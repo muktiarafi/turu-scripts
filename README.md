@@ -25,6 +25,7 @@ repository this one is the `scripts/` submodule.
 | `other/farmjoekits/0FarmerJoeDoAll.ts` | Port of `Other/FarmJoeKits/0FarmerJoeDoAll.cs`: the level 1 to 100 progression. `CoreFarmerJoe.ts` next to it holds the steps and the options; the rest of its tree is listed under [FarmerJoe](#farmerjoe). |
 | `tsconfig.json` | Type-check config; `"turu"` maps to `../bot/js/turu.ts` (the script API, inside a Turu checkout), else `types/turu.ts`. |
 | `types/turu.ts` | A copy of Turu's `bot/js/turu.ts`, for type-checking outside Turu. Copy it again when the API changes (Turu's tests check that it's the same). |
+| `.prettierrc.json` | Formatting: Prettier 3.6.2, 4 spaces, 120 columns. CI fails on unformatted code. |
 | `tools/build-index.mjs` | Builds `index.json`, the list Search Scripts reads (see [The index](#the-index)). |
 
 Folders follow the C# repo (`Nation/Materials/0MaxBags.cs` -> `nation/materials/0MaxBags.ts`).
@@ -35,6 +36,7 @@ needed, in the same order and with the same names in camelCase.
 
 ```bash
 npx -y -p typescript@5.9.3 tsc --noEmit -p .    # here, or in Turu's scripts/
+npx -y prettier@3.6.2 --write "**/*.{ts,mjs}"    # format (CI runs --check)
 ```
 
 The engine doesn't type-check at runtime, so run this after every change.

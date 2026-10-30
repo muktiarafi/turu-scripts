@@ -1,5 +1,5 @@
-# Type-checks the scripts and publishes index.json (tools/build-index.mjs) on the `index`
-# branch, where Turu's Search Scripts reads it:
+# Type-checks the scripts, checks their formatting (Prettier) and publishes index.json
+# (tools/build-index.mjs) on the `index` branch, where Turu's Search Scripts reads it:
 # https://raw.githubusercontent.com/<owner>/<repo>/index/index.json
 #
 # The `index` branch holds that one file in one commit, replaced on every push to main, so
@@ -36,6 +36,9 @@ jobs:
 
       - name: Type-check
         run: npx -y -p typescript@5.9.3 tsc --noEmit -p .
+
+      - name: Check formatting
+        run: npx -y prettier@3.6.2 --check "**/*.{ts,mjs}"
 
       - name: Build index.json
         run: node tools/build-index.mjs > "$RUNNER_TEMP/index.json"
