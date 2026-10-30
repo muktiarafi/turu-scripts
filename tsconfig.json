@@ -13,7 +13,7 @@
     "skipLibCheck": true,
     "types": [],
     "paths": {
-      "turu": ["../bot/js/turu.ts"]
+      "turu": ["../bot/js/turu.ts", "./types/turu.ts"]
     }
   },
   "include": ["**/*.ts"]

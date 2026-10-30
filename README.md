@@ -1,7 +1,11 @@
 # Turu scripts
 
-TypeScript ports of the AQW bot scripts (VibeSkua's C# `Scripts` repo). The engine loads a
-`.ts` file, strips its types (oxc) and runs its `export default function main()`.
+TypeScript ports of the AQW bot scripts (VibeSkua's C# `Scripts` repo) for
+[Turu](https://github.com/muktiarafi/turu). The engine loads a `.ts` file, strips its types
+(oxc) and runs its `export default function main()`.
+
+Turu's Scripts > Search Scripts lists, downloads and updates these scripts. In the Turu
+repository this one is the `scripts/` submodule.
 
 ## Layout
 
@@ -19,7 +23,9 @@ TypeScript ports of the AQW bot scripts (VibeSkua's C# `Scripts` repo). The engi
 | `other/mergeshops/SynderesMerge.ts` | Port of `Other/MergeShops/SynderesMerge.cs`: the pattern for every merge script (see below). |
 | `other/various/Potions.ts` | Port of `Other/Various/Potions.cs`. Its options are declared in `scriptOptions` and edited in Scripts > Edit Script Options. |
 | `other/farmjoekits/0FarmerJoeDoAll.ts` | Port of `Other/FarmJoeKits/0FarmerJoeDoAll.cs`: the level 1 to 100 progression. `CoreFarmerJoe.ts` next to it holds the steps and the options; the rest of its tree is listed under [FarmerJoe](#farmerjoe). |
-| `tsconfig.json` | Type-check config; `"turu"` maps to `../bot/js/turu.ts` (the script API). |
+| `tsconfig.json` | Type-check config; `"turu"` maps to `../bot/js/turu.ts` (the script API, inside a Turu checkout), else `types/turu.ts`. |
+| `types/turu.ts` | A copy of Turu's `bot/js/turu.ts`, for type-checking outside Turu. Copy it again when the API changes (Turu's tests check that it's the same). |
+| `tools/build-index.mjs` | Builds `index.json`, the list Search Scripts reads (see [The index](#the-index)). |
 
 Folders follow the C# repo (`Nation/Materials/0MaxBags.cs` -> `nation/materials/0MaxBags.ts`).
 Core files only contain what ported scripts reach; port more members from the C# files as
@@ -28,10 +34,36 @@ needed, in the same order and with the same names in camelCase.
 ## Type-check
 
 ```bash
-cd scripts && npx -y -p typescript@5.9.3 tsc --noEmit -p .
+npx -y -p typescript@5.9.3 tsc --noEmit -p .    # here, or in Turu's scripts/
 ```
 
 The engine doesn't type-check at runtime, so run this after every change.
+
+## The index
+
+On every push to `main`, CI (`.github/workflows/index.yml`) type-checks the scripts, runs
+`tools/build-index.mjs` and force-pushes the result as the only file of the `index` branch.
+Turu reads it from `https://raw.githubusercontent.com/muktiarafi/turu-scripts/index/index.json`
+(another repository with `TURU_SCRIPTS_REPO=owner/name`). Nothing is committed to `main`.
+
+Each entry has the script's `path`, the `name`, `description` and `tags` of its header block,
+`size`, `sha256`, `added` and `updated` (from `git log`) and `deps`, every file it imports
+directly or not. Turu downloads a script with its `deps`, from the index's `commit`, and checks
+each file's sha256. Keep the header block first in the file:
+
+```ts
+/*
+name: Gold Farm
+description: honor hall for members,
+    BGE for f2p
+tags: gold, battle ground e
+*/
+```
+
+An indented line continues the key above it. A file without a `name` is listed under its file
+name. Imports must be relative (`../core/CoreBots`) so the index can follow them.
+
+To see the index locally: `node tools/build-index.mjs > index.json`.
 
 ## Writing a script
 
