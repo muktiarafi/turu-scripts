@@ -7,7 +7,6 @@ tags: null
 // Not ported (FarmerJoe's DoAll doesn't reach them): BoneSomeDust.
 
 import { bot } from "turu";
-import type { InventoryItem, ShopItem } from "turu";
 import { ClassType, Core, type CoreShopItem, type ShopRequirement } from "../../core/CoreBots";
 import { CoreDailies, MineCraftingMetalsEnum } from "../../core/CoreDailies";
 import { CoreFarms } from "../../core/CoreFarms";
@@ -323,16 +322,6 @@ export class CoreBLOD {
 
         if (!bot.quests.isUnlocked(2136)) {
             Core.logger("Unlocking \"Basic Weapon Kit\" Quest!");
-            // Define valid metals in enum form
-            const validMetals = [
-                MineCraftingMetalsEnum.Aluminum,
-                MineCraftingMetalsEnum.Barium,
-                MineCraftingMetalsEnum.Gold,
-                MineCraftingMetalsEnum.Iron,
-                MineCraftingMetalsEnum.Copper,
-                MineCraftingMetalsEnum.Silver,
-                MineCraftingMetalsEnum.Platinum,
-            ];
 
             // Find first matching item in inventory/bank
             const itemToUpgrade = bot

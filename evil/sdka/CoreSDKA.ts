@@ -7,7 +7,7 @@ tags: null
 
 import { bot, choices, defineScriptOptions, option } from "turu";
 import { CoreAdvanced } from "../../core/CoreAdvanced";
-import { ClassType, Core, configEnum, configOr } from "../../core/CoreBots";
+import { ClassType, Core, configEnum } from "../../core/CoreBots";
 import { CoreDailies, HardCoreMetalsEnum } from "../../core/CoreDailies";
 import { CoreFarms } from "../../core/CoreFarms";
 import { CoreStory } from "../../core/CoreStory";

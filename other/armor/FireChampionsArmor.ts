@@ -8,12 +8,10 @@ tags: fire champions armor, fire champions armor, polished dragon slayer, flame 
 import { bot } from "turu";
 import { CoreAdvanced } from "../../core/CoreAdvanced";
 import { ClassType, Core } from "../../core/CoreBots";
-import { CoreFarms } from "../../core/CoreFarms";
 import { Lair } from "../../story/Lair";
 import { WarfuryEmblem } from "../WarFuryEmblem";
 import { DragonslayerGeneral } from "../classes/DragonslayerGeneral";
 
-const Farm = new CoreFarms();
 const Adv = new CoreAdvanced();
 const DSG = new DragonslayerGeneral();
 const WFE = new WarfuryEmblem();

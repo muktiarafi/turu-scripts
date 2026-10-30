@@ -8,22 +8,10 @@ tags: null
 import { bot } from "turu";
 import { CoreAdvanced } from "../../core/CoreAdvanced";
 import { ClassType, Core } from "../../core/CoreBots";
-import { CoreFarms } from "../../core/CoreFarms";
 
-const Farm = new CoreFarms();
 const Adv = new CoreAdvanced();
 
 export class ExaltedApotheosisPreReqs {
-    private weps: string[] = [
-        "Exalted Apotheosis",
-        "Exalted Penultima",
-        "Exalted Unity",
-        "Apostate Ultima",
-        "Thaumaturgus Ultima",
-        "Apostate Omega",
-        "Thaumaturgus Omega",
-    ];
-
     preReqs(): void {
         // Ensure shop is loaded:
         Core.join("timeinn");

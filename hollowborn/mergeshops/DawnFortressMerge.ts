@@ -55,9 +55,6 @@ export class DawnFortressMerge {
         const findIngredients = (): void => {
             const req = Adv.externalItem;
             const quant = Adv.externalQuant;
-            const currentQuant = req.temp
-                ? bot.tempInv.getQuantity(req.name)
-                : bot.inventory.getQuantity(req.name);
             if (req == null) {
                 Core.logger("req is NULL");
                 return;

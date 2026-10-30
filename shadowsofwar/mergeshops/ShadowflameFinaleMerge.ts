@@ -5,14 +5,12 @@ tags: shadowflame, finale, merge, ruinedcrown, defender, defenders, crest, horn,
 */
 // Port of Scripts/ShadowsOfWar/MergeShops/ShadowflameFinaleMerge.cs.
 
-import { bot, defineScriptOptions, option } from "turu";
+import { defineScriptOptions, option } from "turu";
 import { CoreAdvanced, mergeOptionsEnum } from "../../core/CoreAdvanced";
 import { ClassType, Core } from "../../core/CoreBots";
-import { CoreFarms } from "../../core/CoreFarms";
 import { CoreSoW } from "../../story/shadowsofwar/CoreSoW";
 import { CoreSoWMats } from "../CoreSoWMats";
 
-const Farm = new CoreFarms();
 const Adv = new CoreAdvanced();
 const SOWM = new CoreSoWMats();
 const SoW = new CoreSoW();
@@ -42,9 +40,6 @@ export class ShadowflameFinaleMerge {
         const findIngredients = (): void => {
             const req = Adv.externalItem;
             const quant = Adv.externalQuant;
-            const currentQuant = req.temp
-                ? bot.tempInv.getQuantity(req.name)
-                : bot.inventory.getQuantity(req.name);
             if (req == null) {
                 Core.logger("req is NULL");
                 return;

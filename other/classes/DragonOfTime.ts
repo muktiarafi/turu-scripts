@@ -286,7 +286,7 @@ export class DragonOfTime {
             Core.equipClass(ClassType.Solo);
             bot.drops.add(
                 ...this.extras.filter(x => Core.checkInventory(x, 1, { toInv: false })).map(x => x));
-            for (const Item of Core.questRewards(7725)
+            for (const _item of Core.questRewards(7725)
                     .filter(x => !Core.checkInventory(x, 1, { toInv: false }))
                     .map(x => x)
             ) {

@@ -7,7 +7,6 @@ tags: archfiend, doomlord, ADFL, nulgath, demands, work, unidentified, uni, 35, 
 
 import { bot } from "turu";
 import { Core } from "../../core/CoreBots";
-import { Rewards } from "../AssistingCragAndBamboozle[Mem]";
 import { CoreNation } from "../CoreNation";
 import { GoldenHanzoVoid } from "../various/GoldenHanzoVoid";
 import { WillpowerExtraction } from "./WillpowerExtraction";

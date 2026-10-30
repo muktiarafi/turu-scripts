@@ -9,11 +9,9 @@ tags: head, legion, beast, LOTLB, seven, circles, war, penance, essence, wrath, 
 import { bot, defineScriptOptions, option } from "turu";
 import { CoreAdvanced } from "../core/CoreAdvanced";
 import { ClassType, Core, configOr } from "../core/CoreBots";
-import { CoreFarms } from "../core/CoreFarms";
 import { SevenCircles } from "../story/legion/SevenCircles(War)";
 import { CoreLegion } from "./CoreLegion";
 
-const Farm = new CoreFarms();
 const Adv = new CoreAdvanced();
 const Legion = new CoreLegion();
 const Circles = new SevenCircles();

@@ -8,10 +8,8 @@ tags: null
 import { bot } from "turu";
 import { CoreAdvanced } from "../../core/CoreAdvanced";
 import { ClassType, Core } from "../../core/CoreBots";
-import { CoreFarms } from "../../core/CoreFarms";
 import { CoreNation } from "../CoreNation";
 
-const Farm = new CoreFarms();
 const Adv = new CoreAdvanced();
 const Nation = new CoreNation();
 

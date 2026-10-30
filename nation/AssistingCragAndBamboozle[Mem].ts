@@ -6,8 +6,7 @@ tags: null
 // Port of Scripts/Nation/AssistingCragAndBamboozle[Mem].cs.
 
 import { bot, choices, defineScriptOptions, option } from "turu";
-import type { InventoryItem } from "turu";
-import { Core, configEnum, configOr } from "../core/CoreBots";
+import { Core, configEnum } from "../core/CoreBots";
 import type { RewardItem } from "../core/CoreBots";
 import { CoreDailies } from "../core/CoreDailies";
 import { CoreNation } from "./CoreNation";

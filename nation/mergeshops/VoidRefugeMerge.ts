@@ -8,11 +8,9 @@ tags: void, refuge, merge, voidrefuge, envenomed, edge, nulgath, enchanted, carn
 import { bot, defineScriptOptions, option } from "turu";
 import { CoreAdvanced, mergeOptionsEnum } from "../../core/CoreAdvanced";
 import { ClassType, Core } from "../../core/CoreBots";
-import { CoreFarms } from "../../core/CoreFarms";
 import { VoidRefuge } from "../../story/nation/VoidRefuge";
 import { CoreNation } from "../CoreNation";
 
-const Farm = new CoreFarms();
 const Adv = new CoreAdvanced();
 const VR = new VoidRefuge();
 const Nation = new CoreNation();
@@ -66,9 +64,6 @@ export class VoidRefugeMerge {
         const findIngredients = (): void => {
             const req = Adv.externalItem;
             const quant = Adv.externalQuant;
-            const currentQuant = req.temp
-                ? bot.tempInv.getQuantity(req.name)
-                : bot.inventory.getQuantity(req.name);
             if (req == null) {
                 Core.logger("req is NULL");
                 return;

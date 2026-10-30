@@ -7,7 +7,6 @@ tags: null
 
 import { bot } from "turu";
 import { Core } from "../../core/CoreBots";
-import type { QuestData } from "../../core/CoreBots";
 import { CoreFarms } from "../../core/CoreFarms";
 import { CoreNation } from "../CoreNation";
 

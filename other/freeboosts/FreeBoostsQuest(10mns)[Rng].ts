@@ -7,9 +7,7 @@ tags: reagents for zifwin, free, boost, class points, reputation, gold
 
 import { bot, defineScriptOptions, option } from "turu";
 import { ClassType, Core, configOr } from "../../core/CoreBots";
-import { CoreFarms } from "../../core/CoreFarms";
 
-const Farm = new CoreFarms();
 
 export class FreeBoosts {
     getBoostsSelect(GoldBoostQuant = 9999, ClassBoostQuant = 9999, RepBoostQuant = 9999): void {

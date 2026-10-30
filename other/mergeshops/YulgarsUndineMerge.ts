@@ -8,10 +8,8 @@ tags: yulgars, undine, merge, sunlightzone, poisonous, rogue, nightshade, thorn,
 import { bot, defineScriptOptions, option } from "turu";
 import { CoreAdvanced, mergeOptionsEnum } from "../../core/CoreAdvanced";
 import { ClassType, Core } from "../../core/CoreBots";
-import { CoreFarms } from "../../core/CoreFarms";
 import { CoreAOR } from "../../story/ageofruin/CoreAOR";
 
-const Farm = new CoreFarms();
 const Adv = new CoreAdvanced();
 const AoR = new CoreAOR();
 
@@ -38,9 +36,6 @@ export class YulgarsUndineMerge {
         const findIngredients = (): void => {
             const req = Adv.externalItem;
             const quant = Adv.externalQuant;
-            const currentQuant = req.temp
-                ? bot.tempInv.getQuantity(req.name)
-                : bot.inventory.getQuantity(req.name);
             if (req == null) {
                 Core.logger("req is NULL");
                 return;

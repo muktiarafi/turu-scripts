@@ -7,11 +7,9 @@ tags: story, quest, legion, dark-war-legion-and-nation
 
 import { bot } from "turu";
 import { ClassType, Core } from "../../core/CoreBots";
-import { CoreFarms } from "../../core/CoreFarms";
 import { CoreStory } from "../../core/CoreStory";
 import { Core13LoC } from "../lordsofchaos/Core13LoC";
 
-const Farm = new CoreFarms();
 const LOC = new Core13LoC();
 const Story = new CoreStory();
 

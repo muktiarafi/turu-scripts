@@ -7,7 +7,6 @@ tags: null
 // Not ported (FarmerJoe's DoAll doesn't reach them): CompleteDoomwood, DoomwoodPart1, DoomwoodPart2, DoomwoodForest, ChoppingMaul, NecroTower, NecroU, TempleOfTheLight, MadScientistsLab, NecropolisDungeon, NecropolisCavern.
 
 import { bot } from "turu";
-import type { Quest } from "turu";
 import { ClassType, Core } from "../../core/CoreBots";
 import { CoreStory } from "../../core/CoreStory";
 

@@ -6,7 +6,6 @@ tags: null
 // Port of Scripts/Good/GearOfAwe/CoreAwe.cs.
 
 import { bot } from "turu";
-import type { Monster } from "turu";
 import { ClassType, Core } from "../../core/CoreBots";
 import { CoreFarms } from "../../core/CoreFarms";
 

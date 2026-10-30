@@ -5,7 +5,7 @@ tags: null
 */
 // Port of Scripts/ShadowsOfWar/MergeShops/TimekeepMerge.cs.
 
-import { bot, defineScriptOptions, option } from "turu";
+import { defineScriptOptions, option } from "turu";
 import { CoreAdvanced, mergeOptionsEnum } from "../../core/CoreAdvanced";
 import { Core } from "../../core/CoreBots";
 import { CoreSoW } from "../../story/shadowsofwar/CoreSoW";
@@ -35,9 +35,6 @@ export class TimekeepMerge {
         const findIngredients = (): void => {
             const req = Adv.externalItem;
             const quant = Adv.externalQuant;
-            const currentQuant = req.temp
-                ? bot.tempInv.getQuantity(req.name)
-                : bot.inventory.getQuantity(req.name);
             if (req == null) {
                 Core.logger("req is NULL");
                 return;

@@ -8,6 +8,7 @@
     "moduleResolution": "Bundler",
     "allowImportingTsExtensions": true,
     "noImplicitOverride": true,
+    "noUnusedLocals": true,
     "isolatedModules": true,
     "noFallthroughCasesInSwitch": true,
     "skipLibCheck": true,

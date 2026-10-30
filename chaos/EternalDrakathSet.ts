@@ -7,12 +7,10 @@ tags: eternal drakath set, drakath, set
 
 import { bot } from "turu";
 import { ClassType, Core } from "../core/CoreBots";
-import { CoreFarms } from "../core/CoreFarms";
 import { CoreBLOD } from "../good/blod/CoreBLOD";
 import { StarSinc } from "../story/StarSinc";
 import { DrakathArmorBot } from "./DrakathsArmor";
 
-const Farm = new CoreFarms();
 const Armor = new DrakathArmorBot();
 const BLOD = new CoreBLOD();
 const Star = new StarSinc();

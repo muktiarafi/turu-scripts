@@ -160,7 +160,7 @@ export class CoreVHL {
         const quantity = Core.dynamicQuant("Roentgenium of Nulgath", false);
 
         Core.logger(
-            `Roentgenium of Nulgath: ${Core.dynamicQuant("Roentgenium of Nulgath", false)}/${quant}`, 
+            `Roentgenium of Nulgath: ${quantity}/${quant}`, 
             "Not Enough Roent");
         Core.logger(
             "Not enough \"Roentgenium of Nulgath\", maxing mats so it's easier tomorrow. You can just leave this running!");

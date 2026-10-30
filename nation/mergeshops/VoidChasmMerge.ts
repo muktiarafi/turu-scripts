@@ -8,11 +8,9 @@ tags: void, chasm, merge, voidchasm, abyssal, gravity, ball, balls, midnight, fi
 import { bot, defineScriptOptions, option } from "turu";
 import { CoreAdvanced, mergeOptionsEnum } from "../../core/CoreAdvanced";
 import { ClassType, Core } from "../../core/CoreBots";
-import { CoreFarms } from "../../core/CoreFarms";
 import { VoidChasm } from "../../story/nation/VoidChasm";
 import { CoreNation } from "../CoreNation";
 
-const Farm = new CoreFarms();
 const Adv = new CoreAdvanced();
 const Nation = new CoreNation();
 const voidChasm = new VoidChasm();
@@ -46,9 +44,6 @@ export class VoidChasmMerge {
         const findIngredients = (): void => {
             const req = Adv.externalItem;
             const quant = Adv.externalQuant;
-            const currentQuant = req.temp
-                ? bot.tempInv.getQuantity(req.name)
-                : bot.inventory.getQuantity(req.name);
             if (req == null) {
                 Core.logger("req is NULL");
                 return;

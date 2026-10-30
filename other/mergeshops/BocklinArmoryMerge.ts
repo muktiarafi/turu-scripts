@@ -8,11 +8,9 @@ tags: bocklin, armory, merge, bocklincastle, valens, knightly, golden, anjou, kn
 import { bot, defineScriptOptions, option } from "turu";
 import { CoreAdvanced, mergeOptionsEnum } from "../../core/CoreAdvanced";
 import { ClassType, Core } from "../../core/CoreBots";
-import { CoreFarms } from "../../core/CoreFarms";
 import { CoreLynaria } from "../../story/lynaria/CoreLynaria";
 import { BocklinGroveMerge } from "./BocklinGroveMerge";
 
-const Farm = new CoreFarms();
 const Adv = new CoreAdvanced();
 const Lyn = new CoreLynaria();
 const BGM = new BocklinGroveMerge();
@@ -50,9 +48,6 @@ export class BocklinArmoryMerge {
         const findIngredients = (): void => {
             const req = Adv.externalItem;
             const quant = Adv.externalQuant;
-            const currentQuant = req.temp
-                ? bot.tempInv.getQuantity(req.name)
-                : bot.inventory.getQuantity(req.name);
             if (req == null) {
                 Core.logger("req is NULL");
                 return;

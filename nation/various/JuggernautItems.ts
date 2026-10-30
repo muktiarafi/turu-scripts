@@ -6,7 +6,7 @@ tags: null
 // Port of Scripts/Nation/Various/JuggernautItems.cs.
 
 import { bot, choices, defineScriptOptions, option } from "turu";
-import { Core, configEnum, configOr } from "../../core/CoreBots";
+import { Core, configEnum } from "../../core/CoreBots";
 import { CoreNation } from "../CoreNation";
 
 const Nation = new CoreNation();

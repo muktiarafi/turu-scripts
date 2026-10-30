@@ -946,11 +946,6 @@ export class CoreAdvanced {
         }
     }
 
-    // Unused, as in C#.
-    private static isEnhancedWithBaseForge(item: InventoryItem): boolean {
-        return item.enhancementPatternId === 0 && item.enhancementLevel > 0;
-    }
-
     /**
      * C# `AdvCrash`: reports an enhancement that threw and lets the script go on without it. C#
      * shows a message box with the last logs; Turu logs the report.

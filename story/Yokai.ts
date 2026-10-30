@@ -6,10 +6,8 @@ tags: story, quest, yokai
 // Port of Scripts/Story/Yokai.cs.
 
 import { ClassType, Core } from "../core/CoreBots";
-import { CoreFarms } from "../core/CoreFarms";
 import { CoreStory } from "../core/CoreStory";
 
-const Farm = new CoreFarms();
 const Story = new CoreStory();
 
 export class YokaiQuests {

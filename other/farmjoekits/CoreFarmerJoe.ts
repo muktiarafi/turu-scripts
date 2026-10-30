@@ -153,19 +153,8 @@ export class CoreFarmerJoe {
 
     // Strongly-typed properties
     private get classNinja(): InventoryItem | null { return this.getClass("Ninja"); }
-    private get classRogue(): InventoryItem | null { return this.getClass("Rogue"); }
     private get classMage(): InventoryItem | null { return this.getClass("Mage"); }
-    private get classMasterRanger(): InventoryItem | null { return this.getClass("Master Ranger"); }
-    private get classScarletSorceress(): InventoryItem | null { return this.getClass("Scarlet Sorceress"); }
-    private get classBlazeBinder(): InventoryItem | null { return this.getClass("Blaze Binder"); }
-    private get classDragonSoulShinobi(): InventoryItem | null { return this.getClass("DragonSoul Shinobi"); }
-    private get classArchPaladin(): InventoryItem | null { return this.getClass("ArchPaladin"); }
-    private get classArchFiend(): InventoryItem | null { return this.getClass("ArchFiend"); }
-    private get classGlacialBerserker(): InventoryItem | null { return this.getClass("Glacial Berserker"); }
-    private get classCryomancer(): InventoryItem | null { return this.getClass("Cryomancer"); }
     private get classDragonOfTime(): InventoryItem | null { return this.getClass("Dragon of Time"); }
-    private get classDragonslayer(): InventoryItem | null { return this.getClass("Dragonslayer"); }
-    private get classDragonslayerGeneral(): InventoryItem | null { return this.getClass("Dragonslayer General"); }
 
     //#endregion InvClasses
 
@@ -358,8 +347,6 @@ export class CoreFarmerJoe {
         }
 
         // --- BLADE OF AWE PROGRESSION ---
-        const _aweItems = ["Burning Blade of Abezeth", "Burning Blade", "Awethur's Accoutrements"];
-
         Core.logger("Level 30: Farming Blade of Awe Rep for enhancements & sword");
         this.setClass();
         Farm.bladeofAweREP();

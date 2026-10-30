@@ -8,11 +8,9 @@ tags: temple. delve, merge, seasonal, nulgath, staff, birthday
 import { bot, defineScriptOptions, option } from "turu";
 import { CoreAdvanced, mergeOptionsEnum } from "../../../core/CoreAdvanced";
 import { ClassType, Core } from "../../../core/CoreBots";
-import { CoreFarms } from "../../../core/CoreFarms";
 import { CoreNation } from "../../../nation/CoreNation";
 import { TempleDelve } from "./TempleDelve";
 
-const Farm = new CoreFarms();
 const Adv = new CoreAdvanced();
 const Nation = new CoreNation();
 const TD = new TempleDelve();
@@ -45,9 +43,6 @@ export class TempleDelveMerge {
         const findIngredients = (): void => {
             const req = Adv.externalItem;
             const quant = Adv.externalQuant;
-            const currentQuant = req.temp
-                ? bot.tempInv.getQuantity(req.name)
-                : bot.inventory.getQuantity(req.name);
             if (req == null) {
                 Core.logger("req is NULL");
                 return;
