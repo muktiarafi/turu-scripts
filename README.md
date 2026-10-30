@@ -49,8 +49,9 @@ Turu reads it from `https://raw.githubusercontent.com/muktiarafi/turu-scripts/in
 (another repository with `TURU_SCRIPTS_REPO=owner/name`). Nothing is committed to `main`.
 
 Each entry has the script's `path`, the `name`, `description` and `tags` of its header block,
-`size`, `sha256`, `added` and `updated` (from `git log`) and `deps`, every file it imports
-directly or not. Turu downloads a script with its `deps`, from the index's `commit`, and checks
+`size`, `sha256`, `added` and `updated` (from `git log`), `deps`, every file it imports
+directly or not, and `library`: true for a file with no `export default` (the `Core*` files),
+which Search Scripts doesn't list; it comes with the scripts that import it. Turu downloads a script with its `deps`, from the index's `commit`, and checks
 each file's sha256. Keep the header block first in the file:
 
 ```ts

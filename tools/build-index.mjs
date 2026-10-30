@@ -65,6 +65,15 @@ export function parseHeader(source) {
     return header;
 }
 
+/**
+ * Whether `source` is a library (CoreBots, CoreFarms, ...): no `export default`, so nothing to
+ * run. Search Scripts doesn't list them; they come with the scripts that import them. Same rule
+ * as turu_bot::repo::is_library.
+ */
+export function isLibrary(source) {
+    return !/^\s*export\s+default\b/m.test(source);
+}
+
 /** The relative imports of `source` (`import ... from "./x"`, `export ... from`, `import "./x"`). */
 function imports(source) {
     const out = [];
@@ -149,6 +158,7 @@ const index = {
             added: dates.get(path)?.added ?? "",
             updated: dates.get(path)?.updated ?? "",
             deps: closure(path),
+            library: isLibrary(bytes.toString("utf8")),
         };
     }),
 };
