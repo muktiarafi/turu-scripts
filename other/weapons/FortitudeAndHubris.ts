@@ -15,22 +15,22 @@ const Story = new CoreStory();
 
 export class FandH {
     fortitudeAndHubris(): void {
-        if (Core.checkInventory("Fortitude + Hubris"))
-            return;
+        if (Core.checkInventory("Fortitude + Hubris")) return;
 
         Story.preLoad(this.fortitudeAndHubris);
 
         Core.addDrop(
-            "Zorbak's Secret G-Rave Key", 
-            "Sword's Cost", 
-            "Shards of the Sword", 
-            "Hubris's Final Blade Shard", 
-            "Hubris' Magic Essence", 
-            "Hubris", 
-            "Fortitude's Blade Shards", 
-            "Fortitude's Magic Essence", 
-            "Fortitude", 
-            "Fortitude + Hubris");
+            "Zorbak's Secret G-Rave Key",
+            "Sword's Cost",
+            "Shards of the Sword",
+            "Hubris's Final Blade Shard",
+            "Hubris' Magic Essence",
+            "Hubris",
+            "Fortitude's Blade Shards",
+            "Fortitude's Magic Essence",
+            "Fortitude",
+            "Fortitude + Hubris",
+        );
 
         // Qualifying Quest
         Story.killQuest(6593, "stalagbite", "Balboa", { getReward: false });
@@ -82,7 +82,9 @@ export class FandH {
         if (!Core.checkInventory("Hubris")) {
             Core.ensureAccept(6604);
             Core.equipClass(ClassType.Farm);
-            Core.killMonster("doomwood", "r6a", "Right", "Doomwood Ectomancer", "Hubris's Final Blade Shard", 1, { isTemp: false });
+            Core.killMonster("doomwood", "r6a", "Right", "Doomwood Ectomancer", "Hubris's Final Blade Shard", 1, {
+                isTemp: false,
+            });
             Core.sleep(2500);
             Core.equipClass(ClassType.Solo);
             Core.killTrigoras("Hubris' Handle", 1, 1, true);
@@ -105,16 +107,16 @@ export class FandH {
 
         // Dual Wielding
         if (!Core.checkInventory("Fortitude + Hubris")) {
-            Story.killQuest(6606, "skytower", [ "Aspect of Good", "Aspect of Evil" ]);
+            Story.killQuest(6606, "skytower", ["Aspect of Good", "Aspect of Evil"]);
             bot.wait.forPickup("Fortitude + Hubris");
         }
     }
 }
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new FandH().fortitudeAndHubris();
+    new FandH().fortitudeAndHubris();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

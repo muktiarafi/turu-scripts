@@ -30,8 +30,7 @@ export class CoreVHL {
 
     getVHL(rankUpClass = true): void {
         if (Core.checkInventory("Void Highlord")) {
-            if (rankUpClass)
-                Adv.rankUpClass("Void Highlord");
+            if (rankUpClass) Adv.rankUpClass("Void Highlord");
             return;
         }
 
@@ -39,18 +38,16 @@ export class CoreVHL {
         this.vhlCrystals();
 
         if (
-            Core.checkInventory("Roentgenium of Nulgath", 15)
-            && Core.checkInventory([ "Void Crystal A", "Void Crystal B" ])
+            Core.checkInventory("Roentgenium of Nulgath", 15) &&
+            Core.checkInventory(["Void Crystal A", "Void Crystal B"])
         ) {
             Adv.buyItem("tercessuinotlim", 1355, "Void Highlord");
-            if (rankUpClass)
-                Adv.rankUpClass("Void Highlord");
+            if (rankUpClass) Adv.rankUpClass("Void Highlord");
         }
     }
 
     vhlChallenge(quant: number, farmextra = false): void {
-        if (Core.checkInventory("Roentgenium of Nulgath", quant))
-            return;
+        if (Core.checkInventory("Roentgenium of Nulgath", quant)) return;
 
         Core.logger("Getting Void HighLord Challenge prerequisites");
         Farm.experience(80);
@@ -63,26 +60,35 @@ export class CoreVHL {
         while (!bot.shouldExit && !Core.checkInventory("Roentgenium of Nulgath", quant)) {
             Core.ensureAccept(5660);
 
-            Core.killMonster("tercessuinotlim", "m4", "Right", "Shadow of Nulgath", "Hadean Onyx of Nulgath", undefined, { isTemp: false });
+            Core.killMonster(
+                "tercessuinotlim",
+                "m4",
+                "Right",
+                "Shadow of Nulgath",
+                "Hadean Onyx of Nulgath",
+                undefined,
+                { isTemp: false },
+            );
             if (
                 !Core.checkInventory(
-                    "Elders' Blood", 
+                    "Elders' Blood",
                     quant - Core.dynamicQuant("Elders' Blood", false) > 5
                         ? 5
-                        : (quant - Core.dynamicQuant("Elders' Blood", false)))
+                        : quant - Core.dynamicQuant("Elders' Blood", false),
+                )
             ) {
                 Daily.eldersBlood();
                 this._SparrowMethod(
-                    (quant - Core.dynamicQuant("Elders' Blood", false)) > 5
+                    quant - Core.dynamicQuant("Elders' Blood", false) > 5
                         ? 5
-                        : (quant - Core.dynamicQuant("Elders' Blood", false)));
+                        : quant - Core.dynamicQuant("Elders' Blood", false),
+                );
             }
 
-            Nation.farmVoucher({ member:false });
+            Nation.farmVoucher({ member: false });
             Farm.blackKnightOrb();
             Adv.buyItem("citadel", 44, 38316, undefined, 22367);
-            if (!Core.checkInventory("Aelita's Emerald"))
-                Adv.buyItem("yulgar", 16, "Aelita's Emerald");
+            if (!Core.checkInventory("Aelita's Emerald")) Adv.buyItem("yulgar", 16, "Aelita's Emerald");
             Nation.farmUni13(1);
             Nation.farmGemofNulgath(20);
             Nation.emblemofNulgath(20);
@@ -94,27 +100,20 @@ export class CoreVHL {
             bot.wait.forPickup("Roentgenium of Nulgath");
             Core.toBank(...this.challengeRewards);
 
-            if (
-                Core.checkInventory("Elders' Blood")
-                && !Core.checkInventory("Roentgenium of Nulgath", quant)
-            )
+            if (Core.checkInventory("Elders' Blood") && !Core.checkInventory("Roentgenium of Nulgath", quant))
                 continue; // C#: goto Continue (the top of this loop)
-            else if (
-                !Core.checkInventory("Elders' Blood")
-                && !Core.checkInventory("Roentgenium of Nulgath", quant)
-            ) {
+            else if (!Core.checkInventory("Elders' Blood") && !Core.checkInventory("Roentgenium of Nulgath", quant)) {
                 Core.logger(
-                    `Not enough \"Elders' Blood\", please do the daily ${2 - Core.dynamicQuant("Elders' Blood", false)}`);
-                if (farmextra)
-                    this.farmExtra();
+                    `Not enough \"Elders' Blood\", please do the daily ${2 - Core.dynamicQuant("Elders' Blood", false)}`,
+                );
+                if (farmextra) this.farmExtra();
                 return;
             }
         }
     }
 
     vhlCrystals(): void {
-        if (Core.checkInventory("Void Crystal A") && Core.checkInventory("Void Crystal B"))
-            return;
+        if (Core.checkInventory("Void Crystal A") && Core.checkInventory("Void Crystal B")) return;
 
         Core.addDrop(...Nation.bagDrops);
         Nation.farmUni13(1);
@@ -128,13 +127,13 @@ export class CoreVHL {
         }
         if (!Core.checkInventory("Void Crystal B")) {
             Core.logger("Obtaining Void Crystal B");
-            if (!Core.checkInventory("Elders' Blood", 2))
-                Daily.eldersBlood();
+            if (!Core.checkInventory("Elders' Blood", 2)) Daily.eldersBlood();
             this._SparrowMethod(2);
 
             if (!Core.checkInventory("Elders' Blood", 2)) {
                 Core.logger(
-                    `Not enough \"Elders' Blood\", please do the daily ${2 - bot.inventory.getQuantity("Elders' Blood")} more times (not today)`);
+                    `Not enough \"Elders' Blood\", please do the daily ${2 - bot.inventory.getQuantity("Elders' Blood")} more times (not today)`,
+                );
                 Core.logger("Gathering Materials for Void Crystal B");
                 Nation.farmTotemofNulgath(15);
                 Nation.farmDiamondofNulgath(200);
@@ -154,22 +153,19 @@ export class CoreVHL {
         // 8 for Void Crystals
         // 10 for The Fiend Shard's Final quest
 
-        if (Core.checkInventory("Roentgenium of Nulgath", quant))
-            return;
+        if (Core.checkInventory("Roentgenium of Nulgath", quant)) return;
 
         const quantity = Core.dynamicQuant("Roentgenium of Nulgath", false);
 
+        Core.logger(`Roentgenium of Nulgath: ${quantity}/${quant}`, "Not Enough Roent");
         Core.logger(
-            `Roentgenium of Nulgath: ${quantity}/${quant}`, 
-            "Not Enough Roent");
-        Core.logger(
-            "Not enough \"Roentgenium of Nulgath\", maxing mats so it's easier tomorrow. You can just leave this running!");
+            'Not enough "Roentgenium of Nulgath", maxing mats so it\'s easier tomorrow. You can just leave this running!',
+        );
 
         // Farm Mats for Tomarrow.
         Farm.blackKnightOrb();
         Adv.buyItem("citadel", 44, 38316, undefined, 22367);
-        if (!Core.checkInventory("Aelita's Emerald"))
-            Adv.buyItem("yulgar", 16, "Aelita's Emerald");
+        if (!Core.checkInventory("Aelita's Emerald")) Adv.buyItem("yulgar", 16, "Aelita's Emerald");
         Nation.farmUni13(13);
         Nation.farmGemofNulgath(1000);
         Nation.emblemofNulgath(500);
@@ -178,32 +174,41 @@ export class CoreVHL {
         Nation.approvalAndFavor(5000, 5000); // Core.AddDrop("Totem of Nulgath", "Blood Gem of Nulgath", "Voucher of Nulgath", "Voucher of Nulgath (non-mem)");
         Nation.farmBloodGem();
         if (!Core.checkInventory("Unidentified 19")) {
-            const item = Core.ensureLoad(7551).rewards.find(x => x.id === 57446);
+            const item = Core.ensureLoad(7551).rewards.find((x) => x.id === 57446);
             Nation.swindleReturn(item!.name, 6);
             Adv.buyItem("tercessuinotlim", 1951, "Unidentified 19");
         }
         Nation.farmTotemofNulgath(15); // 15 for Void Crystal B
-        Nation.farmVoucher({ member:false });
-        Nation.farmVoucher({ member:true });
+        Nation.farmVoucher({ member: false });
+        Nation.farmVoucher({ member: true });
         Core.logger("Materials max out! You should be good for tomorrow.");
     }
 
     private _SparrowMethod(EldersBloodQuant: number): void {
         if (
-            !configOr("SparrowMethod", false)
-            || !Core.isMember
-            || !Core.checkInventory(Nation.cragName)
-            || Core.checkInventory("Elders' Blood", EldersBloodQuant)
+            !configOr("SparrowMethod", false) ||
+            !Core.isMember ||
+            !Core.checkInventory(Nation.cragName) ||
+            Core.checkInventory("Elders' Blood", EldersBloodQuant)
         )
             return;
         ACAB.assistingCandB(Rewards.Elders_Blood);
     }
 }
 
-export const scriptOptions = defineScriptOptions("VoidHighLordOptions", [
-    option.bool("SparrowMethod", "Use Sparrow's Blood Method", "When possible, it will use \"Assisting Crag and Bamboozle\" to get an additional Elders' Blood per day.\n"
-                + "Needs Crag and Bamboozle and is Legend-Only.\n"
-                + "Will not be done if you don't meed the conditions\n"
-                + "Recommended setting: True", true),
-    Core.skipOptions,
-], true);
+export const scriptOptions = defineScriptOptions(
+    "VoidHighLordOptions",
+    [
+        option.bool(
+            "SparrowMethod",
+            "Use Sparrow's Blood Method",
+            'When possible, it will use "Assisting Crag and Bamboozle" to get an additional Elders\' Blood per day.\n' +
+                "Needs Crag and Bamboozle and is Legend-Only.\n" +
+                "Will not be done if you don't meed the conditions\n" +
+                "Recommended setting: True",
+            true,
+        ),
+        Core.skipOptions,
+    ],
+    true,
+);

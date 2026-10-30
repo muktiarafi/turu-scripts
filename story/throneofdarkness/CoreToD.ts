@@ -16,11 +16,9 @@ export class CoreToD {
     doAll = false;
 
     shiftingPyramid(): void {
-        if (Core.isCompletedBefore(5187))
-            return;
+        if (Core.isCompletedBefore(5187)) return;
 
-        if (this.doAll)
-            Core.logger("Sekt - The Eternal: Shifting Pyramid");
+        if (this.doAll) Core.logger("Sekt - The Eternal: Shifting Pyramid");
         Story.preLoad(this.shiftingPyramid);
 
         // Hunt for the Infinity Codex
@@ -162,11 +160,9 @@ export class CoreToD {
     }
 
     shatterGlassMaze(): void {
-        if (Core.isCompletedBefore(5313))
-            return;
+        if (Core.isCompletedBefore(5313)) return;
 
-        if (this.doAll)
-            Core.logger("Scarletta - The Sorceress: ShatterGlass Maze");
+        if (this.doAll) Core.logger("Scarletta - The Sorceress: ShatterGlass Maze");
         Story.preLoad(this.shatterGlassMaze);
 
         if (!Story.questProgression(5298)) {
@@ -222,15 +218,13 @@ export class CoreToD {
     }
 
     towerofMirrors(): void {
-        if (Core.isCompletedBefore(5332))
-            return;
+        if (Core.isCompletedBefore(5332)) return;
 
         Core.logger(`${Core.soloClass}, ${Core.farmClass}`);
 
         this.shatterGlassMaze();
 
-        if (this.doAll)
-            Core.logger("Scarletta - The Sorceress: Tower of Mirrors");
+        if (this.doAll) Core.logger("Scarletta - The Sorceress: Tower of Mirrors");
         Story.preLoad(this.towerofMirrors);
 
         // Drink Me
@@ -244,7 +238,13 @@ export class CoreToD {
         // The Key To Success
         if (!Story.questProgression(5315)) {
             Core.ensureAccept(5315);
-            Core.getMapItems([ [4691, 1], [4692, 1] ], "towerofmirrors");
+            Core.getMapItems(
+                [
+                    [4691, 1],
+                    [4692, 1],
+                ],
+                "towerofmirrors",
+            );
             Core.huntMonster("towerofmirrors", "Silver Elemental", "Mirror Key", 1);
             Core.ensureComplete(5315);
         }
@@ -268,7 +268,13 @@ export class CoreToD {
         // True Love
         if (!Story.questProgression(5318)) {
             Core.ensureAccept(5318);
-            Core.getMapItems([ [4687, 1], [4693, 1] ], "towerofmirrors");
+            Core.getMapItems(
+                [
+                    [4687, 1],
+                    [4693, 1],
+                ],
+                "towerofmirrors",
+            );
             Core.huntMonster("towerofmirrors", "Silver Elemental", "Andres' Mirror Key", 1);
             Core.ensureComplete(5318);
         }
@@ -294,7 +300,13 @@ export class CoreToD {
         // Or Maybe THIS Is True Love
         if (!Story.questProgression(5321)) {
             Core.ensureAccept(5321);
-            Core.getMapItems([ [4688, 1], [4694, 1] ], "towerofmirrors");
+            Core.getMapItems(
+                [
+                    [4688, 1],
+                    [4694, 1],
+                ],
+                "towerofmirrors",
+            );
             Core.huntMonster("towerofmirrors", "Silver Elemental", "Gisele's Mirror Key", 1);
             Core.ensureComplete(5321);
         }
@@ -318,7 +330,13 @@ export class CoreToD {
         // Oh Sure, Why Not
         if (!Story.questProgression(5324)) {
             Core.ensureAccept(5324);
-            Core.getMapItems([ [4689, 1], [4695, 1] ], "towerofmirrors");
+            Core.getMapItems(
+                [
+                    [4689, 1],
+                    [4695, 1],
+                ],
+                "towerofmirrors",
+            );
             Core.huntMonster("towerofmirrors", "Silver Elemental", "Emilia's Mirror Key", 1);
             Core.ensureComplete(5324);
         }
@@ -342,7 +360,13 @@ export class CoreToD {
         // Oh, I Give Up
         if (!Story.questProgression(5327)) {
             Core.ensureAccept(5327);
-            Core.getMapItems([ [4690, 1], [4696, 1] ], "towerofmirrors");
+            Core.getMapItems(
+                [
+                    [4690, 1],
+                    [4696, 1],
+                ],
+                "towerofmirrors",
+            );
             Core.huntMonster("towerofmirrors", "Silver Elemental", "Dora's Mirror Key", 1);
             Core.ensureComplete(5327);
         }
@@ -386,11 +410,9 @@ export class CoreToD {
     }
 
     antiqueShop(): void {
-        if (Core.isCompletedBefore(5434))
-            return;
+        if (Core.isCompletedBefore(5434)) return;
 
-        if (this.doAll)
-            Core.logger("??? - The Stranger: Antique Shop");
+        if (this.doAll) Core.logger("??? - The Stranger: Antique Shop");
         Story.preLoad(this.antiqueShop);
 
         //cursed artifact shop - 5428
@@ -409,7 +431,7 @@ export class CoreToD {
         Story.killQuest(5432, "cursedshop", "Grandfather Clock");
 
         //Dr. Darkwood's Robe
-        Story.mapItemQuest(5433, "cursedshop", [ 4804, 4805 ]);
+        Story.mapItemQuest(5433, "cursedshop", [4804, 4805]);
 
         //defeat the arcane sentinel
         if (!Story.questProgression(5434)) {
@@ -421,13 +443,11 @@ export class CoreToD {
     }
 
     mysteriousDungeon(): void {
-        if (Core.isCompletedBefore(5451))
-            return;
+        if (Core.isCompletedBefore(5451)) return;
 
         this.antiqueShop();
 
-        if (this.doAll)
-            Core.logger("??? - The Stranger: Mysterious Dungeon");
+        if (this.doAll) Core.logger("??? - The Stranger: Mysterious Dungeon");
         Story.preLoad(this.mysteriousDungeon);
 
         //cursed artifact shop - 5428
@@ -446,7 +466,7 @@ export class CoreToD {
         Story.killQuest(5432, "cursedshop", "Grandfather Clock");
 
         //Dr. Darkwood's Robe
-        Story.mapItemQuest(5433, "cursedshop", [ 4804, 4805 ]);
+        Story.mapItemQuest(5433, "cursedshop", [4804, 4805]);
 
         //defeat the arcane sentinel
         if (!Story.questProgression(5434)) {
@@ -469,10 +489,7 @@ export class CoreToD {
         Story.mapItemQuest(5441, "MysteriousDungeon", 4809);
 
         //seeking answers
-        Story.mapItemQuest(
-            5442, 
-            "MysteriousDungeon", 
-            [ 4810, 4811, 4812, 4813, 4814, 4815, 4816 ]);
+        Story.mapItemQuest(5442, "MysteriousDungeon", [4810, 4811, 4812, 4813, 4814, 4815, 4816]);
 
         //Curses!
         Story.mapItemQuest(5443, "MysteriousDungeon", 4817);

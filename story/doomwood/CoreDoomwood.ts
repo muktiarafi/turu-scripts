@@ -22,8 +22,7 @@ export class CoreDoomwood {
     }
 
     thornsgarde(): void {
-        if (Core.isCompletedBefore(7653))
-            return;
+        if (Core.isCompletedBefore(7653)) return;
 
         Story.preLoad(this.thornsgarde);
 
@@ -65,7 +64,13 @@ export class CoreDoomwood {
         //7595    Find my Stuff
         if (!Story.questProgression(7595)) {
             Core.ensureAccept(7595);
-            Core.getMapItems([ [7487, 1], [7488, 1] ], "thorngarde");
+            Core.getMapItems(
+                [
+                    [7487, 1],
+                    [7488, 1],
+                ],
+                "thorngarde",
+            );
             Core.huntMonster("thorngarde", "NecroDrone", "Kyger's Bunny", 1);
             Core.ensureComplete(7595);
         }
@@ -73,7 +78,14 @@ export class CoreDoomwood {
         //7596    Save my Friends
         if (!Story.questProgression(7596)) {
             Core.ensureAccept(7596);
-            Core.getMapItems([ [7489, 1], [7490, 1], [7491, 1] ], "thorngarde");
+            Core.getMapItems(
+                [
+                    [7489, 1],
+                    [7490, 1],
+                    [7491, 1],
+                ],
+                "thorngarde",
+            );
             Core.huntMonster("thorngarde", "NecroMech", "NecroMech Slain", 3);
             Core.ensureComplete(7596);
         }
@@ -113,8 +125,7 @@ export class CoreDoomwood {
     }
 
     stonewood(): void {
-        if (Core.isCompletedBefore(7653))
-            return;
+        if (Core.isCompletedBefore(7653)) return;
 
         this.thornsgarde();
 
@@ -151,8 +162,7 @@ export class CoreDoomwood {
     }
 
     techDungeon(): void {
-        if (Core.isCompletedBefore(7636))
-            return;
+        if (Core.isCompletedBefore(7636)) return;
 
         this.stonewood();
 
@@ -197,8 +207,7 @@ export class CoreDoomwood {
     }
 
     stonewoodForest(): void {
-        if (Core.isCompletedBefore(7636))
-            return;
+        if (Core.isCompletedBefore(7636)) return;
 
         this.techDungeon();
 
@@ -314,8 +323,7 @@ export class CoreDoomwood {
     }
 
     techFortress(): void {
-        if (Core.isCompletedBefore(7653))
-            return;
+        if (Core.isCompletedBefore(7653)) return;
 
         this.stonewoodForest();
 
@@ -365,8 +373,7 @@ export class CoreDoomwood {
     }
 
     aqwZombies(): void {
-        if (Core.isCompletedBefore(2128))
-            return;
+        if (Core.isCompletedBefore(2128)) return;
 
         this.techFortress();
 
@@ -375,8 +382,7 @@ export class CoreDoomwood {
         //2093    Undead Assault
         Story.killQuest(2093, "doomhaven", "Skeletal Soldier", { autoCompleteQuest: false });
         //insurance
-        if (bot.quests.canComplete(2093))
-            Core.ensureComplete(2093);
+        if (bot.quests.canComplete(2093)) Core.ensureComplete(2093);
 
         //2094    Skull Crusher Mountain
         Story.killQuest(2094, "doomhaven", "Skeletal Ice Mage");
@@ -391,14 +397,13 @@ export class CoreDoomwood {
         Story.killQuest(2097, "doomhaven", "Skeletal Viking");
 
         for (const Quest of [
-                2117, // Rolith Defeated
-                2120, // Lair
-                2121, // Mythsong
-                2122, // Arcangrove
-                2123, // Willowshire
-                2119, // Battleon
-            ]
-        ) {
+            2117, // Rolith Defeated
+            2120, // Lair
+            2121, // Mythsong
+            2122, // Arcangrove
+            2123, // Willowshire
+            2119, // Battleon
+        ]) {
             Story.chainQuest(Quest);
             bot.wait.forQuestComplete(Quest);
         }

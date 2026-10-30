@@ -13,8 +13,7 @@ const Nation = new CoreNation();
 
 export class EmpoweringItems {
     empoweringStuff(): void {
-        if (Core.checkInventory("Death Scythe of Nulgath"))
-            return;
+        if (Core.checkInventory("Death Scythe of Nulgath")) return;
 
         Core.addDrop("Death Scythe of Nulgath");
 
@@ -35,9 +34,9 @@ export class EmpoweringItems {
 }
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new EmpoweringItems().empoweringStuff();
+    new EmpoweringItems().empoweringStuff();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

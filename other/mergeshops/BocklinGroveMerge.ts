@@ -15,18 +15,68 @@ const Lyn = new CoreLynaria();
 
 export class BocklinGroveMerge {
     static readonly select = [
-        option.bool("93590", "Champion Lynaria Armor", "Mode: [select] only\nShould the bot buy \"Champion Lynaria Armor\" ?", false),
-        option.bool("93613", "Chiral Valley Knight", "Mode: [select] only\nShould the bot buy \"Chiral Valley Knight\" ?", false),
-        option.bool("93614", "Chiral Valley Duke", "Mode: [select] only\nShould the bot buy \"Chiral Valley Duke\" ?", false),
-        option.bool("93615", "Chiral Valley Noble", "Mode: [select] only\nShould the bot buy \"Chiral Valley Noble\" ?", false),
-        option.bool("93616", "Antlered Golden Anjou Helm", "Mode: [select] only\nShould the bot buy \"Antlered Golden Anjou Helm\" ?", false),
-        option.bool("93617", "Regal Golden Anjou Helm", "Mode: [select] only\nShould the bot buy \"Regal Golden Anjou Helm\" ?", false),
-        option.bool("93619", "Antlered Golden Anjou Visor", "Mode: [select] only\nShould the bot buy \"Antlered Golden Anjou Visor\" ?", false),
-        option.bool("93620", "Golden Anjou Visor", "Mode: [select] only\nShould the bot buy \"Golden Anjou Visor\" ?", false),
-        option.bool("93621", "Anjou Duke's Helm", "Mode: [select] only\nShould the bot buy \"Anjou Duke's Helm\" ?", false),
-        option.bool("93624", "Vaughn's Sash and Aquitaine", "Mode: [select] only\nShould the bot buy \"Vaughn's Sash and Aquitaine\" ?", false),
-        option.bool("93625", "Aquitaine", "Mode: [select] only\nShould the bot buy \"Aquitaine\" ?", false),
-        option.bool("93626", "Dual Aquitaine", "Mode: [select] only\nShould the bot buy \"Dual Aquitaine\" ?", false),
+        option.bool(
+            "93590",
+            "Champion Lynaria Armor",
+            'Mode: [select] only\nShould the bot buy "Champion Lynaria Armor" ?',
+            false,
+        ),
+        option.bool(
+            "93613",
+            "Chiral Valley Knight",
+            'Mode: [select] only\nShould the bot buy "Chiral Valley Knight" ?',
+            false,
+        ),
+        option.bool(
+            "93614",
+            "Chiral Valley Duke",
+            'Mode: [select] only\nShould the bot buy "Chiral Valley Duke" ?',
+            false,
+        ),
+        option.bool(
+            "93615",
+            "Chiral Valley Noble",
+            'Mode: [select] only\nShould the bot buy "Chiral Valley Noble" ?',
+            false,
+        ),
+        option.bool(
+            "93616",
+            "Antlered Golden Anjou Helm",
+            'Mode: [select] only\nShould the bot buy "Antlered Golden Anjou Helm" ?',
+            false,
+        ),
+        option.bool(
+            "93617",
+            "Regal Golden Anjou Helm",
+            'Mode: [select] only\nShould the bot buy "Regal Golden Anjou Helm" ?',
+            false,
+        ),
+        option.bool(
+            "93619",
+            "Antlered Golden Anjou Visor",
+            'Mode: [select] only\nShould the bot buy "Antlered Golden Anjou Visor" ?',
+            false,
+        ),
+        option.bool(
+            "93620",
+            "Golden Anjou Visor",
+            'Mode: [select] only\nShould the bot buy "Golden Anjou Visor" ?',
+            false,
+        ),
+        option.bool(
+            "93621",
+            "Anjou Duke's Helm",
+            'Mode: [select] only\nShould the bot buy "Anjou Duke\'s Helm" ?',
+            false,
+        ),
+        option.bool(
+            "93624",
+            "Vaughn's Sash and Aquitaine",
+            'Mode: [select] only\nShould the bot buy "Vaughn\'s Sash and Aquitaine" ?',
+            false,
+        ),
+        option.bool("93625", "Aquitaine", 'Mode: [select] only\nShould the bot buy "Aquitaine" ?', false),
+        option.bool("93626", "Dual Aquitaine", 'Mode: [select] only\nShould the bot buy "Dual Aquitaine" ?', false),
     ];
 
     private dontStopMissingIng = false;
@@ -45,14 +95,17 @@ export class BocklinGroveMerge {
                 default:
                     const shouldStop = !Adv.matsOnly || !this.dontStopMissingIng;
                     Core.logger(
-                        `The bot hasn't been taught how to get ${req.name}.`
-                            + (shouldStop ? " Please report the issue." : " Skipping"), "", { messageBox: shouldStop, stopBot: shouldStop });
+                        `The bot hasn't been taught how to get ${req.name}.` +
+                            (shouldStop ? " Please report the issue." : " Skipping"),
+                        "",
+                        { messageBox: shouldStop, stopBot: shouldStop },
+                    );
                     break;
-        //#endregion
+                //#endregion
 
                 case "Enthralling Gem Shard":
                     Core.farmingLogger(req.name, quant);
-                   while (!bot.shouldExit && !Core.checkInventory(req.name, quant)) {
+                    while (!bot.shouldExit && !Core.checkInventory(req.name, quant)) {
                         Core.ensureAccept(Core.isMember ? 10242 : 10240);
                         Core.equipClass(ClassType.Farm);
                         Core.huntMonster("bocklingrove", "Undead Garde", "Undead's Flag", 9);
@@ -82,7 +135,10 @@ export class BocklinGroveMerge {
                 case "Sheathed Aquitaine":
                     Core.farmingLogger(req.name, quant);
                     Core.equipClass(ClassType.Solo);
-                    Core.huntMonster("bocklingrove", "Elder Necromancer", req.name, quant, { isTemp: req.temp, log: false });
+                    Core.huntMonster("bocklingrove", "Elder Necromancer", req.name, quant, {
+                        isTemp: req.temp,
+                        log: false,
+                    });
                     break;
             }
         };
@@ -99,17 +155,18 @@ export const scriptOptions = defineScriptOptions(Adv.optionsStorage, [], true, {
 });
 
 export default function main(): void {
-        Core.bankingBlackList.push(...
-            [
-                "Enthralling Gem Shard",
-                "Victorious' Golden Scale",
-                "Vaughn Crest",
-                "Golden Anjou Helm",
-                "Vaughn's Crimson Sash",
-                "Sheathed Aquitaine",
-            ]);
-        Core.setOptions();
+    Core.bankingBlackList.push(
+        ...[
+            "Enthralling Gem Shard",
+            "Victorious' Golden Scale",
+            "Vaughn Crest",
+            "Golden Anjou Helm",
+            "Vaughn's Crimson Sash",
+            "Sheathed Aquitaine",
+        ],
+    );
+    Core.setOptions();
 
-        new BocklinGroveMerge().buyAllMerge();
-        Core.setOptions(false);
+    new BocklinGroveMerge().buyAllMerge();
+    Core.setOptions(false);
 }

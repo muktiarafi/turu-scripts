@@ -12,8 +12,7 @@ const Awe = new CoreAwe();
 
 export class HelmOfAwe {
     getHoA(): void {
-        if (Core.checkInventory("Helm of Awe"))
-            return;
+        if (Core.checkInventory("Helm of Awe")) return;
 
         Core.equipClass(ClassType.Solo);
         Awe.getAweRelic("Helm", 4175, 10, 5, "doomvaultb", "Undead Raxgore");
@@ -24,9 +23,9 @@ export class HelmOfAwe {
 }
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new HelmOfAwe().getHoA();
+    new HelmOfAwe().getHoA();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

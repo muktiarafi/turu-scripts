@@ -12,8 +12,7 @@ const Story = new CoreStory();
 
 export class Originul_Story {
     originul_Questline(): void {
-        if (Core.isCompletedBefore(7889))
-            return;
+        if (Core.isCompletedBefore(7889)) return;
 
         Story.preLoad(this.originul_Questline);
 
@@ -65,9 +64,9 @@ export class Originul_Story {
 }
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new Originul_Story().originul_Questline();
+    new Originul_Story().originul_Questline();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

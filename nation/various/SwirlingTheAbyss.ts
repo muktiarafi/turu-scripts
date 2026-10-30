@@ -28,33 +28,26 @@ export class SwirlingTheAbyss {
     ];
 
     sta(item: string | null = null): void {
-        if (item != null && Core.checkInventory(item))
-            return;
+        if (item != null && Core.checkInventory(item)) return;
 
-        if (item != null)
-            Core.logger(`Farming ${item}.`);
-        else
-            Core.logger("Farming Swirling the Abyss Quest Rewards.");
+        if (item != null) Core.logger(`Farming ${item}.`);
+        else Core.logger("Farming Swirling the Abyss Quest Rewards.");
         Fiendshard.fiendshard_QuestlineP1();
         Core.addDrop(...Nation.bagDrops);
         Core.addDrop(...this.rewards);
-        const Item = Core.ensureLoad(7899).rewards.find(x => x.name === item);
+        const Item = Core.ensureLoad(7899).rewards.find((x) => x.name === item);
 
         let i = 1;
         while (
-            !bot.shouldExit
-            && (
-                Item != null
-                    ? !Core.checkInventory(Item!.name)
-                    : !Core.checkInventory(this.rewards, 1, { toInv: false })
-            )
+            !bot.shouldExit &&
+            (Item != null ? !Core.checkInventory(Item!.name) : !Core.checkInventory(this.rewards, 1, { toInv: false }))
         ) {
             Nation.farmBloodGem(10);
             Nation.farmUni13(3);
             Nation.farmTaintedGem(75);
             Nation.farmDarkCrystalShard(50);
             Nation.farmGemofNulgath(50);
-            Nation.farmVoucher({ member:true });
+            Nation.farmVoucher({ member: true });
 
             Core.ensureAccept(7899);
 
@@ -63,9 +56,7 @@ export class SwirlingTheAbyss {
                 bot.wait.forPickup(Item!.name);
             } else {
                 Core.ensureCompleteChoose(7899, Core.questRewards(7899));
-                for (const thing of Core.questRewards(7899))
-                    if (bot.drops.exists(thing))
-                        bot.wait.forPickup(thing);
+                for (const thing of Core.questRewards(7899)) if (bot.drops.exists(thing)) bot.wait.forPickup(thing);
                 Core.toBank(...this.rewards);
                 Core.logger(`Completed x${i++}.`);
             }
@@ -75,11 +66,11 @@ export class SwirlingTheAbyss {
 
 export default function main(): void {
     const script = new SwirlingTheAbyss();
-        Core.bankingBlackList.push(...Nation.bagDrops);
-        Core.bankingBlackList.push(...script.rewards);
-        Core.setOptions();
+    Core.bankingBlackList.push(...Nation.bagDrops);
+    Core.bankingBlackList.push(...script.rewards);
+    Core.setOptions();
 
-        script.sta();
+    script.sta();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

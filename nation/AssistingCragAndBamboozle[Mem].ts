@@ -35,10 +35,12 @@ export class AssistingCragAndBamboozle {
     ];
 
     assistingCandB(reward: Rewards = Rewards.Get_whats_not_maxed): void {
-        if (!Core.isMember ||
+        if (
+            !Core.isMember ||
             !Core.checkInventory(Nation.cragName) ||
             (!Core.checkInventory("Sparrow's Blood") &&
-             !Daily.checkDailyv2(803, ["Sparrow's Blood"], { any: true, shouldUnBank: true })))
+                !Daily.checkDailyv2(803, ["Sparrow's Blood"], { any: true, shouldUnBank: true }))
+        )
             return;
 
         // Core.ensureLoad: its rewards carry the max stacks (C# `ItemBase.MaxStack`).
@@ -49,10 +51,11 @@ export class AssistingCragAndBamboozle {
         }
 
         // Build target pool once
-        const targets = quest.rewards
-            .filter(r => reward === Rewards.Get_whats_not_maxed
+        const targets = quest.rewards.filter((r) =>
+            reward === Rewards.Get_whats_not_maxed
                 ? !Core.checkInventory(r.id, r.maxStack)
-                : r.id === reward && !Core.checkInventory(r.id, r.maxStack));
+                : r.id === reward && !Core.checkInventory(r.id, r.maxStack),
+        );
 
         if (targets.length === 0) {
             Core.logger("Everything already maxed. No work needed.");
@@ -60,10 +63,20 @@ export class AssistingCragAndBamboozle {
         }
 
         Core.addDrop(
-            "Nulgath Larvae", "Sparrow's Blood", "Sword of Nulgath", "Gem of Nulgath", 
-            "Tainted Gem", "Dark Crystal Shard", "Diamond of Nulgath", "Totem of Nulgath", 
-            "Blood Gem of the Archfiend", "Unidentified 19", "Elders' Blood", 
-            "Voucher of Nulgath", "Voucher of Nulgath (non-mem)");
+            "Nulgath Larvae",
+            "Sparrow's Blood",
+            "Sword of Nulgath",
+            "Gem of Nulgath",
+            "Tainted Gem",
+            "Dark Crystal Shard",
+            "Diamond of Nulgath",
+            "Totem of Nulgath",
+            "Blood Gem of the Archfiend",
+            "Unidentified 19",
+            "Elders' Blood",
+            "Voucher of Nulgath",
+            "Voucher of Nulgath (non-mem)",
+        );
 
         Core.logger(`AssistingCandB Optimized → Targets: ${targets.length}`);
 
@@ -99,8 +112,7 @@ export class AssistingCragAndBamboozle {
 
                 Core.ensureComplete(5817, target.id);
 
-                if (Core.checkInventory(target.id, target.maxStack))
-                    completedThisCycle.push(target);
+                if (Core.checkInventory(target.id, target.maxStack)) completedThisCycle.push(target);
 
                 if (!Core.checkInventory("Sparrow's Blood")) {
                     Core.logger(`Stopped early after completing ${target.name}`);
@@ -114,8 +126,7 @@ export class AssistingCragAndBamboozle {
 
             // prune finished items in one go (fast + clean)
             for (let k = targets.length - 1; k >= 0; k--)
-                if (completedThisCycle.some(c => c.id === targets[k].id))
-                    targets.splice(k, 1);
+                if (completedThisCycle.some((c) => c.id === targets[k].id)) targets.splice(k, 1);
         }
 
         Core.logger("AssistingCandB Optimized → COMPLETE.");
@@ -137,26 +148,37 @@ export enum Rewards {
     Get_whats_not_maxed = -1,
 }
 
-export const scriptOptions = defineScriptOptions("AssistingCragAndBamboozle", [
-    option.choice("PickReward", "Pick your reward", "This quest is a daily.. unless you have multiple sparrows blood then itll keep running.", choices(Rewards), "Get_whats_not_maxed"),
-    Core.skipOptions,
-], true);
+export const scriptOptions = defineScriptOptions(
+    "AssistingCragAndBamboozle",
+    [
+        option.choice(
+            "PickReward",
+            "Pick your reward",
+            "This quest is a daily.. unless you have multiple sparrows blood then itll keep running.",
+            choices(Rewards),
+            "Get_whats_not_maxed",
+        ),
+        Core.skipOptions,
+    ],
+    true,
+);
 
 export default function main(): void {
-        Core.bankingBlackList.push(...
-            [
-                Nation.cragName,
-                "Gem of Nulgath",
-                "Tainted Gem",
-                "Dark Crystal Shard",
-                "Diamond of Nulgath",
-                "Totem of Nulgath",
-                "Blood Gem of the Archfiend",
-            ]);
+    Core.bankingBlackList.push(
+        ...[
+            Nation.cragName,
+            "Gem of Nulgath",
+            "Tainted Gem",
+            "Dark Crystal Shard",
+            "Diamond of Nulgath",
+            "Totem of Nulgath",
+            "Blood Gem of the Archfiend",
+        ],
+    );
 
-        Core.setOptions();
+    Core.setOptions();
 
-        new AssistingCragAndBamboozle().assistingCandB(configEnum("PickReward", Rewards, 0 as Rewards));
+    new AssistingCragAndBamboozle().assistingCandB(configEnum("PickReward", Rewards, 0 as Rewards));
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

@@ -16,8 +16,7 @@ const Adv = new CoreAdvanced();
 export class BlazeBinder {
     getClass(rankUpClass = true): void {
         if (Core.checkInventory("Blaze Binder")) {
-            if (rankUpClass)
-                Adv.rankUpClass("Blaze Binder");
+            if (rankUpClass) Adv.rankUpClass("Blaze Binder");
             return;
         }
 
@@ -25,8 +24,9 @@ export class BlazeBinder {
         Dailies.pyromancer();
 
         // Get atlest one ClassPoint
-        const itemInv = bot.inventory.items.find(i =>
-            i.name.toLowerCase() === ("Pyromancer").toLowerCase() && i.category === "Class")!; // C# First() throws when missing
+        const itemInv = bot.inventory.items.find(
+            (i) => i.name.toLowerCase() === "Pyromancer".toLowerCase() && i.category === "Class",
+        )!; // C# First() throws when missing
         if (itemInv.quantity < 1) {
             Adv.gearStore(false, { enhAfter: true });
             Core.equip("Pyromancer");
@@ -44,9 +44,9 @@ export class BlazeBinder {
 }
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new BlazeBinder().getClass();
+    new BlazeBinder().getClass();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

@@ -133,13 +133,23 @@ export class CoreFarms {
         if (enabled) {
             switch (type) {
                 case BoostType.Gold:
-                    if (Core.cboBool("doGoldBoost") !== true || bot.boosts.uses(BoostType.Gold) || bot.player.gold >= 100_000_000) return;
+                    if (
+                        Core.cboBool("doGoldBoost") !== true ||
+                        bot.boosts.uses(BoostType.Gold) ||
+                        bot.player.gold >= 100_000_000
+                    )
+                        return;
                     bot.boosts.setBoostIdFromInventory(BoostType.Gold);
                     bot.boosts.setUses(BoostType.Gold, true);
                     Core.logger("💰 Gold boost activated!");
                     break;
                 case BoostType.Class:
-                    if (Core.cboBool("doClassBoost") !== true || bot.boosts.uses(BoostType.Class) || Core.checkClassRank({ currentClass: true }) === 10) return;
+                    if (
+                        Core.cboBool("doClassBoost") !== true ||
+                        bot.boosts.uses(BoostType.Class) ||
+                        Core.checkClassRank({ currentClass: true }) === 10
+                    )
+                        return;
                     bot.boosts.setBoostIdFromInventory(BoostType.Class);
                     bot.boosts.setUses(BoostType.Class, true);
                     Core.logger("🛡️ Class boost activated!");
@@ -151,7 +161,12 @@ export class CoreFarms {
                     Core.logger("🏰 Reputation boost activated!");
                     break;
                 case BoostType.Experience:
-                    if (Core.cboBool("doExpBoost") !== true || bot.boosts.uses(BoostType.Experience) || bot.player.level >= 100) return;
+                    if (
+                        Core.cboBool("doExpBoost") !== true ||
+                        bot.boosts.uses(BoostType.Experience) ||
+                        bot.player.level >= 100
+                    )
+                        return;
                     bot.boosts.setBoostIdFromInventory(BoostType.Experience);
                     bot.boosts.setUses(BoostType.Experience, true);
                     Core.logger("📚 Experience boost activated!");
@@ -238,7 +253,8 @@ export class CoreFarms {
                 continue;
             }
 
-            if (bot.map.name !== "battlegrounde") Core.join("battlegrounde", "Enter", "Spawn", { publicRoom: Core.privateRooms });
+            if (bot.map.name !== "battlegrounde")
+                Core.join("battlegrounde", "Enter", "Spawn", { publicRoom: Core.privateRooms });
             if (bot.player.cell !== "r2") Core.jump("r2", "center");
 
             Core.canWeAggro();
@@ -376,7 +392,8 @@ export class CoreFarms {
             bot.log(`rankUpClass: ${rankUpClass ? "True" : "False"}, CurrentClassRank: ${bot.player.currentClassRank}`);
             while (
                 !bot.shouldExit &&
-                ((bot.player.level < 5 && rankUpClass && bot.player.currentClassRank < 10) || (!rankUpClass && bot.player.level < 5))
+                ((bot.player.level < 5 && rankUpClass && bot.player.currentClassRank < 10) ||
+                    (!rankUpClass && bot.player.level < 5))
             ) {
                 if (levelReached()) break;
                 reviveTo("r4", "Bottom");
@@ -561,7 +578,8 @@ export class CoreFarms {
                             Core.byPassCheck(["r2", "center"]);
                             continue;
                         }
-                        if (bot.map.name !== "battlegrounde") Core.join("battlegrounde", "Enter", "Spawn", { publicRoom: Core.privateRooms });
+                        if (bot.map.name !== "battlegrounde")
+                            Core.join("battlegrounde", "Enter", "Spawn", { publicRoom: Core.privateRooms });
                         if (bot.player.cell !== "r2") Core.jump("r2", "center");
 
                         Core.canWeAggro();
@@ -583,7 +601,8 @@ export class CoreFarms {
             Core.savedState(true, "icestormunder");
             while (
                 !bot.shouldExit &&
-                ((bot.player.level <= level && rankUpClass && bot.player.currentClassRank !== 10) || (!rankUpClass && bot.player.level <= level))
+                ((bot.player.level <= level && rankUpClass && bot.player.currentClassRank !== 10) ||
+                    (!rankUpClass && bot.player.level <= level))
             ) {
                 if (levelReached()) break;
                 // Wait if dead, then spoof levelUp
@@ -656,7 +675,9 @@ export class CoreFarms {
         if (Core.checkInventory(item, quant)) return;
 
         if (bot.map.name === "bludrutbrawl") {
-            Core.logger("Started in PvP map, which doesnt allow us to equip things if needed and can cause issues. Joining whitemap first.");
+            Core.logger(
+                "Started in PvP map, which doesnt allow us to equip things if needed and can cause issues. Joining whitemap first.",
+            );
             Core.join("whitemap");
         }
 
@@ -664,7 +685,9 @@ export class CoreFarms {
         const killAds = Core.cboBool("PvP_SoloPvPBoss") === true;
         Core.logger(
             `\`Kill Ads\` Enabled? ${killAds ? "True" : "False"}` +
-                (killAds ? " - if enabled this will kill the healers aswell for an aditional 3 trophies (totaling 10) but will take longer." : ""),
+                (killAds
+                    ? " - if enabled this will kill the healers aswell for an aditional 3 trophies (totaling 10) but will take longer."
+                    : ""),
         );
         Core.addDrop(item);
 
@@ -705,7 +728,10 @@ export class CoreFarms {
                     if (killAds) {
                         // C# checks "owns an amulet and has anything equipped"; this checks an amulet is equipped.
                         if (!bot.inventory.items.some((x) => x?.equipped && this.acceptablePvPAmulets.includes(x.name)))
-                            Core.oneTimeMessage("Wheres your amulet retard?", "Hey ChuckleFuck, you forgot your amulet! So now you get to kill the minions.");
+                            Core.oneTimeMessage(
+                                "Wheres your amulet retard?",
+                                "Hey ChuckleFuck, you forgot your amulet! So now you get to kill the minions.",
+                            );
 
                         Core.pvpMove(14, "Crossupper", randomInt(399, 545), randomInt(255, 256));
                         Core.pvpMove(18, "Resource1A", randomInt(786, 860), randomInt(255, 274));
@@ -860,7 +886,8 @@ export class CoreFarms {
         Core.farmingLogger("Spirit Orb", quant);
 
         Core.registerQuests(2082, 2083);
-        while (!bot.shouldExit && !Core.checkInventory("Spirit Orb", quant)) Core.killMonster("battleunderb", "Enter", "Spawn", "*", null, 1, { log: false });
+        while (!bot.shouldExit && !Core.checkInventory("Spirit Orb", quant))
+            Core.killMonster("battleunderb", "Enter", "Spawn", "*", null, 1, { log: false });
         Core.cancelRegisteredQuests();
     }
 
@@ -869,24 +896,45 @@ export class CoreFarms {
      * reagents and Dragon Runestones last, or until you own `item`. Reaches `rank` in Alchemy first
      * when asked, and buys Dragon Runestones when you're short.
      */
-    alchemyPacket(reagent1: string, reagent2: string, rune = AlchemyRunes.Gebo, options: AlchemyPacketOptions = {}): void {
-        const { rank = 0, loop = true, modifier = "Moose", trait = AlchemyTraits.APw, item = null, quant = 1 } = options;
+    alchemyPacket(
+        reagent1: string,
+        reagent2: string,
+        rune = AlchemyRunes.Gebo,
+        options: AlchemyPacketOptions = {},
+    ): void {
+        const {
+            rank = 0,
+            loop = true,
+            modifier = "Moose",
+            trait = AlchemyTraits.APw,
+            item = null,
+            quant = 1,
+        } = options;
 
         const offPacket = bot.events.on("extensionPacket", (packet) => this.alchemyPacketCheck(packet));
         try {
-            if ((rank !== 0 && this.factionRank("Alchemy") < rank) || (item !== null && Core.checkInventory(item, quant))) {
+            if (
+                (rank !== 0 && this.factionRank("Alchemy") < rank) ||
+                (item !== null && Core.checkInventory(item, quant))
+            ) {
                 this.alchemyREP(rank);
             }
 
             const reg1 = bot.inventory.getItem(reagent1);
             if (!Core.checkInventory(reagent1) || !reg1) {
-                Core.logger(`Something went wrong, you do not own ${reagent1}`, "", { messageBox: true, stopBot: true });
+                Core.logger(`Something went wrong, you do not own ${reagent1}`, "", {
+                    messageBox: true,
+                    stopBot: true,
+                });
                 return;
             }
 
             const reg2 = bot.inventory.getItem(reagent2);
             if (!Core.checkInventory(reagent2) || !reg2) {
-                Core.logger(`Something went wrong, you do not own ${reagent2}`, "", { messageBox: true, stopBot: true });
+                Core.logger(`Something went wrong, you do not own ${reagent2}`, "", {
+                    messageBox: true,
+                    stopBot: true,
+                });
                 return;
             }
 
@@ -1122,7 +1170,9 @@ export class CoreFarms {
     alchemyREP(rank = 10, goldMethod = true): void {
         if (this.factionRank("Alchemy") >= rank) return;
 
-        Core.logger("Start by Selling all items named dragon scale (there are 2...) sorta fucks it all up, if u have the wrong one");
+        Core.logger(
+            "Start by Selling all items named dragon scale (there are 2...) sorta fucks it all up, if u have the wrong one",
+        );
         for (const item of ["Dragon Scale", "Ice Vapor"]) {
             if (!Core.checkInventory(item)) continue;
 
@@ -1208,7 +1258,9 @@ export class CoreFarms {
                 const itemsNeeded = Math.max(1, Math.trunc((remainingRepXP + 999) / 1000)); // 1 voucher = 1000 rep, round up
                 const currentQuantity = bot.inventory.getQuantity("Gold Voucher 500k");
 
-                Core.logger(`Blacksmithing rep needed for rank ${rank}: ${remainingRepXP} (${itemsNeeded} vouchers, have ${currentQuantity})`);
+                Core.logger(
+                    `Blacksmithing rep needed for rank ${rank}: ${remainingRepXP} (${itemsNeeded} vouchers, have ${currentQuantity})`,
+                );
 
                 let toBuy = Math.max(0, Math.min(itemsNeeded - currentQuantity, Math.min(200, 300 - currentQuantity)));
                 if (toBuy > 0) {
@@ -1270,7 +1322,11 @@ export class CoreFarms {
 
             Core.registerQuests(2935);
             // C# checks `targetRank` on both sides of the ||.
-            while (!bot.shouldExit && (this.factionRank("Blade of Awe") < targetRank || (farmBoA && this.factionRank("Blade of Awe") < targetRank))) {
+            while (
+                !bot.shouldExit &&
+                (this.factionRank("Blade of Awe") < targetRank ||
+                    (farmBoA && this.factionRank("Blade of Awe") < targetRank))
+            ) {
                 if (Core.checkSaveState()) Core.executeSaveState();
                 Core.killMonster("castleundead", "Enter", "Left", "Skeletal Viking");
             }
@@ -1296,10 +1352,18 @@ export class CoreFarms {
             } else Core.logger(`Already Completed: [${questId}] - "${title}"`);
         };
 
-        step(2933, "Find the Stonewrit!", ClassType.Solo, () => Core.huntMonster("j6", "Sketchy Dragon", "Stonewrit Found!", 1, { isTemp: false }));
-        step(2934, "Find the Handle!", ClassType.Solo, () => Core.huntMonster("gilead", "Fire Elemental", "Handle Found!", 1, { isTemp: false }));
-        step(2935, "Find the Hilt!", ClassType.Farm, () => Core.huntMonster("castleundead", "Skeletal Viking", "Hilt Found!", 1, { isTemp: false }));
-        step(2936, "Find the Blade!", ClassType.Farm, () => Core.huntMonster("hydra", "Hydra Head", "Blade Found!", 1, { isTemp: false }));
+        step(2933, "Find the Stonewrit!", ClassType.Solo, () =>
+            Core.huntMonster("j6", "Sketchy Dragon", "Stonewrit Found!", 1, { isTemp: false }),
+        );
+        step(2934, "Find the Handle!", ClassType.Solo, () =>
+            Core.huntMonster("gilead", "Fire Elemental", "Handle Found!", 1, { isTemp: false }),
+        );
+        step(2935, "Find the Hilt!", ClassType.Farm, () =>
+            Core.huntMonster("castleundead", "Skeletal Viking", "Hilt Found!", 1, { isTemp: false }),
+        );
+        step(2936, "Find the Blade!", ClassType.Farm, () =>
+            Core.huntMonster("hydra", "Hydra Head", "Blade Found!", 1, { isTemp: false }),
+        );
         if (!Core.isCompletedBefore(2937)) Core.resetQuest(2937);
         step(2937, "Find the Runes!", ClassType.Solo, () => Core.killEscherion("Runes Found!"));
     }
@@ -1434,7 +1498,10 @@ export class CoreFarms {
             switch (String(data.cmd ?? "")) {
                 case "castWait":
                     if (data.wait !== undefined && data.wait !== null) waitTimer = Math.trunc(Number(data.wait));
-                    hitDerp = data.derp !== undefined && data.derp !== null && (data.derp === true || String(data.derp).toLowerCase() === "true");
+                    hitDerp =
+                        data.derp !== undefined &&
+                        data.derp !== null &&
+                        (data.derp === true || String(data.derp).toLowerCase() === "true");
                     receivedCastWait = true;
                     Core.logger(`Derp Moosefish: ${hitDerp ? "True" : "False"}, CatchTimer: ${waitTimer}ms`);
                     break;
@@ -1472,7 +1539,11 @@ export class CoreFarms {
 
                 Core.logger("Fishing With: Dynamite");
 
-                while (!bot.shouldExit && Core.checkInventory("Fishing Dynamite") && (shouldDerp || this.factionRank("Fishing") < rank)) {
+                while (
+                    !bot.shouldExit &&
+                    Core.checkInventory("Fishing Dynamite") &&
+                    (shouldDerp || this.factionRank("Fishing") < rank)
+                ) {
                     hitDerp = false;
                     receivedCastWait = false;
                     receivedCatchResult = false;
@@ -1524,10 +1595,21 @@ export class CoreFarms {
 
     /** Farms Fishing Bait (Frogzards) and Fishing Dynamite (Slimes) with quest 1682. */
     getBaitandDynamite(fishingBaitQuant: number, fishingDynamiteQuant: number): void {
-        if (Core.checkInventory("Fishing Bait", fishingBaitQuant) && Core.checkInventory("Fishing Dynamite", fishingDynamiteQuant)) return;
+        if (
+            Core.checkInventory("Fishing Bait", fishingBaitQuant) &&
+            Core.checkInventory("Fishing Dynamite", fishingDynamiteQuant)
+        )
+            return;
         Core.registerQuests(1682);
 
-        const farmItem = (itemName: string, quantity: number, map: string, cell: string, pad: string, monster: string): void => {
+        const farmItem = (
+            itemName: string,
+            quantity: number,
+            map: string,
+            cell: string,
+            pad: string,
+            monster: string,
+        ): void => {
             if (quantity <= 0) return;
             Core.killMonster(map, cell, pad, monster, itemName, quantity, { isTemp: false });
             bot.wait.forPickup(itemName);
@@ -1560,13 +1642,19 @@ export class CoreFarms {
                 // the cast to use a stick instead.
                 bot.wait.forTrue(() => bot.inventory.getQuantity("Fishing Dynamite") < currentDynamiteQuant, 20);
                 Core.sendPackets("%xt%zm%getFish%1%false");
-                Core.logger(`Dynamite: ${bot.inventory.getQuantity("Fishing Dynamite")} Fish: ${bot.tempInv.getQuantity(itemId)}/${quant}`);
+                Core.logger(
+                    `Dynamite: ${bot.inventory.getQuantity("Fishing Dynamite")} Fish: ${bot.tempInv.getQuantity(itemId)}/${quant}`,
+                );
             }
         }
     }
 
     /** The PvP amulets the Bludrut and Death Pit brawls equip, best first. */
-    readonly acceptablePvPAmulets = ["Mithril PvP Amulet +15000", "Diamond PvP Amulet +5500", "Platinum PvP Amulet +5000"];
+    readonly acceptablePvPAmulets = [
+        "Mithril PvP Amulet +15000",
+        "Diamond PvP Amulet +5500",
+        "Platinum PvP Amulet +5000",
+    ];
 
     /** Farms Death Pit Brawl reputation to `rank` (unlocking the farm quests 5155-5157 first). */
     deathPitBrawlREP(rank = 10): void {
@@ -1613,7 +1701,14 @@ export class CoreFarms {
     }
 
     /** C# `RunDeathPitBrawl`: brawl runs until the rank, then until you have `item`. */
-    private runDeathPitBrawl(item: string | null = null, quant = 1, isTemp = false, rank = 10, _canSoloBoss = true, forStory = false): void {
+    private runDeathPitBrawl(
+        item: string | null = null,
+        quant = 1,
+        isTemp = false,
+        rank = 10,
+        _canSoloBoss = true,
+        forStory = false,
+    ): void {
         let runStarted = 0;
 
         if (!forStory) Core.registerQuests(...[5156, 5165].filter((q) => bot.quests.isUnlocked(q)));
@@ -1709,7 +1804,8 @@ export class CoreFarms {
             }
         };
 
-        const quantity = (name: string): number => (isTemp ? bot.tempInv.getQuantity(name) : bot.inventory.getQuantity(name));
+        const quantity = (name: string): number =>
+            isTemp ? bot.tempInv.getQuantity(name) : bot.inventory.getQuantity(name);
 
         // C#'s `goto Start` after each run: back to the rank loop.
         start: for (;;) {
@@ -1727,7 +1823,11 @@ export class CoreFarms {
             if (item !== null) {
                 // C# sets canSoloBoss to false for the 2 temp items (it isn't read after).
                 // C# precedence kept: (!ShouldExit && isTemp) ? !TempInv.Contains : !Inventory.Contains
-                while (!bot.shouldExit && isTemp ? !bot.tempInv.contains(item, quant) : !bot.inventory.contains(item, quant)) {
+                while (
+                    !bot.shouldExit && isTemp
+                        ? !bot.tempInv.contains(item, quant)
+                        : !bot.inventory.contains(item, quant)
+                ) {
                     const startQuant = quantity(item);
 
                     executeOneBrawlRun();
@@ -1756,7 +1856,8 @@ export class CoreFarms {
             break;
         }
 
-        for (const reward of ["Yoshino's Citrine", "The Secret 4"]) if (item !== reward && bot.inventory.contains(reward)) Core.toBank(reward);
+        for (const reward of ["Yoshino's Citrine", "The Secret 4"])
+            if (item !== reward && bot.inventory.contains(reward)) Core.toBank(reward);
     }
 
     /**
@@ -1783,7 +1884,9 @@ export class CoreFarms {
         Core.logger(`Farming rank ${rank}`);
 
         if (Core.farmClass === "Generic")
-            Core.logger("FarmClass not set in CBO (options > corebot > tab 2),\nso you'll be getting *very* low Rep Rates without a multi-target class.");
+            Core.logger(
+                "FarmClass not set in CBO (options > corebot > tab 2),\nso you'll be getting *very* low Rep Rates without a multi-target class.",
+            );
 
         Core.registerQuests(5597, 5598, 5599, 5600);
         while (!bot.shouldExit && this.factionRank("Glacera") < rank) {
@@ -1808,7 +1911,13 @@ export class CoreFarms {
             );
             Core.savedState(
                 true,
-                !Core.isCompletedBefore(1955) ? (this.factionRank("Good") < 4 ? "swordhavenbridge" : !Core.isMember ? "castleundead" : "sewer") : "PoisonForest",
+                !Core.isCompletedBefore(1955)
+                    ? this.factionRank("Good") < 4
+                        ? "swordhavenbridge"
+                        : !Core.isMember
+                          ? "castleundead"
+                          : "sewer"
+                    : "PoisonForest",
             );
         }
         this.toggleBoost(BoostType.Reputation);
@@ -1962,7 +2071,8 @@ export class CoreFarms {
             Core.joinSWF("mobius", "ChiralValley/town-Mobius-21Feb14.swf", "Slugfit", "Bottom");
             Core.huntMonster("mobius", "Slugfit", "Mystic Quills", 10, { isTemp: false });
             Core.buyItem("dragonrune", 549, "Ember Ink", 50);
-            while (!bot.shouldExit && Core.checkInventory("Ember Ink") && this.factionRank("SpellCrafting") < 4) Core.chainComplete(2299);
+            while (!bot.shouldExit && Core.checkInventory("Ember Ink") && this.factionRank("SpellCrafting") < 4)
+                Core.chainComplete(2299);
         }
 
         Core.savedState(true, "underworld");
@@ -1970,7 +2080,8 @@ export class CoreFarms {
             if (Core.checkSaveState()) Core.executeSaveState();
             Core.huntMonster("underworld", "Skull Warrior", "Mystic Parchment", 10, { isTemp: false });
             Core.buyItem("dragonrune", 549, "Hallow Ink", 50);
-            while (!bot.shouldExit && Core.checkInventory("Hallow Ink") && this.factionRank("SpellCrafting") < rank) Core.chainComplete(2322);
+            while (!bot.shouldExit && Core.checkInventory("Hallow Ink") && this.factionRank("SpellCrafting") < rank)
+                Core.chainComplete(2322);
         }
         Core.sellItem("Ember Ink", 1, { all: true });
         Core.sellItem("Hallow Ink", 1, { all: true });
@@ -2065,7 +2176,9 @@ export class CoreFarms {
         if (!Core.isCompletedBefore(177)) {
             Core.logger("Unlocking farm quest.");
             Core.ensureAccept(183);
-            Core.killMonster("portalundead", "Enter", "Left", "Skeletal Fire Mage", "Defeated Fire Mage", 4, { log: false });
+            Core.killMonster("portalundead", "Enter", "Left", "Skeletal Fire Mage", "Defeated Fire Mage", 4, {
+                log: false,
+            });
             Core.ensureComplete(183);
 
             Core.ensureAccept(176);

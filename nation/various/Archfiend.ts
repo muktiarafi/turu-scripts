@@ -20,20 +20,17 @@ const NSoD = new CoreNSOD();
 export class ArchFiend {
     getArchfiend(rankUp = true): void {
         if (Core.checkInventory("ArchFiend")) {
-            if (rankUp)
-                Adv.rankUpClass("ArchFiend");
+            if (rankUp) Adv.rankUpClass("ArchFiend");
             return;
         }
         this.abyssalContract();
 
         Core.buyItem("tercessuinotlim", 695, 18894, 1, 1925);
-        if (rankUp)
-            Adv.rankUpClass("ArchFiend");
+        if (rankUp) Adv.rankUpClass("ArchFiend");
     }
 
     abyssalContract(): void {
-        if (Core.checkInventory("Abyssal Contract"))
-            return;
+        if (Core.checkInventory("Abyssal Contract")) return;
 
         Core.addDrop(...Nation.bagDrops);
         Core.addDrop("Abyssal Contract");
@@ -59,10 +56,8 @@ export class ArchFiend {
         if (!Core.checkInventory("Blood Star of the Archfiend")) {
             Nation.farmBloodGem(20);
             Nation.farmTotemofNulgath(8);
-            if (!Core.checkInventory("Sepulchure's DoomKnight Armor"))
-                NSoD.retrieveVoidAuras(2);
-            else
-                NSoD.voidAuras(2);
+            if (!Core.checkInventory("Sepulchure's DoomKnight Armor")) NSoD.retrieveVoidAuras(2);
+            else NSoD.voidAuras(2);
             Nation.approvalAndFavor(0, 999);
             Core.buyItem("shadowblast", 1206, "Blood Star of the Archfiend");
         }
@@ -75,10 +70,10 @@ export class ArchFiend {
 }
 
 export default function main(): void {
-        Core.bankingBlackList.push(...Nation.bagDrops);
-        Core.setOptions();
+    Core.bankingBlackList.push(...Nation.bagDrops);
+    Core.setOptions();
 
-        new ArchFiend().getArchfiend();
+    new ArchFiend().getArchfiend();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

@@ -49,21 +49,21 @@ export class JuggernautItemsofNulgath {
         }
         Count = RewardsList.length;
         const rewards = Core.ensureLoad(837).rewards;
-        const item = rewards.find(x => x.id === reward) ?? null;
+        const item = rewards.find((x) => x.id === reward) ?? null;
         const defaultId = 0;
         const itemId = item?.id ?? defaultId;
         while (
-            !bot.shouldExit
-            && (
-                reward === RewardsSelection.All
-                    ? !Core.checkInventory(rewards.map(x => x.name), 1, { toInv: false })
-                    : !Core.checkInventory(itemId, 1, { toInv: false })
-            )
+            !bot.shouldExit &&
+            (reward === RewardsSelection.All
+                ? !Core.checkInventory(
+                      rewards.map((x) => x.name),
+                      1,
+                      { toInv: false },
+                  )
+                : !Core.checkInventory(itemId, 1, { toInv: false }))
         ) {
-            if (reward === RewardsSelection.All)
-                Core.logger(`Farming All ${x++}/${Count}`);
-            else
-                Core.logger(`... ${RewardsSelection[reward]} ...`);
+            if (reward === RewardsSelection.All) Core.logger(`Farming All ${x++}/${Count}`);
+            else Core.logger(`... ${RewardsSelection[reward]} ...`);
 
             Nation.farmUni13(1);
             Core.ensureAccept(837);
@@ -71,14 +71,13 @@ export class JuggernautItemsofNulgath {
             Nation.farmDarkCrystalShard(50);
             Nation.farmTotemofNulgath(3);
             Nation.farmGemofNulgath(20);
-            Nation.farmVoucher({ member:false });
+            Nation.farmVoucher({ member: false });
             Nation.farmTaintedGem(50);
             Core.huntMonster("underworld", "Undead Bruiser", "Undead Bruiser Rune");
 
             if (configEnum("RewardsSelection", RewardsSelection, 0 as RewardsSelection) === RewardsSelection.All)
                 Core.ensureCompleteChoose(837);
-            else
-                Core.ensureComplete(837, reward);
+            else Core.ensureComplete(837, reward);
         }
     }
 }
@@ -107,18 +106,28 @@ export enum RewardsSelection {
     All,
 }
 
-export const scriptOptions = defineScriptOptions("JuggernautItemsofNulgath", [
-    Core.skipOptions,
-    option.choice("RewardsSelection", "Select Your Quest Reward", "Select Your Quest Reward for The JuggerNaught items of Nulgath quest.", choices(RewardsSelection), "Oblivion_of_Nulgath"),
-], true);
+export const scriptOptions = defineScriptOptions(
+    "JuggernautItemsofNulgath",
+    [
+        Core.skipOptions,
+        option.choice(
+            "RewardsSelection",
+            "Select Your Quest Reward",
+            "Select Your Quest Reward for The JuggerNaught items of Nulgath quest.",
+            choices(RewardsSelection),
+            "Oblivion_of_Nulgath",
+        ),
+    ],
+    true,
+);
 
 export default function main(): void {
     const script = new JuggernautItemsofNulgath();
-        Core.bankingBlackList.push(...Nation.bagDrops);
-        Core.bankingBlackList.push(...script.rewards);
-        Core.setOptions();
+    Core.bankingBlackList.push(...Nation.bagDrops);
+    Core.bankingBlackList.push(...script.rewards);
+    Core.setOptions();
 
-        script.juggItems(configEnum("RewardsSelection", RewardsSelection, 0 as RewardsSelection));
+    script.juggItems(configEnum("RewardsSelection", RewardsSelection, 0 as RewardsSelection));
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

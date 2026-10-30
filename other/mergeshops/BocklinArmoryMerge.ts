@@ -17,28 +17,133 @@ const BGM = new BocklinGroveMerge();
 
 export class BocklinArmoryMerge {
     static readonly select = [
-        option.bool("93591", "Valen's Knightly Armor", "Mode: [select] only\nShould the bot buy \"Valen's Knightly Armor\" ?", false),
-        option.bool("93628", "Golden Anjou Knight", "Mode: [select] only\nShould the bot buy \"Golden Anjou Knight\" ?", false),
-        option.bool("93629", "Golden Anjou Duke", "Mode: [select] only\nShould the bot buy \"Golden Anjou Duke\" ?", false),
-        option.bool("93630", "Golden Anjou Noble", "Mode: [select] only\nShould the bot buy \"Golden Anjou Noble\" ?", false),
-        option.bool("93631", "Enchanted Antlered Anjou Helm", "Mode: [select] only\nShould the bot buy \"Enchanted Antlered Anjou Helm\" ?", false),
-        option.bool("93632", "Enchanted Regal Anjou Helm", "Mode: [select] only\nShould the bot buy \"Enchanted Regal Anjou Helm\" ?", false),
-        option.bool("93633", "Enchanted Anjou Helm", "Mode: [select] only\nShould the bot buy \"Enchanted Anjou Helm\" ?", false),
-        option.bool("93634", "Enchanted Anjou Duke's Helm", "Mode: [select] only\nShould the bot buy \"Enchanted Anjou Duke's Helm\" ?", false),
-        option.bool("93635", "Vaughn's Enchanted Sash", "Mode: [select] only\nShould the bot buy \"Vaughn's Enchanted Sash\" ?", false),
-        option.bool("93636", "Enchanted Sash and Aquitaine", "Mode: [select] only\nShould the bot buy \"Enchanted Sash and Aquitaine\" ?", false),
-        option.bool("93637", "Enchanted Gem of Anjou", "Mode: [select] only\nShould the bot buy \"Enchanted Gem of Anjou\" ?", false),
-        option.bool("93663", "Enchanted Aquitaine", "Mode: [select] only\nShould the bot buy \"Enchanted Aquitaine\" ?", false),
-        option.bool("93664", "Enchanted Dual Aquitaine", "Mode: [select] only\nShould the bot buy \"Enchanted Dual Aquitaine\" ?", false),
-        option.bool("93697", "EarthVessel Harpoon", "Mode: [select] only\nShould the bot buy \"EarthVessel Harpoon\" ?", false),
-        option.bool("93698", "EarthVessel Blade", "Mode: [select] only\nShould the bot buy \"EarthVessel Blade\" ?", false),
-        option.bool("93699", "EarthVessel Blades", "Mode: [select] only\nShould the bot buy \"EarthVessel Blades\" ?", false),
-        option.bool("93700", "EarthVessel Dagger", "Mode: [select] only\nShould the bot buy \"EarthVessel Dagger\" ?", false),
-        option.bool("93701", "EarthVessel Daggers", "Mode: [select] only\nShould the bot buy \"EarthVessel Daggers\" ?", false),
-        option.bool("93702", "EarthVessel Rapier", "Mode: [select] only\nShould the bot buy \"EarthVessel Rapier\" ?", false),
-        option.bool("93703", "EarthVessel Rapiers", "Mode: [select] only\nShould the bot buy \"EarthVessel Rapiers\" ?", false),
-        option.bool("93704", "EarthVessel Kris", "Mode: [select] only\nShould the bot buy \"EarthVessel Kris\" ?", false),
-        option.bool("93705", "Dual EarthVessel Kris", "Mode: [select] only\nShould the bot buy \"Dual EarthVessel Kris\" ?", false),
+        option.bool(
+            "93591",
+            "Valen's Knightly Armor",
+            'Mode: [select] only\nShould the bot buy "Valen\'s Knightly Armor" ?',
+            false,
+        ),
+        option.bool(
+            "93628",
+            "Golden Anjou Knight",
+            'Mode: [select] only\nShould the bot buy "Golden Anjou Knight" ?',
+            false,
+        ),
+        option.bool(
+            "93629",
+            "Golden Anjou Duke",
+            'Mode: [select] only\nShould the bot buy "Golden Anjou Duke" ?',
+            false,
+        ),
+        option.bool(
+            "93630",
+            "Golden Anjou Noble",
+            'Mode: [select] only\nShould the bot buy "Golden Anjou Noble" ?',
+            false,
+        ),
+        option.bool(
+            "93631",
+            "Enchanted Antlered Anjou Helm",
+            'Mode: [select] only\nShould the bot buy "Enchanted Antlered Anjou Helm" ?',
+            false,
+        ),
+        option.bool(
+            "93632",
+            "Enchanted Regal Anjou Helm",
+            'Mode: [select] only\nShould the bot buy "Enchanted Regal Anjou Helm" ?',
+            false,
+        ),
+        option.bool(
+            "93633",
+            "Enchanted Anjou Helm",
+            'Mode: [select] only\nShould the bot buy "Enchanted Anjou Helm" ?',
+            false,
+        ),
+        option.bool(
+            "93634",
+            "Enchanted Anjou Duke's Helm",
+            'Mode: [select] only\nShould the bot buy "Enchanted Anjou Duke\'s Helm" ?',
+            false,
+        ),
+        option.bool(
+            "93635",
+            "Vaughn's Enchanted Sash",
+            'Mode: [select] only\nShould the bot buy "Vaughn\'s Enchanted Sash" ?',
+            false,
+        ),
+        option.bool(
+            "93636",
+            "Enchanted Sash and Aquitaine",
+            'Mode: [select] only\nShould the bot buy "Enchanted Sash and Aquitaine" ?',
+            false,
+        ),
+        option.bool(
+            "93637",
+            "Enchanted Gem of Anjou",
+            'Mode: [select] only\nShould the bot buy "Enchanted Gem of Anjou" ?',
+            false,
+        ),
+        option.bool(
+            "93663",
+            "Enchanted Aquitaine",
+            'Mode: [select] only\nShould the bot buy "Enchanted Aquitaine" ?',
+            false,
+        ),
+        option.bool(
+            "93664",
+            "Enchanted Dual Aquitaine",
+            'Mode: [select] only\nShould the bot buy "Enchanted Dual Aquitaine" ?',
+            false,
+        ),
+        option.bool(
+            "93697",
+            "EarthVessel Harpoon",
+            'Mode: [select] only\nShould the bot buy "EarthVessel Harpoon" ?',
+            false,
+        ),
+        option.bool(
+            "93698",
+            "EarthVessel Blade",
+            'Mode: [select] only\nShould the bot buy "EarthVessel Blade" ?',
+            false,
+        ),
+        option.bool(
+            "93699",
+            "EarthVessel Blades",
+            'Mode: [select] only\nShould the bot buy "EarthVessel Blades" ?',
+            false,
+        ),
+        option.bool(
+            "93700",
+            "EarthVessel Dagger",
+            'Mode: [select] only\nShould the bot buy "EarthVessel Dagger" ?',
+            false,
+        ),
+        option.bool(
+            "93701",
+            "EarthVessel Daggers",
+            'Mode: [select] only\nShould the bot buy "EarthVessel Daggers" ?',
+            false,
+        ),
+        option.bool(
+            "93702",
+            "EarthVessel Rapier",
+            'Mode: [select] only\nShould the bot buy "EarthVessel Rapier" ?',
+            false,
+        ),
+        option.bool(
+            "93703",
+            "EarthVessel Rapiers",
+            'Mode: [select] only\nShould the bot buy "EarthVessel Rapiers" ?',
+            false,
+        ),
+        option.bool("93704", "EarthVessel Kris", 'Mode: [select] only\nShould the bot buy "EarthVessel Kris" ?', false),
+        option.bool(
+            "93705",
+            "Dual EarthVessel Kris",
+            'Mode: [select] only\nShould the bot buy "Dual EarthVessel Kris" ?',
+            false,
+        ),
     ];
 
     private dontStopMissingIng = false;
@@ -57,10 +162,13 @@ export class BocklinArmoryMerge {
                 default:
                     const shouldStop = !Adv.matsOnly || !this.dontStopMissingIng;
                     Core.logger(
-                        `The bot hasn't been taught how to get ${req.name}.`
-                            + (shouldStop ? " Please report the issue." : " Skipping"), "", { messageBox: shouldStop, stopBot: shouldStop });
+                        `The bot hasn't been taught how to get ${req.name}.` +
+                            (shouldStop ? " Please report the issue." : " Skipping"),
+                        "",
+                        { messageBox: shouldStop, stopBot: shouldStop },
+                    );
                     break;
-        //#endregion
+                //#endregion
 
                 case "Bocklin Ornament":
                     Core.farmingLogger(req.name, quant);
@@ -68,10 +176,11 @@ export class BocklinArmoryMerge {
                     Core.addDrop(req.id);
                     while (!bot.shouldExit && !Core.checkInventory(req.id, quant)) {
                         Core.huntMonsterQuest(
-                            Core.isMember ? 10255 : 10253, 
+                            Core.isMember ? 10255 : 10253,
                             ["bocklincastle", "Faceless Ritualist", ClassType.Farm],
                             ["bocklincastle", "Headless Knight", ClassType.Solo],
-                            ["bocklincastle", "Warped Revenant", ClassType.Farm]);
+                            ["bocklincastle", "Warped Revenant", ClassType.Farm],
+                        );
                         bot.wait.forPickup(req.name);
                     }
                     Core.cancelRegisteredQuests();
@@ -88,7 +197,10 @@ export class BocklinArmoryMerge {
                     Core.farmingLogger(req.name, quant);
                     Core.equipClass(ClassType.Farm);
                     Core.addDrop(req.id);
-                    Core.huntMonster("bocklincastle", "Garde Wraith", req.name, quant, { isTemp: req.temp, log: false });
+                    Core.huntMonster("bocklincastle", "Garde Wraith", req.name, quant, {
+                        isTemp: req.temp,
+                        log: false,
+                    });
                     break;
 
                 case "Chiral Valley Knight":
@@ -108,7 +220,10 @@ export class BocklinArmoryMerge {
                 case "Gem of Anjou":
                     Core.farmingLogger(req.name, quant);
                     Core.equipClass(ClassType.Solo);
-                    Core.huntMonster("bocklingrove", "Elder Necromancer", req.name, quant, { isTemp: req.temp, log: false });
+                    Core.huntMonster("bocklingrove", "Elder Necromancer", req.name, quant, {
+                        isTemp: req.temp,
+                        log: false,
+                    });
                     break;
 
                 case "Forbidden EarthVessel Harpoon":
@@ -123,7 +238,10 @@ export class BocklinArmoryMerge {
                     Core.farmingLogger(req.name, quant);
                     Core.equipClass(ClassType.Solo);
                     Core.addDrop(req.id);
-                    Core.huntMonster("bocklincastle", "Headless Knight", req.name, quant, { isTemp: req.temp, log: false });
+                    Core.huntMonster("bocklincastle", "Headless Knight", req.name, quant, {
+                        isTemp: req.temp,
+                        log: false,
+                    });
                     break;
             }
         };
@@ -140,35 +258,36 @@ export const scriptOptions = defineScriptOptions(Adv.optionsStorage, [], true, {
 });
 
 export default function main(): void {
-        Core.bankingBlackList.push(...
-            [
-                "Bocklin Ornament",
-                "Monster Blood",
-                "Vaughn Crest",
-                "Chiral Valley Knight",
-                "Chiral Valley Duke",
-                "Chiral Valley Noble",
-                "Antlered Golden Anjou Helm",
-                "Regal Golden Anjou Helm",
-                "Golden Anjou Helm",
-                "Anjou Duke's Helm",
-                "Vaughn's Crimson Sash",
-                "Vaughn's Sash and Aquitaine",
-                "Gem of Anjou",
-                "Aquitaine",
-                "Dual Aquitaine",
-                "Forbidden EarthVessel Harpoon",
-                "Forbidden EarthVessel Sword",
-                "Forbidden EarthVessel Swords",
-                "Forbidden EarthVessel Dagger",
-                "Forbidden EarthVessel Daggers",
-                "Forbidden EarthVessel Rapier",
-                "Forbidden EarthVessel Rapiers",
-                "Forbidden EarthVessel Kris",
-                "Forbidden Dual EarthVessel Kris",
-            ]);
-        Core.setOptions();
+    Core.bankingBlackList.push(
+        ...[
+            "Bocklin Ornament",
+            "Monster Blood",
+            "Vaughn Crest",
+            "Chiral Valley Knight",
+            "Chiral Valley Duke",
+            "Chiral Valley Noble",
+            "Antlered Golden Anjou Helm",
+            "Regal Golden Anjou Helm",
+            "Golden Anjou Helm",
+            "Anjou Duke's Helm",
+            "Vaughn's Crimson Sash",
+            "Vaughn's Sash and Aquitaine",
+            "Gem of Anjou",
+            "Aquitaine",
+            "Dual Aquitaine",
+            "Forbidden EarthVessel Harpoon",
+            "Forbidden EarthVessel Sword",
+            "Forbidden EarthVessel Swords",
+            "Forbidden EarthVessel Dagger",
+            "Forbidden EarthVessel Daggers",
+            "Forbidden EarthVessel Rapier",
+            "Forbidden EarthVessel Rapiers",
+            "Forbidden EarthVessel Kris",
+            "Forbidden Dual EarthVessel Kris",
+        ],
+    );
+    Core.setOptions();
 
-        new BocklinArmoryMerge().buyAllMerge();
-        Core.setOptions(false);
+    new BocklinArmoryMerge().buyAllMerge();
+    Core.setOptions(false);
 }

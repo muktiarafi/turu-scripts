@@ -208,7 +208,11 @@ type Widen<T> = T extends boolean ? boolean : T extends number ? number : T exte
  * `configOr(group, name, fallback)` reads an option of a group.
  */
 export function configOr<T extends boolean | number | string | null>(name: string, fallback: T): Widen<T>;
-export function configOr<T extends boolean | number | string | null>(group: string, name: string, fallback: T): Widen<T>;
+export function configOr<T extends boolean | number | string | null>(
+    group: string,
+    name: string,
+    fallback: T,
+): Widen<T>;
 export function configOr(...args: unknown[]): unknown {
     const fallback = args.pop();
     const key = args as [string] | [string, string];
@@ -221,7 +225,11 @@ export function configOr(...args: unknown[]): unknown {
  * {@link configOr} for an option of a numeric enum (`option.choice(name, ..., choices(MyEnum))`, read
  * in C# as `Bot.Config.Get<MyEnum>(name)`): the member the saved name stands for, or `fallback`.
  */
-export function configEnum<E extends Record<string, string | number>>(name: string, enumObject: E, fallback: E[keyof E]): E[keyof E] {
+export function configEnum<E extends Record<string, string | number>>(
+    name: string,
+    enumObject: E,
+    fallback: E[keyof E],
+): E[keyof E] {
     const value = String(configOr(name, "")).replaceAll(" ", "_");
     return value !== "" && value in enumObject && !/^\d+$/.test(value) ? enumObject[value as keyof E] : fallback;
 }
@@ -297,7 +305,7 @@ function callerName(depth: number): string {
         .map((line) => line.trim())
         .filter((line) => line.startsWith("at "));
     const match = /^at (?:new )?([\w$.]+)/.exec(frames[depth + 1] ?? "");
-    const name = match ? match[1].split(".").pop() ?? "" : "";
+    const name = match ? (match[1].split(".").pop() ?? "") : "";
     return name === "<anonymous>" || name === "anonymous" ? "" : name;
 }
 
@@ -366,7 +374,12 @@ function toShopItem(raw: GameItem): CoreShopItem {
         level: num(raw.iLvl),
         faction: text(raw.sFaction),
         requiredReputation: num(raw.iReqRep),
-        requirements: turnin.map((r) => ({ id: num(r.ItemID), name: text(r.sName), quantity: num(r.iQty), temp: flag(r.bTemp) })),
+        requirements: turnin.map((r) => ({
+            id: num(r.ItemID),
+            name: text(r.sName),
+            quantity: num(r.iQty),
+            temp: flag(r.bTemp),
+        })),
     };
 }
 
@@ -385,9 +398,11 @@ class GameInventoryCategories {
     readonly miscSlots: number;
 
     constructor() {
-        const settings = bot.flash.callGameFunction<InvCatSettings | null>("loaderInfo.applicationDomain.getDefinition", "InvCat");
-        if (!settings || typeof settings !== "object")
-            throw new Error("Cannot read the game misc inventory settings.");
+        const settings = bot.flash.callGameFunction<InvCatSettings | null>(
+            "loaderInfo.applicationDomain.getDefinition",
+            "InvCat",
+        );
+        if (!settings || typeof settings !== "object") throw new Error("Cannot read the game misc inventory settings.");
         const miscSlots = settings.MISC_SLOTS ?? bot.flash.get<number | null>("world.myAvatar.objData.iBagSlots");
         if (miscSlots === null || miscSlots === undefined)
             throw new Error("The game misc inventory limit is unavailable. Report this in the Discord!");
@@ -409,13 +424,24 @@ class GameInventoryCategories {
             type !== undefined &&
             type !== null &&
             this.miscTypes.has(type) &&
-            !(type === "Item" && item.sMeta !== null && item.sMeta !== undefined && /^\s*[0-9]+\s*$/.test(text(item.sMeta)))
+            !(
+                type === "Item" &&
+                item.sMeta !== null &&
+                item.sMeta !== undefined &&
+                /^\s*[0-9]+\s*$/.test(text(item.sMeta))
+            )
         );
     }
 
     static isHouse(item: GameItem): boolean {
         const type = text(item.sType);
-        return num(item.bHouse) === 1 || type === "House" || type === "Wall Item" || type === "Floor Item" || type === "Guild";
+        return (
+            num(item.bHouse) === 1 ||
+            type === "House" ||
+            type === "Wall Item" ||
+            type === "Floor Item" ||
+            type === "Guild"
+        );
     }
 
     private isBag(item: GameItem): boolean {
@@ -431,7 +457,13 @@ class GameInventoryCategories {
     }
 
     poolOf(item: GameItem): string {
-        return GameInventoryCategories.isClass(item) ? "class" : GameInventoryCategories.isHouse(item) ? "house" : this.isMisc(item) ? "misc" : "bag";
+        return GameInventoryCategories.isClass(item)
+            ? "class"
+            : GameInventoryCategories.isHouse(item)
+              ? "house"
+              : this.isMisc(item)
+                ? "misc"
+                : "bag";
     }
 
     private owned(id: number): GameItem | undefined {
@@ -442,7 +474,9 @@ class GameInventoryCategories {
         if (GameInventoryCategories.isClass(item)) return false;
         const owned = this.owned(Math.trunc(num(item.ItemID)));
         if (owned && num(owned.iQty) < num(owned.iStk)) return false;
-        return this.isMisc(item) ? !owned && this.countMisc() - freedSlots >= this.miscSlots : this.countBag() - freedSlots >= bagSlots;
+        return this.isMisc(item)
+            ? !owned && this.countMisc() - freedSlots >= this.miscSlots
+            : this.countBag() - freedSlots >= bagSlots;
     }
 
     /** Match InvCat.freedBy: only consumed stacks from the output pool count. */
@@ -469,7 +503,12 @@ class GameInventoryCategories {
                     consumed += tokenNeed;
                 }
                 const owned = this.owned(id);
-                if (owned && id !== 45739 && this.poolOf(owned) === pool && (text(owned.sES) === "ar" || num(owned.iQty) <= consumed))
+                if (
+                    owned &&
+                    id !== 45739 &&
+                    this.poolOf(owned) === pool &&
+                    (text(owned.sES) === "ar" || num(owned.iQty) <= consumed)
+                )
                     freed++;
             }
         }
@@ -650,7 +689,10 @@ export class CoreBots {
 
             // Only stop AFTER retries exhausted
             if (!bot.player.loggedIn) {
-                this.logger("Please log-in before starting the bot.", "SetOptions", { messageBox: true, stopBot: true });
+                this.logger("Please log-in before starting the bot.", "SetOptions", {
+                    messageBox: true,
+                    stopBot: true,
+                });
                 return;
             }
         }
@@ -693,7 +735,10 @@ export class CoreBots {
                 const current = bot.flash.get<boolean>(`uoPref.${key}`) === true;
                 if (disabling ? current : !current) {
                     if (disabling && !warned) {
-                        this.logger('[SetOptions] Turning certain "Social" options off to help protect you', "SetOptions");
+                        this.logger(
+                            '[SetOptions] Turning certain "Social" options off to help protect you',
+                            "SetOptions",
+                        );
                         warned = true;
                     }
                     this.logger(`[SetOptions] ${disabling ? "Turning off" : "Re-enabling"}: ${label}`, "SetOptions");
@@ -859,7 +904,8 @@ export class CoreBots {
             bot.lite.disableSkillAnimation = changeTo;
             bot.lite.disableAuraAnimations = changeTo;
 
-            if (bot.flash.get<boolean>("ui.monsterIcon.redX.visible") !== true) bot.flash.callGameFunction("world.toggleMonsters");
+            if (bot.flash.get<boolean>("ui.monsterIcon.redX.visible") !== true)
+                bot.flash.callGameFunction("world.toggleMonsters");
         }
 
         // C# AprilFools() / UserSpecificMessages(): dropped.
@@ -907,7 +953,19 @@ export class CoreBots {
             if (this.customStopLocation.trim().length > 0) {
                 const stopLoc = this.customStopLocation.trim().toLowerCase();
                 if (["home", "house"].includes(stopLoc)) this.goHome();
-                else if (["off", "disabled", "disable", "stop", "same", "currentmap", "bot.map.currentmap", "none", ""].includes(stopLoc)) {
+                else if (
+                    [
+                        "off",
+                        "disabled",
+                        "disable",
+                        "stop",
+                        "same",
+                        "currentmap",
+                        "bot.map.currentmap",
+                        "none",
+                        "",
+                    ].includes(stopLoc)
+                ) {
                     // Nothing happens
                 } else bot.send.packet(`%xt%zm%cmd%1%tfer%${this.username()}%${stopLoc}-${this.privateRoomNumber}%`);
 
@@ -947,7 +1005,8 @@ export class CoreBots {
 
         if (this.antiLag) {
             // C# sets SetFPS = 30 here: dropped so the game's own frame rate setting stays as the player left it.
-            if (bot.flash.get<boolean>("ui.monsterIcon.redX.visible") === true) bot.flash.callGameFunction("world.toggleMonsters");
+            if (bot.flash.get<boolean>("ui.monsterIcon.redX.visible") === true)
+                bot.flash.callGameFunction("world.toggleMonsters");
         }
 
         bot.options.customName = bot.player.username || this.username();
@@ -1022,7 +1081,12 @@ export class CoreBots {
         for (let i = 0; i < retries; i++) {
             try {
                 const result = initializer();
-                if (result !== null && result !== undefined && (result as unknown) !== false && (result as unknown) !== 0)
+                if (
+                    result !== null &&
+                    result !== undefined &&
+                    (result as unknown) !== false &&
+                    (result as unknown) !== 0
+                )
                     return result;
             } catch (error) {
                 rethrowIfStopped(error);
@@ -1067,18 +1131,28 @@ export class CoreBots {
                     if (!categoryItem) continue;
 
                     if (!this.hasSpaceFor(categoryItem)) {
-                        this.logger(`The ${this.inventoryPoolFor(categoryItem)} inventory is full. Attempting to make room.`);
+                        this.logger(
+                            `The ${this.inventoryPoolFor(categoryItem)} inventory is full. Attempting to make room.`,
+                        );
                         this.bankInventoryPoolFor(categoryItem);
                         if (!this.hasSpaceFor(categoryItem)) {
-                            this.logger(`The ${this.inventoryPoolFor(categoryItem)} inventory is still full. Please clear space and restart.`, "", {
-                                messageBox: true,
-                                stopBot: true,
-                            });
+                            this.logger(
+                                `The ${this.inventoryPoolFor(categoryItem)} inventory is still full. Please clear space and restart.`,
+                                "",
+                                {
+                                    messageBox: true,
+                                    stopBot: true,
+                                },
+                            );
                             return;
                         }
                     }
                 } else {
-                    if (this.inventoryBagFreeSlots <= 0 && bot.inventory.slots !== 0 && bot.inventory.usedSlots >= bot.inventory.slots) {
+                    if (
+                        this.inventoryBagFreeSlots <= 0 &&
+                        bot.inventory.slots !== 0 &&
+                        bot.inventory.usedSlots >= bot.inventory.slots
+                    ) {
                         this.logger(
                             `⚠️ Your inventory is full (${bot.inventory.usedSlots}/${bot.inventory.slots}. Attempting to make room by banking Misc Ac items`,
                         );
@@ -1089,7 +1163,11 @@ export class CoreBots {
                     }
 
                     // Retry after banking misc stuff
-                    if (this.inventoryBagFreeSlots <= 0 && bot.inventory.slots !== 0 && bot.inventory.usedSlots >= bot.inventory.slots) {
+                    if (
+                        this.inventoryBagFreeSlots <= 0 &&
+                        bot.inventory.slots !== 0 &&
+                        bot.inventory.usedSlots >= bot.inventory.slots
+                    ) {
                         if (this.inventoryBagFreeSlots <= 0)
                             this.logger(
                                 `⚠️ Your inventory is full (${bot.inventory.usedSlots}/${bot.inventory.slots}) — please make ${requiredSpaces} space(s) and restart the bot.`,
@@ -1162,7 +1240,9 @@ export class CoreBots {
                     // TEMPORARY Game4000 inventory change. Remove after the client inventory fix.
                     this.usesCategoryInventory()
                         ? !this.hasSpaceFor(bankItem)
-                        : this.inventoryBagFreeSlots <= 0 && bot.inventory.slots !== 0 && bot.inventory.usedSlots >= bot.inventory.slots
+                        : this.inventoryBagFreeSlots <= 0 &&
+                          bot.inventory.slots !== 0 &&
+                          bot.inventory.usedSlots >= bot.inventory.slots
                 ) {
                     this.logger("The destination inventory is full. Please clear space and restart the bot.", "", {
                         messageBox: true,
@@ -1253,7 +1333,9 @@ export class CoreBots {
 
             // TEMPORARY Game4000 class-banking guard. Game4000 classes cannot be banked, including AC-tagged classes.
             if (categoryIs(inventoryItem, "Class")) {
-                this.logger(`Skipping class banking for item ID ${inventoryItem.id}. Classes cannot be banked in Game4000.`);
+                this.logger(
+                    `Skipping class banking for item ID ${inventoryItem.id}. Classes cannot be banked in Game4000.`,
+                );
                 continue;
             }
 
@@ -1311,7 +1393,13 @@ export class CoreBots {
         if (!items.some((id) => id > 0)) return;
 
         for (const itemId of items) {
-            if (itemId <= 0 || CoreBots.extras.has(itemId) || bot.inventory.isEquipped(itemId) || bot.house.isEquipped(itemId)) continue;
+            if (
+                itemId <= 0 ||
+                CoreBots.extras.has(itemId) ||
+                bot.inventory.isEquipped(itemId) ||
+                bot.house.isEquipped(itemId)
+            )
+                continue;
 
             const inventoryItem = [...bot.inventory.items, ...bot.house.items].find((x) => x.id === itemId);
             if (!inventoryItem) continue;
@@ -1319,7 +1407,9 @@ export class CoreBots {
 
             // TEMPORARY Game4000 class-banking guard.
             if (categoryIs(inventoryItem, "Class")) {
-                this.logger(`Skipping class banking for item ID ${inventoryItem.id}. Classes cannot be banked in Game4000.`);
+                this.logger(
+                    `Skipping class banking for item ID ${inventoryItem.id}. Classes cannot be banked in Game4000.`,
+                );
                 continue;
             }
 
@@ -1337,7 +1427,9 @@ export class CoreBots {
                 continue;
             }
 
-            const itemIsForHouse = bot.house.items.some((x) => x.id === itemId && this.categoryStrings.includes(x.category));
+            const itemIsForHouse = bot.house.items.some(
+                (x) => x.id === itemId && this.categoryStrings.includes(x.category),
+            );
 
             if (!itemIsForHouse) {
                 this.jumpWait();
@@ -1363,7 +1455,8 @@ export class CoreBots {
                 this.jumpWait();
                 this.sendPackets(`%xt%zm%bankFromInv%${bot.map.roomId}%${houseItem.id}%${houseItem.charItemId}%`);
                 this.waitForTrue(() => !bot.house.contains(itemId), 20);
-                if (bot.house.items.some((x) => x.id === itemId)) this.logger(`🚫 Failed to bank ${label} from house storage.`);
+                if (bot.house.items.some((x) => x.id === itemId))
+                    this.logger(`🚫 Failed to bank ${label} from house storage.`);
                 else this.logger(`🏠💰 ${label} moved to bank from house storage! 🎒➡️🏦`);
             }
         }
@@ -1418,7 +1511,15 @@ export class CoreBots {
      * @param index Which of several matching shop entries to buy.
      * @param log Log the purchase.
      */
-    buyItem(map: string, shopId: number, item: string | number, quant = 1, shopItemId = 0, index = 0, log = true): void {
+    buyItem(
+        map: string,
+        shopId: number,
+        item: string | number,
+        quant = 1,
+        shopItemId = 0,
+        index = 0,
+        log = true,
+    ): void {
         if (typeof item === "number" && this.checkInventory(item, quant)) return;
 
         this._checkInventorySpace();
@@ -1464,7 +1565,10 @@ export class CoreBots {
             this.waitForTrue(() => bot.shops.isLoaded && bot.shops.id === shopId, 20);
             this.sleep(1000);
             if (bot.shops.id === shopId) {
-                this.logger(`Shop loaded: "${bot.flash.get<string>("world.shopinfo.sName")}" (${shopId})`, "Loading Shop");
+                this.logger(
+                    `Shop loaded: "${bot.flash.get<string>("world.shopinfo.sName")}" (${shopId})`,
+                    "Loading Shop",
+                );
                 break;
             }
             if (retry === 20) break;
@@ -1494,7 +1598,10 @@ export class CoreBots {
             this.sleep(1000);
         }
         if (!succeeded) {
-            this.logger(`Failed to find the shopItemData for itemID ${shopItem.id} in ${shopId}${CoreBots.reinstallCleanFlash}`, "BuyItem");
+            this.logger(
+                `Failed to find the shopItemData for itemID ${shopItem.id} in ${shopId}${CoreBots.reinstallCleanFlash}`,
+                "BuyItem",
+            );
             this.logger("BuyItem Failed, crashed 5 times", "", { stopBot: true });
             return;
         }
@@ -1507,8 +1614,16 @@ export class CoreBots {
                 case "Item is not buyable. Item Inventory full. Re-login to syncronize your real bag slot amount.":
                     this.relogin("Inventory de-sync (AE Issue) detected, relogging so the bot can continue");
                     // TEMPORARY Game4000 inventory change. Remove after the client inventory fix.
-                    if (this.usesCategoryInventory() ? !this.hasSpaceFor(shopItem, buyQuant) : this.inventoryBagFreeSlots < 1)
-                        this.logger("The destination inventory has insufficient space after login. Please clear space.", "", { stopBot: true });
+                    if (
+                        this.usesCategoryInventory()
+                            ? !this.hasSpaceFor(shopItem, buyQuant)
+                            : this.inventoryBagFreeSlots < 1
+                    )
+                        this.logger(
+                            "The destination inventory has insufficient space after login. Please clear space.",
+                            "",
+                            { stopBot: true },
+                        );
                     break;
                 case "Quest Complete Failed: Missing Required Item":
                     this.relogin("Quest de-sync (AE Issue) detected, relogging so the bot can continue");
@@ -1521,7 +1636,10 @@ export class CoreBots {
             // C# calls world.sendBuyItemRequestWithQuantity({iSel: item, iQty, accept: 1}); skua.swf's
             // buyItemByID builds the same request (turu can't pass objects to game functions).
             bot.flash.call("buyItemByID", shopItem.id, shopItem.shopItemId || -1, buyQuant);
-            this.waitForTrue(() => bot.inventory.contains(shopItem.id, quant) || bot.bank.contains(shopItem.id, quant), 20);
+            this.waitForTrue(
+                () => bot.inventory.contains(shopItem.id, quant) || bot.bank.contains(shopItem.id, quant),
+                20,
+            );
             this.sleep();
         } finally {
             offRelog();
@@ -1563,7 +1681,10 @@ export class CoreBots {
         const achievementId = num(bot.flash.get("world.shopinfo.iIndex"));
         const io = bot.flash.get<string | null>("world.shopinfo.sField");
         if (achievementId > 0 && io && !this.hasAchievement(achievementId, io)) {
-            this.logger(`Cannot buy ${item.name} from ${shopId} because you dont have achievement ${achievementId} of category ${io}.`, "CanBuy");
+            this.logger(
+                `Cannot buy ${item.name} from ${shopId} because you dont have achievement ${achievementId} of category ${io}.`,
+                "CanBuy",
+            );
             return false;
         }
 
@@ -1591,7 +1712,10 @@ export class CoreBots {
         if (item.faction && item.faction !== "None") {
             const reqRank = this.pointsToLevel(item.requiredReputation);
             if (reqRank > this.factionRank(item.faction)) {
-                this.logger(`Cannot buy ${item.name} from ${shopId} because you dont have rank ${reqRank} ${item.faction}.`, "CanBuy");
+                this.logger(
+                    `Cannot buy ${item.name} from ${shopId} because you dont have rank ${reqRank} ${item.faction}.`,
+                    "CanBuy",
+                );
                 return false;
             }
         }
@@ -1606,7 +1730,8 @@ export class CoreBots {
             bot.wait.forPickup(req.id);
 
             const totalQuant = buyCount * req.quantity;
-            if (this.getShopItems(map, shopId).some((x) => req.id === x.id)) this.buyItem(map, shopId, req.id, totalQuant, 0, 0, true);
+            if (this.getShopItems(map, shopId).some((x) => req.id === x.id))
+                this.buyItem(map, shopId, req.id, totalQuant, 0, 0, true);
 
             if (!this.checkInventory(req.id, totalQuant)) {
                 if (this.checkInventory(req.id)) {
@@ -1644,7 +1769,10 @@ export class CoreBots {
                         "Turu can't ask for confirmation, so the purchase is skipped.",
                     "CanBuy",
                 );
-                this.logger(`Cannot buy ${item.name} from ${shopId} because you didn't allow the bot to buy the item`, "CanBuy");
+                this.logger(
+                    `Cannot buy ${item.name} from ${shopId} because you didn't allow the bot to buy the item`,
+                    "CanBuy",
+                );
                 return false;
             }
         }
@@ -1696,7 +1824,9 @@ export class CoreBots {
 
         this.sleep(1000); // Prevent potential race conditions
         bot.wait.forActionCooldown("buyItem");
-        const owned = this.allItems().filter((x) => x.id === item.id).reduce((sum, x) => sum + x.quantity, 0);
+        const owned = this.allItems()
+            .filter((x) => x.id === item.id)
+            .reduce((sum, x) => sum + x.quantity, 0);
         return Math.max(0, item.maxStack - owned);
     }
 
@@ -1707,9 +1837,12 @@ export class CoreBots {
             if (log) this.logger("Shop items data could not be retrieved.", "GetShopItemData");
             return null;
         }
-        const found = shopItems.find((i) => i && num(i.ItemID) === itemId && (shopItemId === 0 || num(i.ShopItemID) === shopItemId));
+        const found = shopItems.find(
+            (i) => i && num(i.ItemID) === itemId && (shopItemId === 0 || num(i.ShopItemID) === shopItemId),
+        );
         if (found) return found;
-        if (log) this.logger(`Shop item data not found for ItemID ${itemId}, ShopItemID ${shopItemId}.`, "GetShopItemData");
+        if (log)
+            this.logger(`Shop item data not found for ItemID ${itemId}, ShopItemID ${shopItemId}.`, "GetShopItemData");
         return null;
     }
 
@@ -1735,7 +1868,10 @@ export class CoreBots {
                 );
             else {
                 const free = this.inventoryBagFreeSlots;
-                this.logger(`Banked ${freed} item${s}. ${free} slot${free !== 1 ? "s" : ""} now available.`, "_CheckInventorySpace");
+                this.logger(
+                    `Banked ${freed} item${s}. ${free} slot${free !== 1 ? "s" : ""} now available.`,
+                    "_CheckInventorySpace",
+                );
             }
         }
     }
@@ -1743,17 +1879,27 @@ export class CoreBots {
     private _checkHouseSpace(): void {
         if (bot.house.slots !== 0 && bot.house.freeSlots <= 0) {
             const usedBefore = bot.house.usedSlots;
-            this.logger(`Your house inventory is full [${usedBefore}/${bot.house.slots}]. Attempting to bank AC-tagged misc items...`, "_CheckHouseSpace");
+            this.logger(
+                `Your house inventory is full [${usedBefore}/${bot.house.slots}]. Attempting to bank AC-tagged misc items...`,
+                "_CheckHouseSpace",
+            );
             this.bankACHouseItems();
             const freed = usedBefore - bot.house.usedSlots;
             const s = freed !== 1 ? "s" : "";
             if (bot.house.freeSlots <= 0)
-                this.logger(`Banked ${freed} item${s} but your house is still full. Please clear space manually. Stopping the bot.`, "_CheckHouseSpace", {
-                    stopBot: true,
-                });
+                this.logger(
+                    `Banked ${freed} item${s} but your house is still full. Please clear space manually. Stopping the bot.`,
+                    "_CheckHouseSpace",
+                    {
+                        stopBot: true,
+                    },
+                );
             else {
                 const free = bot.house.freeSlots;
-                this.logger(`Banked ${freed} item${s}. ${free} slot${free !== 1 ? "s" : ""} now available.`, "_CheckHouseSpace");
+                this.logger(
+                    `Banked ${freed} item${s}. ${free} slot${free !== 1 ? "s" : ""} now available.`,
+                    "_CheckHouseSpace",
+                );
             }
         }
     }
@@ -1766,7 +1912,10 @@ export class CoreBots {
     /** How many to buy (in whole bundles) to reach `requestedAmount`, capped by the max stack; 0 = don't buy. */
     _calcBuyQuantity(item: CoreShopItem, requestedAmount: number): number {
         if (requestedAmount > item.maxStack) {
-            this.logger(`Requested ${requestedAmount}, but max stack for ${item.name} is ${item.maxStack}. Fix the calling script.`, "BuyItem");
+            this.logger(
+                `Requested ${requestedAmount}, but max stack for ${item.name} is ${item.maxStack}. Fix the calling script.`,
+                "BuyItem",
+            );
             bot.stop();
         }
 
@@ -1847,7 +1996,9 @@ export class CoreBots {
                 typeof item === "string" ? x.name === itemName : x.id === item,
             );
             if (found) break;
-            this.logger(`Attempt ${i + 1}: ${typeof item === "string" ? `Item ${itemName}` : `Item ID ${item}`} not found. Retrying...`);
+            this.logger(
+                `Attempt ${i + 1}: ${typeof item === "string" ? `Item ${itemName}` : `Item ID ${item}`} not found. Retrying...`,
+            );
             this.sleep(1000);
         }
         if (typeof item === "number" && !found) {
@@ -1872,7 +2023,8 @@ export class CoreBots {
             this.sleep();
 
             if (!all && (bot.inventory.contains(itemName) || bot.inventory.getQuantity(itemName) === quantAfterSale)) {
-                if (bot.inventory.getQuantity(itemName) === quantAfterSale) this.logger(`Sold x${sellCount} "${itemName}"${suffix}`);
+                if (bot.inventory.getQuantity(itemName) === quantAfterSale)
+                    this.logger(`Sold x${sellCount} "${itemName}"${suffix}`);
                 return;
             } else if (all && !this.checkInventory(itemName)) {
                 this.logger(`Sold all of "${itemName}"${suffix}`);
@@ -1946,7 +2098,12 @@ export class CoreBots {
      * Picks a shop item by ShopItemID (when > 0) then by name (exactly one match) or item ID.
      * @returns The item, or null (logged) if it isn't there or the name is ambiguous.
      */
-    parseShopItem(shopItems: CoreShopItem[], shopId: number, item: string | number, shopItemId = 0): CoreShopItem | null {
+    parseShopItem(
+        shopItems: CoreShopItem[],
+        shopId: number,
+        item: string | number,
+        shopItemId = 0,
+    ): CoreShopItem | null {
         if (shopItems.length === 0) {
             this.logger(`Shop ${shopId} has no items loaded.`);
             return null;
@@ -1991,7 +2148,13 @@ export class CoreBots {
      */
     getBoostFloat(item: InventoryItem, boostType: string): number {
         if (!item.meta || !item.meta.includes(boostType)) return 0;
-        return parseFloat(item.meta.split(",").find((meta) => meta.includes(boostType))!.split(":").pop()!);
+        return parseFloat(
+            item.meta
+                .split(",")
+                .find((meta) => meta.includes(boostType))!
+                .split(":")
+                .pop()!,
+        );
     }
 
     /** Removes the items from the inventory (AC items are banked instead). */
@@ -2009,7 +2172,9 @@ export class CoreBots {
             if (!trashItem || trashItem.temp) continue;
 
             if (!trashItem.coins) {
-                bot.send.packet(`%xt%zm%removeItem%${bot.map.roomId}%${trashItem.id}%${bot.player.id}%${trashItem.quantity}%`);
+                bot.send.packet(
+                    `%xt%zm%removeItem%${bot.map.roomId}%${trashItem.id}%${bot.player.id}%${trashItem.quantity}%`,
+                );
                 this.sleep();
                 this.logger(`Trashed: ${trashItem.name} x${trashItem.quantity}`);
             } else this.toBank(trashItem.id);
@@ -2040,10 +2205,12 @@ export class CoreBots {
         if (items.length === 0) return;
         const toPickup = bot.drops.toPickup;
         const toPickupIds = bot.drops.toPickupIds;
-        const names = unique(items.filter((x): x is string => typeof x === "string" && x.trim().length > 0).map((x) => x.trim())).filter((x) =>
-            toPickup.includes(x),
+        const names = unique(
+            items.filter((x): x is string => typeof x === "string" && x.trim().length > 0).map((x) => x.trim()),
+        ).filter((x) => toPickup.includes(x));
+        const ids = unique(items.filter((x): x is number => typeof x === "number")).filter((x) =>
+            toPickupIds.includes(x),
         );
-        const ids = unique(items.filter((x): x is number => typeof x === "number")).filter((x) => toPickupIds.includes(x));
         if (names.length > 0) bot.drops.remove(...names);
         if (ids.length > 0) bot.drops.remove(...ids);
     }
@@ -2132,9 +2299,10 @@ export class CoreBots {
             if (q.simpleRewards.some((r) => r.type === 2)) chooseQuests.set(q.id, q);
             else nonChooseQuests.set(q.id, q);
 
-            const requiredItems = [...q.acceptRequirements.filter((x) => !x.temp), ...q.requirements.filter((x) => !x.temp)].filter(
-                (item) => item && item.id > 0,
-            );
+            const requiredItems = [
+                ...q.acceptRequirements.filter((x) => !x.temp),
+                ...q.requirements.filter((x) => !x.temp),
+            ].filter((item) => item && item.id > 0);
             for (const item of requiredItems) {
                 if (!bot.drops.toPickup.includes(item.name) || !bot.drops.toPickupIds.includes(item.id)) {
                     this.addDrop(item.name);
@@ -2151,7 +2319,8 @@ export class CoreBots {
         this.lastTurnInSeen.clear();
         for (const quest of allQuests) this.markTurnInSeen(quest.id);
 
-        if (allQuests.length === 0) this.logger("No quests left to register (all skipped, e.g. member-only or not available).");
+        if (allQuests.length === 0)
+            this.logger("No quests left to register (all skipped, e.g. member-only or not available).");
 
         const loop: QuestLoop = {
             quests: allQuests,
@@ -2163,8 +2332,10 @@ export class CoreBots {
         this.questLoop = loop;
 
         bot.handlers.register(QUEST_WATCHER, Math.min(this.actionDelay, 500), () => this.questWatcher(loop));
-        bot.handlers.register(QUEST_MANAGER, Math.max(this.actionDelay, 100) + allQuests.length * this.actionDelay * 2, () =>
-            this.questManager(loop),
+        bot.handlers.register(
+            QUEST_MANAGER,
+            Math.max(this.actionDelay, 100) + allQuests.length * this.actionDelay * 2,
+            () => this.questManager(loop),
         );
         bot.handlers.register(QUEST_WATCHDOG, 2000, () => this.questWatchdog(loop));
     }
@@ -2202,7 +2373,8 @@ export class CoreBots {
             const reward = this.questData(quest.id)?.rewards.find((r) => r.quantity < r.maxStack);
             rewardId = reward?.id ?? -1;
         }
-        const turnIns = quest.once || quest.field ? 1 : num(bot.flash.callGameFunction("world.maximumQuestTurnIns", quest.id));
+        const turnIns =
+            quest.once || quest.field ? 1 : num(bot.flash.callGameFunction("world.maximumQuestTurnIns", quest.id));
         bot.send.packet(`%xt%zm%tryQuestComplete%${bot.map.roomId}%${quest.id}%${rewardId}%false%${turnIns}%wvz%`);
     }
 
@@ -2306,13 +2478,15 @@ export class CoreBots {
             return false;
         }
 
-        if (questData.upgrade && !bot.player.isMember) this.logger(`"${questData.name}" [${questId}] is member-only, stopping the bot.`, "", { stopBot: true });
+        if (questData.upgrade && !bot.player.isMember)
+            this.logger(`"${questData.name}" [${questId}] is member-only, stopping the bot.`, "", { stopBot: true });
 
         if (questId <= 0) return false;
 
-        const requiredItems = [...questData.acceptRequirements.filter((x) => !x.temp), ...questData.requirements.filter((x) => !x.temp)].filter(
-            (item) => item && item.id > 0,
-        );
+        const requiredItems = [
+            ...questData.acceptRequirements.filter((x) => !x.temp),
+            ...questData.requirements.filter((x) => !x.temp),
+        ].filter((item) => item && item.id > 0);
         // Add both ID and Name to the drop list if missing (ID is incase of duplicate names)
         for (const item of requiredItems) {
             if (!bot.drops.toPickup.includes(item.name) || !bot.drops.toPickupIds.includes(item.id)) {
@@ -2340,7 +2514,8 @@ export class CoreBots {
         }
 
         for (const quest of questData) {
-            if (quest.upgrade && !bot.player.isMember) this.logger(`"${quest.name}" [${quest.id}] is member-only, stopping the bot.`, "", { stopBot: true });
+            if (quest.upgrade && !bot.player.isMember)
+                this.logger(`"${quest.name}" [${quest.id}] is member-only, stopping the bot.`, "", { stopBot: true });
 
             if (bot.quests.isInProgress(quest.id) || quest.id <= 0) continue;
 
@@ -2384,9 +2559,12 @@ export class CoreBots {
                 this.checkInventory(questData.acceptRequirements.map((x) => x.id)))
         ) {
             if (itemId === -1 && questData.simpleRewards.length > 0) {
-                const availableReward = questData.simpleRewards.find((x) => x.id > 0 && !this.checkInventory(x.id, x.maxStack, { toInv: false }));
+                const availableReward = questData.simpleRewards.find(
+                    (x) => x.id > 0 && !this.checkInventory(x.id, x.maxStack, { toInv: false }),
+                );
                 itemId = availableReward?.id ?? -1;
-                if (availableReward && itemId !== -1 && !bot.drops.toPickupIds.includes(itemId)) this.addDrop(availableReward.id);
+                if (availableReward && itemId !== -1 && !bot.drops.toPickupIds.includes(itemId))
+                    this.addDrop(availableReward.id);
                 return bot.quests.ensureComplete(questId, itemId);
             }
             return bot.quests.ensureComplete(questId, itemId);
@@ -2408,7 +2586,8 @@ export class CoreBots {
         for (const quest of questData) {
             if (
                 quest.requirements.length === 0 ||
-                (quest.requirements.every((r) => r && r.id > 0) && this.checkInventory(quest.requirements.map((x) => x.id)))
+                (quest.requirements.every((r) => r && r.id > 0) &&
+                    this.checkInventory(quest.requirements.map((x) => x.id)))
             ) {
                 bot.quests.ensureComplete(quest.id);
                 bot.wait.forActionCooldown("tryQuestComplete");
@@ -2445,7 +2624,8 @@ export class CoreBots {
 
     private usesCategoryInventory(): boolean {
         const result = bot.flash.callGameFunction<unknown>("loaderInfo.applicationDomain.hasDefinition", "InvCat");
-        if (result === null || result === undefined || result === "") throw new Error("Cannot determine the game inventory categories.");
+        if (result === null || result === undefined || result === "")
+            throw new Error("Cannot determine the game inventory categories.");
         return flag(result);
     }
 
@@ -2456,8 +2636,11 @@ export class CoreBots {
     /** GameItem item data (keeps fields such as bHouse, TokID and TokQty that the API omits). */
     private inventorySpaceItemData(item: InventoryItem | CoreShopItem, rawItems?: GameItem[] | null): GameItem {
         const isShop = "shopItemId" in item;
-        const items = rawItems ?? bot.flash.get<GameItem[] | null>(isShop ? "world.shopinfo.items" : "world.bankinfo.items");
-        const found = items?.find((c) => c && num(c.ItemID) === item.id && (!isShop || num(c.ShopItemID) === item.shopItemId));
+        const items =
+            rawItems ?? bot.flash.get<GameItem[] | null>(isShop ? "world.shopinfo.items" : "world.bankinfo.items");
+        const found = items?.find(
+            (c) => c && num(c.ItemID) === item.id && (!isShop || num(c.ShopItemID) === item.shopItemId),
+        );
         return (
             found ?? {
                 ItemID: item.id,
@@ -2537,7 +2720,8 @@ export class CoreBots {
         let questCompleted = false;
 
         // Filter rewards by provided list, unless null
-        const rewards = itemList === null ? quest.rewards : quest.rewards.filter((item) => itemList.includes(item.name));
+        const rewards =
+            itemList === null ? quest.rewards : quest.rewards.filter((item) => itemList.includes(item.name));
 
         // If no reward matches, still complete the quest normally.
         if (rewards.length === 0) {
@@ -2658,7 +2842,8 @@ export class CoreBots {
         const rewards: RewardItem[] = [];
         if (oRewards && typeof oRewards === "object")
             for (const group of Object.values(oRewards))
-                if (group && typeof group === "object") for (const item of Object.values(group)) if (item) rewards.push(toRewardItem(item));
+                if (group && typeof group === "object")
+                    for (const item of Object.values(group)) if (item) rewards.push(toRewardItem(item));
 
         const simpleRewards: SimpleReward[] = Array.isArray(reward)
             ? reward.filter((r) => r).map((r) => ({ ...toRewardItem(r), rate: num(r.iRate), type: num(r.iType) }))
@@ -2669,7 +2854,10 @@ export class CoreBots {
         return {
             ...quest,
             rewards: rewards.length > 0 ? rewards : fromApi(quest.rewards),
-            simpleRewards: simpleRewards.length > 0 ? simpleRewards : fromApi(quest.simpleRewards).map((x) => ({ ...x, rate: 0, type: 0 })),
+            simpleRewards:
+                simpleRewards.length > 0
+                    ? simpleRewards
+                    : fromApi(quest.simpleRewards).map((x) => ({ ...x, rate: 0, type: 0 })),
         };
     }
 
@@ -2714,10 +2902,14 @@ export class CoreBots {
         }
 
         if (!quest) {
-            this.logger(`Failed to get the Quest Object for questID ${questId}${CoreBots.reinstallCleanFlash}`, "EnsureLoad A.0", {
-                messageBox: true,
-                stopBot: true,
-            });
+            this.logger(
+                `Failed to get the Quest Object for questID ${questId}${CoreBots.reinstallCleanFlash}`,
+                "EnsureLoad A.0",
+                {
+                    messageBox: true,
+                    stopBot: true,
+                },
+            );
             return CoreBots.emptyQuest();
         }
         return quest;
@@ -2743,10 +2935,14 @@ export class CoreBots {
 
         const toReturn = loaded();
         if (toReturn.length < questIds.length) {
-            this.logger(`Failed to get the Quest Object for questIDs ${questIds.join(" | ")}${CoreBots.reinstallCleanFlash}`, "EnsureLoad B.4", {
-                messageBox: true,
-                stopBot: true,
-            });
+            this.logger(
+                `Failed to get the Quest Object for questIDs ${questIds.join(" | ")}${CoreBots.reinstallCleanFlash}`,
+                "EnsureLoad B.4",
+                {
+                    messageBox: true,
+                    stopBot: true,
+                },
+            );
             return [];
         }
         return toReturn;
@@ -2799,7 +2995,9 @@ export class CoreBots {
                 this.logger(`❌ Quest data for ${questName} [${questId}] is null.`);
                 return false;
             }
-            const complete = questData.slot < 0 || num(bot.flash.callGameFunction("world.getQuestValue", questData.slot)) >= questData.value;
+            const complete =
+                questData.slot < 0 ||
+                num(bot.flash.callGameFunction("world.getQuestValue", questData.slot)) >= questData.value;
             if (log) this.logger(`${questName} [${questId}] completion check [${complete ? "✔" : "❌"}]`);
             return complete;
         };
@@ -2828,13 +3026,37 @@ export class CoreBots {
      * @param item Item to kill the monster for, if null will just kill the monster 1 time.
      * @param quant Desired quantity of the item.
      */
-    killMonster(map: string, cell: string, pad: string, monster: string, item?: string | null, quant?: number, options?: KillOptions): void;
+    killMonster(
+        map: string,
+        cell: string,
+        pad: string,
+        monster: string,
+        item?: string | null,
+        quant?: number,
+        options?: KillOptions,
+    ): void;
     /**
      * C# `KillMonster(map, cell, pad, int MonsterMapID, ...)`: kills the monsters with that map ID
      * (once, or until you have `quant` of `item`, a name or an item ID).
      */
-    killMonster(map: string, cell: string, pad: string, monsterMapId: number, item?: string | number | null, quant?: number, options?: KillOptions): void;
-    killMonster(map: string, cell: string, pad: string, monster: string | number, item: string | number | null = null, quant = 1, options: KillOptions = {}): void {
+    killMonster(
+        map: string,
+        cell: string,
+        pad: string,
+        monsterMapId: number,
+        item?: string | number | null,
+        quant?: number,
+        options?: KillOptions,
+    ): void;
+    killMonster(
+        map: string,
+        cell: string,
+        pad: string,
+        monster: string | number,
+        item: string | number | null = null,
+        quant = 1,
+        options: KillOptions = {},
+    ): void {
         if (typeof monster === "number") {
             if (typeof item === "number") this.killMonsterItemId(map, cell, pad, monster, item, quant, options);
             else this.killMonsterMapId(map, cell, pad, monster, item, quant, options);
@@ -2916,11 +3138,20 @@ export class CoreBots {
     }
 
     /** C# `KillMonster(map, cell, pad, int MonsterMapID, string? item, ...)`. */
-    private killMonsterMapId(map: string, cell: string, pad: string, monsterMapId: number, item: string | null, quant: number, options: KillOptions): void {
+    private killMonsterMapId(
+        map: string,
+        cell: string,
+        pad: string,
+        monsterMapId: number,
+        item: string | null,
+        quant: number,
+        options: KillOptions,
+    ): void {
         const { isTemp = true, log = true, publicRoom = false } = options;
         pad = toTitleCase(pad);
         cell = bot.map.cells.find((c) => equalsIgnoreCase(c, cell)) ?? cell;
-        const have = () => item !== null && (isTemp ? bot.tempInv.contains(item, quant) : this.checkInventory(item, quant));
+        const have = () =>
+            item !== null && (isTemp ? bot.tempInv.contains(item, quant) : this.checkInventory(item, quant));
         // Already has item? Exit early
         if (have()) return;
 
@@ -2986,11 +3217,20 @@ export class CoreBots {
     }
 
     /** C# `KillMonster(map, cell, pad, int MonsterMapID, int ItemID = 0, ...)`. */
-    private killMonsterItemId(map: string, cell: string, pad: string, monsterMapId: number, itemId: number, quant: number, options: KillOptions): void {
+    private killMonsterItemId(
+        map: string,
+        cell: string,
+        pad: string,
+        monsterMapId: number,
+        itemId: number,
+        quant: number,
+        options: KillOptions,
+    ): void {
         const { isTemp = true, log = true, publicRoom = false } = options;
         pad = toTitleCase(pad);
         cell = bot.map.cells.find((c) => equalsIgnoreCase(c, cell)) ?? cell;
-        const have = () => itemId !== 0 && (isTemp ? bot.tempInv.contains(itemId, quant) : this.checkInventory(itemId, quant));
+        const have = () =>
+            itemId !== 0 && (isTemp ? bot.tempInv.contains(itemId, quant) : this.checkInventory(itemId, quant));
 
         // Exit if item already collected
         if (have()) return;
@@ -3014,7 +3254,8 @@ export class CoreBots {
         bot.options.aggroMonsters = false;
 
         // Get all monsters with the MapID (C# `Monster.Alive`: state != 0)
-        const alive = (id: number) => bot.monsters.mapMonsters.some((m) => m !== null && m.mapId === id && m.state !== 0);
+        const alive = (id: number) =>
+            bot.monsters.mapMonsters.some((m) => m !== null && m.mapId === id && m.state !== 0);
         if (!alive(monsterMapId)) {
             this.logger(`⚠️ No monsters with MapID ${monsterMapId} found in /${map} (${cell}, ${pad})`);
             // Restore settings
@@ -3095,7 +3336,8 @@ export class CoreBots {
                     bot.wait.forCellChange(targetMonster?.cell ?? "Enter");
                     if (targetMonster?.cell !== undefined) bot.player.setSpawnPoint();
                 }
-                if (!bot.player.hasTarget && targetMonster && targetMonster.hp > 0) bot.combat.attack(targetMonster.name);
+                if (!bot.player.hasTarget && targetMonster && targetMonster.hp > 0)
+                    bot.combat.attack(targetMonster.name);
 
                 this.pause(500);
 
@@ -3110,8 +3352,15 @@ export class CoreBots {
             this.jumpWait();
             this.rest();
         } else {
-            if (log) this.logger(`Killing ${monster} for item: "${item}" ${bot.inventory.getQuantity(item)}/${quant}`, "HuntMonster");
-            while (!bot.shouldExit && !(isTemp ? bot.tempInv.contains(item, quant) : this.checkInventory(item, quant))) {
+            if (log)
+                this.logger(
+                    `Killing ${monster} for item: "${item}" ${bot.inventory.getQuantity(item)}/${quant}`,
+                    "HuntMonster",
+                );
+            while (
+                !bot.shouldExit &&
+                !(isTemp ? bot.tempInv.contains(item, quant) : this.checkInventory(item, quant))
+            ) {
                 if (!bot.player.alive) this.waitForTrue(() => bot.player.alive, 20);
 
                 targetMonster = this.findMonster(map, monster);
@@ -3139,7 +3388,12 @@ export class CoreBots {
             const cells = bot.map.cells;
             bot.map.jump(
                 cells.find((c) => c.toLowerCase().includes("enter")) ??
-                    cells.find((c) => !c.toLowerCase().includes("wait") && !c.toLowerCase().includes("blank") && !c.toLowerCase().includes("enter")) ??
+                    cells.find(
+                        (c) =>
+                            !c.toLowerCase().includes("wait") &&
+                            !c.toLowerCase().includes("blank") &&
+                            !c.toLowerCase().includes("enter"),
+                    ) ??
                     "Enter",
                 "Spawn",
                 this.inPublicRoom(),
@@ -3163,7 +3417,10 @@ export class CoreBots {
         const { log = true, publicRoom = false } = options;
         if (!items || items.length === 0) return;
 
-        const done = () => items.every(([item, quant, isTemp]) => (isTemp ? bot.tempInv.contains(item, quant) : this.checkInventory(item, quant)));
+        const done = () =>
+            items.every(([item, quant, isTemp]) =>
+                isTemp ? bot.tempInv.contains(item, quant) : this.checkInventory(item, quant),
+            );
         // Exit early if everything is already obtained
         if (done()) return;
 
@@ -3221,7 +3478,12 @@ export class CoreBots {
         const cells = bot.map.cells;
         bot.map.jump(
             cells.find((c) => c.toLowerCase().includes("enter")) ??
-                cells.find((c) => !c.toLowerCase().includes("wait") && !c.toLowerCase().includes("blank") && !c.toLowerCase().includes("enter")) ??
+                cells.find(
+                    (c) =>
+                        !c.toLowerCase().includes("wait") &&
+                        !c.toLowerCase().includes("blank") &&
+                        !c.toLowerCase().includes("enter"),
+                ) ??
                 "Enter",
             "Spawn",
             this.inPublicRoom(),
@@ -3232,7 +3494,13 @@ export class CoreBots {
     }
 
     /** Kills a monster by its map ID (once, or until you have `quant` of `item`). */
-    huntMonsterMapID(map: string, monsterMapId: number, item: string | null = null, quant = 1, options: KillOptions & { pad?: string } = {}): void {
+    huntMonsterMapID(
+        map: string,
+        monsterMapId: number,
+        item: string | null = null,
+        quant = 1,
+        options: KillOptions & { pad?: string } = {},
+    ): void {
         const { isTemp = true, log = true, publicRoom = false, pad = "Left" } = options;
         const has = (item: string) => (isTemp ? bot.tempInv.contains(item, quant) : this.checkInventory(item, quant));
 
@@ -3289,7 +3557,11 @@ export class CoreBots {
             this.sleep(200);
 
             const current = bot.player.target;
-            if ((item !== null && has(item)) || (item === null && bot.player.hasTarget && current !== null && current.hp <= 0)) break;
+            if (
+                (item !== null && has(item)) ||
+                (item === null && bot.player.hasTarget && current !== null && current.hp <= 0)
+            )
+                break;
         }
 
         if (item !== null) {
@@ -3308,7 +3580,12 @@ export class CoreBots {
         const monsterCells = new Set(bot.monsters.mapMonsters.map((m) => m?.cell));
         const enterCount = mapCells.filter((c) => c.includes("Enter")).length;
         const safeCell =
-            mapCells.find((c) => !this.blackListedJumptoCells.includes(c) && !monsterCells.has(c) && (enterCount > 1 || !c.includes("Enter"))) ?? "Enter";
+            mapCells.find(
+                (c) =>
+                    !this.blackListedJumptoCells.includes(c) &&
+                    !monsterCells.has(c) &&
+                    (enterCount > 1 || !c.includes("Enter")),
+            ) ?? "Enter";
 
         bot.map.jump(safeCell, safeCell === "Enter" ? "Spawn" : "Left", this.inPublicRoom());
         bot.wait.forCellChange(safeCell);
@@ -3329,7 +3606,12 @@ export class CoreBots {
     huntMonsterQuest(questId: number, ...mapMonsterClassPairs: HuntPair[]): void;
     huntMonsterQuest(questId: number, ...args: (string | null | undefined | HuntPair)[]): void {
         if (args.length > 0 && Array.isArray(args[0])) this.huntMonsterQuestPairs(questId, true, args as HuntPair[]);
-        else this.huntMonsterQuestIn(questId, (args[0] as string | null | undefined) ?? null, (args[1] as string | null | undefined) ?? null);
+        else
+            this.huntMonsterQuestIn(
+                questId,
+                (args[0] as string | null | undefined) ?? null,
+                (args[1] as string | null | undefined) ?? null,
+            );
     }
 
     /**
@@ -3350,7 +3632,8 @@ export class CoreBots {
         bot.drops.add(...unique(all.filter((x) => x && !x.temp).map((x) => x.id)));
 
         // If no MapMonsterClassPairs are provided, auto-generate default values
-        if (mapMonsterClassPairs.length === 0) mapMonsterClassPairs = quest.requirements.map((): HuntPair => ["Fill ME", "Fill ME", ClassType.Solo]);
+        if (mapMonsterClassPairs.length === 0)
+            mapMonsterClassPairs = quest.requirements.map((): HuntPair => ["Fill ME", "Fill ME", ClassType.Solo]);
 
         let pairIndex = 0;
 
@@ -3365,7 +3648,13 @@ export class CoreBots {
 
             if (!bot.quests.isInProgress(questId)) this.ensureAccept(questId);
 
-            this.huntMonster(mapName ?? bot.map.name, monsterName ?? "*", requirement.name ?? "", requirement.quantity, { isTemp: requirement.temp, log });
+            this.huntMonster(
+                mapName ?? bot.map.name,
+                monsterName ?? "*",
+                requirement.name ?? "",
+                requirement.quantity,
+                { isTemp: requirement.temp, log },
+            );
         }
 
         this.ensureCompleteMulti(questId);
@@ -3400,7 +3689,9 @@ export class CoreBots {
 
             if (!bot.quests.ensureAccept(questId)) this.ensureAccept(questId);
 
-            this.huntMonster(huntMapName, huntMonsterName, requirement.name ?? "", requirement.quantity, { isTemp: requirement.temp });
+            this.huntMonster(huntMapName, huntMonsterName, requirement.name ?? "", requirement.quantity, {
+                isTemp: requirement.temp,
+            });
         }
 
         if (bot.quests.canCompleteFullCheck(questId)) this.ensureCompleteMulti(questId);
@@ -3513,7 +3804,8 @@ export class CoreBots {
 
         const kill = (item: string | null, quant: number, isTemp: boolean): void => {
             bot.options.aggroMonsters = true;
-            if (item !== null && (isTemp ? bot.tempInv.contains(item, quant) : this.checkInventory(item, quant))) return;
+            if (item !== null && (isTemp ? bot.tempInv.contains(item, quant) : this.checkInventory(item, quant)))
+                return;
 
             checkMap();
 
@@ -3526,7 +3818,11 @@ export class CoreBots {
                 // MonsterMapIDs: 2 = Staff, 3 = Escherion
                 const target = bot.player.target;
                 if (!bot.player.hasTarget) bot.combat.attack(3);
-                else if (target?.mapId === 3 && target.state === 2 && alive(bot.monsters.mapMonsters.find((x) => x.mapId === 2)))
+                else if (
+                    target?.mapId === 3 &&
+                    target.state === 2 &&
+                    alive(bot.monsters.mapMonsters.find((x) => x.mapId === 2))
+                )
                     // Escherion is invulnerable -> attack Staff of Inversion
                     bot.combat.attack(2);
                 else if (target?.mapId === 2 && target.hp > 0)
@@ -3540,7 +3836,10 @@ export class CoreBots {
                     if (log) this.logger("💀 No item selected, killed Escherion once");
                     done = true;
                     break;
-                } else if (item !== null && (isTemp ? bot.tempInv.contains(item, quant) : this.checkInventory(item, quant))) {
+                } else if (
+                    item !== null &&
+                    (isTemp ? bot.tempInv.contains(item, quant) : this.checkInventory(item, quant))
+                ) {
                     done = true;
                     break;
                 }
@@ -3585,7 +3884,8 @@ export class CoreBots {
             const stalagbite = monsters.find((x) => x.mapId === 8);
             if (stalagbite) {
                 bot.wait.forMonsterSpawn(stalagbite.name);
-                if (vath) bot.combat.attack(stalagbite.state === 1 || stalagbite.state === 2 ? stalagbite.mapId : vath.mapId);
+                if (vath)
+                    bot.combat.attack(stalagbite.state === 1 || stalagbite.state === 2 ? stalagbite.mapId : vath.mapId);
                 this.sleep();
             }
         };
@@ -3595,7 +3895,10 @@ export class CoreBots {
             killVathInternal();
         } else {
             if (!isTemp) this.addDrop(item);
-            if (log) this.logger(`⚡ Killing Vath for ${item} (${this.dynamicQuant(item, isTemp)}/${quant}) [Temp = ${isTemp ? "True" : "False"}]`);
+            if (log)
+                this.logger(
+                    `⚡ Killing Vath for ${item} (${this.dynamicQuant(item, isTemp)}/${quant}) [Temp = ${isTemp ? "True" : "False"}]`,
+                );
             while (!bot.shouldExit && !this.checkInventory(item, quant)) killVathInternal();
         }
 
@@ -3640,7 +3943,10 @@ export class CoreBots {
             bot.kill.monster("Kitsune");
         } else {
             if (!isTemp) this.addDrop(item);
-            if (log) this.logger(`🌀 Killing Kitsune for ${item} (${this.dynamicQuant(item, isTemp)}/${quant}) [Temp = ${isTemp ? "True" : "False"}]`);
+            if (log)
+                this.logger(
+                    `🌀 Killing Kitsune for ${item} (${this.dynamicQuant(item, isTemp)}/${quant}) [Temp = ${isTemp ? "True" : "False"}]`,
+                );
             while (!bot.shouldExit && !this.checkInventory(item, quant)) {
                 insurance();
                 // C#: `!HasTarget || Target == null || Target?.HP > 0`.
@@ -3700,7 +4006,9 @@ export class CoreBots {
 
         // Find first owned DoT class
         const ownedDotClass =
-            dotClasses.map((className) => ownedClasses.find((i) => equalsIgnoreCase(i.name, className))).find((i) => i !== undefined) ?? null;
+            dotClasses
+                .map((className) => ownedClasses.find((i) => equalsIgnoreCase(i.name, className)))
+                .find((i) => i !== undefined) ?? null;
 
         // If we own one -> equip it, otherwise keep whatever class is currently equipped
         if (ownedDotClass !== null) {
@@ -3723,7 +4031,8 @@ export class CoreBots {
             this.logger("--------------------------------");
         }
 
-        const usingShinobi = ownedDotClass?.name === "DragonSoul Shinobi" || ownedDotClass?.name === "Shadow Dragon Shinobi";
+        const usingShinobi =
+            ownedDotClass?.name === "DragonSoul Shinobi" || ownedDotClass?.name === "Shadow Dragon Shinobi";
         const usingBlazeBinder = ownedDotClass?.name === "Blaze Binder" || ownedDotClass?.name === "FireLord Summoner";
 
         this.join("doomkitten");
@@ -3739,7 +4048,10 @@ export class CoreBots {
                 return;
             }
 
-            while (!bot.shouldExit && !(isTemp ? bot.tempInv.contains(item, quant) : this.checkInventory(item, quant))) {
+            while (
+                !bot.shouldExit &&
+                !(isTemp ? bot.tempInv.contains(item, quant) : this.checkInventory(item, quant))
+            ) {
                 // C#: `!HasTarget ?? true || Target?.HP > 0`.
                 const target = bot.player.target;
                 if (!bot.player.hasTarget || (target !== null && target.hp > 0)) bot.combat.attack("*");
@@ -3772,7 +4084,10 @@ export class CoreBots {
 
         const rankFiveOrHigher = (className: string): boolean =>
             [...bot.inventory.items, ...bot.bank.items].some(
-                (classItem) => equalsIgnoreCase(classItem.name, className) && classItem.category === "Class" && classItem.quantity >= 22500,
+                (classItem) =>
+                    equalsIgnoreCase(classItem.name, className) &&
+                    classItem.category === "Class" &&
+                    classItem.quantity >= 22500,
             );
 
         if (rankFiveOrHigher("Dragon of Time")) bot.skills.startAdvanced("Dragon of Time", true, ClassUseMode.Solo);
@@ -3787,7 +4102,15 @@ export class CoreBots {
                 `🔥 Killing ${ultra ? "Ultra Xiang" : "Chaos Lord Xiang"} for ${item ?? "(none)"} (${current}/${quant}) [Temp = ${isTemp ? "True" : "False"}]`,
             );
         }
-        this.killMonster("mirrorportal", ultra ? "r6" : "r4", "Right", ultra ? "Ultra Xiang" : "Chaos Lord Xiang", item, quant, { isTemp, log });
+        this.killMonster(
+            "mirrorportal",
+            ultra ? "r6" : "r4",
+            "Right",
+            ultra ? "Ultra Xiang" : "Chaos Lord Xiang",
+            item,
+            quant,
+            { isTemp, log },
+        );
     }
 
     // C# _KillForItem(Monster, ...) and _KillForItem(name, int itemID, ...): not used, dropped.
@@ -3796,7 +4119,15 @@ export class CoreBots {
      * Kills a monster (by name, "*" = any) in your cell until you have the item.
      * @param cell Cell to stay in (jumps back if moved).
      */
-    _killForItem(name: string, item: string | null = null, quantity = 1, isTemp = false, rejectElse = false, log = true, cell: string | null = null): void {
+    _killForItem(
+        name: string,
+        item: string | null = null,
+        quantity = 1,
+        isTemp = false,
+        rejectElse = false,
+        log = true,
+        cell: string | null = null,
+    ): void {
         if (item === null) return;
 
         const trimmedName = formatForCompare(name.trim());
@@ -3821,7 +4152,8 @@ export class CoreBots {
             if (name === "*" && !bot.player.hasTarget) bot.combat.attack("*");
             // Only attack if we have no target, the target isn't {target} (always true here, like the
             // C# reference comparison) or it's dead.
-            else if (target && (!bot.player.hasTarget || bot.player.target !== target || target.hp <= 0)) bot.combat.attack(target.name);
+            else if (target && (!bot.player.hasTarget || bot.player.target !== target || target.hp <= 0))
+                bot.combat.attack(target.name);
 
             if (rejectElse) bot.drops.rejectExcept(item);
             this.sleep(250); // Small delay to prevent spam
@@ -3933,7 +4265,11 @@ export class CoreBots {
     debugLogger(marker: string | null = null, caller = ""): void {
         if (!this.dlEnabled) return;
         if (!caller) caller = callerName(1);
-        if ((this.dlMarkerFilter !== null && this.dlMarkerFilter !== marker) || (this.dlCallerFilter !== null && this.dlCallerFilter !== caller)) return;
+        if (
+            (this.dlMarkerFilter !== null && this.dlMarkerFilter !== marker) ||
+            (this.dlCallerFilter !== null && this.dlCallerFilter !== caller)
+        )
+            return;
         this.logger(`${marker ?? ""}${marker ? " | " : ""}${caller}`, "DEBUG LOGGER");
     }
 
@@ -3951,7 +4287,9 @@ export class CoreBots {
 
     /** Quantity of an item in the temp inventory, or the inventory+bank. */
     dynamicQuant(item: string, isTemp: boolean): number {
-        return isTemp ? bot.tempInv.getQuantity(item) : [...bot.inventory.items, ...bot.bank.items].find((x) => x.name === item)?.quantity ?? 0;
+        return isTemp
+            ? bot.tempInv.getQuantity(item)
+            : ([...bot.inventory.items, ...bot.bank.items].find((x) => x.name === item)?.quantity ?? 0);
     }
 
     /** Sets the aggro status {@link toggleAggro} restores. */
@@ -4004,13 +4342,20 @@ export class CoreBots {
      * Rank of the equipped class (`currentClass`), or of `className` from its class points (1 when
      * not found).
      */
-    checkClassRank({ currentClass = false, className = null }: { currentClass?: boolean; className?: string | null } = {}): number {
+    checkClassRank({
+        currentClass = false,
+        className = null,
+    }: { currentClass?: boolean; className?: string | null } = {}): number {
         if (currentClass && bot.player.currentClass !== null) {
-            this.debugLogger(`Current Class: ${bot.player.currentClass} | Current Rank: ${bot.player.currentClassRank}`);
+            this.debugLogger(
+                `Current Class: ${bot.player.currentClass} | Current Rank: ${bot.player.currentClassRank}`,
+            );
             return bot.player.currentClassRank;
         }
 
-        const classItem = [...bot.inventory.items, ...bot.bank.items].find((i) => i.name === className && categoryIs(i, "Class"));
+        const classItem = [...bot.inventory.items, ...bot.bank.items].find(
+            (i) => i.name === className && categoryIs(i, "Class"),
+        );
         if (className !== null && classItem) {
             this.logger(`Class: ${classItem.name} | Rank: ${classItem.quantity}`);
             // Minimum CP for each rank (CP < 900 stays at rank 1)
@@ -4042,7 +4387,9 @@ export class CoreBots {
             const healthThreshold = Math.ceil(bot.player.maxHealth / 50);
             if (this.shouldRest && bot.player.alive && bot.player.health < healthThreshold) {
                 bot.player.rest(false);
-                this.logger(`Resting initiated: Health below threshold (${bot.player.health}/${bot.player.maxHealth}).`);
+                this.logger(
+                    `Resting initiated: Health below threshold (${bot.player.health}/${bot.player.maxHealth}).`,
+                );
             }
         } catch (error) {
             rethrowIfStopped(error);
@@ -4141,7 +4488,13 @@ export class CoreBots {
         if (this.currentClass === classToUse && bot.skills.timerRunning) return;
         this.currentClass = classToUse;
 
-        const equipClass = (usingGeneric: boolean, className: string, classMode: ClassUseMode, useEquipment: boolean, equipment: string[]): boolean => {
+        const equipClass = (
+            usingGeneric: boolean,
+            className: string,
+            classMode: ClassUseMode,
+            useEquipment: boolean,
+            equipment: string[],
+        ): boolean => {
             if (usingGeneric) {
                 bot.log("Using generic");
                 return false;
@@ -4153,7 +4506,9 @@ export class CoreBots {
                 return false;
             }
 
-            const classItem = [...bot.inventory.items, ...bot.bank.items].find((x) => equalsIgnoreCase(x.name, className) && categoryIs(x, "Class"));
+            const classItem = [...bot.inventory.items, ...bot.bank.items].find(
+                (x) => equalsIgnoreCase(x.name, className) && categoryIs(x, "Class"),
+            );
             if (!classItem) {
                 this.logger(`Class "${className}" not found`);
                 return false;
@@ -4198,21 +4553,43 @@ export class CoreBots {
             return true;
         };
 
-        const configured = (name: string) => name !== "Generic" && name !== "(Current)" && name.length > 0 && this.checkInventory(name);
+        const configured = (name: string) =>
+            name !== "Generic" && name !== "(Current)" && name.length > 0 && this.checkInventory(name);
 
         switch (classToUse) {
             case ClassType.Farm:
-                if (configured(this.farmClass) && equipClass(this.usingFarmGeneric, this.farmClass, this.farmUseMode, this.farmGearOn, this.farmGear)) return;
+                if (
+                    configured(this.farmClass) &&
+                    equipClass(this.usingFarmGeneric, this.farmClass, this.farmUseMode, this.farmGearOn, this.farmGear)
+                )
+                    return;
                 break;
             case ClassType.Solo:
-                if (configured(this.soloClass) && equipClass(this.usingSoloGeneric, this.soloClass, this.soloUseMode, this.soloGearOn, this.soloGear)) return;
+                if (
+                    configured(this.soloClass) &&
+                    equipClass(this.usingSoloGeneric, this.soloClass, this.soloUseMode, this.soloGearOn, this.soloGear)
+                )
+                    return;
                 break;
             case ClassType.Dodge:
-                if (configured(this.dodgeClass) && equipClass(this.usingDodgeGeneric, this.dodgeClass, this.dodgeUseMode, this.dodgeGearOn, this.dodgeGear))
+                if (
+                    configured(this.dodgeClass) &&
+                    equipClass(
+                        this.usingDodgeGeneric,
+                        this.dodgeClass,
+                        this.dodgeUseMode,
+                        this.dodgeGearOn,
+                        this.dodgeGear,
+                    )
+                )
                     return;
                 break;
             case ClassType.Boss:
-                if (configured(this.bossClass) && equipClass(this.usingBossGeneric, this.bossClass, this.bossUseMode, this.bossGearOn, this.bossGear)) return;
+                if (
+                    configured(this.bossClass) &&
+                    equipClass(this.usingBossGeneric, this.bossClass, this.bossUseMode, this.bossGearOn, this.bossGear)
+                )
+                    return;
                 break;
             case ClassType.None:
                 break;
@@ -4332,7 +4709,9 @@ export class CoreBots {
         this.savedStateEnabled = on;
         this.logger(
             `SaveState [${this.savedStateEnabled ? "True" : "False"}] ` +
-                (this.savedStateEnabled ? "We'll randomly goto /whitemap to save your progress every 30mns to an hour" : ""),
+                (this.savedStateEnabled
+                    ? "We'll randomly goto /whitemap to save your progress every 30mns to an hour"
+                    : ""),
             "SaveStateHandler",
         );
 
@@ -4374,7 +4753,8 @@ export class CoreBots {
     private inventoryWearAndPattern(): Map<number, { wearing: boolean; enhancementPatternId: number }> {
         const result = new Map<number, { wearing: boolean; enhancementPatternId: number }>();
         for (const raw of bot.flash.get<GameItem[] | null>("world.myAvatar.items") ?? [])
-            if (raw) result.set(num(raw.ItemID), { wearing: flag(raw.bWear), enhancementPatternId: num(raw.EnhPatternID) });
+            if (raw)
+                result.set(num(raw.ItemID), { wearing: flag(raw.bWear), enhancementPatternId: num(raw.EnhPatternID) });
         return result;
     }
 
@@ -4397,7 +4777,8 @@ export class CoreBots {
         // Include ServerUse if boosts are not active
         if (
             !bot.boosts.enabled &&
-            (this.cboActive() || !["doGoldBoost", "doClassBoost", "doRepBoost", "doExpBoost"].some((key) => this.cboBool(key) === true))
+            (this.cboActive() ||
+                !["doGoldBoost", "doClassBoost", "doRepBoost", "doExpBoost"].some((key) => this.cboBool(key) === true))
         )
             allowedCategories.push("serveruse");
 
@@ -4430,10 +4811,14 @@ export class CoreBots {
 
         if (this.dlEnabled)
             for (const item of toBankItems)
-                this.debugLogger(`DEBUG - Banking: ${item.name} | Equipped: ${item.equipped} | Wearing: ${extras.get(item.id)?.wearing} | ID: ${item.id}`);
+                this.debugLogger(
+                    `DEBUG - Banking: ${item.name} | Equipped: ${item.equipped} | Wearing: ${extras.get(item.id)?.wearing} | ID: ${item.id}`,
+                );
 
         const selected = requiredSpaces > 0 ? toBankItems.slice(0, requiredSpaces) : toBankItems;
-        this.logger(`Banking misc AC items [${selected.length} items]: ${selected.map((item) => `"${item.name}"`).join(", ")}`);
+        this.logger(
+            `Banking misc AC items [${selected.length} items]: ${selected.map((item) => `"${item.name}"`).join(", ")}`,
+        );
         this.toBank(...selected.map((item) => item.id));
     }
 
@@ -4451,7 +4836,12 @@ export class CoreBots {
      * @param requiredSpaces Max number of items to bank; 0 means all.
      */
     bankACUnenhancedGear(requiredSpaces = 0, inventoryPool: string | null = null): void {
-        const allProtectedGear = CoreBots.combineGearSets([this.soloGear, this.farmGear, this.bossGear, this.dodgeGear]);
+        const allProtectedGear = CoreBots.combineGearSets([
+            this.soloGear,
+            this.farmGear,
+            this.bossGear,
+            this.dodgeGear,
+        ]);
         const extras = this.inventoryWearAndPattern();
 
         let bankableItems = bot.inventory.items.filter((item) => {
@@ -4477,13 +4867,20 @@ export class CoreBots {
         }
 
         const itemsToBank = requiredSpaces > 0 ? bankableItems.slice(0, requiredSpaces) : bankableItems;
-        this.logger(`🏦 Banking unenhanced AC gear [${itemsToBank.length} items]: ${itemsToBank.map((i) => `"${i.name}" x${i.quantity}`).join(", ")}`);
+        this.logger(
+            `🏦 Banking unenhanced AC gear [${itemsToBank.length} items]: ${itemsToBank.map((i) => `"${i.name}" x${i.quantity}`).join(", ")}`,
+        );
         this.toBank(...itemsToBank.map((i) => i.id));
     }
 
     /** Lowercased names of all the gear sets (case-insensitive set). */
     private static combineGearSets(gearSets: string[][]): Set<string> {
-        return new Set(gearSets.flat().filter((item) => item.trim().length > 0).map((item) => item.toLowerCase()));
+        return new Set(
+            gearSets
+                .flat()
+                .filter((item) => item.trim().length > 0)
+                .map((item) => item.toLowerCase()),
+        );
     }
 
     static readonly reinstallCleanFlash =
@@ -4532,7 +4929,8 @@ export class CoreBots {
         ];
         const mapName = bot.map.name;
         const currentMap = levelLockedMaps.find((m) => m.map === mapName);
-        if (!currentMap || flashLevel >= currentMap.levelRequired || bot.player.level >= currentMap.levelRequired) return;
+        if (!currentMap || flashLevel >= currentMap.levelRequired || bot.player.level >= currentMap.levelRequired)
+            return;
 
         if (flashLevel < currentMap.levelRequired) this.logger("Bypass Broke, resetting level");
 
@@ -4542,7 +4940,10 @@ export class CoreBots {
         this.sleep();
 
         // Send a client packet to set the player's level to 100
-        bot.send.clientPacket('{"t":"xt","b":{"r":-1,"o":{"cmd":"levelUp","intExpToLevel":"0","intLevel":100}}}', "json");
+        bot.send.clientPacket(
+            '{"t":"xt","b":{"r":-1,"o":{"cmd":"levelUp","intExpToLevel":"0","intLevel":100}}}',
+            "json",
+        );
         this.sleep();
 
         this.jump(cellPad[0], cellPad[1]);
@@ -4598,7 +4999,9 @@ export class CoreBots {
         for (const cell of cells) {
             if (
                 cell &&
-                (/(^cut\w*$)|(^\w*cut$)|(^cut$)|(^r\d+$)|^(bs\d+|ar\d+|ms\d+|apo\d+|guild|move\d+|moveframe|game)$/i.test(cell) ||
+                (/(^cut\w*$)|(^\w*cut$)|(^cut$)|(^r\d+$)|^(bs\d+|ar\d+|ms\d+|apo\d+|guild|move\d+|moveframe|game)$/i.test(
+                    cell,
+                ) ||
                     blacklistPatterns.some((pattern) => pattern.test(cell)) ||
                     (playerCell !== "Enter" && cell.toLowerCase().includes("enter")))
             )
@@ -4711,7 +5114,9 @@ export class CoreBots {
 
         // Viable cells: not in the static list nor the blacklist (case-insensitive)
         const staticList = new Set(this.blackListedJumptoCells.map((c) => c.toLowerCase()));
-        const viableCells = unique(cells.filter((c) => !staticList.has(c.toLowerCase()) && !blackListed.has(c.toLowerCase())));
+        const viableCells = unique(
+            cells.filter((c) => !staticList.has(c.toLowerCase()) && !blackListed.has(c.toLowerCase())),
+        );
 
         const cellPad: [string, string] =
             viableCells.length > 0
@@ -4726,7 +5131,11 @@ export class CoreBots {
 
     private performJump(cellPad: [string, string], jumpCount: number): void {
         const mapName = bot.map.name;
-        if (this.lastMapJW !== mapName || this.lastCellPadJW[0] !== cellPad[0] || this.lastCellPadJW[1] !== cellPad[1]) {
+        if (
+            this.lastMapJW !== mapName ||
+            this.lastCellPadJW[0] !== cellPad[0] ||
+            this.lastCellPadJW[1] !== cellPad[1]
+        ) {
             for (let i = 0; i < jumpCount; i++) {
                 bot.map.jump(cellPad[0], cellPad[1], this.inPublicRoom());
                 this.waitForTrue(() => bot.player.cell === cellPad[0], 20);
@@ -4771,7 +5180,12 @@ export class CoreBots {
      * @param cell The cell to jump to.
      * @param pad The pad to jump to.
      */
-    join(mapArg: string | null | undefined, cell: string | null = "Enter", pad = "Spawn", options: JoinOptions = {}): void {
+    join(
+        mapArg: string | null | undefined,
+        cell: string | null = "Enter",
+        pad = "Spawn",
+        options: JoinOptions = {},
+    ): void {
         const { publicRoom = false, ignoreCheck = false } = options;
         if (!mapArg) {
             this.logger("Map is null, cannot join.");
@@ -4806,9 +5220,16 @@ export class CoreBots {
                         }
                         const type = packet?.params?.type;
                         const data = packet?.params?.dataObj;
-                        if (type === "str" && Array.isArray(data) && data[0] === "warning" && JSON.stringify(packet).includes("is an Membership-Only Map")) {
+                        if (
+                            type === "str" &&
+                            Array.isArray(data) &&
+                            data[0] === "warning" &&
+                            JSON.stringify(packet).includes("is an Membership-Only Map")
+                        ) {
                             offMemberLock();
-                            this.logger(` "${map}" requires membership to access it. Stopping the Bot.`, "", { stopBot: true });
+                            this.logger(` "${map}" requires membership to access it. Stopping the Bot.`, "", {
+                                stopBot: true,
+                            });
                         }
                     } catch (error) {
                         rethrowIfStopped(error);
@@ -4826,8 +5247,17 @@ export class CoreBots {
 
                         // Join if we are not in the desired map
                         if (map && bot.map.name !== map) {
-                            const target = hasMapNumber || (publicRoom && this.publicDifficult) || !this.privateRooms ? map : `${map}-${this.privateRoomNumber}`;
-                            bot.map.join(target, cell ?? "Enter", cell === null ? "Spawn" : pad ?? "Left", false, this.inPublicRoom());
+                            const target =
+                                hasMapNumber || (publicRoom && this.publicDifficult) || !this.privateRooms
+                                    ? map
+                                    : `${map}-${this.privateRoomNumber}`;
+                            bot.map.join(
+                                target,
+                                cell ?? "Enter",
+                                cell === null ? "Spawn" : (pad ?? "Left"),
+                                false,
+                                this.inPublicRoom(),
+                            );
 
                             // Wait for the correct map (full name, not stripped)
                             bot.wait.forMapLoad(map);
@@ -4839,16 +5269,25 @@ export class CoreBots {
                         // Update blacklisted cells
                         this.blackListedJumptoCells = unique([
                             ...this.blackListedJumptoCells,
-                            ...bot.map.cells.filter((x) => x && /(^cut\w*$)|(^\w*cut$)|(^cut$)|^r\d+$|^(bs\d+|ar\d+|ms\d+|apo\d+|guild)$/i.test(x)),
+                            ...bot.map.cells.filter(
+                                (x) =>
+                                    x &&
+                                    /(^cut\w*$)|(^\w*cut$)|(^cut$)|^r\d+$|^(bs\d+|ar\d+|ms\d+|apo\d+|guild)$/i.test(x),
+                            ),
                         ]);
 
                         // Auto-cell selection for maps (skip oaklore)
                         if (map !== "oaklore" && (cell === null || cell === "Enter")) {
                             const cells = bot.map.cells;
                             const validCells = cells.filter(
-                                (x) => x && !this.blackListedJumptoCells.some((b) => x.toLowerCase().includes(b.toLowerCase())),
+                                (x) =>
+                                    x &&
+                                    !this.blackListedJumptoCells.some((b) => x.toLowerCase().includes(b.toLowerCase())),
                             );
-                            cell = cells.filter((x) => x.toLowerCase().includes("enter")).length > 1 ? validCells[0] ?? null : "Enter";
+                            cell =
+                                cells.filter((x) => x.toLowerCase().includes("enter")).length > 1
+                                    ? (validCells[0] ?? null)
+                                    : "Enter";
 
                             if (cell !== null && bot.player.cell !== cell) {
                                 bot.map.jump(cell, pad ?? "Spawn", false);
@@ -4860,7 +5299,8 @@ export class CoreBots {
                         if (equalsIgnoreCase(bot.map.name, strippedMap)) {
                             if (bot.options.safeTimings) {
                                 if (map && !bot.wait.forMapLoad(map, 20)) {
-                                    if (cell !== null && bot.player.cell !== cell) bot.map.jump(bot.player.cell, bot.player.pad, this.inPublicRoom());
+                                    if (cell !== null && bot.player.cell !== cell)
+                                        bot.map.jump(bot.player.cell, bot.player.pad, this.inPublicRoom());
                                 } else if (cell !== null && bot.player.cell !== cell) {
                                     bot.map.jump(cell, pad ?? "Spawn", this.inPublicRoom());
                                 }
@@ -4885,7 +5325,10 @@ export class CoreBots {
         const simpleQuestBypass = (...slotValues: [slot: number, value: number][]): void => {
             try {
                 for (const [slot, value] of slotValues)
-                    bot.send.clientPacket(`{"t":"xt","b":{"r":-1,"o":{"cmd":"updateQuest","iValue":${value},"iIndex":${slot}}}}`, "json");
+                    bot.send.clientPacket(
+                        `{"t":"xt","b":{"r":-1,"o":{"cmd":"updateQuest","iValue":${value},"iIndex":${slot}}}}`,
+                        "json",
+                    );
                 this.sleep();
                 tryJoin();
             } catch (error) {
@@ -4939,7 +5382,10 @@ export class CoreBots {
                         [15, 8],
                         [542, 2],
                     ] as const)
-                        bot.send.clientPacket(`{"t":"xt","b":{"r":-1,"o":{"cmd":"updateQuest","iValue":${value},"iIndex":${slot}}}}`, "json");
+                        bot.send.clientPacket(
+                            `{"t":"xt","b":{"r":-1,"o":{"cmd":"updateQuest","iValue":${value},"iIndex":${slot}}}}`,
+                            "json",
+                        );
                     this.sleep();
                     tryJoin();
                     this.join("citadel");
@@ -4966,9 +5412,18 @@ export class CoreBots {
             case "icestormarena":
                 this.jumpWait();
                 if (bot.map.name && bot.map.name !== map)
-                    bot.map.join(this.privateRooms ? `${map}-${this.privateRoomNumber}` : map, "Enter", "Spawn", false, this.inPublicRoom());
+                    bot.map.join(
+                        this.privateRooms ? `${map}-${this.privateRoomNumber}` : map,
+                        "Enter",
+                        "Spawn",
+                        false,
+                        this.inPublicRoom(),
+                    );
                 bot.wait.forMapLoad("icestormarena");
-                bot.send.clientPacket('{"t":"xt","b":{"r":-1,"o":{"cmd":"levelUp","intExpToLevel":"0","intLevel":100}}}', "json");
+                bot.send.clientPacket(
+                    '{"t":"xt","b":{"r":-1,"o":{"cmd":"levelUp","intExpToLevel":"0","intLevel":100}}}',
+                    "json",
+                );
                 this.sleep();
                 if (cell !== null && bot.player.cell !== cell) bot.map.jump(cell ?? "Enter", pad, this.inPublicRoom());
                 bot.wait.forCellChange(cell ?? "Enter");
@@ -5081,7 +5536,8 @@ export class CoreBots {
             let attempts = 0;
             for (;;) {
                 const item = bot.tempInv.getItem(newItem.name);
-                if (bot.tempInv.getQuantity(newItem.name) >= quant || item === null || item.quantity >= item.maxStack) break;
+                if (bot.tempInv.getQuantity(newItem.name) >= quant || item === null || item.quantity >= item.maxStack)
+                    break;
                 bot.map.getMapItem(itemId);
                 this.sleep(1000);
                 attempts++;
@@ -5100,7 +5556,9 @@ export class CoreBots {
     pvpMove(mtcid: number, cell: string, moveX = 0, moveY = 0): void {
         for (;;) {
             // Different maps = different walk speeds for pvp apparently
-            bot.send.packet(`%xt%zm%mv%${bot.map.roomId}%${moveX}%${moveY}%${bot.map.name === "dagepvp" ? "10%" : "8%"}`);
+            bot.send.packet(
+                `%xt%zm%mv%${bot.map.roomId}%${moveX}%${moveY}%${bot.map.name === "dagepvp" ? "10%" : "8%"}`,
+            );
             this.sleep(2500);
             bot.send.packet(`%xt%zm%mtcid%${bot.map.roomId}%${mtcid}%`);
             this.sleep(2500);
@@ -5164,8 +5622,7 @@ export class CoreBots {
     isSeasonalMapActive(map: string, log = true): boolean {
         map = map.toLowerCase().replaceAll(" ", "");
 
-        if (bot.map.name != null && bot.map.name.toLowerCase() === map)
-            return true;
+        if (bot.map.name != null && bot.map.name.toLowerCase() === map) return true;
 
         this.jumpWait();
 
@@ -5174,18 +5631,19 @@ export class CoreBots {
             const type = packet?.params?.type;
             const data = packet?.params?.dataObj;
 
-            if (type !== "str")
-                return;
+            if (type !== "str") return;
 
             const cmd = data?.[0];
-            if (cmd !== "warning")
-                return;
+            if (cmd !== "warning") return;
 
             const bLower = JSON.stringify(packet).toLowerCase();
 
-            if (bLower.includes("is not available.") || bLower.includes("map is locked until event begins") || bLower.includes("house item from /basecamp")) {
-                if (log)
-                    this.logger(`[${map}] Seasonal Message: ${data[2]}`);
+            if (
+                bLower.includes("is not available.") ||
+                bLower.includes("map is locked until event begins") ||
+                bLower.includes("house item from /basecamp")
+            ) {
+                if (log) this.logger(`[${map}] Seasonal Message: ${data[2]}`);
 
                 seasonalMessageProc = true;
             }
@@ -5194,16 +5652,20 @@ export class CoreBots {
 
         try {
             for (let i = 0; i < 20 && !bot.shouldExit; i++) {
-                if (seasonalMessageProc)
-                    return false;
+                if (seasonalMessageProc) return false;
 
                 if (bot.map.name != null && bot.map.name.toLowerCase() !== map)
-                    bot.map.join(!this.privateRooms ? map : `${map}-${this.privateRoomNumber}`, "Enter", "Spawn", false, this.inPublicRoom());
+                    bot.map.join(
+                        !this.privateRooms ? map : `${map}-${this.privateRoomNumber}`,
+                        "Enter",
+                        "Spawn",
+                        false,
+                        this.inPublicRoom(),
+                    );
 
                 // Poll for up to 2 seconds, checking for an unavailable warning every 100 ms.
                 for (let wait = 0; wait < 20 && !bot.shouldExit; wait++) {
-                    if (seasonalMessageProc)
-                        return false;
+                    if (seasonalMessageProc) return false;
 
                     const currentMap = bot.map.name;
                     if (currentMap && currentMap.toLowerCase() === map) {
@@ -5214,11 +5676,9 @@ export class CoreBots {
                     this.sleep();
                 }
 
-                if (seasonalMessageProc)
-                    return false;
+                if (seasonalMessageProc) return false;
 
-                if (i === 19)
-                    this.logger(`Failed to join ${map}`);
+                if (i === 19) this.logger(`Failed to join ${map}`);
             }
 
             return false;
@@ -5248,7 +5708,9 @@ export class CoreBots {
         this.join(selectedMap[0], selectedMap[1], "Left");
 
         // C# precedence kept: (!ShouldExit && isTemp) ? !TempInv.Contains : !Inventory.Contains
-        while (!bot.shouldExit && isTemp ? !bot.tempInv.contains(item, quantity) : !bot.inventory.contains(item, quantity)) {
+        while (
+            !bot.shouldExit && isTemp ? !bot.tempInv.contains(item, quantity) : !bot.inventory.contains(item, quantity)
+        ) {
             if (bot.player.cell !== selectedMap[1]) this.jump(selectedMap[1]);
             bot.combat.attack("Dark Makai");
             this.sleep();
@@ -5286,7 +5748,9 @@ export class CoreBots {
      */
     getItemProperty<T>(item: InventoryItem | CoreShopItem, prop: string): T | null {
         const fromList = (path: string): T | null =>
-            (bot.flash.get<Record<string, unknown>[] | null>(path)?.find((d) => num(d.ItemID) === item.id)?.[prop] as T | undefined) ?? null;
+            (bot.flash.get<Record<string, unknown>[] | null>(path)?.find((d) => num(d.ItemID) === item.id)?.[prop] as
+                | T
+                | undefined) ?? null;
         if ("shopItemId" in item) return fromList("world.shopinfo.items");
         if (bot.inventory.contains(item.id)) return bot.flash.get<T | null>(`world.invTree.${item.id}.${prop}`);
         // Also covers banked house items
@@ -5414,9 +5878,18 @@ export class CoreBots {
      * Logs a message once per script run (C# keeps a OneTimeMessages.txt file; Turu keeps it in
      * memory). Message boxes don't exist in Turu, so it never returns "Yes".
      */
-    oneTimeMessage(internalName: string, message: string, _messageBox = true, _forcedMessageBox = false, _yesAndNo = false): boolean {
+    oneTimeMessage(
+        internalName: string,
+        message: string,
+        _messageBox = true,
+        _forcedMessageBox = false,
+        _yesAndNo = false,
+    ): boolean {
         if (this.oneTimeMessages.has(internalName)) return false;
-        this.logger("Please make sure you read this as it will only be shown once:\n\n" + message, "One Time-Only Message");
+        this.logger(
+            "Please make sure you read this as it will only be shown once:\n\n" + message,
+            "One Time-Only Message",
+        );
         this.oneTimeMessages.add(internalName);
         return false;
     }

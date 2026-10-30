@@ -15,27 +15,26 @@ const Nation = new CoreNation();
 
 export class WillpowerExtraction {
     unidentified34(quant = 300): void {
-        if (Core.checkInventory("Unidentified 34", quant))
-            return;
+        if (Core.checkInventory("Unidentified 34", quant)) return;
 
         Core.farmingLogger("Unidentified 34", quant);
 
         Core.addDrop(
-            ...Nation
-                .bagDrops.concat(Nation.tercessBags)
-                .concat(
-                    [
-                        "Unidentified 34",
-                        "Unidentified 19",
-                        "Necrot",
-                        "Chaoroot",
-                        "Doomatter",
-                        "Facebreakers of Nulgath",
-                        "SightBlinder Axes of Nulgath",
-                        "Mystic Tribal Sword",
-                        "Golden Shadow Breaker",
-                        "Shadow Terror Axe",
-                    ]));
+            ...Nation.bagDrops
+                .concat(Nation.tercessBags)
+                .concat([
+                    "Unidentified 34",
+                    "Unidentified 19",
+                    "Necrot",
+                    "Chaoroot",
+                    "Doomatter",
+                    "Facebreakers of Nulgath",
+                    "SightBlinder Axes of Nulgath",
+                    "Mystic Tribal Sword",
+                    "Golden Shadow Breaker",
+                    "Shadow Terror Axe",
+                ]),
+        );
 
         while (!bot.shouldExit && !Core.checkInventory("Unidentified 34", quant)) {
             Core.ensureAccept(5258);
@@ -43,22 +42,20 @@ export class WillpowerExtraction {
             Adv.buyItem("shadowfall", 89, "Shadow Lich");
 
             if (!Core.checkInventory(Nation.uni(19))) {
-                if (Core.isMember)
-                    Adv.buyItem("tercessuinotlim", 1951, "Unidentified 19");
-                else
-                    Nation.supplies("Unidentified 19");
+                if (Core.isMember) Adv.buyItem("tercessuinotlim", 1951, "Unidentified 19");
+                else Nation.supplies("Unidentified 19");
             }
-          
+
             if (!Core.checkInventory("Necrot", 5)) {
                 Adv.buyItem("tercessuinotlim", 1951, "Necrot", 10);
                 bot.wait.forItemBuy();
             }
-           
+
             if (!Core.checkInventory("Chaoroot", 5)) {
                 Adv.buyItem("tercessuinotlim", 1951, "Chaoroot", 10);
                 bot.wait.forItemBuy();
             }
-           
+
             if (!Core.checkInventory("Doomatter", 5)) {
                 Adv.buyItem("tercessuinotlim", 1951, "Doomatter", 10);
                 bot.wait.forItemBuy();
@@ -92,34 +89,33 @@ export class WillpowerExtraction {
             Core.ensureComplete(5258);
             bot.wait.forQuestComplete(5258);
             bot.wait.forPickup("Unidentified 34");
-
         }
     }
 }
 
 export default function main(): void {
-        Core.bankingBlackList.push(...
-            Nation
-                .bagDrops.concat(Nation.tercessBags)
-                .concat(
-                    [
-                        "Unidentified 34",
-                        "Unidentified 19",
-                        "Necrot",
-                        "Chaoroot",
-                        "Doomatter",
-                        "Mortality Cape of Revontheus",
-                        "Facebreakers of Nulgath",
-                        "SightBlinder Axes of Nulgath",
-                        "Mystic Tribal Sword",
-                        "King Klunk's Crown",
-                        "Golden Shadow Breaker",
-                        "Shadow Terror Axe",
-                    ]));
+    Core.bankingBlackList.push(
+        ...Nation.bagDrops
+            .concat(Nation.tercessBags)
+            .concat([
+                "Unidentified 34",
+                "Unidentified 19",
+                "Necrot",
+                "Chaoroot",
+                "Doomatter",
+                "Mortality Cape of Revontheus",
+                "Facebreakers of Nulgath",
+                "SightBlinder Axes of Nulgath",
+                "Mystic Tribal Sword",
+                "King Klunk's Crown",
+                "Golden Shadow Breaker",
+                "Shadow Terror Axe",
+            ]),
+    );
 
-        Core.setOptions();
+    Core.setOptions();
 
-        new WillpowerExtraction().unidentified34();
+    new WillpowerExtraction().unidentified34();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

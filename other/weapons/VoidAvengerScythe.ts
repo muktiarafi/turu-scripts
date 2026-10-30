@@ -27,8 +27,7 @@ export class VoidAvengerScythe {
         this.snowbeardsQuests();
         this.donnaCharmersQuests();
 
-        if (Core.checkInventory("Void Avenger Scythe"))
-            return;
+        if (Core.checkInventory("Void Avenger Scythe")) return;
 
         Core.logger("Farming Void Avenger Scythe.");
 
@@ -84,8 +83,7 @@ export class VoidAvengerScythe {
     }
 
     donnaCharmersQuests(): void {
-        if (Core.isCompletedBefore(327))
-            return;
+        if (Core.isCompletedBefore(327)) return;
 
         // Requirements: Must have completed the 'Bear Facts' quest.
 
@@ -100,8 +98,7 @@ export class VoidAvengerScythe {
     }
 
     snowbeardsQuests(): void {
-        if (Core.isCompletedBefore(322))
-            return;
+        if (Core.isCompletedBefore(322)) return;
 
         // Adorable Sisters
         Story.mapItemQuest(319, "tavern", 56, 7);
@@ -115,9 +112,9 @@ export class VoidAvengerScythe {
 }
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new VoidAvengerScythe().skewsQuests();
+    new VoidAvengerScythe().skewsQuests();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

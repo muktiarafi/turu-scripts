@@ -40,8 +40,7 @@ export class DragonOfTime {
     ];
 
     getDoT(rankUpClass = true, doExtra = true, DotArmorOnly = false): void {
-        if (doExtra ? Core.checkInventory(this.extras) : Core.checkInventory("Dragon of Time"))
-            return;
+        if (doExtra ? Core.checkInventory(this.extras) : Core.checkInventory("Dragon of Time")) return;
 
         Story.preLoad(this.getDoT);
 
@@ -62,7 +61,10 @@ export class DragonOfTime {
             Core.equipClass(ClassType.Solo);
             Core.huntMonster("kingcoal", "Frost King", "Frost King's Story", 1, { isTemp: false });
 
-            Core.killMonster("baconcatyou", "Enter", "Spawn", "*", "Your Own Memories", 1, { isTemp: false, publicRoom: true });
+            Core.killMonster("baconcatyou", "Enter", "Spawn", "*", "Your Own Memories", 1, {
+                isTemp: false,
+                publicRoom: true,
+            });
             Story.chainQuest(7716);
             bot.wait.forPickup("*");
             Core.toBank("Dragon of Time Helm", "Dragon of Time Ponytail");
@@ -73,7 +75,10 @@ export class DragonOfTime {
             Core.ensureAccept(7717);
 
             Core.equipClass(ClassType.Solo);
-            Core.huntMonster("dragonchallenge", "Desoloth the Final", "Desoloth's Destructive Aura", 1, { isTemp: false, publicRoom: true });
+            Core.huntMonster("dragonchallenge", "Desoloth the Final", "Desoloth's Destructive Aura", 1, {
+                isTemp: false,
+                publicRoom: true,
+            });
 
             bot.quests.updateQuest(899);
             Core.huntMonster("blindingsnow", "Nythera", "Nythera's Patience", 1, { isTemp: false });
@@ -120,7 +125,10 @@ export class DragonOfTime {
             Core.ensureAccept(7719);
 
             Core.equipClass(ClassType.Solo);
-            Core.huntMonster("cathedral", "Incarnation of Time", "Time Loop Broken", 1, { isTemp: false, publicRoom: true });
+            Core.huntMonster("cathedral", "Incarnation of Time", "Time Loop Broken", 1, {
+                isTemp: false,
+                publicRoom: true,
+            });
 
             Core.equipClass(ClassType.Farm);
             Core.killMonster("portalwar", "r4", "Right", "*", "Anomaly Silenced", 100, { isTemp: false });
@@ -134,8 +142,7 @@ export class DragonOfTime {
         }
 
         // If we are only getting the armor, we can return here.
-        if (DotArmorOnly)
-            return;
+        if (DotArmorOnly) return;
 
         // Rend 7720
         if (!Story.questProgression(7720)) {
@@ -144,7 +151,10 @@ export class DragonOfTime {
 
             Core.equipClass(ClassType.Solo);
             Core.huntMonster("lairdefend", "Dragon Summoner", "Dimensional Dragon Portal", 2, { isTemp: false });
-            Core.huntMonster("bosschallenge", "Grievous Inbunche", "Brutal Slash Studied", 10, { isTemp: false, publicRoom: true });
+            Core.huntMonster("bosschallenge", "Grievous Inbunche", "Brutal Slash Studied", 10, {
+                isTemp: false,
+                publicRoom: true,
+            });
             Core.killMonster("hydrachallenge", "h90", "Left", "*", "Epic Hydra Fang", 125, { isTemp: false });
 
             Story.chainQuest(7720);
@@ -175,7 +185,10 @@ export class DragonOfTime {
             }
 
             Core.equipClass(ClassType.Farm);
-            Core.killMonster("aqw3d", "r13", "Bottom", "*", "Cross-Dimensional Weapons", 300, { isTemp: false, publicRoom: true });
+            Core.killMonster("aqw3d", "r13", "Bottom", "*", "Cross-Dimensional Weapons", 300, {
+                isTemp: false,
+                publicRoom: true,
+            });
             TOD.shiftingPyramid();
             if (!Core.checkInventory("Starlight Singularity")) {
                 Core.addDrop("Starlight Singularity");
@@ -204,28 +217,40 @@ export class DragonOfTime {
             Core.huntMonster("moonlab", "Slime Mold", "Unyielding Slime", 300, { isTemp: false });
 
             Core.equipClass(ClassType.Solo);
-            Core.huntMonster("bosschallenge", "Mutated Void Dragon", "Omnipotent Cells", 20, { isTemp: false, publicRoom: true });
+            Core.huntMonster("bosschallenge", "Mutated Void Dragon", "Omnipotent Cells", 20, {
+                isTemp: false,
+                publicRoom: true,
+            });
             if (!Core.checkInventory("Dragon's Plasma", 20)) {
                 //why the fuck was the class buffed!?
-                const usethis = bot.inventory.items.concat(bot.bank.items).find(n => n.name === "Yami no Ronin" || n.name.startsWith("Chaos Slayer"));
+                const usethis = bot.inventory.items
+                    .concat(bot.bank.items)
+                    .find((n) => n.name === "Yami no Ronin" || n.name.startsWith("Chaos Slayer"));
                 if (usethis != null) {
                     Core.equip(usethis.id);
                     Core.equip(...Core.farmGear);
-                    if (usethis.name === "Yami no Ronin")
-                        bot.skills.startAdvanced("1 | 4");
-                } else
-                    Core.equipClass(ClassType.Dodge);
+                    if (usethis.name === "Yami no Ronin") bot.skills.startAdvanced("1 | 4");
+                } else Core.equipClass(ClassType.Dodge);
                 Core.huntMonster("underlair", "ArchFiend Dragonlord", "Dragon's Plasma", 20, { isTemp: false });
             }
             Core.jumpWait();
             Core.equipClass(ClassType.Solo);
 
-            Core.huntMonster("chaoskraken", "Chaos Kraken", "Chaotic Invertebrae", 20, { isTemp: false, publicRoom: true });
+            Core.huntMonster("chaoskraken", "Chaos Kraken", "Chaotic Invertebrae", 20, {
+                isTemp: false,
+                publicRoom: true,
+            });
 
             bot.quests.updateQuest(9, 159);
-            Core.huntMonster("towerofdoom9", "Dread Fang", "Cryostatic Essence", 20, { isTemp: false, publicRoom: true });
+            Core.huntMonster("towerofdoom9", "Dread Fang", "Cryostatic Essence", 20, {
+                isTemp: false,
+                publicRoom: true,
+            });
 
-            Core.huntMonster("castleroof", "Ultra Chaos Dragon", "Salvaged Chaos Dragon Biomass", 20, { isTemp: false, publicRoom: true });
+            Core.huntMonster("castleroof", "Ultra Chaos Dragon", "Salvaged Chaos Dragon Biomass", 20, {
+                isTemp: false,
+                publicRoom: true,
+            });
             Story.chainQuest(7722);
             bot.wait.forPickup("*");
             Core.toBank("Dragon of Time Reaper", "Dragon of Time WingBlade");
@@ -240,7 +265,10 @@ export class DragonOfTime {
             Core.killMonster("volcano", "r10", "Left", "Fire Imp", "Fire Essence", 3000, { isTemp: false });
 
             Core.equipClass(ClassType.Solo);
-            Core.huntMonster("charredplains", "Akriloth", "Akriloth's Flametongue", 100, { isTemp: false, publicRoom: true });
+            Core.huntMonster("charredplains", "Akriloth", "Akriloth's Flametongue", 100, {
+                isTemp: false,
+                publicRoom: true,
+            });
             Core.huntMonster("ultraphedra", "Ultra Phedra", "Immortal Embers", 50, { isTemp: false, publicRoom: true });
             Core.huntMonster("thevoid", "Reaper", "Ashes from the Void Realm", 50, { isTemp: false, publicRoom: true });
             Story.chainQuest(7723);
@@ -251,8 +279,7 @@ export class DragonOfTime {
         // Hero's Heartbeat 7724
         if (!Story.questProgression(7724) || !Core.checkInventory("Dragon of Time")) {
             Farm.experience(75);
-            if (!Core.checkInventory("Blade of Awe"))
-                Farm.bladeofAweREP(6, true);
+            if (!Core.checkInventory("Blade of Awe")) Farm.bladeofAweREP(6, true);
             Core.ensureAccept(7724);
 
             Egg.getMysteriousEgg();
@@ -261,12 +288,18 @@ export class DragonOfTime {
             const chaosProgress = bot.flash.callGameFunction<number>("world.getQuestValue", 182);
             try {
                 bot.quests.updateQuest(3880);
-                Core.killMonster("chaoslord", "r2", "Left", "*", "Conquered Past", 1, { isTemp: false, publicRoom: true });
+                Core.killMonster("chaoslord", "r2", "Left", "*", "Conquered Past", 1, {
+                    isTemp: false,
+                    publicRoom: true,
+                });
             } finally {
                 bot.quests.updateQuest(chaosProgress, 182);
             }
             bot.quests.updateQuest(10, 159);
-            Core.huntMonster("towerofdoom10", "Slugbutter", "Slugbutter Trophy", 100, { isTemp: false, publicRoom: true });
+            Core.huntMonster("towerofdoom10", "Slugbutter", "Slugbutter Trophy", 100, {
+                isTemp: false,
+                publicRoom: true,
+            });
             Core.equipClass(ClassType.Dodge);
             Core.huntMonster("icewing", "Warlord Icewing", "Icewing's Laurel", 30, { isTemp: false, publicRoom: true });
             Story.chainQuest(7724);
@@ -275,8 +308,7 @@ export class DragonOfTime {
             Core.toBank("Ascended Dragon of Time Morph", "Ascended Dragon of Time Wings");
         }
 
-        if (rankUpClass)
-            Adv.rankUpClass("Dragon of Time");
+        if (rankUpClass) Adv.rankUpClass("Dragon of Time");
 
         // I'm Loving It My Way 7725
         if (doExtra) {
@@ -284,12 +316,10 @@ export class DragonOfTime {
             Farm.experience(75);
             Core.addDrop("Burger Buns");
             Core.equipClass(ClassType.Solo);
-            bot.drops.add(
-                ...this.extras.filter(x => Core.checkInventory(x, 1, { toInv: false })).map(x => x));
+            bot.drops.add(...this.extras.filter((x) => Core.checkInventory(x, 1, { toInv: false })).map((x) => x));
             for (const _item of Core.questRewards(7725)
-                    .filter(x => !Core.checkInventory(x, 1, { toInv: false }))
-                    .map(x => x)
-            ) {
+                .filter((x) => !Core.checkInventory(x, 1, { toInv: false }))
+                .map((x) => x)) {
                 Core.ensureAccept(7725);
                 if (!Core.checkInventory("Borgar")) {
                     while (!bot.shouldExit && !Core.checkInventory("Burger Buns", 5)) {
@@ -305,18 +335,15 @@ export class DragonOfTime {
                 Core.ensureCompleteChoose(7725, this.extras);
                 bot.wait.forPickup("*");
             }
-            Core.toBank(
-                "Dragon of Time Horns", 
-                "Dragon of Time Horns + Ponytail", 
-                "Dragon of Time Wings + Tail");
+            Core.toBank("Dragon of Time Horns", "Dragon of Time Horns + Ponytail", "Dragon of Time Wings + Tail");
         }
     }
 }
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new DragonOfTime().getDoT();
+    new DragonOfTime().getDoT();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

@@ -20,8 +20,7 @@ export class DarkWarLegionandNation {
     }
 
     darkWarLegion(): void {
-        if (Core.isCompletedBefore(8588))
-            return;
+        if (Core.isCompletedBefore(8588)) return;
 
         Story.preLoad(this.darkWarLegion);
 
@@ -50,10 +49,8 @@ export class DarkWarLegionandNation {
             Core.equipClass(ClassType.Solo);
             Core.ensureAccept(8560);
             while (!bot.shouldExit && bot.map.name !== "dagerecruit" && bot.player?.cell !== "r3") {
-                if (bot.map.name !== "dagerecruit")
-                    Core.join("dagerecruit");
-                if (bot.player?.cell !== "r3")
-                    Core.jump("r3", "Left");
+                if (bot.map.name !== "dagerecruit") Core.join("dagerecruit");
+                if (bot.player?.cell !== "r3") Core.jump("r3", "Left");
                 Core.sleep();
             }
             Core.killMonster("dagerecruit", "r3", "Left", "Graython", "Graython Defeated");
@@ -156,8 +153,7 @@ export class DarkWarLegionandNation {
     }
 
     darkWarNation(): void {
-        if (Core.isCompletedBefore(8583))
-            return;
+        if (Core.isCompletedBefore(8583)) return;
 
         LOC.vath();
 
@@ -184,9 +180,9 @@ export class DarkWarLegionandNation {
 }
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new DarkWarLegionandNation().doBoth();
+    new DarkWarLegionandNation().doBoth();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

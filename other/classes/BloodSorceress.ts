@@ -13,8 +13,7 @@ const Adv = new CoreAdvanced();
 
 export class BloodSorceress {
     getBSorc(rankUpClass = true): void {
-        if (Core.checkInventory(/*Blood Sorceress*/36298)
-        ) {
+        if (Core.checkInventory(/*Blood Sorceress*/ 36298)) {
             if (rankUpClass) {
                 Adv.rankUpClass("Blood Sorceress", { itemId: 36298 });
             }
@@ -22,19 +21,22 @@ export class BloodSorceress {
         }
 
         Core.equipClass(ClassType.Solo);
-        Core.killMonster("towerofmirrors", "r16", "Top", 32, 36298, 1, { isTemp: false, log: false, publicRoom: false });
+        Core.killMonster("towerofmirrors", "r16", "Top", 32, 36298, 1, {
+            isTemp: false,
+            log: false,
+            publicRoom: false,
+        });
         Core.jumpWait();
         bot.wait.forPickup(36298);
 
-        if (rankUpClass)
-            Adv.rankUpClass("Blood Sorceress", { itemId: 36298 });
+        if (rankUpClass) Adv.rankUpClass("Blood Sorceress", { itemId: 36298 });
     }
 }
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new BloodSorceress().getBSorc();
+    new BloodSorceress().getBSorc();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

@@ -14,8 +14,7 @@ const Story = new CoreStory();
 
 export class Core7DD {
     sloth(): void {
-        if (Core.isCompletedBefore(5959))
-            return;
+        if (Core.isCompletedBefore(5959)) return;
 
         Core.logger("Hunting the Slime Dragon of Sloth!");
 
@@ -96,7 +95,13 @@ export class Core7DD {
         if (!bot.tempInv.contains(40710)) {
             Core.logger("Suit not found");
             Core.ensureAccept(5944);
-            Core.getMapItems([ [5381, 1], [5380, 1] ], "Sloth");
+            Core.getMapItems(
+                [
+                    [5381, 1],
+                    [5380, 1],
+                ],
+                "Sloth",
+            );
             Core.ensureComplete(5944);
             bot.wait.forDrop("Hazmat Suit (Temp)");
             bot.wait.forPickup("Hazmat Suit (Temp)");

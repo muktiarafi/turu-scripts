@@ -13,22 +13,20 @@ const Adv = new CoreAdvanced();
 export class Shaman {
     getShaman(rankUpClass = true): void {
         if (Core.checkInventory("Shaman")) {
-            if (rankUpClass)
-                Adv.rankUpClass("Shaman");
+            if (rankUpClass) Adv.rankUpClass("Shaman");
             return;
         }
 
         Adv.buyItem("arcangrove", 214, 5765, 1, 4799);
 
-        if (rankUpClass)
-            Adv.rankUpClass("Shaman");
+        if (rankUpClass) Adv.rankUpClass("Shaman");
     }
 }
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new Shaman().getShaman();
+    new Shaman().getShaman();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

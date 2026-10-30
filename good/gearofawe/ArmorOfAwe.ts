@@ -15,8 +15,7 @@ const Awe = new CoreAwe();
 
 export class ArmorOfAwe {
     getArmor(): void {
-        if (Core.checkInventory("Armor of Awe"))
-            return;
+        if (Core.checkInventory("Armor of Awe")) return;
 
         if (Core.isMember) {
             if (!Core.checkInventory("Pauldron Relic")) {
@@ -33,8 +32,7 @@ export class ArmorOfAwe {
 
                 Core.buyItem("museum", 1129, "Pauldron Relic");
             }
-        } else
-            Awe.getAweRelic("Pauldron", 4160, 15, 15, "gravestrike", "Ultra Akriloth");
+        } else Awe.getAweRelic("Pauldron", 4160, 15, 15, "gravestrike", "Ultra Akriloth");
 
         Awe.getAweRelic("Breastplate", 4163, 10, 10, "aqlesson", "Carnax");
         Awe.getAweRelic("Vambrace", 4166, 15, 15, "bloodtitan", "Ultra Blood Titan");
@@ -47,9 +45,9 @@ export class ArmorOfAwe {
 }
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new ArmorOfAwe().getArmor();
+    new ArmorOfAwe().getArmor();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

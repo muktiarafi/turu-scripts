@@ -14,19 +14,9 @@ const Farm = new CoreFarms();
 const LOC = new Core13LoC();
 
 export class ArchDoomKnight {
-    q1items: string[] = [
-        "Arch DoomKnight Cape",
-        "Undead Energy",
-        "Human Souls",
-        "Dragon Energy",
-    ];
+    q1items: string[] = ["Arch DoomKnight Cape", "Undead Energy", "Human Souls", "Dragon Energy"];
 
-    q2items: string[] = [
-        "Arch DoomKnight Cape Sword",
-        "Arch DoomKnight Polearm",
-        "Death's Power",
-        "Souls of the Dead",
-    ];
+    q2items: string[] = ["Arch DoomKnight Cape Sword", "Arch DoomKnight Polearm", "Death's Power", "Souls of the Dead"];
 
     q3items: string[] = [
         "Arch DoomKnight Sword",
@@ -64,13 +54,11 @@ export class ArchDoomKnight {
 
     doAll(ArmorOnly = false, BankRewards = false): void {
         this.aMeansToAnEnd(ArmorOnly);
-        if (BankRewards)
-            Core.toBank(...this.combined);
+        if (BankRewards) Core.toBank(...this.combined);
     }
 
     gatheringPower(): void {
-        if (Core.checkInventory("Arch DoomKnight Cape", 1, { toInv: false }))
-            return;
+        if (Core.checkInventory("Arch DoomKnight Cape", 1, { toInv: false })) return;
 
         LOC.wolfwing();
         Farm.evilREP(7);
@@ -87,14 +75,9 @@ export class ArchDoomKnight {
     }
 
     deathsDoor(): void {
-        if (!Core.isCompletedBefore(6796))
-            this.gatheringPower();
+        if (!Core.isCompletedBefore(6796)) this.gatheringPower();
 
-        if (
-            Core.checkInventory(
-                [ "Arch DoomKnight Cape Sword", "Arch DoomKnight Polearm" ], 1, { toInv: false })
-        )
-            return;
+        if (Core.checkInventory(["Arch DoomKnight Cape Sword", "Arch DoomKnight Polearm"], 1, { toInv: false })) return;
 
         Core.addDrop(...this.q2items);
         Core.ensureAccept(6796);
@@ -107,14 +90,9 @@ export class ArchDoomKnight {
     }
 
     chaoticLords(): void {
-        if (!Core.isCompletedBefore(6797))
-            this.deathsDoor();
+        if (!Core.isCompletedBefore(6797)) this.deathsDoor();
 
-        if (
-            Core.checkInventory(
-                [ "Arch DoomKnight Sword", "Arch DoomKnight's Edge" ], 1, { toInv: false })
-        )
-            return;
+        if (Core.checkInventory(["Arch DoomKnight Sword", "Arch DoomKnight's Edge"], 1, { toInv: false })) return;
 
         Core.addDrop(...this.q3items);
 
@@ -138,8 +116,7 @@ export class ArchDoomKnight {
         Core.killXiang("Xiang Chaos");
 
         //Drakath's Sword (Free Player)
-        while (!bot.shouldExit && !Core.checkInventory(25286))
-            Core.huntMonster("ultradrakath", "Champion of Chaos");
+        while (!bot.shouldExit && !Core.checkInventory(25286)) Core.huntMonster("ultradrakath", "Champion of Chaos");
 
         Core.huntMonster("mqlesson", "Dragonoid", "Dragonoid of Hours", 1, { isTemp: false });
         Core.huntMonster("timespace", "Chaos Lord Iadoa", "Chaorrupted Hourglass", 1, { isTemp: false });
@@ -148,17 +125,17 @@ export class ArchDoomKnight {
     }
 
     aMeansToAnEnd(ArmorOnly = false, HelmOnly = false): void {
-        if (!Core.isCompletedBefore(6798))
-            this.chaoticLords();
+        if (!Core.isCompletedBefore(6798)) this.chaoticLords();
 
         if (
-            HelmOnly && Core.checkInventory("Arch DoomKnight Helm")
-            || (ArmorOnly && Core.checkInventory("Arch DoomKnight"))
+            (HelmOnly && Core.checkInventory("Arch DoomKnight Helm")) ||
+            (ArmorOnly && Core.checkInventory("Arch DoomKnight"))
         )
             return;
         else if (
-            Core.checkInventory(
-                [ "Arch DoomKnight", "Arch DoomKnight Open Helm", "Arch DoomKnight Helm" ], 1, { toInv: false })
+            Core.checkInventory(["Arch DoomKnight", "Arch DoomKnight Open Helm", "Arch DoomKnight Helm"], 1, {
+                toInv: false,
+            })
         )
             return;
 
@@ -170,7 +147,8 @@ export class ArchDoomKnight {
         Farm.battleUnderB("Undead Energy", 2000);
 
         Core.equipClass(ClassType.Solo);
-        Core.huntMonster("epicvordred", "Ultra Vordred", "(Necro) Scroll of Dark Arts", 2, { isTemp: false }); Core.huntMonster("sepulchurebattle", "ULTRA Sepulchure", "Doom Heart", 1, { isTemp: false });
+        Core.huntMonster("epicvordred", "Ultra Vordred", "(Necro) Scroll of Dark Arts", 2, { isTemp: false });
+        Core.huntMonster("sepulchurebattle", "ULTRA Sepulchure", "Doom Heart", 1, { isTemp: false });
         Core.huntMonster("sepulchure", "Dark Sepulchure", "Dread Knight Cleaver", 1, { isTemp: false });
         Core.huntMonster("thevoid", "Reaper", "Reaper's Soul", 1, { isTemp: false });
         Core.huntMonster("Desolich", "Desolich", "Desolich's Undead Eye", 2, { isTemp: false });
@@ -180,9 +158,9 @@ export class ArchDoomKnight {
 }
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new ArchDoomKnight().doAll();
+    new ArchDoomKnight().doAll();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

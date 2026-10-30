@@ -12,10 +12,16 @@ import { CoreFarms } from "../../core/CoreFarms";
 const Farm = new CoreFarms();
 
 export class CoreAwe {
-    getAweRelic(Item: string, LegendQuest: number, FragmentAmount: number, ShardAmount: number, Map: string, Monster: string): void {
+    getAweRelic(
+        Item: string,
+        LegendQuest: number,
+        FragmentAmount: number,
+        ShardAmount: number,
+        Map: string,
+        Monster: string,
+    ): void {
         const relicName = `${Item} Relic`;
-        if (Core.checkInventory(relicName))
-            return;
+        if (Core.checkInventory(relicName)) return;
 
         let questID: number;
         if (bot.flash.get<number>("world.myAvatar.objData.intAQ") > 0) {
@@ -27,10 +33,7 @@ export class CoreAwe {
             Farm.bladeofAweREP(10, false);
             Farm.experience(55);
 
-            Core.buyItem(
-                "museum", 
-                1130, 
-                Core.isMember ? 29402 : 29404, 1, Core.isMember ? 18580 : 18579);
+            Core.buyItem("museum", 1130, Core.isMember ? 29402 : 29404, 1, Core.isMember ? 18580 : 18579);
             questID = Core.isMember ? LegendQuest : LegendQuest + 2;
         }
 
@@ -41,9 +44,16 @@ export class CoreAwe {
         while (!bot.shouldExit && !Core.checkInventory(`${Item} Fragment`, FragmentAmount)) {
             Core.ensureAccept(questID);
             if (Map.toLowerCase() === "doomvault" || Map.toLowerCase() === "doomvaultb")
-                Core.killMonster(Map, Map.toLowerCase().endsWith("b") ? "r26" : "r5", "Left", Monster, `${Item} Shard`, ShardAmount, { isTemp: false });
-            else
-                Core.huntMonster(Map, Monster, `${Item} Shard`, ShardAmount, { isTemp: false });
+                Core.killMonster(
+                    Map,
+                    Map.toLowerCase().endsWith("b") ? "r26" : "r5",
+                    "Left",
+                    Monster,
+                    `${Item} Shard`,
+                    ShardAmount,
+                    { isTemp: false },
+                );
+            else Core.huntMonster(Map, Monster, `${Item} Shard`, ShardAmount, { isTemp: false });
             Core.ensureComplete(questID);
             bot.wait.forPickup(`${Item} Fragment`);
         }

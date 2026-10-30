@@ -12,8 +12,7 @@ const Story = new CoreStory();
 
 export class Mazumi {
     mazumiQuests(): void {
-        if (Core.isCompletedBefore(92))
-            return;
+        if (Core.isCompletedBefore(92)) return;
 
         Story.preLoad(this.mazumiQuests);
 
@@ -46,9 +45,9 @@ export class Mazumi {
 }
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new Mazumi().mazumiQuests();
+    new Mazumi().mazumiQuests();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

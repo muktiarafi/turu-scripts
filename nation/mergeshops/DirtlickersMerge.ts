@@ -25,17 +25,52 @@ const Jugger = new JuggernautItemsofNulgath();
 
 export class DirtlickersMerge {
     static readonly select = [
-        option.bool("33283", "Enchanted Nulgath Nation House", "Mode: [select] only\nShould the bot buy \"Enchanted Nulgath Nation House\" ?", false),
-        option.bool("33196", "Evolved Blood Orb", "Mode: [select] only\nShould the bot buy \"Evolved Blood Orb\" ?", false),
-        option.bool("33197", "Evolved Hex Orb", "Mode: [select] only\nShould the bot buy \"Evolved Hex Orb\" ?", false),
-        option.bool("33198", "Evolved Shadow Orb", "Mode: [select] only\nShould the bot buy \"Evolved Shadow Orb\" ?", false),
-        option.bool("33155", "Evolved Soulreaper Blade of Nulgath", "Mode: [select] only\nShould the bot buy \"Evolved Soulreaper Blade of Nulgath\" ?", false),
-        option.bool("33165", "Raw Dreadsaw", "Mode: [select] only\nShould the bot buy \"Raw Dreadsaw\" ?", false),
-        option.bool("33164", "Iron Dreadsaw", "Mode: [select] only\nShould the bot buy \"Iron Dreadsaw\" ?", false),
-        option.bool("33270", "Shadow Legacy of Nulgath", "Mode: [select] only\nShould the bot buy \"Shadow Legacy of Nulgath\" ?", false),
-        option.bool("33271", "Shadow Legacy of Nulgath Helm", "Mode: [select] only\nShould the bot buy \"Shadow Legacy of Nulgath Helm\" ?", false),
-        option.bool("43230", "Shadow Legacy of Nulgath Hair", "Mode: [select] only\nShould the bot buy \"Shadow Legacy of Nulgath Hair\" ?", false),
-        option.bool("58542", "Yulgath's Inn", "Mode: [select] only\nShould the bot buy \"Yulgath's Inn\" ?", false),
+        option.bool(
+            "33283",
+            "Enchanted Nulgath Nation House",
+            'Mode: [select] only\nShould the bot buy "Enchanted Nulgath Nation House" ?',
+            false,
+        ),
+        option.bool(
+            "33196",
+            "Evolved Blood Orb",
+            'Mode: [select] only\nShould the bot buy "Evolved Blood Orb" ?',
+            false,
+        ),
+        option.bool("33197", "Evolved Hex Orb", 'Mode: [select] only\nShould the bot buy "Evolved Hex Orb" ?', false),
+        option.bool(
+            "33198",
+            "Evolved Shadow Orb",
+            'Mode: [select] only\nShould the bot buy "Evolved Shadow Orb" ?',
+            false,
+        ),
+        option.bool(
+            "33155",
+            "Evolved Soulreaper Blade of Nulgath",
+            'Mode: [select] only\nShould the bot buy "Evolved Soulreaper Blade of Nulgath" ?',
+            false,
+        ),
+        option.bool("33165", "Raw Dreadsaw", 'Mode: [select] only\nShould the bot buy "Raw Dreadsaw" ?', false),
+        option.bool("33164", "Iron Dreadsaw", 'Mode: [select] only\nShould the bot buy "Iron Dreadsaw" ?', false),
+        option.bool(
+            "33270",
+            "Shadow Legacy of Nulgath",
+            'Mode: [select] only\nShould the bot buy "Shadow Legacy of Nulgath" ?',
+            false,
+        ),
+        option.bool(
+            "33271",
+            "Shadow Legacy of Nulgath Helm",
+            'Mode: [select] only\nShould the bot buy "Shadow Legacy of Nulgath Helm" ?',
+            false,
+        ),
+        option.bool(
+            "43230",
+            "Shadow Legacy of Nulgath Hair",
+            'Mode: [select] only\nShould the bot buy "Shadow Legacy of Nulgath Hair" ?',
+            false,
+        ),
+        option.bool("58542", "Yulgath's Inn", 'Mode: [select] only\nShould the bot buy "Yulgath\'s Inn" ?', false),
     ];
 
     private readonly dontStopMissingIng = false;
@@ -54,17 +89,20 @@ export class DirtlickersMerge {
                 default:
                     const shouldStop = !Adv.matsOnly || !this.dontStopMissingIng;
                     Core.logger(
-                        `The bot hasn't been taught how to get ${req.name}.`
-                            + (shouldStop ? " Please report the issue." : " Skipping"), "", { messageBox: shouldStop, stopBot: shouldStop });
+                        `The bot hasn't been taught how to get ${req.name}.` +
+                            (shouldStop ? " Please report the issue." : " Skipping"),
+                        "",
+                        { messageBox: shouldStop, stopBot: shouldStop },
+                    );
                     break;
-        //#endregion
+                //#endregion
 
                 case "Nulgath Nation House":
                     Core.farmingLogger(req.name, quant);
                     Core.addDrop(req.name, "Cemaros' Amethyst", "Aluminium", "NUE Necronomicon");
                     Nation.farmUni10(400);
                     Nation.farmUni13(1);
-                    Nation.farmVoucher({ member:false });
+                    Nation.farmVoucher({ member: false });
                     Nation.farmDiamondofNulgath(300);
                     Nation.farmDarkCrystalShard(250);
                     Nation.farmTotemofNulgath(30);
@@ -77,7 +115,7 @@ export class DirtlickersMerge {
                     Core.buyItem("mountdoomskull", 776, "Cemaros' Amethyst");
 
                     BLOD.unlockMineCrafting();
-                    Daily.mineCrafting([ "Aluminum" ]);
+                    Daily.mineCrafting(["Aluminum"]);
 
                     Farm.doomWoodREP();
                     Farm.gold(999);
@@ -118,12 +156,12 @@ export class DirtlickersMerge {
                     break;
 
                 case "Voucher of Nulgath (non-mem)":
-                    Nation.farmVoucher({ member:false, keepVoucher: true });
+                    Nation.farmVoucher({ member: false, keepVoucher: true });
                     bot.wait.forPickup(req.name);
                     break;
 
                 case "Voucher of Nulgath":
-                    Nation.farmVoucher({ member:true, keepVoucher: true });
+                    Nation.farmVoucher({ member: true, keepVoucher: true });
                     bot.wait.forPickup(req.name);
                     break;
 
@@ -139,10 +177,8 @@ export class DirtlickersMerge {
                     break;
 
                 case "Tainted Gem":
-                    if (Core.checkInventory("Gemstone of Nulgath") && Core.isMember)
-                        Nation.forgeTaintedGems(quant);
-                    else
-                        Nation.farmTaintedGem(quant);
+                    if (Core.checkInventory("Gemstone of Nulgath") && Core.isMember) Nation.forgeTaintedGems(quant);
+                    else Nation.farmTaintedGem(quant);
                     bot.wait.forPickup(req.name);
                     break;
 
@@ -212,31 +248,32 @@ export const scriptOptions = defineScriptOptions(Adv.optionsStorage, [], true, {
 });
 
 export default function main(): void {
-        Core.bankingBlackList.push(...
-            [
-                "Nulgath Nation House",
-                "Pink Star Diamond of Nulgath",
-                "Musgravite of Nulgath",
-                "Nulgath's Approval",
-                "Totem of Nulgath",
-                "Voucher of Nulgath (non-mem)",
-                "Voucher of Nulgath",
-                "Unidentified 13",
-                "Dark Crystal Shard",
-                "Tainted Gem",
-                "Gem of Nulgath",
-                "Corpse Maker of Nulgath",
-                "Overfiend Blade of Nulgath",
-                "Archfiend's Favor",
-                "Hadean Onyx of Nulgath",
-                "Essence of Nulgath",
-                "Letter from Asuka and Tendou",
-                "Chain of Nulgath",
-                "Yulgath's Hut",
-                "Unidentified 10",
-            ]);
-        Core.setOptions();
+    Core.bankingBlackList.push(
+        ...[
+            "Nulgath Nation House",
+            "Pink Star Diamond of Nulgath",
+            "Musgravite of Nulgath",
+            "Nulgath's Approval",
+            "Totem of Nulgath",
+            "Voucher of Nulgath (non-mem)",
+            "Voucher of Nulgath",
+            "Unidentified 13",
+            "Dark Crystal Shard",
+            "Tainted Gem",
+            "Gem of Nulgath",
+            "Corpse Maker of Nulgath",
+            "Overfiend Blade of Nulgath",
+            "Archfiend's Favor",
+            "Hadean Onyx of Nulgath",
+            "Essence of Nulgath",
+            "Letter from Asuka and Tendou",
+            "Chain of Nulgath",
+            "Yulgath's Hut",
+            "Unidentified 10",
+        ],
+    );
+    Core.setOptions();
 
-        new DirtlickersMerge().buyAllMerge();
-        Core.setOptions(false);
+    new DirtlickersMerge().buyAllMerge();
+    Core.setOptions(false);
 }

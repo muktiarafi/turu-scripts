@@ -20,8 +20,7 @@ export class XansLair {
     }
 
     volcano(): void {
-        if (Core.isCompletedBefore(1261))
-            return;
+        if (Core.isCompletedBefore(1261)) return;
 
         Story.preLoad(this.volcano);
 
@@ -116,8 +115,7 @@ export class XansLair {
     }
 
     andesisQuests(): void {
-        if (Core.isCompletedBefore(1739))
-            return;
+        if (Core.isCompletedBefore(1739)) return;
 
         Story.preLoad(this.andesisQuests);
 
@@ -141,25 +139,21 @@ export class XansLair {
 
         // Signed, Seared, Delivered 1739
         Story.mapItemQuest(1739, "xantown", 925);
-        if (bot.map.name === "xantown")
-            Core.jump("r12", "Left");
+        if (bot.map.name === "xantown") Core.jump("r12", "Left");
     }
 
     scoriasQuestsQuests(): void {
-        if (Core.isCompletedBefore(1740))
-            return;
+        if (Core.isCompletedBefore(1740)) return;
 
         Story.preLoad(this.scoriasQuestsQuests);
 
         // The Xan With The Plan 1740
         Story.killQuest(1740, "xantown", "Xan");
-        if (bot.map.name === "xantown")
-            Core.jump("r12", "Left");
+        if (bot.map.name === "xantown") Core.jump("r12", "Left");
     }
 
     warlicsQuests(): void {
-        if (Core.isCompletedBefore(2157))
-            return;
+        if (Core.isCompletedBefore(2157)) return;
 
         Story.preLoad(this.warlicsQuests);
 
@@ -193,9 +187,9 @@ export class XansLair {
 }
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new XansLair().doAll();
+    new XansLair().doAll();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

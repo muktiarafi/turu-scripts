@@ -26,7 +26,7 @@ const worldsCoreMerge = new WorldsCoreMerge();
 const manaCradleMerge = new ManaCradleMerge();
 
 export class MalgorsArmorSet {
-    armorSet: string[] = [ "Malgor the ShadowLord", "ShadowLord's Helm" ];
+    armorSet: string[] = ["Malgor the ShadowLord", "ShadowLord's Helm"];
 
     questItems: string[] = [
         "Timestream Ravager",
@@ -41,8 +41,7 @@ export class MalgorsArmorSet {
         // Determine which items to check: default ArmorSet or provided array
         const items = useSet ? this.armorSet : item;
 
-        if (items == null || items.length === 0)
-            return; // Nothing to do if no items specified
+        if (items == null || items.length === 0) return; // Nothing to do if no items specified
 
         // If we already have all items, bank quest drops and exit
         if (Core.checkInventory(items)) {
@@ -77,10 +76,10 @@ export class MalgorsArmorSet {
 
 export default function main(): void {
     const script = new MalgorsArmorSet();
-        Core.bankingBlackList.push(...script.armorSet.concat(script.questItems));
-        Core.setOptions();
+    Core.bankingBlackList.push(...script.armorSet.concat(script.questItems));
+    Core.setOptions();
 
-        script.getSet(true, script.armorSet);
+    script.getSet(true, script.armorSet);
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

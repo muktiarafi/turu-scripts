@@ -22,8 +22,7 @@ export class CoreYnR {
 
     getYnR(rankUpClass = true): void {
         // There is an armor called YNR.
-        if (Core.checkInventory(53841))
-            return;
+        if (Core.checkInventory(53841)) return;
 
         Core.addDrop("Yami no Ronin");
 
@@ -33,13 +32,11 @@ export class CoreYnR {
         Core.ensureComplete(7408);
         bot.wait.forPickup("Yami no Ronin");
 
-        if (rankUpClass)
-            Adv.rankUpClass("Yami no Ronin");
+        if (rankUpClass) Adv.rankUpClass("Yami no Ronin");
     }
 
     yokaiSwordScroll(): void {
-        if (Core.checkInventory("Yokai Sword Scroll"))
-            return;
+        if (Core.checkInventory("Yokai Sword Scroll")) return;
 
         SOW.darkAlly();
         Core.farmingLogger("Yokai Sword Scroll", 1);
@@ -65,8 +62,7 @@ export class CoreYnR {
     }
 
     yami(quant = 10): void {
-        if (Core.checkInventory("Yami", quant))
-            return;
+        if (Core.checkInventory("Yami", quant)) return;
 
         SOW.darkAlly();
         Core.farmingLogger("Yami", quant);
@@ -81,14 +77,11 @@ export class CoreYnR {
     }
 
     foldedSteel(): void {
-        if (Core.checkInventory("Folded Steel"))
-            return;
+        if (Core.checkInventory("Folded Steel")) return;
 
         Core.logger("Checking which method to use");
-        if (!Core.isCompletedBefore(793))
-            this.nonLegion = true;
-        else
-            this.nonLegion = false;
+        if (!Core.isCompletedBefore(793)) this.nonLegion = true;
+        else this.nonLegion = false;
 
         Core.farmingLogger("Folded Steel", 1);
         Core.addDrop("Folded Steel");
@@ -98,8 +91,7 @@ export class CoreYnR {
         Core.huntMonster("fotia", "Amia the Cult Leader", "Eternity Flame", 1, { isTemp: false });
         Core.huntMonster("shadowfortress", "Jaaku", "Shadow Katana Blueprint", 1, { isTemp: false });
         if (!Core.checkInventory("Obsidian Rock", 108)) {
-            if (this.nonLegion)
-                Legion.obsidianRock(108);
+            if (this.nonLegion) Legion.obsidianRock(108);
             else {
                 Legion.soulForgeHammer();
                 Legion.farmLegionToken(220);
@@ -114,8 +106,7 @@ export class CoreYnR {
     }
 
     flameForgedMetal(quant = 13): void {
-        if (Core.checkInventory("Flame-Forged Metal", quant))
-            return;
+        if (Core.checkInventory("Flame-Forged Metal", quant)) return;
 
         Core.farmingLogger("Flame-Forged Metal", quant);
         Core.addDrop("Flame-Forged Metal");
@@ -129,14 +120,11 @@ export class CoreYnR {
     }
 
     blademasterSwordScroll(nonLegion = false): void {
-        if (Core.checkInventory("Blademaster Sword Scroll"))
-            return;
+        if (Core.checkInventory("Blademaster Sword Scroll")) return;
 
         Core.logger("Checking which method to use");
-        if (!Core.isCompletedBefore(793))
-            nonLegion = true;
-        else
-            nonLegion = false;
+        if (!Core.isCompletedBefore(793)) nonLegion = true;
+        else nonLegion = false;
 
         SOW.darkAlly();
         Core.farmingLogger("Blademaster Sword Scroll", 1);
@@ -147,12 +135,20 @@ export class CoreYnR {
             Core.ensureAccept(7410);
             Core.logger("Using Non-Legion variant for the Blademaster Sword Scroll");
             Core.equipClass(ClassType.Dodge);
-            Core.killMonster("frozenlair", "r3", "Left", "Legion Lich Lord", "Sapphire Orb", 26, { isTemp: false, publicRoom: true });
+            Core.killMonster("frozenlair", "r3", "Left", "Legion Lich Lord", "Sapphire Orb", 26, {
+                isTemp: false,
+                publicRoom: true,
+            });
             Core.equipClass(ClassType.Solo);
-            Core.killMonster("Judgement", "r10a", "Spawn", "Ultra Aeacus", "Aeacus Empowered", 100, { isTemp: false, publicRoom: true });
+            Core.killMonster("Judgement", "r10a", "Spawn", "Ultra Aeacus", "Aeacus Empowered", 100, {
+                isTemp: false,
+                publicRoom: true,
+            });
             Core.huntMonster("darkally", "Underfiend", "Traitor's Tract", 250, { isTemp: false });
             Core.huntMonster("shadowsong", "Oh'Garr", "Ogre Titan's Resonance", 250, { isTemp: false });
-            Core.huntMonster("shadowgrove", "Titan Shadow Dragonlord", "Shadow Dragonlord's Shroud", 250, { isTemp: false });
+            Core.huntMonster("shadowgrove", "Titan Shadow Dragonlord", "Shadow Dragonlord's Shroud", 250, {
+                isTemp: false,
+            });
             Core.equipClass(ClassType.Farm);
             Core.huntMonster("evilwardage", "Blade Master", "Discipline", 1, { isTemp: false });
             Legion.dagePvP(400, 50, 1000);
@@ -161,10 +157,16 @@ export class CoreYnR {
             Core.logger("Using Legion variant for the Blademaster Sword Scroll");
             Core.ensureAccept(7443);
             Core.equipClass(ClassType.Dodge);
-            Core.killMonster("frozenlair", "r3", "Left", "Legion Lich Lord", "Sapphire Orb", 13, { isTemp: false, publicRoom: true });
+            Core.killMonster("frozenlair", "r3", "Left", "Legion Lich Lord", "Sapphire Orb", 13, {
+                isTemp: false,
+                publicRoom: true,
+            });
             Legion.farmLegionToken(17500);
             Core.equipClass(ClassType.Solo);
-            Core.killMonster("Judgement", "r10a", "Spawn", "Ultra Aeacus", "Aeacus Empowered", 50, { isTemp: false, publicRoom: true });
+            Core.killMonster("Judgement", "r10a", "Spawn", "Ultra Aeacus", "Aeacus Empowered", 50, {
+                isTemp: false,
+                publicRoom: true,
+            });
 
             if (!Core.checkInventory("Meditation")) {
                 Core.addDrop("Meditation");

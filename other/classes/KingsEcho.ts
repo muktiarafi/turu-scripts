@@ -22,8 +22,7 @@ const LOC = new Core13LoC();
 export class KingsEcho {
     getKE(rankup = true): void {
         if (Core.checkInventory("King's Echo")) {
-            if (rankup)
-                Adv.rankUpClass("King's Echo");
+            if (rankup) Adv.rankUpClass("King's Echo");
             return;
         }
 
@@ -48,14 +47,12 @@ export class KingsEcho {
                 return;
             }
             for (const item of q.acceptRequirements) {
-                if (Core.checkInventory(item.id))
-                    continue;
+                if (Core.checkInventory(item.id)) continue;
 
                 switch (item.name) {
                     case "King Alteon's Crown": // 10440 | Purify The Crown
                         // Updatequest to see queen of monsters
-                        if (!Core.isCompletedBefore(8361))
-                            bot.quests.updateQuest(8361);
+                        if (!Core.isCompletedBefore(8361)) bot.quests.updateQuest(8361);
 
                         Core.ensureAccept(10440);
                         Core.equipClass(ClassType.Solo);
@@ -66,20 +63,43 @@ export class KingsEcho {
                         break;
 
                     case "Royal Dragon Sword": // 10442 | The Path of the King
-                        Core.addDrop("Endured Against Chaos", "Endured Against a Fallen Friend", "Endured Against the Great Dragon", "Endured Against the Defiler", "Endured Against the Monster King");
+                        Core.addDrop(
+                            "Endured Against Chaos",
+                            "Endured Against a Fallen Friend",
+                            "Endured Against the Great Dragon",
+                            "Endured Against the Defiler",
+                            "Endured Against the Monster King",
+                        );
                         Core.join("portal");
                         Core.ensureAccept(10442);
                         if (!bot.quests.isInProgress(10442)) {
-                            Core.logger("The Path of the King [10442] could not be accepted.", "", { messageBox: true, stopBot: true });
+                            Core.logger("The Path of the King [10442] could not be accepted.", "", {
+                                messageBox: true,
+                                stopBot: true,
+                            });
                             return;
                         }
                         Core.equipClass(ClassType.Farm);
-                        Core.killMonster("chaoswar", "r9", "Left", "*", "Endured Against Chaos", 113, { isTemp: false });
+                        Core.killMonster("chaoswar", "r9", "Left", "*", "Endured Against Chaos", 113, {
+                            isTemp: false,
+                        });
                         Core.equipClass(ClassType.Solo);
-                        Core.huntMonster("falcontower", "Sepulchure", "Endured Against a Fallen Friend", 100, { isTemp: false });
-                        Core.huntMonster("naoisegrave", "Volgritian", "Endured Against the Great Dragon", 70, { isTemp: false });
-                        Core.huntMonster(Core.isMember ? "shattersword" : "infernalarena", Core.isMember ? "Graveclaw the Defiler" : "Destructive Defiler", "Endured Against the Defiler", 100, { isTemp: false });
-                        Core.huntMonster("ebondungeon", "Dethrix", "Endured Against the Monster King", 90, { isTemp: false });
+                        Core.huntMonster("falcontower", "Sepulchure", "Endured Against a Fallen Friend", 100, {
+                            isTemp: false,
+                        });
+                        Core.huntMonster("naoisegrave", "Volgritian", "Endured Against the Great Dragon", 70, {
+                            isTemp: false,
+                        });
+                        Core.huntMonster(
+                            Core.isMember ? "shattersword" : "infernalarena",
+                            Core.isMember ? "Graveclaw the Defiler" : "Destructive Defiler",
+                            "Endured Against the Defiler",
+                            100,
+                            { isTemp: false },
+                        );
+                        Core.huntMonster("ebondungeon", "Dethrix", "Endured Against the Monster King", 90, {
+                            isTemp: false,
+                        });
                         Core.ensureComplete(10442);
                         break;
 
@@ -112,16 +132,15 @@ export class KingsEcho {
             // Buy the class
             Core.buyItem("TerminaTemple", 2630, 95742);
 
-            if (rankup)
-                Adv.rankUpClass("King's Echo");
+            if (rankup) Adv.rankUpClass("King's Echo");
         }
     }
 }
 
 export default function main(): void {
-        Core.setOptions(true, { disableClassSwap: true });
+    Core.setOptions(true, { disableClassSwap: true });
 
-        new KingsEcho().getKE();
+    new KingsEcho().getKE();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

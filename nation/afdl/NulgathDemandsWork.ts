@@ -25,20 +25,19 @@ export class NulgathDemandsWork {
 
     doNulgathDemandsWork(): void {
         this.ndwQuest(this.ndwItems);
-        this.ndwQuest([ "Unidentified 35" ], 300);
+        this.ndwQuest(["Unidentified 35"], 300);
     }
 
     ndwQuest(itemNames: string[] | null = null, quant = 1): void {
-        itemNames ??= this.ndwItems.map(item => item);
-        if (itemNames.length === 0 || Core.checkInventory(itemNames, quant))
-            return;
+        itemNames ??= this.ndwItems.map((item) => item);
+        if (itemNames.length === 0 || Core.checkInventory(itemNames, quant)) return;
         const Rewards = Core.ensureLoad(5259).rewards;
         const NDW = Core.initializeWithRetries(() => Core.ensureLoad(5259));
         Core.addDrop(...Nation.bagDrops);
-        Core.addDrop(...Rewards.map(x => x.name));
+        Core.addDrop(...Rewards.map((x) => x.name));
 
         for (const itemName of itemNames) {
-            const item = Rewards.find(x => x != null && x.name === itemName);
+            const item = Rewards.find((x) => x != null && x.name === itemName);
             if (item == null) {
                 Core.logger(`Item '${itemName}' not found in quest rewards, skipping.`);
                 continue;
@@ -62,11 +61,10 @@ export class NulgathDemandsWork {
                 GHV.getGHV();
                 // C# farms the voucher before the three above, whose Supplies/Kiss the Void/Bamblooze
                 // sell it when "Sell Voucher of Nulgath" is on (the default).
-                Nation.farmVoucher({ member:true });
+                Nation.farmVoucher({ member: true });
 
                 // Try to buy U35 with fragments BEFORE completing quest
-                if (item.name === "Unidentified 35"
-                    && Core.checkInventory("Archfiend Essence Fragment", 9)) {
+                if (item.name === "Unidentified 35" && Core.checkInventory("Archfiend Essence Fragment", 9)) {
                     const currentUni35 = bot.inventory.getQuantity("Unidentified 35");
                     const needed = quant - currentUni35;
                     const canBuy = Math.trunc(bot.inventory.getQuantity("Archfiend Essence Fragment") / 9); // C# int division
@@ -77,7 +75,9 @@ export class NulgathDemandsWork {
 
                         // Check if we've reached the target after buying
                         if (Core.checkInventory("Unidentified 35", quant)) {
-                            Core.logger(`Reached target quantity of ${quant} Unidentified 35 by purchasing with fragments.`);
+                            Core.logger(
+                                `Reached target quantity of ${quant} Unidentified 35 by purchasing with fragments.`,
+                            );
                             break; // Exit the while loop, continue to next item in foreach
                         }
                     }
@@ -85,21 +85,19 @@ export class NulgathDemandsWork {
 
                 // Complete quest with appropriate reward
                 if (item.name === "Unidentified 35") {
-                    if (bot.quests.canCompleteFullCheck(5259))
-                        Core.ensureComplete(5259, item.id);
+                    if (bot.quests.canCompleteFullCheck(5259)) Core.ensureComplete(5259, item.id);
                 } else {
                     // Pick ONE NDW reward that isn't maxed
-                    const rewardToPick = NDW?.rewards.find(x =>
-                        x != null
-                        && this.ndwItems.includes(x.name)
-                        && !Core.checkInventory(x.name, x.maxStack));
+                    const rewardToPick = NDW?.rewards.find(
+                        (x) => x != null && this.ndwItems.includes(x.name) && !Core.checkInventory(x.name, x.maxStack),
+                    );
 
-                    if (rewardToPick != null)
-                        Core.ensureComplete(5259, rewardToPick.id);
+                    if (rewardToPick != null) Core.ensureComplete(5259, rewardToPick.id);
                     else {
                         Core.logger(
-                            "All NDW items are at MaxStack. Completing quest without selecting a reward.\n"
-                            + "(You will still receive Archfiend Essence Fragment and Unidentified 35.)");
+                            "All NDW items are at MaxStack. Completing quest without selecting a reward.\n" +
+                                "(You will still receive Archfiend Essence Fragment and Unidentified 35.)",
+                        );
                         Core.ensureComplete(5259);
                     }
                 }
@@ -108,8 +106,7 @@ export class NulgathDemandsWork {
     }
 
     uni27(): void {
-        if (Core.checkInventory("Unidentified 27"))
-            return;
+        if (Core.checkInventory("Unidentified 27")) return;
 
         Core.addDrop("Unidentified 27");
         Nation.supplies("Unidentified 26", 1);
@@ -126,12 +123,12 @@ export class NulgathDemandsWork {
 
 export default function main(): void {
     const script = new NulgathDemandsWork();
-        Core.bankingBlackList.push(...Nation.bagDrops);
-        Core.bankingBlackList.push(...script.ndwItems);
-        Core.bankingBlackList.push(...[ "Archfiend Essence Fragment", "Unidentified 35" ]);
-        Core.setOptions();
+    Core.bankingBlackList.push(...Nation.bagDrops);
+    Core.bankingBlackList.push(...script.ndwItems);
+    Core.bankingBlackList.push(...["Archfiend Essence Fragment", "Unidentified 35"]);
+    Core.setOptions();
 
-        script.doNulgathDemandsWork();
+    script.doNulgathDemandsWork();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

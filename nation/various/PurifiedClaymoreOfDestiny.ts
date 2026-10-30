@@ -12,8 +12,7 @@ const Farm = new CoreFarms();
 
 export class PurifiedClaymoreOfDestiny {
     getPCoD(): void {
-        if (Core.checkInventory("Purified Claymore of Destiny"))
-            return;
+        if (Core.checkInventory("Purified Claymore of Destiny")) return;
 
         Core.addDrop("Purified Claymore of Destiny");
 
@@ -27,9 +26,9 @@ export class PurifiedClaymoreOfDestiny {
 }
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new PurifiedClaymoreOfDestiny().getPCoD();
+    new PurifiedClaymoreOfDestiny().getPCoD();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

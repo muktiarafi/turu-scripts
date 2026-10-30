@@ -12,8 +12,7 @@ const Story = new CoreStory();
 
 export class VoidRefuge {
     storyline(): void {
-        if (Core.isCompletedBefore(9531))
-            return;
+        if (Core.isCompletedBefore(9531)) return;
 
         Story.preLoad(this.storyline);
 
@@ -55,7 +54,7 @@ export class VoidRefuge {
         Story.killQuest(9528, "voidrefuge", "Nation Outrider");
 
         // Blood and Water (9529)
-        Story.mapItemQuest(9529, "voidrefuge", [ 12575, 12576, 12577 ]);
+        Story.mapItemQuest(9529, "voidrefuge", [12575, 12576, 12577]);
 
         // Family Feud (9530)
         if (!Story.questProgression(9530)) {
@@ -71,9 +70,9 @@ export class VoidRefuge {
 }
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new VoidRefuge().storyline();
+    new VoidRefuge().storyline();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

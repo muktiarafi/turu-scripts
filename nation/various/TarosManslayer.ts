@@ -16,15 +16,14 @@ const Nation = new CoreNation();
 const PCoD = new PurifiedClaymoreOfDestiny();
 
 export class TarosManslayer {
-    private rewards: string[] = [ "Taro's Manslayer", "Taro Blademaster Guardian" ];
+    private rewards: string[] = ["Taro's Manslayer", "Taro Blademaster Guardian"];
 
     guardianTaro(ManslayerOnly = true): void {
         if (ManslayerOnly) {
-            this.rewards = [ "Taro's Manslayer" ];
+            this.rewards = ["Taro's Manslayer"];
         }
 
-        if (Core.checkInventory(this.rewards))
-            return;
+        if (Core.checkInventory(this.rewards)) return;
 
         Core.addDrop(...this.rewards);
 
@@ -33,8 +32,7 @@ export class TarosManslayer {
             Core.huntMonster("tercessuinotlim", "Taro Blademaster", "Taro's Manslayer", 1, { isTemp: false });
         } else {
             if (!bot.player.isMember) {
-                Core.logger(
-                    "Membership REQUIRED for this quest ( \"The Guardian Taro Blademaster\")");
+                Core.logger('Membership REQUIRED for this quest ( "The Guardian Taro Blademaster")');
                 return;
             }
 
@@ -54,9 +52,9 @@ export class TarosManslayer {
 }
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new TarosManslayer().guardianTaro(!Core.isMember);
+    new TarosManslayer().guardianTaro(!Core.isMember);
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

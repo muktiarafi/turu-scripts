@@ -12,8 +12,7 @@ const Story = new CoreStory();
 
 export class SEP {
     silverExaltedPaladin(): void {
-        if (Core.checkInventory("Silver Exalted Paladin"))
-            return;
+        if (Core.checkInventory("Silver Exalted Paladin")) return;
 
         Story.preLoad(this.silverExaltedPaladin);
 
@@ -50,9 +49,10 @@ export class SEP {
             Story.killQuest(7584, "table", "Roach", { autoCompleteQuest: false });
             Core.ensureCompleteChoose(7584);
             Core.toBank(
-                    "Silver Exalted Paladin Spear",
-                    "Silver Exalted Paladin Poleaxe",
-                    "Silver Exalted Spears of Light",);
+                "Silver Exalted Paladin Spear",
+                "Silver Exalted Paladin Poleaxe",
+                "Silver Exalted Spears of Light",
+            );
 
             // The Fifth Scroll
             Story.killQuest(7585, "dracocon", "Singer", { autoCompleteQuest: false });
@@ -66,9 +66,9 @@ export class SEP {
 }
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new SEP().silverExaltedPaladin();
+    new SEP().silverExaltedPaladin();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

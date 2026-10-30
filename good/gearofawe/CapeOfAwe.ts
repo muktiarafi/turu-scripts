@@ -14,8 +14,7 @@ const Awe = new CoreAwe();
 
 export class CapeOfAwe {
     getCoA(): void {
-        if (Core.checkInventory("Cape of Awe"))
-            return;
+        if (Core.checkInventory("Cape of Awe")) return;
 
         Awe.getAweRelic("Cape", 4178, 1, 1, "doomvault", "Binky");
         Adv.buyItem("museum", 1129, "Cape of Awe");
@@ -25,9 +24,9 @@ export class CapeOfAwe {
 }
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new CapeOfAwe().getCoA();
+    new CapeOfAwe().getCoA();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

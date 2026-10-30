@@ -18,8 +18,7 @@ export class YokaiQuests {
     }
 
     shogunWar(): void {
-        if (Core.isCompletedBefore(6459))
-            return;
+        if (Core.isCompletedBefore(6459)) return;
 
         Story.preLoad(this.shogunWar);
 
@@ -53,7 +52,7 @@ export class YokaiQuests {
         Story.killQuest(6455, "ShogunWar", "Shadow Samurai");
 
         // Advice from the Spirits 6456
-        Story.mapItemQuest(6456, "ShogunWar", [ 5957, 5958, 5959, 5960 ]);
+        Story.mapItemQuest(6456, "ShogunWar", [5957, 5958, 5959, 5960]);
 
         // Fight the Shadows 6457
         Story.killQuest(6457, "ShogunWar", "Reishi");
@@ -84,8 +83,7 @@ export class YokaiQuests {
     }
 
     shinrinGrove(): void {
-        if (Core.isCompletedBefore(6472))
-            return;
+        if (Core.isCompletedBefore(6472)) return;
 
         Story.preLoad(this.shinrinGrove);
 
@@ -174,8 +172,7 @@ export class YokaiQuests {
     }
 
     shadowfortress(): void {
-        if (Core.isCompletedBefore(6494))
-            return;
+        if (Core.isCompletedBefore(6494)) return;
 
         Story.preLoad(this.shadowfortress);
 
@@ -268,7 +265,7 @@ export class YokaiQuests {
         Story.killQuest(6491, "shadowfortress", "7th Head of Orochi");
 
         // Get to the Roof 6492
-        Story.mapItemQuest(6492, "shadowfortress", [ 5976, 5979 ]);
+        Story.mapItemQuest(6492, "shadowfortress", [5976, 5979]);
 
         // Find Jaaku! 6493
         if (!Story.questProgression(6493)) {
@@ -294,9 +291,9 @@ export class YokaiQuests {
 }
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new YokaiQuests().quests();
+    new YokaiQuests().quests();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

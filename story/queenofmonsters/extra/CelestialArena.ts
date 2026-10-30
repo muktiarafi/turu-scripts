@@ -22,8 +22,7 @@ export class CelestialArenaQuests {
     }
 
     arena1to10(): void {
-        if (Core.isCompletedBefore(6022))
-            return;
+        if (Core.isCompletedBefore(6022)) return;
 
         Core.equipClass(ClassType.Solo);
         Story.killQuest(6013, "celestialarenab", "Slork Construct");
@@ -49,8 +48,7 @@ export class CelestialArenaQuests {
     }
 
     arena11to20(): void {
-        if (Core.isCompletedBefore(6032))
-            return;
+        if (Core.isCompletedBefore(6032)) return;
 
         Core.equipClass(ClassType.Solo);
         Story.killQuest(6023, "celestialarenac", "Conquest Construct");
@@ -76,8 +74,7 @@ export class CelestialArenaQuests {
     }
 
     arena21to29(): void {
-        if (Core.isCompletedBefore(6042))
-            return;
+        if (Core.isCompletedBefore(6042)) return;
 
         Core.equipClass(ClassType.Solo);
         Story.killQuest(6033, "celestialarenad", "Queen of Hope");
@@ -103,9 +100,9 @@ export class CelestialArenaQuests {
 }
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new CelestialArenaQuests().doAll();
+    new CelestialArenaQuests().doAll();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

@@ -29,31 +29,22 @@ export class VoidSpartan {
     ];
 
     getSpartan(item: string | null = null): void {
-        Core.addDrop(
-            ...Nation
-                .bagDrops.concat(this.rewards)
-                .concat([ "Zee's Red Jasper", "Fiend Cloak of Nulgath" ]));
+        Core.addDrop(...Nation.bagDrops.concat(this.rewards).concat(["Zee's Red Jasper", "Fiend Cloak of Nulgath"]));
 
         const QuestData = Core.initializeWithRetries(() => Core.ensureLoad(5982));
         if (QuestData == null) {
             Core.logger("Quest 5982 not found, please report this to the devs.");
             return;
         }
-        const Item = Core.ensureLoad(5982).rewards.find(x => x.name === item);
+        const Item = Core.ensureLoad(5982).rewards.find((x) => x.name === item);
 
-        if (item == null)
-            Core.logger("Farming Void Spartan Set.");
-        else
-            Core.logger(`Farming ${item}.`);
+        if (item == null) Core.logger("Farming Void Spartan Set.");
+        else Core.logger(`Farming ${item}.`);
 
         let i = 1;
         while (
-            !bot.shouldExit
-            && (
-                Item != null
-                    ? !Core.checkInventory(Item!.name)
-                    : !Core.checkInventory(this.rewards, 1, { toInv: false })
-            )
+            !bot.shouldExit &&
+            (Item != null ? !Core.checkInventory(Item!.name) : !Core.checkInventory(this.rewards, 1, { toInv: false }))
         ) {
             Core.ensureAccept(5982);
 
@@ -73,9 +64,7 @@ export class VoidSpartan {
                 bot.wait.forPickup(Item!.name);
             } else {
                 Core.ensureCompleteChoose(5982, Core.questRewards(5982));
-                for (const thing of Core.questRewards(5982))
-                    if (bot.drops.exists(thing))
-                        bot.wait.forPickup(thing);
+                for (const thing of Core.questRewards(5982)) if (bot.drops.exists(thing)) bot.wait.forPickup(thing);
             }
             Core.logger(`Completed ${QuestData.name}[${QuestData.id}] x${i++}`);
         }
@@ -85,11 +74,11 @@ export class VoidSpartan {
 
 export default function main(): void {
     const script = new VoidSpartan();
-        Core.bankingBlackList.push(...Nation.bagDrops);
-        Core.bankingBlackList.push(...script.rewards);
-        Core.setOptions();
+    Core.bankingBlackList.push(...Nation.bagDrops);
+    Core.bankingBlackList.push(...script.rewards);
+    Core.setOptions();
 
-        script.getSpartan();
+    script.getSpartan();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

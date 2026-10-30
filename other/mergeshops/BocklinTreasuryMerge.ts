@@ -23,16 +23,56 @@ const Seppy = new CoreSepulchure();
 
 export class BocklinTreasuryMerge {
     static readonly select = [
-        option.bool("93592", "Alden's Liberation Armor", "Mode: [select] only\nShould the bot buy \"Alden's Liberation Armor\" ?", false),
-        option.bool("93825", "Alden's Battle Morph", "Mode: [select] only\nShould the bot buy \"Alden's Battle Morph\" ?", false),
-        option.bool("93824", "Alden's Battle Helm", "Mode: [select] only\nShould the bot buy \"Alden's Battle Helm\" ?", false),
-        option.bool("93767", "Lynaria's Hammer", "Mode: [select] only\nShould the bot buy \"Lynaria's Hammer\" ?", false),
-        option.bool("93766", "Lynaria's Locks", "Mode: [select] only\nShould the bot buy \"Lynaria's Locks\" ?", false),
-        option.bool("93765", "Lynaria's Visage", "Mode: [select] only\nShould the bot buy \"Lynaria's Visage\" ?", false),
-        option.bool("93764", "Castle Bocklin", "Mode: [select] only\nShould the bot buy \"Castle Bocklin\" ?", false),
-        option.bool("93638", "Princess Brittany's Dress", "Mode: [select] only\nShould the bot buy \"Princess Brittany's Dress\" ?", false),
-        option.bool("93639", "Princess Brittany's Visage", "Mode: [select] only\nShould the bot buy \"Princess Brittany's Visage\" ?", false),
-        option.bool("93640", "Princess Brittany's Hair", "Mode: [select] only\nShould the bot buy \"Princess Brittany's Hair\" ?", false),
+        option.bool(
+            "93592",
+            "Alden's Liberation Armor",
+            'Mode: [select] only\nShould the bot buy "Alden\'s Liberation Armor" ?',
+            false,
+        ),
+        option.bool(
+            "93825",
+            "Alden's Battle Morph",
+            'Mode: [select] only\nShould the bot buy "Alden\'s Battle Morph" ?',
+            false,
+        ),
+        option.bool(
+            "93824",
+            "Alden's Battle Helm",
+            'Mode: [select] only\nShould the bot buy "Alden\'s Battle Helm" ?',
+            false,
+        ),
+        option.bool(
+            "93767",
+            "Lynaria's Hammer",
+            'Mode: [select] only\nShould the bot buy "Lynaria\'s Hammer" ?',
+            false,
+        ),
+        option.bool("93766", "Lynaria's Locks", 'Mode: [select] only\nShould the bot buy "Lynaria\'s Locks" ?', false),
+        option.bool(
+            "93765",
+            "Lynaria's Visage",
+            'Mode: [select] only\nShould the bot buy "Lynaria\'s Visage" ?',
+            false,
+        ),
+        option.bool("93764", "Castle Bocklin", 'Mode: [select] only\nShould the bot buy "Castle Bocklin" ?', false),
+        option.bool(
+            "93638",
+            "Princess Brittany's Dress",
+            'Mode: [select] only\nShould the bot buy "Princess Brittany\'s Dress" ?',
+            false,
+        ),
+        option.bool(
+            "93639",
+            "Princess Brittany's Visage",
+            'Mode: [select] only\nShould the bot buy "Princess Brittany\'s Visage" ?',
+            false,
+        ),
+        option.bool(
+            "93640",
+            "Princess Brittany's Hair",
+            'Mode: [select] only\nShould the bot buy "Princess Brittany\'s Hair" ?',
+            false,
+        ),
     ];
 
     private dontStopMissingIng = false;
@@ -51,10 +91,13 @@ export class BocklinTreasuryMerge {
                 default:
                     const shouldStop = !Adv.matsOnly || !this.dontStopMissingIng;
                     Core.logger(
-                        `The bot hasn't been taught how to get ${req.name}.`
-                            + (shouldStop ? " Please report the issue." : " Skipping"), "", { messageBox: shouldStop, stopBot: shouldStop });
+                        `The bot hasn't been taught how to get ${req.name}.` +
+                            (shouldStop ? " Please report the issue." : " Skipping"),
+                        "",
+                        { messageBox: shouldStop, stopBot: shouldStop },
+                    );
                     break;
-        //#endregion
+                //#endregion
 
                 case "Thronekeeper's Rune":
                     Core.farmingLogger("Thronekeeper's Rune", quant);
@@ -121,14 +164,19 @@ export class BocklinTreasuryMerge {
                 case "Scion's Regalia":
                     Core.equipClass(ClassType.Farm);
                     Core.addDrop(93762);
-                    Core.huntMonster("bocklinsanctum", "Tarnished Scion", req.name, req.quantity, { isTemp: req.temp }); bot.wait.forPickup(req.name);
+                    Core.huntMonster("bocklinsanctum", "Tarnished Scion", req.name, req.quantity, { isTemp: req.temp });
+                    bot.wait.forPickup(req.name);
                     break;
 
                 case "Vaughn Crest":
                     Core.farmingLogger(req.name, quant);
                     Core.equipClass(ClassType.Farm);
                     Core.addDrop(req.id);
-                    Core.huntMonster("bocklincastle", "Garde Wraith", req.name, quant, { isTemp: req.temp, log: false }); break;
+                    Core.huntMonster("bocklincastle", "Garde Wraith", req.name, quant, {
+                        isTemp: req.temp,
+                        log: false,
+                    });
+                    break;
 
                 case "Gold Voucher 100k":
                     Farm.voucher(req.name, req.quantity);
@@ -141,11 +189,7 @@ export class BocklinTreasuryMerge {
         Lynaria.doAll();
 
         //Only edit the map and shopID here
-        Adv.startBuyAllMerge(
-            "bocklinsanctum", 
-            2578, 
-            findIngredients, 
-            buyOnlyThis, { buyMode: buyMode });
+        Adv.startBuyAllMerge("bocklinsanctum", 2578, findIngredients, buyOnlyThis, { buyMode: buyMode });
     }
 }
 
@@ -155,19 +199,20 @@ export const scriptOptions = defineScriptOptions(Adv.optionsStorage, [], true, {
 });
 
 export default function main(): void {
-        Core.bankingBlackList.push(...
-            [
-                "Thronekeeper's Rune",
-                "Champion Lynaria Armor",
-                "Valen's Knightly Armor",
-                "King Alteon's Armor Fragment",
-                "Enthralling Gem Shard",
-                "Bocklin Ornament",
-                "Scion's Regalia",
-                "Vaughn Crest",
-            ]);
-        Core.setOptions();
+    Core.bankingBlackList.push(
+        ...[
+            "Thronekeeper's Rune",
+            "Champion Lynaria Armor",
+            "Valen's Knightly Armor",
+            "King Alteon's Armor Fragment",
+            "Enthralling Gem Shard",
+            "Bocklin Ornament",
+            "Scion's Regalia",
+            "Vaughn Crest",
+        ],
+    );
+    Core.setOptions();
 
-        new BocklinTreasuryMerge().buyAllMerge();
-        Core.setOptions(false);
+    new BocklinTreasuryMerge().buyAllMerge();
+    Core.setOptions(false);
 }

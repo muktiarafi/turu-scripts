@@ -89,7 +89,15 @@ export class CoreAdvanced {
      * @param index Which of several matching entries to buy (merge items).
      * @param log Log the purchase.
      */
-    buyItem(map: string, shopId: number, item: string | number, quant = 1, shopItemId = 0, index = 0, log = true): void {
+    buyItem(
+        map: string,
+        shopId: number,
+        item: string | number,
+        quant = 1,
+        shopItemId = 0,
+        index = 0,
+        log = true,
+    ): void {
         if (Core.checkInventory(item, quant)) return;
 
         if (typeof item === "number" && Core.inventoryBagFreeSlots <= 0 && !bot.inventory.contains(item)) {
@@ -181,7 +189,10 @@ export class CoreAdvanced {
         if (bot.map.name !== map) Core.join(map);
 
         const shopItems = Core.getShopItems(map, shopId).filter(
-            (x) => x.id === item.id && !(x.coins && x.cost > 0) && item.requirements.every((r) => Core.checkInventory(r.id, r.quantity)),
+            (x) =>
+                x.id === item.id &&
+                !(x.coins && x.cost > 0) &&
+                item.requirements.every((r) => Core.checkInventory(r.id, r.quantity)),
         );
 
         const mainItem = shopItems.length > index ? shopItems[index] : shopItems[0];
@@ -201,7 +212,15 @@ export class CoreAdvanced {
             return;
         }
 
-        Core.buyItem(map, shopId, mainItem.id, buyAmount, mainItem.shopItemId !== 1 ? mainItem.shopItemId : shopItemId, index, log);
+        Core.buyItem(
+            map,
+            shopId,
+            mainItem.id,
+            buyAmount,
+            mainItem.shopItemId !== 1 ? mainItem.shopItemId : shopItemId,
+            index,
+            log,
+        );
 
         Core.sleep();
 
@@ -349,23 +368,42 @@ export class CoreAdvanced {
             buyMode = null,
             group = "First",
             log = true,
-        }: { itemBlackList?: string[] | null; buyMode?: mergeOptionsEnum | null; group?: "First" | "Last"; log?: boolean } = {},
+        }: {
+            itemBlackList?: string[] | null;
+            buyMode?: mergeOptionsEnum | null;
+            group?: "First" | "Last";
+            log?: boolean;
+        } = {},
     ): void {
         //#region Setup and Initialization
         // C# Get<bool>(SkipOptions) finds the option in any group; merge scripts have it in Generic.
-        if (buyOnlyThis === null && buyMode === null && bot.config.has("Generic", Core.skipOptions.name) && !bot.config.get<boolean>("Generic", Core.skipOptions.name))
+        if (
+            buyOnlyThis === null &&
+            buyMode === null &&
+            bot.config.has("Generic", Core.skipOptions.name) &&
+            !bot.config.get<boolean>("Generic", Core.skipOptions.name)
+        )
             bot.config.configure();
 
         let mode: mergeOptionsEnum = mergeOptionsEnum.all;
         if (buyOnlyThis !== null) mode = mergeOptionsEnum.all;
         else if (buyMode !== null) mode = buyMode;
-        else if (bot.config.has("Generic", "mode")) mode = mergeOptionsEnum[bot.config.get<keyof typeof mergeOptionsEnum>("Generic", "mode")];
-        else Core.logger("Invalid setup detected for StartBuyAllMerge. Please report", "", { messageBox: true, stopBot: true });
+        else if (bot.config.has("Generic", "mode"))
+            mode = mergeOptionsEnum[bot.config.get<keyof typeof mergeOptionsEnum>("Generic", "mode")];
+        else
+            Core.logger("Invalid setup detected for StartBuyAllMerge. Please report", "", {
+                messageBox: true,
+                stopBot: true,
+            });
 
         this.matsOnly = mode === mergeOptionsEnum.mergeMats;
 
         // Set for tracking unique item IDs to prevent redundant operations
-        const uniqueItemIds = new Set([...bot.bank.items, ...bot.tempInv.items, ...bot.house.items, ...bot.inventory.items].map((item) => item.id));
+        const uniqueItemIds = new Set(
+            [...bot.bank.items, ...bot.tempInv.items, ...bot.house.items, ...bot.inventory.items].map(
+                (item) => item.id,
+            ),
+        );
 
         // Filter shop items based on various conditions: one entry per (name, ID, ShopItemID)
         const groups = new Map<string, CoreShopItem[]>();
@@ -380,7 +418,8 @@ export class CoreAdvanced {
 
         const items: CoreShopItem[] = [];
         let memSkipped = false;
-        const selected = (item: CoreShopItem) => bot.config.has("Select", `${item.id}`) && bot.config.get<boolean>("Select", `${item.id}`);
+        const selected = (item: CoreShopItem) =>
+            bot.config.has("Select", `${item.id}`) && bot.config.get<boolean>("Select", `${item.id}`);
 
         // Process shop items based on various conditions
         for (const item of shopItems) {
@@ -391,7 +430,11 @@ export class CoreAdvanced {
             )
                 continue;
 
-            if (Core.isMember || !item.upgrade || (item.requirements.length > 0 && Core.readShopItems().some((x) => x.upgrade && !Core.isMember))) {
+            if (
+                Core.isMember ||
+                !item.upgrade ||
+                (item.requirements.length > 0 && Core.readShopItems().some((x) => x.upgrade && !Core.isMember))
+            ) {
                 if (mode === mergeOptionsEnum.select) {
                     if (selected(item)) items.push(item);
                 } else if (mode !== mergeOptionsEnum.acOnly) items.push(item);
@@ -436,9 +479,13 @@ export class CoreAdvanced {
                 bot.wait.forPickup(item.id);
 
                 if (!Core.checkInventory(item.id, item.quantity)) {
-                    const missing = item.requirements.filter((x) => x && !Core.checkInventory(x.id, x.quantity)).map((x) => `"${x.name} x${x.quantity}"`);
+                    const missing = item.requirements
+                        .filter((x) => x && !Core.checkInventory(x.id, x.quantity))
+                        .map((x) => `"${x.name} x${x.quantity}"`);
 
-                    Core.logger(`Failed to meet requirements for ${item.name} [${item.id}] due to missing: ${missing.join(", ")}.`);
+                    Core.logger(
+                        `Failed to meet requirements for ${item.name} [${item.id}] due to missing: ${missing.join(", ")}.`,
+                    );
                 }
             }
         }
@@ -528,11 +575,17 @@ export class CoreAdvanced {
                 Farm.voucher(req.name, requiredQty);
             }
             if (reqInShop) {
-                Core.logger(`Requirement "${reqInShop.name}" [${reqInShop.id}] is in shop.`, "ProcessItemWithDependencies");
+                Core.logger(
+                    `Requirement "${reqInShop.name}" [${reqInShop.id}] is in shop.`,
+                    "ProcessItemWithDependencies",
+                );
                 requiredQty = Math.min(requiredQty, reqInShop.maxStack);
 
                 // If requirement has no dependencies, buy it directly
-                if (reqInShop.requirements.length === 0 && ((reqInShop.coins && reqInShop.cost <= 0) || !reqInShop.coins)) {
+                if (
+                    reqInShop.requirements.length === 0 &&
+                    ((reqInShop.coins && reqInShop.cost <= 0) || !reqInShop.coins)
+                ) {
                     if (reqInShop.upgrade && !bot.player.isMember) {
                         Core.logger(`${reqInShop.name} is MEMBERS ONLY, you are not.... we can't buy it >.>`);
                         return;
@@ -541,7 +594,15 @@ export class CoreAdvanced {
                     bot.wait.forPickup(reqInShop.id);
                 } else if (reqInShop.requirements.length > 0) {
                     // Recurse for nested requirements
-                    this.processItemWithDependencies(reqInShop, requiredQty, map, shopId, findIngredients, depth + 1, acquiredItems);
+                    this.processItemWithDependencies(
+                        reqInShop,
+                        requiredQty,
+                        map,
+                        shopId,
+                        findIngredients,
+                        depth + 1,
+                        acquiredItems,
+                    );
                     bot.wait.forPickup(req.id);
                 }
             } else {
@@ -555,14 +616,21 @@ export class CoreAdvanced {
             }
 
             // Verify we got it
-            if (!Core.checkInventory(req.id, requiredQty)) Core.logger(`Warning: Failed to acquire ${req.name} x${requiredQty}.`);
+            if (!Core.checkInventory(req.id, requiredQty))
+                Core.logger(`Warning: Failed to acquire ${req.name} x${requiredQty}.`);
         }
 
         this.ensureShopLoaded(map, shopId);
-        if (shopItem.requirements.every((x) => Core.checkInventory(x.id, x.quantity))) this.buyItem(map, shopId, shopItem.id, quantity, shopItem.shopItemId);
+        if (shopItem.requirements.every((x) => Core.checkInventory(x.id, x.quantity)))
+            this.buyItem(map, shopId, shopItem.id, quantity, shopItem.shopItemId);
     }
 
-    private handleNoItemsFound(shopItems: CoreShopItem[], buyOnlyThis: string | null, mode: mergeOptionsEnum, memSkipped: boolean): void {
+    private handleNoItemsFound(
+        shopItems: CoreShopItem[],
+        buyOnlyThis: string | null,
+        mode: mergeOptionsEnum,
+        memSkipped: boolean,
+    ): void {
         if (buyOnlyThis !== null) return;
 
         switch (mode) {
@@ -571,7 +639,10 @@ export class CoreAdvanced {
                 Core.logger("The bot fetched 0 items to farm. Something must have gone wrong.");
                 break;
             case mergeOptionsEnum.acOnly:
-                if (shopItems.every((x) => !x.coins)) Core.logger("The bot fetched 0 items to farm. This is because none of the items in this shop are AC tagged.");
+                if (shopItems.every((x) => !x.coins))
+                    Core.logger(
+                        "The bot fetched 0 items to farm. This is because none of the items in this shop are AC tagged.",
+                    );
                 else
                     Core.logger(
                         "The bot fetched 0 items to farm. Something must have gone wrong. Try re-checking your options, if you picked specificly items, then you'll want stop the script (if it isnt) and change the `Mode` to `Select`, and rerun this script",
@@ -622,8 +693,18 @@ export class CoreAdvanced {
             choices(mergeOptionsEnum),
             "all",
         ),
-        option.text("modeExplanationAll", "Mode Explanation [all]", "Mode [all]: \t\tYou get all the items from shop, even if non-AC ones if any.", "click here"),
-        option.text("modeExplanationAcOnly", "Mode Explanation [acOnly]", "Mode [acOnly]: \tYou get all the AC tagged items from the shop.", "click here"),
+        option.text(
+            "modeExplanationAll",
+            "Mode Explanation [all]",
+            "Mode [all]: \t\tYou get all the items from shop, even if non-AC ones if any.",
+            "click here",
+        ),
+        option.text(
+            "modeExplanationAcOnly",
+            "Mode Explanation [acOnly]",
+            "Mode [acOnly]: \tYou get all the AC tagged items from the shop.",
+            "click here",
+        ),
         option.text(
             "modeExplanationMergeMats",
             "Mode Explanation [mergeMats]",
@@ -653,7 +734,10 @@ export class CoreAdvanced {
      *   `itemId`: the class's ID, when `className` is a name shared by several items (C#'s
      *   `RankUpClass(name, itemid)`).
      */
-    rankUpClass(className: string | number, { gearRestore = true, itemId = 0 }: { gearRestore?: boolean; itemId?: number } = {}): void {
+    rankUpClass(
+        className: string | number,
+        { gearRestore = true, itemId = 0 }: { gearRestore?: boolean; itemId?: number } = {},
+    ): void {
         if (typeof className === "number") this.rankUpClassInternal(null, className, gearRestore);
         else if (itemId > 0) this.rankUpClassInternal(null, itemId, gearRestore);
         else this.rankUpClassInternal(className, null, gearRestore);
@@ -669,12 +753,18 @@ export class CoreAdvanced {
             className = currentName;
         }
 
-        const classMatch = (i: InventoryItem) => isCategory(i, "Class") && (itemId !== null ? i.id === itemId : i.name.toLowerCase() === className!.toLowerCase());
+        const classMatch = (i: InventoryItem) =>
+            isCategory(i, "Class") &&
+            (itemId !== null ? i.id === itemId : i.name.toLowerCase() === className!.toLowerCase());
 
         let itemInv = [...bot.inventory.items, ...bot.bank.items].find((i) => i && classMatch(i));
 
         if (!itemInv) {
-            Core.logger(itemId !== null ? `Can't level up item ID ${itemId} because you don't own it.` : `Can't level up "${className}" because you don't own it.`);
+            Core.logger(
+                itemId !== null
+                    ? `Can't level up item ID ${itemId} because you don't own it.`
+                    : `Can't level up "${className}" because you don't own it.`,
+            );
             return;
         }
 
@@ -739,7 +829,11 @@ export class CoreAdvanced {
             return;
         }
 
-        Core.logger(classItem.quantity >= 302500 ? `"${classItem.name}" is now Rank 10` : `"${classItem.name}" is somehow... not rank 10??`);
+        Core.logger(
+            classItem.quantity >= 302500
+                ? `"${classItem.name}" is now Rank 10`
+                : `"${classItem.name}" is somehow... not rank 10??`,
+        );
 
         Farm.toggleBoost(BoostType.Class, false);
 
@@ -762,20 +856,27 @@ export class CoreAdvanced {
             this.reEnhanceAfter = this.currentClassEnh();
             this.reWEnhanceAfter = this.currentWeaponSpecial();
 
-            this.reCEnhanceAfter = equippedItems.some((i) => isCategory(i, "Cape")) ? this.currentCapeSpecial() : CapeSpecial.None;
+            this.reCEnhanceAfter = equippedItems.some((i) => isCategory(i, "Cape"))
+                ? this.currentCapeSpecial()
+                : CapeSpecial.None;
 
-            this.reHEnhanceAfter = equippedItems.some((i) => isCategory(i, "Helm")) ? this.currentHelmSpecial() : HelmSpecial.None;
+            this.reHEnhanceAfter = equippedItems.some((i) => isCategory(i, "Helm"))
+                ? this.currentHelmSpecial()
+                : HelmSpecial.None;
 
             // ---- Store summary ----
             Core.logger("GearStore: Saved current equipment state");
             Core.logger(` - Items: ${this.reEquippedItems.join(", ")}`);
             Core.logger(` - Class Enh: ${enumName(EnhancementType, this.reEnhanceAfter)}`);
 
-            if (this.reCEnhanceAfter !== CapeSpecial.None) Core.logger(` - Cape Special: ${enumName(CapeSpecial, this.reCEnhanceAfter)}`);
+            if (this.reCEnhanceAfter !== CapeSpecial.None)
+                Core.logger(` - Cape Special: ${enumName(CapeSpecial, this.reCEnhanceAfter)}`);
 
-            if (this.reHEnhanceAfter !== HelmSpecial.None) Core.logger(` - Helm Special: ${enumName(HelmSpecial, this.reHEnhanceAfter)}`);
+            if (this.reHEnhanceAfter !== HelmSpecial.None)
+                Core.logger(` - Helm Special: ${enumName(HelmSpecial, this.reHEnhanceAfter)}`);
 
-            if (this.reWEnhanceAfter !== WeaponSpecial.None) Core.logger(` - Weapon Special: ${enumName(WeaponSpecial, this.reWEnhanceAfter)}`);
+            if (this.reWEnhanceAfter !== WeaponSpecial.None)
+                Core.logger(` - Weapon Special: ${enumName(WeaponSpecial, this.reWEnhanceAfter)}`);
         } else if (this.reEquippedItems.length > 0) {
             // ---- Restore summary ----
             Core.logger("GearStore: Restoring saved equipment state");
@@ -829,7 +930,9 @@ export class CoreAdvanced {
      * @param percentage The boost in percent (25 = a 1.25 boost).
      */
     hasMinimalBoost(boostType: GenericGearBoost | RacialGearBoost, percentage: number): boolean {
-        return [...bot.inventory.items, ...bot.bank.items].some((x) => Core.getBoostFloat(x, boostType) >= percentage / 100 + 1);
+        return [...bot.inventory.items, ...bot.bank.items].some(
+            (x) => Core.getBoostFloat(x, boostType) >= percentage / 100 + 1,
+        );
     }
 
     //#endregion
@@ -843,7 +946,15 @@ export class CoreAdvanced {
      * @param type The enhancement type.
      * @param options The cape, helm and weapon specials, and `bypassDisableAutoEnhance`.
      */
-    enhanceEquipped(type: EnhancementType, { cSpecial = CapeSpecial.None, hSpecial = HelmSpecial.None, wSpecial = WeaponSpecial.None, bypassDisableAutoEnhance = false }: EnhanceOptions = {}): void {
+    enhanceEquipped(
+        type: EnhancementType,
+        {
+            cSpecial = CapeSpecial.None,
+            hSpecial = HelmSpecial.None,
+            wSpecial = WeaponSpecial.None,
+            bypassDisableAutoEnhance = false,
+        }: EnhanceOptions = {},
+    ): void {
         if (!bypassDisableAutoEnhance) {
             if (Core.cboBool("DisableAutoEnhance") === true) return;
         }
@@ -868,7 +979,12 @@ export class CoreAdvanced {
     enhanceItem(
         item: string | string[],
         type: EnhancementType,
-        { cSpecial = CapeSpecial.None, hSpecial = HelmSpecial.None, wSpecial = WeaponSpecial.None, bypassDisableAutoEnhance = false }: EnhanceOptions & { logging?: boolean } = {},
+        {
+            cSpecial = CapeSpecial.None,
+            hSpecial = HelmSpecial.None,
+            wSpecial = WeaponSpecial.None,
+            bypassDisableAutoEnhance = false,
+        }: EnhanceOptions & { logging?: boolean } = {},
     ): void {
         if (Array.isArray(item)) {
             this.enhanceItems(item, type, cSpecial, hSpecial, wSpecial, bypassDisableAutoEnhance);
@@ -892,9 +1008,12 @@ export class CoreAdvanced {
             Core.sleep();
         }
 
-        const selectedItem = bot.inventory.items.find((i) => i.name.toLowerCase().trim() === item.toLowerCase().trim() && isEnhanceable(i));
+        const selectedItem = bot.inventory.items.find(
+            (i) => i.name.toLowerCase().trim() === item.toLowerCase().trim() && isEnhanceable(i),
+        );
         if (!selectedItem) {
-            if (bot.inventory.items.some((i) => i.name.toLowerCase().trim() === item.toLowerCase().trim())) Core.logger(`Enhancement Failed: ${item} cannot be enhanced`);
+            if (bot.inventory.items.some((i) => i.name.toLowerCase().trim() === item.toLowerCase().trim()))
+                Core.logger(`Enhancement Failed: ${item} cannot be enhanced`);
             return;
         }
 
@@ -907,7 +1026,14 @@ export class CoreAdvanced {
     }
 
     /** C# `EnhanceItem(string[] items, ...)`. */
-    private enhanceItems(items: string[], type: EnhancementType, cSpecial: CapeSpecial, hSpecial: HelmSpecial, wSpecial: WeaponSpecial, bypassDisableAutoEnhance: boolean): void {
+    private enhanceItems(
+        items: string[],
+        type: EnhancementType,
+        cSpecial: CapeSpecial,
+        hSpecial: HelmSpecial,
+        wSpecial: WeaponSpecial,
+        bypassDisableAutoEnhance: boolean,
+    ): void {
         if (items.length === 0) return;
 
         if (!bypassDisableAutoEnhance) {
@@ -931,9 +1057,11 @@ export class CoreAdvanced {
         if (selectedItems.length !== items.length) {
             const unEnhanceable: string[] = [];
 
-            for (const item of items) if (!bot.inventory.items.some((i) => i.name === item && isEnhanceable(i))) unEnhanceable.push(item);
+            for (const item of items)
+                if (!bot.inventory.items.some((i) => i.name === item && isEnhanceable(i))) unEnhanceable.push(item);
 
-            if (unEnhanceable.length === 1) Core.logger(`Enhancement Failed: Unenhanceable item found, ${unEnhanceable[0]}`);
+            if (unEnhanceable.length === 1)
+                Core.logger(`Enhancement Failed: Unenhanceable item found, ${unEnhanceable[0]}`);
             else Core.logger(`Enhancement Failed: The following items are unenhanceable, ${unEnhanceable.join(", ")}`);
 
             return;
@@ -955,7 +1083,12 @@ export class CoreAdvanced {
         if (e === null || e === undefined) return;
 
         const message = e instanceof Error ? e.message : String(e);
-        const severity = e instanceof TypeError || e instanceof ReferenceError ? "❗ Major" : e instanceof RangeError || e instanceof SyntaxError ? "⚠️ Minor" : "🔥 Critical";
+        const severity =
+            e instanceof TypeError || e instanceof ReferenceError
+                ? "❗ Major"
+                : e instanceof RangeError || e instanceof SyntaxError
+                  ? "⚠️ Minor"
+                  : "🔥 Critical";
         const stack = e instanceof Error && e.stack ? e.stack.split("\n").slice(0, 5).join("\n") : "No line info.";
 
         Core.logger(
@@ -971,7 +1104,8 @@ export class CoreAdvanced {
      * (Adventurer and Depths count as Lucky).
      */
     currentClassEnh(): EnhancementType {
-        let patternId = bot.inventory.items.find((i) => i.equipped && isCategory(i, "Class"))?.enhancementPatternId ?? 9;
+        let patternId =
+            bot.inventory.items.find((i) => i.equipped && isCategory(i, "Class"))?.enhancementPatternId ?? 9;
 
         if (patternId === 1 || patternId === 23) patternId = 9;
 
@@ -1002,7 +1136,9 @@ export class CoreAdvanced {
      * reads the weapon's enhancement pattern, not its proc.
      */
     currentWeaponSpecial(): WeaponSpecial {
-        const equippedWeapon = bot.inventory.items.find((i) => i.equipped && this.weaponCatagories.some((c) => isCategory(i, c)));
+        const equippedWeapon = bot.inventory.items.find(
+            (i) => i.equipped && this.weaponCatagories.some((c) => isCategory(i, c)),
+        );
         if (!equippedWeapon) return WeaponSpecial.None;
         const patternId = equippedWeapon.enhancementPatternId;
 
@@ -1013,7 +1149,14 @@ export class CoreAdvanced {
     /** The weapon categories (C# `WeaponCatagories`: the first 12 enhanceable ones, so not Whip). */
     readonly weaponCatagories: readonly string[] = enhanceableCatagories.slice(0, 12);
 
-    private alreadyHasRequestedEnhancement(item: InventoryItem, type: EnhancementType, cSpecial: CapeSpecial, hSpecial: HelmSpecial, wSpecial: WeaponSpecial, _logging = false): boolean {
+    private alreadyHasRequestedEnhancement(
+        item: InventoryItem,
+        type: EnhancementType,
+        cSpecial: CapeSpecial,
+        hSpecial: HelmSpecial,
+        wSpecial: WeaponSpecial,
+        _logging = false,
+    ): boolean {
         if (!item || item.enhancementLevel <= 0 || item.enhancementLevel !== bot.player.level) return false;
 
         if (isCategory(item, "Cape")) {
@@ -1036,7 +1179,11 @@ export class CoreAdvanced {
         return false;
     }
 
-    private weaponAlreadyHasRequestedEnhancement(item: InventoryItem, type: EnhancementType, wSpecial: WeaponSpecial): boolean {
+    private weaponAlreadyHasRequestedEnhancement(
+        item: InventoryItem,
+        type: EnhancementType,
+        wSpecial: WeaponSpecial,
+    ): boolean {
         if (!item || item.equipSlot !== "Weapon" || item.enhancementLevel <= 0) return false;
 
         const currentPattern = item.enhancementPatternId;
@@ -1047,12 +1194,20 @@ export class CoreAdvanced {
         // Forge (1) falls in this range too, as in C#.
         if (wSpecial > 0 && wSpecial <= 6) return currentPattern === type && currentProc === wSpecial;
 
-        if (wSpecial === WeaponSpecial.Forge) return currentProc === 0 && (currentPattern === type || currentPattern === 10);
+        if (wSpecial === WeaponSpecial.Forge)
+            return currentProc === 0 && (currentPattern === type || currentPattern === 10);
 
         return currentProc === wSpecial;
     }
 
-    private autoEnhance(itemList: InventoryItem[], type: EnhancementType, cSpecial: CapeSpecial, hSpecial: HelmSpecial, wSpecial: WeaponSpecial, logging = false): void {
+    private autoEnhance(
+        itemList: InventoryItem[],
+        type: EnhancementType,
+        cSpecial: CapeSpecial,
+        hSpecial: HelmSpecial,
+        wSpecial: WeaponSpecial,
+        logging = false,
+    ): void {
         // In case the 'CurrentEnhancement()' failed and returned 0
         if ((type as number) === 0) return;
 
@@ -1085,7 +1240,11 @@ export class CoreAdvanced {
         // Defining weapon
         let weapon: InventoryItem | undefined;
         // If Awe-Enhancements aren't unlocked, enhance them with normal enhancements
-        if (wSpecial !== WeaponSpecial.None && itemList.some((i) => i.equipSlot === "Weapon") && (this.uAwe() || wSpecial === WeaponSpecial.Forge || wSpecial > 6)) {
+        if (
+            wSpecial !== WeaponSpecial.None &&
+            itemList.some((i) => i.equipSlot === "Weapon") &&
+            (this.uAwe() || wSpecial === WeaponSpecial.Forge || wSpecial > 6)
+        ) {
             weapon = itemList.find((i) => i.equipSlot === "Weapon");
 
             // Removing weapon from the list because it needs to be enhanced seperately
@@ -1098,7 +1257,12 @@ export class CoreAdvanced {
         const hName = enumName(HelmSpecial, hSpecial);
         const wName = enumName(WeaponSpecial, wSpecial);
 
-        const _autoEnhance = (item: InventoryItem, shopID: number, map: string | null = null, logging = false): void => {
+        const _autoEnhance = (
+            item: InventoryItem,
+            shopID: number,
+            map: string | null = null,
+            logging = false,
+        ): void => {
             const specialOnCape = isCategory(item, "Cape") && cSpecial !== CapeSpecial.None;
             const specialOnHelm = isCategory(item, "Helm") && hSpecial !== HelmSpecial.None;
             const specialOnWeapon = item.equipSlot === "Weapon" && wName !== "None";
@@ -1127,7 +1291,10 @@ export class CoreAdvanced {
                         return;
                     }
                 } else if (specialOnWeapon) {
-                    if ((wSpecial > 0 && wSpecial <= 6 ? type : 10) === item.enhancementPatternId && wSpecial === this.getProcID(item)) {
+                    if (
+                        (wSpecial > 0 && wSpecial <= 6 ? type : 10) === item.enhancementPatternId &&
+                        wSpecial === this.getProcID(item)
+                    ) {
                         skipCounter++;
                         return;
                     }
@@ -1139,9 +1306,12 @@ export class CoreAdvanced {
 
             // Logging
             if (logging) {
-                if (specialOnCape) Core.logger(`Searching Enhancement:\tForge/${cName.replace(/_/g, " ")} - "${item.name}"`);
+                if (specialOnCape)
+                    Core.logger(`Searching Enhancement:\tForge/${cName.replace(/_/g, " ")} - "${item.name}"`);
                 else if (specialOnWeapon)
-                    Core.logger(`Searching Enhancement:\t${wSpecial > 0 && wSpecial <= 6 ? typeName : "Forge"}/${wName.replace(/_/g, " ")} - "${item.name}"`);
+                    Core.logger(
+                        `Searching Enhancement:\t${wSpecial > 0 && wSpecial <= 6 ? typeName : "Forge"}/${wName.replace(/_/g, " ")} - "${item.name}"`,
+                    );
                 else Core.logger(`Searching Enhancement:\t${typeName} - "${item.name}"`);
             }
 
@@ -1157,9 +1327,11 @@ export class CoreAdvanced {
                 // Cape if cSpecial
                 if (specialOnCape && enhName.includes(cName.replace(/_/g, "").toLowerCase())) availableEnh.push(enh);
                 // Weapon if wSpecial
-                else if (specialOnWeapon && enhName.includes(wName.replace(/_/g, "").toLowerCase())) availableEnh.push(enh);
+                else if (specialOnWeapon && enhName.includes(wName.replace(/_/g, "").toLowerCase()))
+                    availableEnh.push(enh);
                 //Helm if hSpecial
-                else if (specialOnHelm && enhName.includes(hName.replace(/_/g, "").toLowerCase())) availableEnh.push(enh);
+                else if (specialOnHelm && enhName.includes(hName.replace(/_/g, "").toLowerCase()))
+                    availableEnh.push(enh);
                 // Class
                 else if (isCategory(item, "Class") && enhName.includes("armor")) availableEnh.push(enh);
                 // Helm
@@ -1178,7 +1350,9 @@ export class CoreAdvanced {
             } else if (availableEnh.length === 1) bestEnhancement = availableEnh[0];
             else {
                 // Sorting by level (descending)
-                const sortedList = [...availableEnh].sort((a, b) => b.level - a.level || (b.upgrade ? 1 : 0) - (a.upgrade ? 1 : 0));
+                const sortedList = [...availableEnh].sort(
+                    (a, b) => b.level - a.level || (b.upgrade ? 1 : 0) - (a.upgrade ? 1 : 0),
+                );
                 bestEnhancement = sortedList[0];
             }
 
@@ -1189,8 +1363,13 @@ export class CoreAdvanced {
             }
 
             // Compare with current enhancement
-            if (bestEnhancement.id === this.getEnhID(item) && item.enhancementLevel > 0 && bestEnhancement.level === item.enhancementLevel) {
-                if (logging) Core.logger(`Enhancement Canceled:\tBest enhancement is already applied for "${item.name}"`);
+            if (
+                bestEnhancement.id === this.getEnhID(item) &&
+                item.enhancementLevel > 0 &&
+                bestEnhancement.level === item.enhancementLevel
+            ) {
+                if (logging)
+                    Core.logger(`Enhancement Canceled:\tBest enhancement is already applied for "${item.name}"`);
                 return;
             }
 
@@ -1201,14 +1380,18 @@ export class CoreAdvanced {
 
             // Final logging
             if (specialOnCape) {
-                if (logging) Core.logger(`Enhancement Applied:\tForge/${cName.replace(/_/g, " ")} - "${item.name}" (Lvl ${bestEnhancement.level})`);
+                if (logging)
+                    Core.logger(
+                        `Enhancement Applied:\tForge/${cName.replace(/_/g, " ")} - "${item.name}" (Lvl ${bestEnhancement.level})`,
+                    );
             } else if (specialOnWeapon) {
                 if (logging)
                     Core.logger(
                         `Enhancement Applied:\t${wSpecial > 0 && wSpecial <= 6 ? typeName : "Forge"}/${wName.replace(/_/g, " ")} - "${item.name}" (Lvl ${bestEnhancement.level})`,
                     );
             } else {
-                if (logging) Core.logger(`Enhancement Applied:\t${typeName} - "${item.name}" (Lvl ${bestEnhancement.level})`);
+                if (logging)
+                    Core.logger(`Enhancement Applied:\t${typeName} - "${item.name}" (Lvl ${bestEnhancement.level})`);
             }
             Core.sleep();
         };
@@ -1365,7 +1548,9 @@ export class CoreAdvanced {
                         shopID = 639;
                         break;
                     default:
-                        Core.logger(`Enhancement Failed:\tInvalid "EnhancementType" given, received ${wSpecial} | ${wName}`);
+                        Core.logger(
+                            `Enhancement Failed:\tInvalid "EnhancementType" given, received ${wSpecial} | ${wName}`,
+                        );
                         return;
                 }
             } else {
@@ -1387,7 +1572,9 @@ export class CoreAdvanced {
                         break;
                     case WeaponSpecial.Arcanas_Concerto:
                         if (!this.uArcanasConcerto()) {
-                            Core.logger("Enhancement Failed:\tYou did not unlock the Arcana's Concerto Enhancement yet");
+                            Core.logger(
+                                "Enhancement Failed:\tYou did not unlock the Arcana's Concerto Enhancement yet",
+                            );
                             canEnhance = false;
                         }
                         break;
@@ -1408,7 +1595,9 @@ export class CoreAdvanced {
                         break;
 
                     default:
-                        Core.logger(`Enhancement Failed:\tInvalid "WeaponSpecial" given, received ${wSpecial} | ${wName}`);
+                        Core.logger(
+                            `Enhancement Failed:\tInvalid "WeaponSpecial" given, received ${wSpecial} | ${wName}`,
+                        );
                         return;
                 }
 
@@ -1416,7 +1605,13 @@ export class CoreAdvanced {
             }
 
             if (this.alreadyHasRequestedEnhancement(weapon, type, cSpecial, hSpecial, wSpecial, logging)) skipCounter++;
-            else if (canEnhance) _autoEnhance(weapon, shopID, wSpecial === WeaponSpecial.Forge || wSpecial > 6 ? "forge" : null, logging);
+            else if (canEnhance)
+                _autoEnhance(
+                    weapon,
+                    shopID,
+                    wSpecial === WeaponSpecial.Forge || wSpecial > 6 ? "forge" : null,
+                    logging,
+                );
             else skipCounter++;
         }
 
@@ -1538,7 +1733,10 @@ export class CoreAdvanced {
      *   `weaponOverride`: the weapon special to use instead of the library's pick (falls back to
      *   the base enhancement when it isn't unlocked, like any other weapon special).
      */
-    smartEnhance(name: string | null, { forceEnh = false, weaponOverride = null }: { forceEnh?: boolean; weaponOverride?: WeaponSpecial | null } = {}): void {
+    smartEnhance(
+        name: string | null,
+        { forceEnh = false, weaponOverride = null }: { forceEnh?: boolean; weaponOverride?: WeaponSpecial | null } = {},
+    ): void {
         // Get CBO bool for DisableAutoEnhance and return if we're not forcing an enh for unenhed (lvl = 0) classes
         let enhDisabled = false;
         const autoEnhance = Core.cboBool("DisableAutoEnhance");
@@ -1564,7 +1762,9 @@ export class CoreAdvanced {
 
         // Error correction
         className = className.toLowerCase().trim();
-        const selectedClass = bot.inventory.items.find((i) => i.name.toLowerCase().trim() === className.toLowerCase().trim() && isCategory(i, "Class"));
+        const selectedClass = bot.inventory.items.find(
+            (i) => i.name.toLowerCase().trim() === className.toLowerCase().trim() && isCategory(i, "Class"),
+        );
         if (!selectedClass) {
             Core.logger(`SmartEnhance Failed: Class ${className} was not found in inventory`);
             return;
@@ -1589,8 +1789,7 @@ export class CoreAdvanced {
 
                 //#region Lucky - Vim - vainglory - lacerate
                 case "horc evader":
-                    if (!this.uLacerate() || !this.uVim() || !this.uVainglory())
-                        return useAwe();
+                    if (!this.uLacerate() || !this.uVim() || !this.uVainglory()) return useAwe();
 
                     type = EnhancementType.Thief;
                     cSpecial = CapeSpecial.Vainglory;
@@ -1601,13 +1800,10 @@ export class CoreAdvanced {
 
                 //#region Luck - Awe_Blast | Arcanas_Concerto - ForgeHelm - Penitence
                 case "lord of order":
-                    if (!this.uAwe() || !this.uForgeHelm() || !this.uPenitence())
-                        return useAwe();
+                    if (!this.uAwe() || !this.uForgeHelm() || !this.uPenitence()) return useAwe();
 
                     type = EnhancementType.Lucky;
-                    wSpecial = this.uArcanasConcerto()
-                        ? WeaponSpecial.Arcanas_Concerto
-                        : WeaponSpecial.Awe_Blast;
+                    wSpecial = this.uArcanasConcerto() ? WeaponSpecial.Arcanas_Concerto : WeaponSpecial.Awe_Blast;
                     hSpecial = HelmSpecial.Forge;
                     cSpecial = CapeSpecial.Penitence;
                     break;
@@ -1615,8 +1811,7 @@ export class CoreAdvanced {
 
                 //#region Ravenous
                 case "PlaceHolder": // Never matches (className is lower case), as in C#.
-                    if (!this.uRavenous())
-                        return useAwe();
+                    if (!this.uRavenous()) return useAwe();
 
                     type = EnhancementType.Lucky;
                     cSpecial = CapeSpecial.Forge;
@@ -1624,11 +1819,9 @@ export class CoreAdvanced {
                     break;
                 //#endregion
 
-
                 //#region Lucky - Dauntless - Vim - Lament
                 case "great thief":
-                    if (!this.uDauntless() || !this.uVim() || !this.uLament())
-                        return useAwe();
+                    if (!this.uDauntless() || !this.uVim() || !this.uLament()) return useAwe();
 
                     type = EnhancementType.Lucky;
                     cSpecial = CapeSpecial.Lament;
@@ -1640,8 +1833,7 @@ export class CoreAdvanced {
                 //#region Lucky - Lacerate - Vim - Lament
                 case "timekeeper":
                 case "timekiller":
-                    if (!this.uLacerate() || !this.uVim() || !this.uLament())
-                        return useAwe();
+                    if (!this.uLacerate() || !this.uVim() || !this.uLament()) return useAwe();
 
                     type = EnhancementType.Lucky;
                     cSpecial = CapeSpecial.Lament;
@@ -1656,8 +1848,7 @@ export class CoreAdvanced {
                 case "eternal chronomancer":
                 case "immortal chronomancer":
                 case "dark metal necro":
-                    if (!this.uForgeCape())
-                        return useAwe();
+                    if (!this.uForgeCape()) return useAwe();
 
                     type = EnhancementType.Lucky;
                     cSpecial = CapeSpecial.Forge;
@@ -1667,8 +1858,7 @@ export class CoreAdvanced {
 
                 //#region Lucky - Forge - Awe Blast
                 case "glacial berserker":
-                    if (!Core.isCompletedBefore(8758))
-                        return useAwe();
+                    if (!Core.isCompletedBefore(8758)) return useAwe();
 
                     type = EnhancementType.Lucky;
                     cSpecial = CapeSpecial.Forge;
@@ -1680,8 +1870,7 @@ export class CoreAdvanced {
                 case "legendary elemental warrior":
                 case "mythic elemental warrior":
                 case "ultra elemental warrior":
-                    if (!this.uForgeCape())
-                        return useAwe();
+                    if (!this.uForgeCape()) return useAwe();
 
                     type = EnhancementType.Lucky;
                     cSpecial = CapeSpecial.Forge;
@@ -1691,8 +1880,7 @@ export class CoreAdvanced {
 
                 //#region Lucky - Forge - Smite
                 case "Draconic Chronomancer": // Never matches (className is lower case), as in C#.
-                    if (!this.uSmite() || !this.uForgeCape())
-                        return useAwe();
+                    if (!this.uSmite() || !this.uForgeCape()) return useAwe();
 
                     type = EnhancementType.Lucky;
                     cSpecial = CapeSpecial.Forge;
@@ -1703,8 +1891,7 @@ export class CoreAdvanced {
                 //#region Lucky - Forge - Elysium
                 case "ultra omniknight":
                 case "dark ultra omninight":
-                    if (!this.uElysium() || !this.uForgeCape())
-                        return useAwe();
+                    if (!this.uElysium() || !this.uForgeCape()) return useAwe();
 
                     type = EnhancementType.Lucky;
                     cSpecial = CapeSpecial.Forge;
@@ -1716,8 +1903,7 @@ export class CoreAdvanced {
                 case "archfiend":
                 case "eternal inversionist":
                 case "dragonlord":
-                    if (!this.uVainglory() || !this.uValiance() || !this.uAnima())
-                        return useAwe();
+                    if (!this.uVainglory() || !this.uValiance() || !this.uAnima()) return useAwe();
 
                     type = EnhancementType.Lucky;
                     cSpecial = CapeSpecial.Vainglory;
@@ -1731,20 +1917,22 @@ export class CoreAdvanced {
                 case "continuum chronomancer":
                 case "quantum chronomancer":
                     if (
-                        !this.uPenitence()
-                        || (!this.uDauntless() || !this.uValiance())
-                        || !this.uRavenous()
-                        || !this.uValiance()
-                        || !this.uAnima()
+                        !this.uPenitence() ||
+                        !this.uDauntless() ||
+                        !this.uValiance() ||
+                        !this.uRavenous() ||
+                        !this.uValiance() ||
+                        !this.uAnima()
                     )
                         return useAwe();
 
                     type = EnhancementType.Lucky;
                     cSpecial = CapeSpecial.Vainglory;
-                    wSpecial =
-                        this.uRavenous() ? WeaponSpecial.Ravenous
-                        : this.uDauntless() ? WeaponSpecial.Dauntless
-                        : WeaponSpecial.Valiance;
+                    wSpecial = this.uRavenous()
+                        ? WeaponSpecial.Ravenous
+                        : this.uDauntless()
+                          ? WeaponSpecial.Dauntless
+                          : WeaponSpecial.Valiance;
 
                     hSpecial = HelmSpecial.Anima;
                     break;
@@ -1752,8 +1940,7 @@ export class CoreAdvanced {
 
                 //#region Lucky - Vainglory - Dauntless - Anima
                 case "chaos avenger":
-                    if (!this.uAnima() || !this.uVainglory())
-                        return useAwe();
+                    if (!this.uAnima() || !this.uVainglory()) return useAwe();
 
                     type = EnhancementType.Lucky;
                     cSpecial = CapeSpecial.Vainglory;
@@ -1766,8 +1953,7 @@ export class CoreAdvanced {
 
                 case "doom metal necro":
                 case "neo metal necro":
-                    if (!this.uLacerate() || !this.uForgeHelm() || !this.uLament())
-                        return useAwe();
+                    if (!this.uLacerate() || !this.uForgeHelm() || !this.uLament()) return useAwe();
 
                     type = EnhancementType.Lucky;
                     cSpecial = this.uLament() ? CapeSpecial.Lament : CapeSpecial.Vainglory;
@@ -1779,23 +1965,27 @@ export class CoreAdvanced {
                 //#region Lucky - Vainglory - Dauntless|Valiance|Smite - Vim
                 case "martial artist":
                 case "master martial artist":
-                    if ((!this.uDauntless() && !this.uValiance() && !this.uSmite()) || !this.uVainglory() || !this.uVim())
+                    if (
+                        (!this.uDauntless() && !this.uValiance() && !this.uSmite()) ||
+                        !this.uVainglory() ||
+                        !this.uVim()
+                    )
                         return useAwe();
 
                     type = EnhancementType.Lucky;
                     cSpecial = CapeSpecial.Vainglory;
-                    wSpecial =
-                        this.uDauntless() ? WeaponSpecial.Dauntless
-                        : this.uValiance() ? WeaponSpecial.Valiance
-                        : WeaponSpecial.Smite; // else do smite, if no smite > do Awe
+                    wSpecial = this.uDauntless()
+                        ? WeaponSpecial.Dauntless
+                        : this.uValiance()
+                          ? WeaponSpecial.Valiance
+                          : WeaponSpecial.Smite; // else do smite, if no smite > do Awe
                     hSpecial = HelmSpecial.Vim;
                     break;
                 //#endregion
 
                 //#region Lucky - Vainglory - Praxis - Vim
                 case "yami no ronin":
-                    if (!this.uPraxis() || !this.uVainglory() || !this.uVim())
-                        return useAwe();
+                    if (!this.uPraxis() || !this.uVainglory() || !this.uVim()) return useAwe();
                     type = EnhancementType.Lucky;
                     cSpecial = CapeSpecial.Vainglory;
                     wSpecial = WeaponSpecial.Praxis;
@@ -1806,8 +1996,7 @@ export class CoreAdvanced {
                 //#region Lucky - Vainglory - Valiance - Anima
                 case "nechronomancer":
                 case "necrotic chronomancer":
-                    if (!this.uVainglory() || !this.uArcanasConcerto() || !this.uAnima())
-                        return useAwe();
+                    if (!this.uVainglory() || !this.uArcanasConcerto() || !this.uAnima()) return useAwe();
 
                     type = EnhancementType.Lucky;
                     cSpecial = CapeSpecial.Vainglory;
@@ -1820,8 +2009,7 @@ export class CoreAdvanced {
                 case "shadowwalker of time":
                 case "shadowstalker of time":
                 case "shadowweaver of time":
-                    if (!this.uVainglory() || !this.uElysium() || !this.uVim())
-                        return useAwe();
+                    if (!this.uVainglory() || !this.uElysium() || !this.uVim()) return useAwe();
 
                     type = EnhancementType.Lucky;
                     cSpecial = CapeSpecial.Vainglory;
@@ -1832,8 +2020,7 @@ export class CoreAdvanced {
 
                 //#region Lucky - Vainglory - Valiance - None
                 case "legion doomknight":
-                    if (!this.uVainglory() || !this.uValiance())
-                        return useAwe();
+                    if (!this.uVainglory() || !this.uValiance()) return useAwe();
 
                     type = EnhancementType.Lucky;
                     cSpecial = CapeSpecial.Vainglory;
@@ -1845,8 +2032,7 @@ export class CoreAdvanced {
                 //#region Lucky - Vainglory - Elysium - Pneuma
                 case "antique hunter":
                 case "artifact hunter":
-                    if (!this.uVainglory() || !this.uElysium() || !this.uPneuma())
-                        return useAwe();
+                    if (!this.uVainglory() || !this.uElysium() || !this.uPneuma()) return useAwe();
 
                     type = EnhancementType.Lucky;
                     cSpecial = CapeSpecial.Vainglory;
@@ -1858,8 +2044,7 @@ export class CoreAdvanced {
                 //#region Lucky - Lament - Elysium - Pneuma
                 case "abyssal angel":
                 case "abyssal angel's shadow":
-                    if (!this.uLament() || !this.uElysium() || !this.uPneuma())
-                        return useAwe();
+                    if (!this.uLament() || !this.uElysium() || !this.uPneuma()) return useAwe();
 
                     type = EnhancementType.Lucky;
                     cSpecial = CapeSpecial.Vainglory;
@@ -1870,8 +2055,7 @@ export class CoreAdvanced {
 
                 //#region Lucky - Dauntless | Ravenous - Anima | ForgeHelm - Vainglory
                 case "verus doomknight":
-                    if (!this.uRavenous() || !this.uForgeHelm() || !this.uVainglory())
-                        return useAwe();
+                    if (!this.uRavenous() || !this.uForgeHelm() || !this.uVainglory()) return useAwe();
 
                     type = EnhancementType.Lucky;
                     cSpecial = CapeSpecial.Vainglory;
@@ -1884,27 +2068,24 @@ export class CoreAdvanced {
                 case "debris highlord":
                 case "void highlord":
                 case "void highlord (ioda)":
-                    if (!this.uAnima() || !this.uValiance() || !this.uVainglory())
-                        return useAwe();
+                    if (!this.uAnima() || !this.uValiance() || !this.uVainglory()) return useAwe();
 
                     type = EnhancementType.Lucky;
                     cSpecial = CapeSpecial.Vainglory;
                     wSpecial = !this.uDauntless()
-                        ? (
-                            this.uRavenous()
-                                ? WeaponSpecial.Ravenous
-                                : (this.uValiance() ? WeaponSpecial.Valiance : WeaponSpecial.Forge)
-                        )
+                        ? this.uRavenous()
+                            ? WeaponSpecial.Ravenous
+                            : this.uValiance()
+                              ? WeaponSpecial.Valiance
+                              : WeaponSpecial.Forge
                         : WeaponSpecial.Dauntless;
                     hSpecial = HelmSpecial.Anima;
                     break;
                 //#endregion
 
-
                 //#region Lucky - Avarice - Dauntless - Anima
                 case "flame dragon warrior":
-                    if (!this.uAvarice() || !this.uDauntless() || !this.uAnima())
-                        return useAwe();
+                    if (!this.uAvarice() || !this.uDauntless() || !this.uAnima()) return useAwe();
 
                     type = EnhancementType.Lucky;
                     cSpecial = CapeSpecial.Avarice;
@@ -1919,8 +2100,7 @@ export class CoreAdvanced {
                 case "chaos slayer cleric":
                 case "chaos slayer mystic":
                 case "chaos slayer thief":
-                    if (!this.uAvarice() || !this.uElysium() || !this.uAnima())
-                        return useAwe();
+                    if (!this.uAvarice() || !this.uElysium() || !this.uAnima()) return useAwe();
 
                     type = EnhancementType.Lucky;
                     cSpecial = CapeSpecial.Avarice;
@@ -1931,13 +2111,14 @@ export class CoreAdvanced {
 
                 //#region Lucky - Penitence - Ravenous | Praxis | Lacerate - Forge | None
                 case "archpaladin":
-                    if (!this.uLacerate() || !this.uForgeHelm() || !this.uPenitence())
-                        return useAwe();
+                    if (!this.uLacerate() || !this.uForgeHelm() || !this.uPenitence()) return useAwe();
 
                     type = EnhancementType.Lucky;
                     wSpecial = this.uValiance()
                         ? WeaponSpecial.Valiance
-                        : (this.uPraxis() ? WeaponSpecial.Praxis : WeaponSpecial.Lacerate);
+                        : this.uPraxis()
+                          ? WeaponSpecial.Praxis
+                          : WeaponSpecial.Lacerate;
                     hSpecial = this.uForgeHelm() ? HelmSpecial.Forge : HelmSpecial.None;
                     cSpecial = CapeSpecial.Penitence;
                     break;
@@ -1945,8 +2126,7 @@ export class CoreAdvanced {
 
                 //#region Fighter - Ravenous | Valiance - Anima - Absolution
                 case "stonecrusher":
-                    if (!this.uValiance() || !this.uAnima() || !this.uAbsolution())
-                        return useAwe();
+                    if (!this.uValiance() || !this.uAnima() || !this.uAbsolution()) return useAwe();
 
                     type = EnhancementType.Fighter;
                     wSpecial = WeaponSpecial.Valiance;
@@ -1962,8 +2142,7 @@ export class CoreAdvanced {
                 //#region Wizard -  Valiance|Praxis - Pneuna - Vainglory|Lament
                 case "lightcaster":
                     if (!this.uValiance() || !this.uPneuma() || !this.uVainglory()) {
-                        if (!this.uLament() || !this.uPraxis())
-                            return useAwe();
+                        if (!this.uLament() || !this.uPraxis()) return useAwe();
                     }
                     type = EnhancementType.Wizard;
                     cSpecial = !this.uVainglory() ? CapeSpecial.Lament : CapeSpecial.Vainglory;
@@ -1983,12 +2162,11 @@ export class CoreAdvanced {
                     hSpecial = HelmSpecial.Pneuma;
                     break;
 
-                    //#endregion
+                //#endregion
 
                 //#region Wizard - Forge - Awe Blast
                 case "infinity knight":
-                    if (!this.uForgeCape())
-                        return useAwe();
+                    if (!this.uForgeCape()) return useAwe();
 
                     type = EnhancementType.Wizard;
                     cSpecial = CapeSpecial.Forge;
@@ -2001,8 +2179,7 @@ export class CoreAdvanced {
                 case "archmage":
                 case "darklord":
                 case "arcana invoker":
-                    if (!this.uVainglory() || !this.uValiance() || !this.uPneuma())
-                        return useAwe();
+                    if (!this.uVainglory() || !this.uValiance() || !this.uPneuma()) return useAwe();
 
                     type = EnhancementType.Wizard;
                     cSpecial = CapeSpecial.Vainglory;
@@ -2014,8 +2191,7 @@ export class CoreAdvanced {
                 //#region Wizard - Penitence - Acheron - Pneuma
                 case "master of moglins":
                 case "dark master of moglins":
-                    if (!this.uPenitence() || !this.uAcheron() || !this.uPneuma())
-                        return useAwe();
+                    if (!this.uPenitence() || !this.uAcheron() || !this.uPneuma()) return useAwe();
 
                     type = EnhancementType.Wizard;
                     cSpecial = CapeSpecial.Penitence;
@@ -2027,8 +2203,7 @@ export class CoreAdvanced {
                 //#region Wizard - Vainglory - Ravenous | Valiance - Pneuma | Wizard
                 case "legion revenant":
                 case "legion revenant (ioda)":
-                    if (!this.uVainglory() || !this.uValiance() || !this.uPneuma())
-                        return useAwe();
+                    if (!this.uVainglory() || !this.uValiance() || !this.uPneuma()) return useAwe();
 
                     type = EnhancementType.Wizard;
                     cSpecial = CapeSpecial.Vainglory;
@@ -2043,8 +2218,7 @@ export class CoreAdvanced {
                 case "royal vampire lord":
                 case "darkside":
                 case "dark lord":
-                    if (!this.uAvarice() || !this.uElysium() || !this.uPneuma())
-                        return useAwe();
+                    if (!this.uAvarice() || !this.uElysium() || !this.uPneuma()) return useAwe();
 
                     type = EnhancementType.Wizard;
                     cSpecial = CapeSpecial.Avarice;
@@ -2055,8 +2229,7 @@ export class CoreAdvanced {
 
                 //#region Wizard - Vainglory - Elysium - Pneuma
                 case "shaman":
-                    if (!this.uVainglory() || !this.uElysium() || !this.uPneuma())
-                        return useAwe();
+                    if (!this.uVainglory() || !this.uElysium() || !this.uPneuma()) return useAwe();
 
                     type = EnhancementType.Wizard;
                     cSpecial = CapeSpecial.Vainglory;
@@ -2067,8 +2240,7 @@ export class CoreAdvanced {
 
                 //#region Wizard - Avarice - Acheron - Pneuma
                 case "blaze binder":
-                    if (!this.uAvarice() || !this.uAcheron() || !this.uPneuma())
-                        return useAwe();
+                    if (!this.uAvarice() || !this.uAcheron() || !this.uPneuma()) return useAwe();
 
                     type = EnhancementType.Wizard;
                     cSpecial = CapeSpecial.Avarice;
@@ -2079,8 +2251,7 @@ export class CoreAdvanced {
 
                 //#region Wizard - Lament - Elysium - Pneuma
                 case "royal battlemage":
-                    if (!this.uLament() || !this.uElysium() || !this.uPneuma())
-                        return useAwe();
+                    if (!this.uLament() || !this.uElysium() || !this.uPneuma()) return useAwe();
 
                     type = EnhancementType.Wizard;
                     cSpecial = CapeSpecial.Lament;
@@ -2092,8 +2263,7 @@ export class CoreAdvanced {
                 //#region Wizard - Lament - Valiance - Pneuma
                 case "scarlet sorceress":
                 case "kathool adept":
-                    if (!this.uLament() || !this.uValiance() || !this.uPneuma())
-                        return useAwe();
+                    if (!this.uLament() || !this.uValiance() || !this.uPneuma()) return useAwe();
 
                     type = EnhancementType.Wizard;
                     cSpecial = CapeSpecial.Lament;
@@ -2101,7 +2271,6 @@ export class CoreAdvanced {
                     hSpecial = HelmSpecial.Pneuma;
                     break;
                 //#endregion
-
 
                 //#region Wizard - Vainglory / Forge - Daunt / Ravenous / Forge - Pneuma / Forge
                 case "sovereign of storms":
@@ -2112,16 +2281,16 @@ export class CoreAdvanced {
                     cSpecial = this.uVainglory() ? CapeSpecial.Vainglory : CapeSpecial.Forge;
                     wSpecial = this.uDauntless()
                         ? WeaponSpecial.Dauntless
-                        : (this.uRavenous() ? WeaponSpecial.Ravenous : WeaponSpecial.Forge);
+                        : this.uRavenous()
+                          ? WeaponSpecial.Ravenous
+                          : WeaponSpecial.Forge;
                     hSpecial = this.uPneuma() ? HelmSpecial.Pneuma : HelmSpecial.Forge;
                     break;
                 //#endregion
 
-
                 //#region Wizard - Ravenous - Lament - Examen
                 case "lich":
-                    if (!(this.uRavenous() && this.uLament() && this.uExamen()))
-                        return useAwe();
+                    if (!(this.uRavenous() && this.uLament() && this.uExamen())) return useAwe();
 
                     type = EnhancementType.Wizard;
                     cSpecial = CapeSpecial.Lament;
@@ -2135,8 +2304,7 @@ export class CoreAdvanced {
 
                 //#region Healer - Avarice - Elysium - Pneuma
                 case "dragon of time":
-                    if (!this.uAvarice() || !this.uElysium() || !this.uPneuma())
-                        return useAwe();
+                    if (!this.uAvarice() || !this.uElysium() || !this.uPneuma()) return useAwe();
 
                     type = EnhancementType.Healer;
                     cSpecial = CapeSpecial.Avarice;
@@ -2149,8 +2317,7 @@ export class CoreAdvanced {
                 //#region Healer - None - Valiance - Nine
                 case "obsidian paladin chronomancer":
                 case "paladin chronomancer":
-                    if (!this.uValiance())
-                        return useAwe();
+                    if (!this.uValiance()) return useAwe();
 
                     type = EnhancementType.Healer;
                     cSpecial = CapeSpecial.None;
@@ -2162,8 +2329,7 @@ export class CoreAdvanced {
 
                 //#region Fighter - Ravenous | Valiance - Anima - Absolution
                 case "frostval barbarian":
-                    if (!this.uAbsolution() || !this.uValiance() || !this.uAnima())
-                        return useAwe();
+                    if (!this.uAbsolution() || !this.uValiance() || !this.uAnima()) return useAwe();
                     type = EnhancementType.Fighter;
                     cSpecial = CapeSpecial.Absolution;
                     wSpecial = this.uRavenous() ? WeaponSpecial.Ravenous : WeaponSpecial.Valiance;
@@ -2173,8 +2339,7 @@ export class CoreAdvanced {
 
                 //#region Lucky - Penitence | Absolution - Elysium | Valiance - Vim
                 case "arachnomancer":
-                    if (!this.uAbsolution() || !this.uAbsolution() || !this.uVim())
-                        return useAwe();
+                    if (!this.uAbsolution() || !this.uAbsolution() || !this.uVim()) return useAwe();
 
                     type = EnhancementType.Lucky;
                     cSpecial = this.uPenitence() ? CapeSpecial.Penitence : CapeSpecial.Absolution;
@@ -2190,9 +2355,7 @@ export class CoreAdvanced {
                 //#region Wizard - Elysium/Ravenous - Examen - Lament
                 case "phantom chronomancer":
                 case "phantasm chronomancer":
-
-                    if (this.uElysium() || this.uRavenous())
-                        return useAwe();
+                    if (this.uElysium() || this.uRavenous()) return useAwe();
                     type = EnhancementType.Wizard;
                     cSpecial = CapeSpecial.Lament;
                     wSpecial = this.uElysium() ? WeaponSpecial.Elysium : WeaponSpecial.Ravenous;
@@ -2202,9 +2365,11 @@ export class CoreAdvanced {
                 //#endregion
 
                 case "scion of flames":
-                    if ((!this.uVainglory() || !this.uLament())
-                    && (!this.uPneuma() || !this.uForgeHelm())
-                    && (!this.uRavenous() || !this.uValiance()))
+                    if (
+                        (!this.uVainglory() || !this.uLament()) &&
+                        (!this.uPneuma() || !this.uForgeHelm()) &&
+                        (!this.uRavenous() || !this.uValiance())
+                    )
                         return useAwe();
                     type = EnhancementType.Wizard;
                     cSpecial = this.uVainglory() ? CapeSpecial.Vainglory : CapeSpecial.Lament;
@@ -2228,17 +2393,21 @@ export class CoreAdvanced {
                     type = EnhancementType.Lucky;
                     cSpecial = this.uLament()
                         ? CapeSpecial.Lament
-                        : (this.uForgeCape() ? CapeSpecial.Forge : this.currentCapeSpecial());
+                        : this.uForgeCape()
+                          ? CapeSpecial.Forge
+                          : this.currentCapeSpecial();
                     wSpecial = this.uRavenous()
                         ? WeaponSpecial.Ravenous
-                        : (
-                            this.uArcanasConcerto()
-                                ? WeaponSpecial.Arcanas_Concerto
-                                : (this.uForgeWeapon() ? WeaponSpecial.Forge : WeaponSpecial.Awe_Blast)
-                        );
+                        : this.uArcanasConcerto()
+                          ? WeaponSpecial.Arcanas_Concerto
+                          : this.uForgeWeapon()
+                            ? WeaponSpecial.Forge
+                            : WeaponSpecial.Awe_Blast;
                     hSpecial = this.uVim()
                         ? HelmSpecial.Vim
-                        : (this.uForgeHelm() ? HelmSpecial.Forge : this.currentHelmSpecial());
+                        : this.uForgeHelm()
+                          ? HelmSpecial.Forge
+                          : this.currentHelmSpecial();
                     break;
                 //#endregion
 
@@ -2247,8 +2416,7 @@ export class CoreAdvanced {
                 case "glaceran warlord":
                 case "dark glaceran warlord":
                 case "savage glaceran warlord":
-                    if (!this.uVainglory() || !this.uValiance() || !this.uAnima())
-                        return useAwe();
+                    if (!this.uVainglory() || !this.uValiance() || !this.uAnima()) return useAwe();
 
                     type = EnhancementType.Lucky;
                     cSpecial = CapeSpecial.Vainglory;
@@ -2259,8 +2427,7 @@ export class CoreAdvanced {
 
                 //#region Lucky - Ravenous/Valiance - Examen - Lament/Vainglory
                 case "king's echo":
-                    if (!this.uValiance() || !this.uExamen() || !this.uVainglory())
-                        return useAwe();
+                    if (!this.uValiance() || !this.uExamen() || !this.uVainglory()) return useAwe();
 
                     type = EnhancementType.Healer;
                     cSpecial = this.uLament() ? CapeSpecial.Lament : CapeSpecial.Vainglory;
@@ -2273,28 +2440,30 @@ export class CoreAdvanced {
                 case "dragonslayer general":
                     type = EnhancementType.Lucky;
 
-                    cSpecial =
-                        this.uVainglory() ? CapeSpecial.Vainglory
-                        : this.uForgeCape() ? CapeSpecial.Forge
-                        : this.currentCapeSpecial();
+                    cSpecial = this.uVainglory()
+                        ? CapeSpecial.Vainglory
+                        : this.uForgeCape()
+                          ? CapeSpecial.Forge
+                          : this.currentCapeSpecial();
 
-                    wSpecial =
-                        this.uValiance() ? WeaponSpecial.Valiance
-                        : this.uSmite() ? WeaponSpecial.Smite
-                        : WeaponSpecial.Mana_Vamp;
+                    wSpecial = this.uValiance()
+                        ? WeaponSpecial.Valiance
+                        : this.uSmite()
+                          ? WeaponSpecial.Smite
+                          : WeaponSpecial.Mana_Vamp;
 
-                    hSpecial =
-                        this.uAnima() ? HelmSpecial.Anima
-                        : this.uForgeHelm() ? HelmSpecial.Forge
-                        : this.currentHelmSpecial();
+                    hSpecial = this.uAnima()
+                        ? HelmSpecial.Anima
+                        : this.uForgeHelm()
+                          ? HelmSpecial.Forge
+                          : this.currentHelmSpecial();
 
                     break;
                 //#endregion
 
                 //#region Luck - Dauntless | Ravenous - Anima - Vainglory
                 case "chrono chaorruptor":
-                    if (!this.uRavenous() || !this.uAnima() || !this.uVainglory())
-                        return useAwe();
+                    if (!this.uRavenous() || !this.uAnima() || !this.uVainglory()) return useAwe();
 
                     type = EnhancementType.Lucky;
                     cSpecial = CapeSpecial.Vainglory;
@@ -2306,8 +2475,7 @@ export class CoreAdvanced {
                 //#region Wizard - Ravenous - Pneuma - Vainglory
                 case "chrono dataknight":
                 case "chrono dragonknight":
-                    if (!this.uRavenous() || !this.uPneuma() || !this.uVainglory())
-                        return useAwe();
+                    if (!this.uRavenous() || !this.uPneuma() || !this.uVainglory()) return useAwe();
 
                     type = EnhancementType.Wizard;
                     cSpecial = CapeSpecial.Vainglory;
@@ -2318,8 +2486,7 @@ export class CoreAdvanced {
 
                 //#region Luck - Ravenous | Valiance - ForgeHelm | Luck - Absolution
                 case "legendary hero":
-                    if (!this.uValiance() || !this.uForgeHelm() || !this.uAbsolution())
-                        return useAwe();
+                    if (!this.uValiance() || !this.uForgeHelm() || !this.uAbsolution()) return useAwe();
 
                     type = EnhancementType.Wizard;
                     cSpecial = CapeSpecial.Absolution;
@@ -2870,11 +3037,14 @@ export class CoreAdvanced {
                 //#endregion
 
                 default:
-                    Core.logger(`SmartEnhance Failed: "${className}" is not found in the Smart Enhance Library, please report to @tato2`, "", { messageBox: true });
+                    Core.logger(
+                        `SmartEnhance Failed: "${className}" is not found in the Smart Enhance Library, please report to @tato2`,
+                        "",
+                        { messageBox: true },
+                    );
                     return;
             }
         };
-
 
         // If the item doesnt exist in the forge enh lib, or the player doesn't have the Forge enh unlocked, use Awe enh instead
         if (!forgeEnhancementLibrary()) aweEnhancementLibrary();

@@ -15,8 +15,7 @@ const Egg = new MysteriousEgg();
 
 export class HatchTheEgg {
     hatch(): void {
-        if (Core.isCompletedBefore(6914) && Core.checkInventory("Manticore Cub Pet"))
-            return;
+        if (Core.isCompletedBefore(6914) && Core.checkInventory("Manticore Cub Pet")) return;
 
         Egg.getMysteriousEgg();
 
@@ -81,9 +80,9 @@ export class HatchTheEgg {
 }
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new HatchTheEgg().hatch();
+    new HatchTheEgg().hatch();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

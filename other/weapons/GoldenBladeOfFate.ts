@@ -13,8 +13,7 @@ const Story = new CoreStory();
 
 export class GoldenBladeOfFate {
     getGBoF(): void {
-        if (Core.checkInventory("Golden Blade of Fate"))
-            return;
+        if (Core.checkInventory("Golden Blade of Fate")) return;
 
         Story.preLoad(this.getGBoF);
 
@@ -52,8 +51,7 @@ export class GoldenBladeOfFate {
                 // Doom... Or Redemption?
                 if (!Story.questProgression(5678)) {
                     Core.ensureAccept(5678);
-                    if (!Core.checkInventory(38354))
-                        Core.huntMonster("sepulchure", "Dark Sepulchure", "Dark Spirit");
+                    if (!Core.checkInventory(38354)) Core.huntMonster("sepulchure", "Dark Sepulchure", "Dark Spirit");
                     Core.ensureComplete(5678);
                 }
             }
@@ -68,9 +66,9 @@ export class GoldenBladeOfFate {
 }
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new GoldenBladeOfFate().getGBoF();
+    new GoldenBladeOfFate().getGBoF();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

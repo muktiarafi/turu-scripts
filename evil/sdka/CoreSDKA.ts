@@ -76,12 +76,12 @@ export class CoreSDKA {
     questProgression = false;
 
     doAll(): void {
-
         if (Core.checkInventory("Sepulchure's DoomKnight Armor") || !Core.isMember) {
             Core.logger(
                 Core.checkInventory("Sepulchure's DoomKnight Armor")
                     ? "Player already owns SDKA"
-                    : "Player is non-Member, membership is required for SDKA");
+                    : "Player is non-Member, membership is required for SDKA",
+            );
             return;
         }
 
@@ -90,14 +90,50 @@ export class CoreSDKA {
         Core.addDrop(...this.sdkaItems);
         Core.logger("Step 1/5: Unlock Hard Core Metals");
         this.unlockHardCoreMetals();
-        if (!Core.checkInventory(
-                ["Arsenic", "Accursed Arsenic", "Accursed Arsenic of Doom", "Daggers of Destruction", "Shadow Daggers of Destruction", "Necrotic Daggers of Destruction"], undefined, { any: true, toInv: false }))
+        if (
+            !Core.checkInventory(
+                [
+                    "Arsenic",
+                    "Accursed Arsenic",
+                    "Accursed Arsenic of Doom",
+                    "Daggers of Destruction",
+                    "Shadow Daggers of Destruction",
+                    "Necrotic Daggers of Destruction",
+                ],
+                undefined,
+                { any: true, toInv: false },
+            )
+        )
             Daily.hardCoreMetals(["Arsenic"], undefined, { toBank: true });
-        else if (!Core.checkInventory(
-                ["Chromium", "Calamitous Chromium", "Calamitous Chromium of Doom", "Broadsword of Bane", "Shadow Broadsword of Bane", "Necrotic Broadsword of Bane"], undefined, { any: true, toInv: false }))
+        else if (
+            !Core.checkInventory(
+                [
+                    "Chromium",
+                    "Calamitous Chromium",
+                    "Calamitous Chromium of Doom",
+                    "Broadsword of Bane",
+                    "Shadow Broadsword of Bane",
+                    "Necrotic Broadsword of Bane",
+                ],
+                undefined,
+                { any: true, toInv: false },
+            )
+        )
             Daily.hardCoreMetals(["Chromium"], undefined, { toBank: true });
-        else if (!Core.checkInventory(
-                ["Rhodium", "Reprehensible Rhodium", "Reprehensible Rhodium of Doom", "Bow to the Shadows", "ShadowBow of the Shadows", "Necrotic Bow of the Shadow"], undefined, { any: true, toInv: false }))
+        else if (
+            !Core.checkInventory(
+                [
+                    "Rhodium",
+                    "Reprehensible Rhodium",
+                    "Reprehensible Rhodium of Doom",
+                    "Bow to the Shadows",
+                    "ShadowBow of the Shadows",
+                    "Necrotic Bow of the Shadow",
+                ],
+                undefined,
+                { any: true, toInv: false },
+            )
+        )
             Daily.hardCoreMetals(["Rhodium"], undefined, { toBank: true });
         Core.logger("Step 2/5: Getting Necrotic Daggers");
         this.necroticDaggers();
@@ -112,24 +148,23 @@ export class CoreSDKA {
     unlockHardCoreMetals(): void {
         //                    // Hard Core Metals | 2098
         if (!Core.isMember || Core.isCompletedBefore(2098)) {
-            Core.logger(!Core.isMember
-                    ? "Not a member, skipping."
-                    : "Hard Core Metals already unlocked, skipping.");
+            Core.logger(!Core.isMember ? "Not a member, skipping." : "Hard Core Metals already unlocked, skipping.");
             return;
         }
 
         Core.addDrop(
-            "Dark Energy", 
-            "Dark Spirit Orb", 
-            "DoomKnight Hood", 
-            "Experimental Dark Item", 
-            "Shadow Terror Axe", 
-            "Elders' Blood", 
-            "DoomCoin", 
-            "Shadow Creeper Enchant", 
-            "Shadow Serpent Scythe", 
-            "Dark Skull", 
-            "Corrupt Spirit Orb");
+            "Dark Energy",
+            "Dark Spirit Orb",
+            "DoomKnight Hood",
+            "Experimental Dark Item",
+            "Shadow Terror Axe",
+            "Elders' Blood",
+            "DoomCoin",
+            "Shadow Creeper Enchant",
+            "Shadow Serpent Scythe",
+            "Dark Skull",
+            "Corrupt Spirit Orb",
+        );
 
         //#region DoQuests
         // Sepulchure's Armor | 2069
@@ -149,11 +184,12 @@ export class CoreSDKA {
 
             // Check if DoomKnight Class is missing for non-members or members without either version (AC or non-AC)
             if (
-                !Core.isMember && !Core.checkInventory(2083)
-                || Core.isMember && !Core.checkInventory([ 8523, 2083 ], undefined, { any: true })
+                (!Core.isMember && !Core.checkInventory(2083)) ||
+                (Core.isMember && !Core.checkInventory([8523, 2083], undefined, { any: true }))
             ) {
                 Core.logger(
-                    "You don't have the DoomKnight Class, Getting it for you. (+Warrior/Healer if those aren't R10)");
+                    "You don't have the DoomKnight Class, Getting it for you. (+Warrior/Healer if those aren't R10)",
+                );
 
                 // Ensure Healer is Rank 10
                 Core.buyItem("trainers", 176, "Healer");
@@ -170,8 +206,7 @@ export class CoreSDKA {
             }
 
             // Ensure DoomKnight is Rank 10 for both members and non-members before proceeding with quest completion
-            Adv.rankUpClass(
-                "DoomKnight", { itemId: Core.isMember ? (Core.checkInventory(8523) ? 8523 : 2083) : 2083 });
+            Adv.rankUpClass("DoomKnight", { itemId: Core.isMember ? (Core.checkInventory(8523) ? 8523 : 2083) : 2083 });
 
             // Equip the DoomKnight class
             Core.equipClass(ClassType.Solo);
@@ -180,8 +215,7 @@ export class CoreSDKA {
             Core.ensureComplete(Core.checkInventory(8523) ? 2086 : 2087);
 
             // Bank non-solo classes if equipped
-            if (Core.soloClass !== "DoomKnight")
-                Core.toBank(Core.isMember ? 8523 : 2083);
+            if (Core.soloClass !== "DoomKnight") Core.toBank(Core.isMember ? 8523 : 2083);
         }
 
         // Toiling with Terror | 2088
@@ -190,8 +224,10 @@ export class CoreSDKA {
             Daily.eldersBlood();
 
             if (!Core.checkInventory("Elders' Blood"))
-                Core.logger(
-                    `Not enough \"Elders' Blood\", please do the daily upon daily reset.`, undefined, { messageBox: true, stopBot: true });
+                Core.logger(`Not enough \"Elders' Blood\", please do the daily upon daily reset.`, undefined, {
+                    messageBox: true,
+                    stopBot: true,
+                });
 
             Core.huntMonster("battleundera", "Bone Terror", "Shadow Terror Axe", undefined, { isTemp: false });
             Core.ensureComplete(2088);
@@ -213,37 +249,35 @@ export class CoreSDKA {
     }
 
     farmDSO(quant = 10500): void {
-        if (Core.checkInventory("Dark Spirit Orb", quant))
-            return;
+        if (Core.checkInventory("Dark Spirit Orb", quant)) return;
 
         this.selectedQuest = this.getSelectedQuest();
         Core.logger(`Selected farming Quest: ${this.selectedQuest}`);
 
-        if (this.selectedQuest === SDKAQuest.DarkSpiritOrbs)
-            this.dso(quant);
-        else
-            this.penny(quant);
+        if (this.selectedQuest === SDKAQuest.DarkSpiritOrbs) this.dso(quant);
+        else this.penny(quant);
     }
 
     private getSelectedQuest(): SDKAQuest {
         const selectedQuest = configEnum("SelectedQuest", SDKAQuest, 0 as SDKAQuest);
         return (selectedQuest as number) === 0 // the option isn't declared (C# default)
-            ? Core.isMember ? SDKAQuest.APennyforYourFoughts : SDKAQuest.DarkSpiritOrbs
+            ? Core.isMember
+                ? SDKAQuest.APennyforYourFoughts
+                : SDKAQuest.DarkSpiritOrbs
             : selectedQuest;
     }
 
     penny(quant = 10500, oneTime = false): void {
-        if (Core.checkInventory("Dark Spirit Orb", quant) && !oneTime)
-            return;
+        if (Core.checkInventory("Dark Spirit Orb", quant) && !oneTime) return;
 
         Core.logger(
             oneTime
                 ? `oneTime set to: ${oneTime}`
-                : `Farming \"Dark Spirit Orb\" ${Core.dynamicQuant("Dark Spirit Orb", false)} / ${quant}`);
+                : `Farming \"Dark Spirit Orb\" ${Core.dynamicQuant("Dark Spirit Orb", false)} / ${quant}`,
+        );
 
         // Prevent recursion when called from the unlock quest
-        if (!oneTime)
-            this.unlockHardCoreMetals();
+        if (!oneTime) this.unlockHardCoreMetals();
 
         Core.addDrop("DoomCoin", "Dark Spirit Orb", "Shadow Creeper Enchant");
         if (Core.checkInventory("DoomCoin")) {
@@ -271,24 +305,18 @@ export class CoreSDKA {
     }
 
     dso(quant = 10500): void {
-        if (Core.checkInventory("Dark Spirit Orb", quant))
-            return;
+        if (Core.checkInventory("Dark Spirit Orb", quant)) return;
 
-        Core.addDrop(
-            "Dark Spirit Orb", 
-            "Shadow Creeper Enchant", 
-            "Shadow Serpent Scythe", 
-            "Dark Energy");
+        Core.addDrop("Dark Spirit Orb", "Shadow Creeper Enchant", "Shadow Serpent Scythe", "Dark Energy");
         Core.equipClass(ClassType.Farm);
         Core.farmingLogger("Dark Spirit Orb", quant);
         Core.registerQuests(2065);
-        while (!bot.shouldExit && (!Core.checkInventory("Dark Spirit Orb", quant))) {
+        while (!bot.shouldExit && !Core.checkInventory("Dark Spirit Orb", quant)) {
             Core.huntMonster("bludrut2", "Shadow Creeper", "Shadow Creeper Enchant", undefined, { isTemp: false });
             Core.huntMonster("bludrut4", "Shadow Serpent", "Shadow Serpent Scythe", undefined, { isTemp: false });
             Core.huntMonster("ruins", "Dark Witch", "Shadow Whiskers", 6);
 
-            if (Core.checkInventory("Dark Energy", 5000))
-                this.doomMerge("Dark Spirit Orb", 100);
+            if (Core.checkInventory("Dark Energy", 5000)) this.doomMerge("Dark Spirit Orb", 100);
         }
         Core.cancelRegisteredQuests();
     }
@@ -298,8 +326,7 @@ export class CoreSDKA {
     }
 
     doomSquireWK(quant = 1): void {
-        if (Core.checkInventory("DoomSquire Weapon Kit", quant))
-            return;
+        if (Core.checkInventory("DoomSquire Weapon Kit", quant)) return;
 
         Core.farmingLogger("DoomSquire Weapon Kit", quant);
 
@@ -307,19 +334,23 @@ export class CoreSDKA {
         // whether the Soldier quest (2164) is unlocked as the readiness signal.
         if (!bot.quests.isUnlocked(2164)) {
             Core.logger("DoomSquire Weapon Kit Quest locked, unlocking via metal upgrade...");
-            const Metals: string[] =
-            [
-            "Arsenic", "Beryllium", "Chromium", "Palladium",
-            "Rhodium", "Thorium", "Mercury",
-        ];
+            const Metals: string[] = ["Arsenic", "Beryllium", "Chromium", "Palladium", "Rhodium", "Thorium", "Mercury"];
 
-            const allItems = bot.inventory.items.concat(bot.bank.items)
-                .filter(x => x != null && Metals.some(m => m.toLowerCase() === x.name.toLowerCase()));
+            const allItems = bot.inventory.items
+                .concat(bot.bank.items)
+                .filter((x) => x != null && Metals.some((m) => m.toLowerCase() === x.name.toLowerCase()));
 
-            const metalEnum = allItems
-                .map(x => Object.values(HardCoreMetalsEnum).find(v => typeof v === "number" && HardCoreMetalsEnum[v].toLowerCase() === x.name.toLowerCase()) as HardCoreMetalsEnum | undefined)
-                .find(x => x !== undefined)
-                ?? HardCoreMetalsEnum.Arsenic;
+            const metalEnum =
+                allItems
+                    .map(
+                        (x) =>
+                            Object.values(HardCoreMetalsEnum).find(
+                                (v) =>
+                                    typeof v === "number" &&
+                                    HardCoreMetalsEnum[v].toLowerCase() === x.name.toLowerCase(),
+                            ) as HardCoreMetalsEnum | undefined,
+                    )
+                    .find((x) => x !== undefined) ?? HardCoreMetalsEnum.Arsenic;
 
             this.upgradeMetal(metalEnum);
         }
@@ -330,10 +361,8 @@ export class CoreSDKA {
 
         while (!bot.shouldExit && !Core.checkInventory("DoomSquire Weapon Kit", quant)) {
             if (!Core.checkInventory("Iron Hammer")) {
-                if (Core.checkInventory(319))
-                    Core.buyItem("swordhaven", 179, "Iron Hammer");
-                else
-                    Core.huntMonster("battleundera", "Skeletal Warrior", "Iron Hammer", undefined, { isTemp: false });
+                if (Core.checkInventory(319)) Core.buyItem("swordhaven", 179, "Iron Hammer");
+                else Core.huntMonster("battleundera", "Skeletal Warrior", "Iron Hammer", undefined, { isTemp: false });
             }
             Core.huntMonster("sandcastle", "War Mummy", "War Mummy Wrap", undefined, { isTemp: false, log: false });
             Core.huntMonster("noobshire", "Horc Noob", "Noob Blade Oil", undefined, { log: false });
@@ -343,25 +372,21 @@ export class CoreSDKA {
             Core.huntMonster("nulgath", "Dark Makai", "Dark Makai Lacquer Finish", undefined, { log: false });
 
             bot.wait.forPickup("DoomSquire Weapon Kit");
-            if (this.questProgression)
-                break;
-
+            if (this.questProgression) break;
         }
 
         Core.cancelRegisteredQuests();
     }
 
     doomSoldierWK(quant = 1): void {
-        if (Core.checkInventory("DoomSoldier Weapon Kit", quant))
-            return;
+        if (Core.checkInventory("DoomSoldier Weapon Kit", quant)) return;
 
         Core.farmingLogger("DoomSoldier Weapon Kit", quant);
 
         if (!bot.quests.isUnlocked(2164)) {
             Core.logger("DoomSoldier Weapon Kit Quest Locked, Doing Previous Quest");
             this.doomSquireWK(1);
-            if (this.questProgression)
-                return;
+            if (this.questProgression) return;
         }
         Core.addDrop("DoomSoldier Weapon Kit");
         Core.registerQuests(2164);
@@ -386,8 +411,7 @@ export class CoreSDKA {
     }
 
     doomKnightWK(item = "DoomKnight Weapon Kit", quant = 1): void {
-        if (Core.checkInventory(item, quant))
-            return;
+        if (Core.checkInventory(item, quant)) return;
 
         Core.farmingLogger(item, quant);
 
@@ -397,7 +421,13 @@ export class CoreSDKA {
             this.questProgression = false;
         }
 
-        Core.addDrop("DoomKnight Weapon Kit", "Dark Spirit Orb", "Corrupt Spirit Orb", "Ominous Aura", "Grumpy Warhammer");
+        Core.addDrop(
+            "DoomKnight Weapon Kit",
+            "Dark Spirit Orb",
+            "Corrupt Spirit Orb",
+            "Ominous Aura",
+            "Grumpy Warhammer",
+        );
         Core.equipClass(ClassType.Solo);
         bot.quests.updateQuest(999);
         Core.registerQuests(2165);
@@ -426,36 +456,34 @@ export class CoreSDKA {
 
         if (
             !Core.checkInventory(
-                [
-                    "Necrotic Daggers of Destruction",
-                    "Shadow Daggers of Destruction",
-                    "Daggers of Destruction",
-                ], undefined, { any: true })
+                ["Necrotic Daggers of Destruction", "Shadow Daggers of Destruction", "Daggers of Destruction"],
+                undefined,
+                { any: true },
+            )
         ) {
             if (
-                !Core.checkInventory(
-                    [ "Accursed Arsenic of Doom", "Accursed Arsenic" ], undefined, { any: true }) && !Core.checkInventory("Ominous Aura", 2)
+                !Core.checkInventory(["Accursed Arsenic of Doom", "Accursed Arsenic"], undefined, { any: true }) &&
+                !Core.checkInventory("Ominous Aura", 2)
             ) {
                 const DSOQuantity =
-                    10500
-                    - (bot.inventory.getQuantity("Corrupt Spirit Orb") * 100)
-                    - (bot.inventory.getQuantity("Ominous Aura") * 5000);
+                    10500 -
+                    bot.inventory.getQuantity("Corrupt Spirit Orb") * 100 -
+                    bot.inventory.getQuantity("Ominous Aura") * 5000;
                 this.farmDSO(DSOQuantity);
             }
 
             if (
-                !Core.checkInventory(
-                    [ "Accursed Arsenic of Doom", "Accursed Arsenic" ], undefined, { any: true }) && !Core.checkInventory("Ominous Aura", 2)
+                !Core.checkInventory(["Accursed Arsenic of Doom", "Accursed Arsenic"], undefined, { any: true }) &&
+                !Core.checkInventory("Ominous Aura", 2)
             ) {
-                const CSOQuantity = 105 - (bot.inventory.getQuantity("Ominous Aura") * 50);
-                if ((CSOQuantity * 100) > bot.inventory.getQuantity("Dark Spirit Orb"))
-                    this.farmDSO(CSOQuantity * 100);
+                const CSOQuantity = 105 - bot.inventory.getQuantity("Ominous Aura") * 50;
+                if (CSOQuantity * 100 > bot.inventory.getQuantity("Dark Spirit Orb")) this.farmDSO(CSOQuantity * 100);
                 this.doomMerge("Corrupt Spirit Orb", CSOQuantity);
             }
 
             if (
-                !Core.checkInventory(
-                    [ "Accursed Arsenic of Doom", "Accursed Arsenic" ], undefined, { any: true }) && !Core.checkInventory("Ominous Aura", 2)
+                !Core.checkInventory(["Accursed Arsenic of Doom", "Accursed Arsenic"], undefined, { any: true }) &&
+                !Core.checkInventory("Ominous Aura", 2)
             )
                 this.doomMerge("Ominous Aura", 2);
 
@@ -464,20 +492,20 @@ export class CoreSDKA {
                     Core.farmingLogger("Accursed Arsenic");
                     Core.ensureAccept(2110);
                     Core.huntMonster("bludrut4", "Shadow Serpent", "Dark Energy", 26, { isTemp: false });
-                    Daily.hardCoreMetals([ "Arsenic" ]);
+                    Daily.hardCoreMetals(["Arsenic"]);
                     if (!Core.checkInventory("Arsenic")) {
                         Core.logger(
-                            "Can't complete Accursed Arsenic Hex (Missing Arsenic).\n"
-                                + "This requires a daily, please run the bot again after the daily reset has occurred.");
+                            "Can't complete Accursed Arsenic Hex (Missing Arsenic).\n" +
+                                "This requires a daily, please run the bot again after the daily reset has occurred.",
+                        );
                         return;
                     }
                     this.farmDSO(6);
                     Core.huntMonster("arcangrove", "Seed Spitter", "Deadly Knightshade", 16);
                     Core.ensureComplete(2110);
                 }
-                const CSOQuantity = 105 - (bot.inventory.getQuantity("Ominous Aura") * 50);
-                if ((CSOQuantity * 100) > bot.inventory.getQuantity("Dark Spirit Orb"))
-                    this.farmDSO(CSOQuantity * 100);
+                const CSOQuantity = 105 - bot.inventory.getQuantity("Ominous Aura") * 50;
+                if (CSOQuantity * 100 > bot.inventory.getQuantity("Dark Spirit Orb")) this.farmDSO(CSOQuantity * 100);
                 this.doomMerge("Corrupt Spirit Orb", CSOQuantity);
                 this.doomMerge("Ominous Aura", 2);
                 Core.buyItem("dwarfhold", 434, 12476, undefined, 778);
@@ -508,16 +536,14 @@ export class CoreSDKA {
             Core.logger("Broadsword found, skipping.");
             return;
         }
-        if (!Core.checkInventory("Necrotic Daggers of Destruction"))
-            this.necroticDaggers();
+        if (!Core.checkInventory("Necrotic Daggers of Destruction")) this.necroticDaggers();
 
         if (
             !Core.checkInventory(
-                [
-                    "Necrotic Broadsword of Bane",
-                    "Shadow Broadsword of Bane",
-                    "Broadsword of Bane",
-                ], undefined, { any: true })
+                ["Necrotic Broadsword of Bane", "Shadow Broadsword of Bane", "Broadsword of Bane"],
+                undefined,
+                { any: true },
+            )
         ) {
             if (!Core.checkInventory("Calamitous Chromium of Doom")) {
                 if (!Core.checkInventory("Calamitous Chromium")) {
@@ -525,11 +551,12 @@ export class CoreSDKA {
                     Core.addDrop("Calamitous Chromium");
                     Core.ensureAccept(2112);
                     Core.huntMonster("bludrut4", "Shadow Serpent", "Dark Energy", 26, { isTemp: false });
-                    Daily.hardCoreMetals([ "Chromium" ]);
+                    Daily.hardCoreMetals(["Chromium"]);
                     if (!Core.checkInventory("Chromium")) {
                         Core.logger(
-                        "Can't complete Calamitous Chromium Hex (Missing Chromium).\n"
-                            + "This requires a daily, please run the bot again after the daily reset has occurred.");
+                            "Can't complete Calamitous Chromium Hex (Missing Chromium).\n" +
+                                "This requires a daily, please run the bot again after the daily reset has occurred.",
+                        );
                         return;
                     }
                     this.farmDSO(6);
@@ -573,16 +600,14 @@ export class CoreSDKA {
             Core.logger("Bow found, skipping.");
             return;
         }
-        if (!Core.checkInventory("Necrotic Broadsword of Bane"))
-            this.necroticBroadsword();
+        if (!Core.checkInventory("Necrotic Broadsword of Bane")) this.necroticBroadsword();
 
         if (
             !Core.checkInventory(
-                [
-                    "Necrotic Bow of the Shadow",
-                    "ShadowBow of the Shadows",
-                    "Bow to the Shadows",
-                ], undefined, { any: true })
+                ["Necrotic Bow of the Shadow", "ShadowBow of the Shadows", "Bow to the Shadows"],
+                undefined,
+                { any: true },
+            )
         ) {
             if (!Core.checkInventory("Reprehensible Rhodium of Doom")) {
                 if (!Core.checkInventory("Reprehensible Rhodium")) {
@@ -590,11 +615,12 @@ export class CoreSDKA {
                     Core.addDrop("Reprehensible Rhodium");
                     Core.ensureAccept(2114);
                     Core.huntMonster("bludrut4", "Shadow Serpent", "Dark Energy", 26, { isTemp: false });
-                    Daily.hardCoreMetals([ "Rhodium" ]);
+                    Daily.hardCoreMetals(["Rhodium"]);
                     if (!Core.checkInventory("Rhodium")) {
                         Core.logger(
-                        "Can't complete Reprehensible Rhodium Hex (Missing Rhodium).\n"
-                            + "This requires a daily, please run the bot again after the daily reset has occurred.");
+                            "Can't complete Reprehensible Rhodium Hex (Missing Rhodium).\n" +
+                                "This requires a daily, please run the bot again after the daily reset has occurred.",
+                        );
                         return;
                     }
                     this.farmDSO(6);
@@ -632,8 +658,7 @@ export class CoreSDKA {
     }
 
     summoningSepulchureArmor(): void {
-        if (Core.checkInventory("Sepulchure's DoomKnight Armor"))
-            return;
+        if (Core.checkInventory("Sepulchure's DoomKnight Armor")) return;
 
         this.pinpointBow(500, 250); // DSO, CSO [Bow]
         this.omninousAura(125); // Ominous Aura [Daggers/Mace/Scythe]
@@ -641,7 +666,7 @@ export class CoreSDKA {
 
         Core.logger(Core.checkInventory("Doom Aura") ? "Doom Aura found." : "Farming for Doom Aura");
 
-        this.pinpointthePieces(2181, [ "Doom Aura" ], [ 1 ]);
+        this.pinpointthePieces(2181, ["Doom Aura"], [1]);
 
         if (!Core.checkInventory("Experimental Dark Item")) {
             Core.addDrop("Experimental Dark Item");
@@ -661,38 +686,33 @@ export class CoreSDKA {
     }
 
     omninousAura(quant = 5): void {
-        if (Core.checkInventory("Ominous Aura", quant))
-            return;
+        if (Core.checkInventory("Ominous Aura", quant)) return;
 
         // Substitute "Necrotic Daggers of Destruction"
         // with "Necrotic Mace of Misery" or "Necrotic Scythe of Scourge" if the player has it
 
         // List of weapons in in order of best rates [Best to worst]
-        const Weapons: string[] =
-        [
+        const Weapons: string[] = [
             "Necrotic Daggers of Destruction",
             "Necrotic Mace of Misery",
             "Necrotic Scythe of Scourge",
         ];
-        const Weapon =
-            Weapons.find(w => Core.checkInventory(w))
-            ?? "Necrotic Daggers of Destruction";
+        const Weapon = Weapons.find((w) => Core.checkInventory(w)) ?? "Necrotic Daggers of Destruction";
         switch (Weapon) {
             case "Necrotic Daggers of Destruction":
-                if (!Core.checkInventory("Necrotic Daggers of Destruction"))
-                    this.necroticDaggers();
+                if (!Core.checkInventory("Necrotic Daggers of Destruction")) this.necroticDaggers();
 
-                this.pinpointthePieces(2181, [ "Ominous Aura" ], [ quant ]);
+                this.pinpointthePieces(2181, ["Ominous Aura"], [quant]);
                 break;
 
             case "Necrotic Mace of Misery":
                 if (Core.checkInventory("Necrotic Mace of Misery"))
-                    this.pinpointthePieces(2185, [ "Ominous Aura" ], [ quant ]);
+                    this.pinpointthePieces(2185, ["Ominous Aura"], [quant]);
                 break;
 
             case "Necrotic Scythe of Scourge":
                 if (Core.checkInventory("Necrotic Scythe of Scourge"))
-                    this.pinpointthePieces(2184, [ "Ominous Aura" ], [ quant ]);
+                    this.pinpointthePieces(2184, ["Ominous Aura"], [quant]);
                 break;
 
             default:
@@ -701,30 +721,33 @@ export class CoreSDKA {
     }
 
     pinpointBroadsword(quant = 1): void {
-        if (Core.checkInventory("Diabolical Aura", quant))
-            return;
+        if (Core.checkInventory("Diabolical Aura", quant)) return;
 
         if (!Core.checkInventory("Necrotic Broadsword of Bane", 1, { toInv: false })) {
             this.necroticBroadsword();
-            Core.logger(" \"Necrotic Broadsword of Bane\" still not owned, most likely missing Daily metal stuffs, stopping", undefined, { stopBot: true });
+            Core.logger(
+                ' "Necrotic Broadsword of Bane" still not owned, most likely missing Daily metal stuffs, stopping',
+                undefined,
+                { stopBot: true },
+            );
         }
 
-        this.pinpointthePieces(2183, [ "Diabolical Aura" ], [ quant ]);
+        this.pinpointthePieces(2183, ["Diabolical Aura"], [quant]);
     }
 
     pinpointBow(quantDSO: number, quantCSO: number): void {
-        if (
-            Core.checkInventory("Dark Spirit Orb", quantDSO)
-            && Core.checkInventory("Corrupt Spirit Orb", quantCSO)
-        )
+        if (Core.checkInventory("Dark Spirit Orb", quantDSO) && Core.checkInventory("Corrupt Spirit Orb", quantCSO))
             return;
 
         if (!Core.checkInventory("Necrotic Bow of the Shadow", 1, { toInv: false })) {
             this.necroticBow();
             // Recheck
             if (!Core.checkInventory("Necrotic Bow of the Shadow", 1, { toInv: false }))
-                Core.logger(" \"Necrotic Bow of the Shadow\" still not owned, most likely missing Daily metal stuffs, stopping", undefined, { stopBot: true });
-
+                Core.logger(
+                    ' "Necrotic Bow of the Shadow" still not owned, most likely missing Daily metal stuffs, stopping',
+                    undefined,
+                    { stopBot: true },
+                );
         }
 
         Core.equipClass(ClassType.Farm);
@@ -732,17 +755,20 @@ export class CoreSDKA {
         Core.farmingLogger("Corrupt Spirit Orb", quantCSO);
 
         // Process each item individually
-        this.pinpointthePieces(
-            2186, 
-            [ "Dark Spirit Orb", "Corrupt Spirit Orb" ], 
-            [ quantDSO, quantCSO ]);
+        this.pinpointthePieces(2186, ["Dark Spirit Orb", "Corrupt Spirit Orb"], [quantDSO, quantCSO]);
     }
 
     pinpointthePieces(quest: number, items: string[] | null = null, quants: number[] | null = null): void {
-        if (items == null || quants == null || items.length !== quants.length)
-            return;
+        if (items == null || quants == null || items.length !== quants.length) return;
 
-        Core.addDrop("Dark Energy", "Dark Spirit Orb", "Corrupt Spirit Orb", "Ominous Aura", "Diabolical Aura", "Doom Aura");
+        Core.addDrop(
+            "Dark Energy",
+            "Dark Spirit Orb",
+            "Corrupt Spirit Orb",
+            "Ominous Aura",
+            "Diabolical Aura",
+            "Doom Aura",
+        );
         Core.equipClass(ClassType.Farm);
 
         for (let i = 0; i < items.length; i++) {
@@ -755,8 +781,7 @@ export class CoreSDKA {
                 Core.killMonster("lycan", "r4", "Left", "*", "DoomKnight Armor Piece", 10, { log: false });
                 Core.ensureComplete(quest);
 
-                for (let t = 0; t < 10 && !bot.shouldExit && !bot.inventory.contains(item, quant); t++)
-                    bot.sleep(500);
+                for (let t = 0; t < 10 && !bot.shouldExit && !bot.inventory.contains(item, quant); t++) bot.sleep(500);
             }
         }
 
@@ -809,7 +834,11 @@ export class CoreSDKA {
 
         // If metal owned & DoomSoldier weapon kit is unlocked ( had to go beyond squire as its unlocked
         // by the first metal quest, not the returnin with the forge key)
-        if (Core.checkInventory(fullMetalName) && bot.quests.hasBeenCompleted(forgeKeyQuest) && Story.questProgression(2144)) {
+        if (
+            Core.checkInventory(fullMetalName) &&
+            bot.quests.hasBeenCompleted(forgeKeyQuest) &&
+            Story.questProgression(2144)
+        ) {
             bot.log(`Required metal (${fullMetalName}) owned, and ForgeKey quest(${forgeKeyQuest}) complete`);
             return;
         }
@@ -822,19 +851,22 @@ export class CoreSDKA {
         }
 
         // Get the forge key itemid for the quest
-        forgekeyitemID =
-            ForgeQuestdata.requirements.find(x => x != null && x.name === "Forge Key")?.id
-            ?? 0;
+        forgekeyitemID = ForgeQuestdata.requirements.find((x) => x != null && x.name === "Forge Key")?.id ?? 0;
 
         if (forgekeyitemID === 0) {
-            Core.logger(`Failed to find the item ID for 'Forge Key' in quest ID ${forgeKeyQuest}. Cannot proceed with metal upgrade.`);
+            Core.logger(
+                `Failed to find the item ID for 'Forge Key' in quest ID ${forgeKeyQuest}. Cannot proceed with metal upgrade.`,
+            );
             return;
         }
 
-        Core.logger(`forge Key Quest: ${forgeKeyQuest} [Completed? ${bot.quests.hasBeenCompleted(forgeKeyQuest)}]\n Full Metal Name ${fullMetalName}\n Forge Key ItemID ${forgekeyitemID}`, "Information");
+        Core.logger(
+            `forge Key Quest: ${forgeKeyQuest} [Completed? ${bot.quests.hasBeenCompleted(forgeKeyQuest)}]\n Full Metal Name ${fullMetalName}\n Forge Key ItemID ${forgekeyitemID}`,
+            "Information",
+        );
 
         if (!Core.checkInventory(fullMetalName)) {
-            const upgradeMetalName = (fullMetalName.split(" ").slice(0, 2)).join(" ");
+            const upgradeMetalName = fullMetalName.split(" ").slice(0, 2).join(" ");
             Core.addDrop(fullMetalName);
             Core.farmingLogger(fullMetalName, 1);
             // Getting the partially upgraded metal
@@ -843,12 +875,12 @@ export class CoreSDKA {
                 Core.farmingLogger(upgradeMetalName, 1);
                 Core.ensureAccept(upgradeMetalQuest);
 
-                if (!Core.checkInventory(metal))
-                    Daily.hardCoreMetals([HardCoreMetalsEnum[metal]]);
+                if (!Core.checkInventory(metal)) Daily.hardCoreMetals([HardCoreMetalsEnum[metal]]);
                 if (!Core.checkInventory(metal)) {
                     Core.logger(
-                     `Can't complete ${fullMetalName.split(" ").slice(0, 2).join(" ")} Enchantment (missing ${HardCoreMetalsEnum[metal]}).\n`
-                         + "This requires a daily, please run the bot again after the daily reset has occurred.");
+                        `Can't complete ${fullMetalName.split(" ").slice(0, 2).join(" ")} Enchantment (missing ${HardCoreMetalsEnum[metal]}).\n` +
+                            "This requires a daily, please run the bot again after the daily reset has occurred.",
+                    );
                     return;
                 }
 
@@ -858,27 +890,28 @@ export class CoreSDKA {
                 Core.ensureComplete(upgradeMetalQuest);
                 bot.wait.forPickup(upgradeMetalName);
                 if (!Core.checkInventory(upgradeMetalName)) {
-                    Core.logger(`Failed to obtain ${upgradeMetalName}. Cannot continue the metal upgrade.`, undefined, { stopBot: true });
+                    Core.logger(`Failed to obtain ${upgradeMetalName}. Cannot continue the metal upgrade.`, undefined, {
+                        stopBot: true,
+                    });
                     return;
                 }
             }
 
             // Getting the fully upgraded metal
-            // IF the gooquest isnt unlocked do the very slow method first.           
+            // IF the gooquest isnt unlocked do the very slow method first.
             if (!bot.quests.isUnlocked(2165)) {
                 let missingAuras = 0;
                 if (!Core.checkInventory("Ominous Aura", 2))
                     missingAuras = 2 - bot.inventory.getQuantity("Ominous Aura");
 
                 // Reserve five orbs for the metal and fifty for each missing aura.
-                const requiredOrbs = 5 + (missingAuras * 50);
+                const requiredOrbs = 5 + missingAuras * 50;
                 if (!Core.checkInventory("Corrupt Spirit Orb", requiredOrbs)) {
                     const missingOrbs = requiredOrbs - bot.inventory.getQuantity("Corrupt Spirit Orb");
                     this.farmDSO(missingOrbs * 100);
                     this.doomMerge("Corrupt Spirit Orb", missingOrbs);
                 }
-                if (missingAuras > 0)
-                    this.doomMerge("Ominous Aura", missingAuras);
+                if (missingAuras > 0) this.doomMerge("Ominous Aura", missingAuras);
             } else {
                 this.doomKnightWK("Corrupt Spirit Orb", 5);
                 this.doomKnightWK("Ominous Aura", 2);
@@ -887,12 +920,14 @@ export class CoreSDKA {
         }
 
         if (!Core.checkInventory(fullMetalName)) {
-            Core.logger(`Failed to obtain ${fullMetalName}. Cannot continue to the Forge Key quest.`, undefined, { stopBot: true });
+            Core.logger(`Failed to obtain ${fullMetalName}. Cannot continue to the Forge Key quest.`, undefined, {
+                stopBot: true,
+            });
             return;
         }
 
-        if (!Story.questProgression(forgeKeyQuest))
-        { // Unlocking "DoomSquire Weapon Kit" [Quest ID 2144]  
+        if (!Story.questProgression(forgeKeyQuest)) {
+            // Unlocking "DoomSquire Weapon Kit" [Quest ID 2144]
             Core.addDrop(fullMetalName);
             Core.addDrop(forgekeyitemID);
             Core.ensureAccept(forgeKeyQuest);
@@ -909,7 +944,17 @@ export enum SDKAQuest {
     DarkSpiritOrbs = 2065,
 }
 
-export const scriptOptions = defineScriptOptions("SupulchuresDoomKnightArmorOptions", [
-    Core.skipOptions,
-    option.choice("SelectedQuest", "Dark Spirit Orbs Quest", "Which quest should the bot use to farm Dark Spirit Orbs with?\nRecommended setting: A Penny for Your Foughts", choices(SDKAQuest), "APennyforYourFoughts"),
-], true);
+export const scriptOptions = defineScriptOptions(
+    "SupulchuresDoomKnightArmorOptions",
+    [
+        Core.skipOptions,
+        option.choice(
+            "SelectedQuest",
+            "Dark Spirit Orbs Quest",
+            "Which quest should the bot use to farm Dark Spirit Orbs with?\nRecommended setting: A Penny for Your Foughts",
+            choices(SDKAQuest),
+            "APennyforYourFoughts",
+        ),
+    ],
+    true,
+);

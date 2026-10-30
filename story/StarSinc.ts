@@ -87,63 +87,37 @@ export class StarSinc {
             }
         };
 
-        if (Core.checkInventory("SuperNova Badge"))
-            return;
+        if (Core.checkInventory("SuperNova Badge")) return;
 
-        bot.drops.add(
-            ...Core.questRewards(
-                4400, 
-                4401, 
-                4402, 
-                4403, 
-                4404, 
-                4405, 
-                4406, 
-                4407, 
-                4408, 
-                4409, 
-                4410, 
-                4412));
+        bot.drops.add(...Core.questRewards(4400, 4401, 4402, 4403, 4404, 4405, 4406, 4407, 4408, 4409, 4410, 4412));
 
         Core.equipClass(ClassType.Farm);
 
-        Story.legacyQuestManager(
-            questLogic,
-            4400, 
-            4401, 
-            4402, 
-            4403, 
-            4404, 
-            4405, 
-            4406, 
-            4407, 
-            4408, 
-            4409, 
-            4410, 
-            4412);
+        Story.legacyQuestManager(questLogic, 4400, 4401, 4402, 4403, 4404, 4405, 4406, 4407, 4408, 4409, 4410, 4412);
     }
 }
 
 export default function main(): void {
-        Core.bankingBlackList.push(...
-            [
-                "Nova Badge 1.0",
-                "Nova Badge 2.0",
-                "Nova Badge 3.0",
-                "Nova Badge 3.0",
-                "Nova Badge 4.0",
-                "Nova Badge 5.0",
-                "Nova Badge 6.0",
-                "Nova Badge 7.0",
-                "Nova Badge 8.0",
-                "Nova Badge 9.0",
-                "Nova Badge 10.0",
-                "Nova Badge 11.0",
-                "SuperNova Badge",
-            ]);
-        Core.setOptions();
+    Core.bankingBlackList.push(
+        ...[
+            "Nova Badge 1.0",
+            "Nova Badge 2.0",
+            "Nova Badge 3.0",
+            "Nova Badge 3.0",
+            "Nova Badge 4.0",
+            "Nova Badge 5.0",
+            "Nova Badge 6.0",
+            "Nova Badge 7.0",
+            "Nova Badge 8.0",
+            "Nova Badge 9.0",
+            "Nova Badge 10.0",
+            "Nova Badge 11.0",
+            "SuperNova Badge",
+        ],
+    );
+    Core.setOptions();
 
-        new StarSinc().starSincQuests();
+    new StarSinc().starSincQuests();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

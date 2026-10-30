@@ -14,8 +14,7 @@ const Legion = new CoreLegion();
 
 export class SwordMaster {
     getSwordMaster(rankUpClass = true): void {
-        if (Core.checkInventory("SwordMaster"))
-            return;
+        if (Core.checkInventory("SwordMaster")) return;
 
         Legion.farmLegionToken(2000);
         Core.buyItem("underworld", 238, "SwordMaster", 1);
@@ -27,9 +26,9 @@ export class SwordMaster {
 }
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new SwordMaster().getSwordMaster();
+    new SwordMaster().getSwordMaster();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

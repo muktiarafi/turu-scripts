@@ -25,25 +25,22 @@ export class EternalDrakath {
     ];
 
     getSet(singleitem = false, item: string | null = null): void {
-        if (item != null && Core.checkInventory(item) || Core.checkInventory(this.rewards))
-            return;
+        if ((item != null && Core.checkInventory(item)) || Core.checkInventory(this.rewards)) return;
 
-        if (item != null)
-            Core.addDrop(item);
-        else
-            Core.addDrop(...this.rewards);
+        if (item != null) Core.addDrop(item);
+        else Core.addDrop(...this.rewards);
         Core.addDrop(25286);
 
         Armor.drakathArmor();
-        if (!Core.checkInventory("Drakath Armor")) //"Drakath the Eternal"
-        {
+        if (!Core.checkInventory("Drakath Armor")) {
+            //"Drakath the Eternal"
             Core.logger(
-                "Drakath Armor is missing, so Drakath the Eternal cannot be obtained. Check the earlier quest reward and armor purchase messages.");
+                "Drakath Armor is missing, so Drakath the Eternal cannot be obtained. Check the earlier quest reward and armor purchase messages.",
+            );
             return;
         }
         Core.equipClass(ClassType.Solo);
-        if (!Core.checkInventory(25286))
-            Core.logger("Farming Drakath's Sword");
+        if (!Core.checkInventory(25286)) Core.logger("Farming Drakath's Sword");
         while (!bot.shouldExit && !Core.checkInventory(25286))
             Core.huntMonster("ultradrakath", "Champion of Chaos", null, 1, { log: false });
 
@@ -52,7 +49,9 @@ export class EternalDrakath {
         BLOD.spiritOrb(2000);
 
         Core.equipClass(ClassType.Farm);
-        Core.killMonster("chaoslab", "r3", "Center", "Chaorrupted Moglin", "Crystallized Chaos", 800, { isTemp: false });
+        Core.killMonster("chaoslab", "r3", "Center", "Chaorrupted Moglin", "Crystallized Chaos", 800, {
+            isTemp: false,
+        });
 
         if (!Core.checkInventory("Star Fragment", 33)) {
             Star.starSincQuests();
@@ -61,7 +60,7 @@ export class EternalDrakath {
 
             Core.registerQuests(4413);
             while (!bot.shouldExit && !Core.checkInventory("Star Fragment", 33)) {
-                Core.huntMonster("starsinc", "Living Star", "Living Star Defeated", 30, { isTemp: false }); 
+                Core.huntMonster("starsinc", "Living Star", "Living Star Defeated", 30, { isTemp: false });
                 bot.wait.forPickup("Star Fragment");
             }
             Core.cancelRegisteredQuests();
@@ -80,7 +79,7 @@ export class EternalDrakath {
             Core.logger("Farming Reality Shards");
             Core.registerQuests(8456);
             while (!bot.shouldExit && !Core.checkInventory("Reality Shard", 200)) {
-                Core.huntMonster("eternalchaos", "Chaos Time Fairy", "Preserved Chaos Fairy Wing", 5, { log: false }); 
+                Core.huntMonster("eternalchaos", "Chaos Time Fairy", "Preserved Chaos Fairy Wing", 5, { log: false });
                 bot.wait.forPickup("Reality Shard");
             }
             Core.cancelRegisteredQuests();
@@ -95,9 +94,9 @@ export class EternalDrakath {
 }
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new EternalDrakath().getSet();
+    new EternalDrakath().getSet();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

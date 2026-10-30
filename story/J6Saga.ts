@@ -22,8 +22,7 @@ export class J6Saga {
 
         Story.preLoad(this.j6);
 
-        if (ReTurnWithHammer)
-            Core.addDrop(5194);
+        if (ReTurnWithHammer) Core.addDrop(5194);
 
         //J6 Quiz Game
         Story.chainQuest(674);
@@ -35,14 +34,13 @@ export class J6Saga {
         if (!Story.questProgression(694)) {
             Core.jump("R10");
             Core.join("zephyrus");
-            Story.mapItemQuest(694, "zephyrus", [ 116, 117 ]);
+            Story.mapItemQuest(694, "zephyrus", [116, 117]);
         }
 
         //Mission1
         Story.killQuest(698, "forest", "Zardman Grunt");
 
-        if (ReTurnWithHammer)
-            return;
+        if (ReTurnWithHammer) return;
 
         //Mission2
         Story.killQuest(699, "boxes", "Sneeviltron");
@@ -86,8 +84,7 @@ export class J6Saga {
             Core.ensureAccept(2830);
             Core.killMonster("xantown", "Enter", "Spawn", "*", "Flare Artifact");
             Core.ensureComplete(2830);
-            if (bot.map.name === "xantown")
-                Core.jump("r12", "Left"); // map is aggro af this is a safe cell.
+            if (bot.map.name === "xantown") Core.jump("r12", "Left"); // map is aggro af this is a safe cell.
             Core.sellItem("Auxiliary Clue 3");
         }
 
@@ -201,9 +198,9 @@ export class J6Saga {
 }
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new J6Saga().j6();
+    new J6Saga().j6();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

@@ -42,8 +42,7 @@ export class VoidPaladin {
     }
 
     aDarkTemptation(): void {
-        if (Core.checkInventory(this.adkRewards))
-            return;
+        if (Core.checkInventory(this.adkRewards)) return;
         Core.addDrop(...this.adkRewards);
         Core.addDrop("Scroll of Underworld", "Archmage Ink", "Mystic Shards");
 
@@ -75,8 +74,7 @@ export class VoidPaladin {
     }
 
     deeperandDeeperintoDarkness(): void {
-        if (Core.checkInventory("Void Paladin"))
-            return;
+        if (Core.checkInventory("Void Paladin")) return;
 
         Core.addDrop("Void Paladin");
         Core.logger("Farming Void Paladin.");
@@ -85,7 +83,7 @@ export class VoidPaladin {
 
         Nation.farmDiamondofNulgath(25);
         Nation.farmTaintedGem(40);
-        Nation.farmVoucher({ member:false });
+        Nation.farmVoucher({ member: false });
         Nation.farmGemofNulgath(25);
         Nation.farmDarkCrystalShard(40);
         Nation.farmUni13(2);
@@ -101,8 +99,7 @@ export class VoidPaladin {
     }
 
     sacrifice(): void {
-        if (Core.checkInventory("Void Light of Destiny"))
-            return;
+        if (Core.checkInventory("Void Light of Destiny")) return;
 
         Core.addDrop("Void Light of Destiny");
         Core.logger("Starting [Sacrifice] Quest");
@@ -115,27 +112,23 @@ export class VoidPaladin {
         Nation.farmTotemofNulgath(1);
         NSoD.voidAuras(6);
 
-        if (Core.checkInventory("Blinding Light of Destiny"))
-            Core.chainComplete(5828);
-        else if (Core.checkInventory("Ascended Light of Destiny"))
-            Core.chainComplete(5829);
+        if (Core.checkInventory("Blinding Light of Destiny")) Core.chainComplete(5828);
+        else if (Core.checkInventory("Ascended Light of Destiny")) Core.chainComplete(5829);
     }
 
     cyberSet(): void {
-        if (Core.checkInventory(this.cyberVoidSet, 1, { toInv: false }))
-            return;
+        if (Core.checkInventory(this.cyberVoidSet, 1, { toInv: false })) return;
 
         Core.addDrop(...this.cyberVoidSet);
         // C# ignores this check; quest 6625 can't be accepted without them.
         if (
-            !Core.checkInventory(
-                [
-                    "Void Light of Destiny",
-                    "Void Paladin",
-                    "Void Paladin Helm",
-                    "Void Paladin Katana",
-                    "Void Paladin Katana Cape",
-                ])
+            !Core.checkInventory([
+                "Void Light of Destiny",
+                "Void Paladin",
+                "Void Paladin Helm",
+                "Void Paladin Katana",
+                "Void Paladin Katana Cape",
+            ])
         ) {
             Core.logger("Missing the Void Paladin items quest 6625 needs (run the other Void Paladin quests first).");
             return;
@@ -148,11 +141,11 @@ export class VoidPaladin {
 
 export default function main(): void {
     const script = new VoidPaladin();
-        Core.bankingBlackList.push(...Nation.bagDrops);
-        Core.bankingBlackList.push(...script.adkRewards);
-        Core.setOptions();
+    Core.bankingBlackList.push(...Nation.bagDrops);
+    Core.bankingBlackList.push(...script.adkRewards);
+    Core.setOptions();
 
-        script.doAll();
+    script.doAll();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

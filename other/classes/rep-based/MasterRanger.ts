@@ -13,22 +13,20 @@ const Adv = new CoreAdvanced();
 export class MasterRanger {
     getMR(rankUpClass = true): void {
         if (Core.checkInventory("Master Ranger")) {
-            if (rankUpClass)
-                Adv.rankUpClass("Master Ranger");
+            if (rankUpClass) Adv.rankUpClass("Master Ranger");
             return;
         }
 
         Adv.buyItem("sandsea", 242, 7260, 1, 5682);
 
-        if (rankUpClass)
-            Adv.rankUpClass("Master Ranger");
+        if (rankUpClass) Adv.rankUpClass("Master Ranger");
     }
 }
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new MasterRanger().getMR();
+    new MasterRanger().getMR();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

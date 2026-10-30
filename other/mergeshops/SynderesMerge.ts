@@ -30,10 +30,15 @@ export class SynderesMerge {
         switch (req.name) {
             default: {
                 const shouldStop = !Adv.matsOnly || !this.dontStopMissingIng;
-                Core.logger(`The bot hasn't been taught how to get ${req.name}.` + (shouldStop ? " Please report the issue." : " Skipping"), "", {
-                    messageBox: shouldStop,
-                    stopBot: shouldStop,
-                });
+                Core.logger(
+                    `The bot hasn't been taught how to get ${req.name}.` +
+                        (shouldStop ? " Please report the issue." : " Skipping"),
+                    "",
+                    {
+                        messageBox: shouldStop,
+                        stopBot: shouldStop,
+                    },
+                );
                 break;
             }
             //#endregion
@@ -53,16 +58,51 @@ export class SynderesMerge {
     }
 
     static readonly select = [
-        option.bool("29574", "Synderes' Cape of Doom", 'Mode: [select] only\nShould the bot buy "Synderes\' Cape of Doom" ?', false),
+        option.bool(
+            "29574",
+            "Synderes' Cape of Doom",
+            'Mode: [select] only\nShould the bot buy "Synderes\' Cape of Doom" ?',
+            false,
+        ),
         option.bool("29576", "NO BOTS Armor", 'Mode: [select] only\nShould the bot buy "NO BOTS Armor" ?', false),
-        option.bool("29711", "Synderes Groupie Armor", 'Mode: [select] only\nShould the bot buy "Synderes Groupie Armor" ?', false),
+        option.bool(
+            "29711",
+            "Synderes Groupie Armor",
+            'Mode: [select] only\nShould the bot buy "Synderes Groupie Armor" ?',
+            false,
+        ),
         option.bool("29753", "Sock Monkey Cape", 'Mode: [select] only\nShould the bot buy "Sock Monkey Cape" ?', false),
-        option.bool("29754", "Synderes Acoustic Guitar", 'Mode: [select] only\nShould the bot buy "Synderes Acoustic Guitar" ?', false),
-        option.bool("29755", "Synderes Electric", 'Mode: [select] only\nShould the bot buy "Synderes Electric" ?', false),
-        option.bool("29756", "Expendable Rogue Mask", 'Mode: [select] only\nShould the bot buy "Expendable Rogue Mask" ?', false),
+        option.bool(
+            "29754",
+            "Synderes Acoustic Guitar",
+            'Mode: [select] only\nShould the bot buy "Synderes Acoustic Guitar" ?',
+            false,
+        ),
+        option.bool(
+            "29755",
+            "Synderes Electric",
+            'Mode: [select] only\nShould the bot buy "Synderes Electric" ?',
+            false,
+        ),
+        option.bool(
+            "29756",
+            "Expendable Rogue Mask",
+            'Mode: [select] only\nShould the bot buy "Expendable Rogue Mask" ?',
+            false,
+        ),
         option.bool("29757", "Expendable Rogue", 'Mode: [select] only\nShould the bot buy "Expendable Rogue" ?', false),
-        option.bool("29758", "Synderes Minion Mask and Locks", 'Mode: [select] only\nShould the bot buy "Synderes Minion Mask and Locks" ?', false),
-        option.bool("29759", "Synderes Minion Mask", 'Mode: [select] only\nShould the bot buy "Synderes Minion Mask" ?', false),
+        option.bool(
+            "29758",
+            "Synderes Minion Mask and Locks",
+            'Mode: [select] only\nShould the bot buy "Synderes Minion Mask and Locks" ?',
+            false,
+        ),
+        option.bool(
+            "29759",
+            "Synderes Minion Mask",
+            'Mode: [select] only\nShould the bot buy "Synderes Minion Mask" ?',
+            false,
+        ),
     ];
 }
 

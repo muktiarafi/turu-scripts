@@ -19,8 +19,7 @@ const lair = new Lair();
 
 export class FireChampionsArmor {
     getFireChampsArmor(): void {
-        if (Core.checkInventory(62570))
-            return;
+        if (Core.checkInventory(62570)) return;
 
         this.polishedDragonSlayer();
         DSG.enchantedScaleandClaw(125, 0);
@@ -31,14 +30,11 @@ export class FireChampionsArmor {
     }
 
     polishedDragonSlayer(): void {
-        if (Core.checkInventory(58462))
-            return;
+        if (Core.checkInventory(58462)) return;
 
-        if (!Core.isCompletedBefore(168))
-            lair.galanoth();
+        if (!Core.isCompletedBefore(168)) lair.galanoth();
 
-        if (!Core.checkInventory(582))
-            Core.buyItem("lair", 38, "Dragonslayer");
+        if (!Core.checkInventory(582)) Core.buyItem("lair", 38, "Dragonslayer");
 
         Adv.rankUpClass("Dragonslayer");
 
@@ -53,8 +49,7 @@ export class FireChampionsArmor {
     }
 
     flameForgedMetal(Metalquant = 10): void {
-        if (Core.checkInventory("Flame-Forged Metal", Metalquant))
-            return;
+        if (Core.checkInventory("Flame-Forged Metal", Metalquant)) return;
 
         Core.equipClass(ClassType.Solo);
         Core.addDrop("Flame-Forged Metal");
@@ -68,34 +63,36 @@ export class FireChampionsArmor {
     }
 
     voidScale(VoidScaleQuant = 13): void {
-        if (Core.checkInventory("Void Scale", VoidScaleQuant))
-            return;
+        if (Core.checkInventory("Void Scale", VoidScaleQuant)) return;
 
         const OptimalClasses = ["Yami no Ronin", "Chaos Slayer"];
 
-        const usethis = bot.inventory.items.concat(bot.bank.items)
-            .find(n => OptimalClasses.some(o => n.name === o || n.name.startsWith(o)));
+        const usethis = bot.inventory.items
+            .concat(bot.bank.items)
+            .find((n) => OptimalClasses.some((o) => n.name === o || n.name.startsWith(o)));
 
-        Core.logger(usethis != null ? `${usethis.name} found -- equipping optimal class.`
-            : !!Core.dodgeClass ? "No optimal class found, falling back to Dodge Class."
-            : "No optimal/dodge class found, using equipped class for Archfiend Dragonlord... GOOD LUCK!!");
+        Core.logger(
+            usethis != null
+                ? `${usethis.name} found -- equipping optimal class.`
+                : !!Core.dodgeClass
+                  ? "No optimal class found, falling back to Dodge Class."
+                  : "No optimal/dodge class found, using equipped class for Archfiend Dragonlord... GOOD LUCK!!",
+        );
 
         if (usethis != null) {
             Core.equip(usethis.id);
             Core.equip(...Core.dodgeGear);
-            if (usethis.name === "Yami no Ronin")
-                bot.skills.startAdvanced("1 | 4");
-        } else if (!!Core.dodgeClass)
-            Core.equipClass(ClassType.Dodge);
+            if (usethis.name === "Yami no Ronin") bot.skills.startAdvanced("1 | 4");
+        } else if (!!Core.dodgeClass) Core.equipClass(ClassType.Dodge);
 
         Core.huntMonster("underlair", "Archfiend Dragonlord", "Void Scale", VoidScaleQuant, { isTemp: false });
     }
 }
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new FireChampionsArmor().getFireChampsArmor();
+    new FireChampionsArmor().getFireChampsArmor();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

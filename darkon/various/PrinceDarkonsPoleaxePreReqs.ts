@@ -15,8 +15,7 @@ const Farm = new CoreFarms();
 
 export class PrinceDarkonsPoleaxePreReqs {
     farmPreReqs(buyPoleaxe = false): void {
-        if (Core.checkInventory("Prince Darkon's Poleaxe"))
-            return;
+        if (Core.checkInventory("Prince Darkon's Poleaxe")) return;
 
         Darkon.aMelody(22);
         Darkon.farmReceipt(22);
@@ -29,23 +28,17 @@ export class PrinceDarkonsPoleaxePreReqs {
             Core.buyItem("garden", 1831, "Darkon's Instant Noodle", 22);
         } //BuyPoleaxe();
 
-        if (buyPoleaxe)
-            this.buyPoleaxe();
+        if (buyPoleaxe) this.buyPoleaxe();
     }
 
     private buyPoleaxe(): void {
         if (!Core.checkInventory("Prince Darkon's Poleaxe")) {
-            if (
-                !Core.checkInventory("Algie's Bow")
-                && Core.checkInventory("King Drago Insignia", 5)
-            ) {
+            if (!Core.checkInventory("Algie's Bow") && Core.checkInventory("King Drago Insignia", 5)) {
                 Core.buyItem("ultradrago", 2066, "Algie's Bow");
                 bot.wait.forItemBuy();
             }
 
-            if (
-                !Core.checkInventory("Dene's Axe") && Core.checkInventory("King Drago Insignia", 5)
-            ) {
+            if (!Core.checkInventory("Dene's Axe") && Core.checkInventory("King Drago Insignia", 5)) {
                 Core.buyItem("ultradrago", 2066, "Dene's Axe");
                 bot.wait.forItemBuy();
             }
@@ -59,9 +52,9 @@ export class PrinceDarkonsPoleaxePreReqs {
 }
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new PrinceDarkonsPoleaxePreReqs().farmPreReqs();
+    new PrinceDarkonsPoleaxePreReqs().farmPreReqs();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

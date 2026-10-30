@@ -12,8 +12,7 @@ const LoC = new Core13LoC();
 
 export class SRoD {
     shadowReaperOfDoom(): void {
-        if (Core.checkInventory("ShadowReaper Of Doom"))
-            return;
+        if (Core.checkInventory("ShadowReaper Of Doom")) return;
 
         Core.farmingLogger("ShadowReaper Of Doom", 1);
         LoC.xiang();
@@ -28,9 +27,9 @@ export class SRoD {
 }
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new SRoD().shadowReaperOfDoom();
+    new SRoD().shadowReaperOfDoom();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

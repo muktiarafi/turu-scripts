@@ -17,11 +17,12 @@ const Willpower = new WillpowerExtraction();
 
 export class ArchfiendDeathLord {
     getArm(OnlyArmor: boolean, Reward: RewardChoice): void {
-        if (Reward !== RewardChoice.All && Core.checkInventory(Reward, 1, { toInv: false }))
-            return;
+        if (Reward !== RewardChoice.All && Core.checkInventory(Reward, 1, { toInv: false })) return;
         else if (OnlyArmor && Reward === RewardChoice.All)
-            Core.logger(
-                "With \"OnlyArmor\" Please Select the \"Archfiend DeathLord\" Option from the list.", "", { messageBox: true, stopBot: true });
+            Core.logger('With "OnlyArmor" Please Select the "Archfiend DeathLord" Option from the list.', "", {
+                messageBox: true,
+                stopBot: true,
+            });
 
         Fiendshard.fiendshard_QuestlineP1();
 
@@ -37,8 +38,7 @@ export class ArchfiendDeathLord {
                     continue;
                 }
 
-                if (Core.checkInventory(item, 1, { toInv: false }))
-                    continue;
+                if (Core.checkInventory(item, 1, { toInv: false })) continue;
 
                 Core.farmingLogger(itemName!.replaceAll("_", " "), 1);
 
@@ -47,7 +47,7 @@ export class ArchfiendDeathLord {
                     Nation.farmBloodGem(20);
                     Nation.farmUni13(5);
                     Nation.farmTotemofNulgath(3);
-                    Nation.farmVoucher({ member:false });
+                    Nation.farmVoucher({ member: false });
                     Nation.farmDiamondofNulgath(150);
                     Nation.farmGemofNulgath(50);
                     Willpower.unidentified34(10);
@@ -64,7 +64,7 @@ export class ArchfiendDeathLord {
                 Nation.farmBloodGem(20);
                 Nation.farmUni13(5);
                 Nation.farmTotemofNulgath(3);
-                Nation.farmVoucher({ member:false });
+                Nation.farmVoucher({ member: false });
                 Nation.farmDiamondofNulgath(150);
                 Nation.farmGemofNulgath(50);
                 Willpower.unidentified34(10);
@@ -90,16 +90,23 @@ export enum RewardChoice {
     Dual_FiendLords_Claymores = 54386,
 }
 
-export const scriptOptions = defineScriptOptions("ArchfiendDeathLord", [
-    option.bool("OnlyArmor", "Only get the Armor?", "Whether to only get the Armor or all quest rewards", false),
-    option.choice("RewardChoice", "Choose Your Reward", "", choices(RewardChoice), "All"),
-    Core.skipOptions,
-], true);
+export const scriptOptions = defineScriptOptions(
+    "ArchfiendDeathLord",
+    [
+        option.bool("OnlyArmor", "Only get the Armor?", "Whether to only get the Armor or all quest rewards", false),
+        option.choice("RewardChoice", "Choose Your Reward", "", choices(RewardChoice), "All"),
+        Core.skipOptions,
+    ],
+    true,
+);
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new ArchfiendDeathLord().getArm(configOr("OnlyArmor", false), configEnum("RewardChoice", RewardChoice, 0 as RewardChoice));
+    new ArchfiendDeathLord().getArm(
+        configOr("OnlyArmor", false),
+        configEnum("RewardChoice", RewardChoice, 0 as RewardChoice),
+    );
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

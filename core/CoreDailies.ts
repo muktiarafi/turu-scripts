@@ -57,7 +57,14 @@ export class CoreDailies {
      * @param item Item to get.
      * @param quant Quantity of the item.
      */
-    dailyRoutine(quest: number, map: string, monster: string, item: string, quant = 1, { isTemp = true, cell = null, pad = "Left", publicRoom = false }: DailyRoutineOptions = {}): void {
+    dailyRoutine(
+        quest: number,
+        map: string,
+        monster: string,
+        item: string,
+        quant = 1,
+        { isTemp = true, cell = null, pad = "Left", publicRoom = false }: DailyRoutineOptions = {},
+    ): void {
         if (bot.quests.isDailyComplete(quest)) return;
         Core.addDrop(item);
         Core.join(map);
@@ -81,7 +88,11 @@ export class CoreDailies {
      * @returns True (don't use !) when the daily can be done; false when it is already done or
      *   the items are at max stack.
      */
-    checkDailyv2(quest: number, items: readonly string[] = [], { any = true, shouldUnBank = true }: { any?: boolean; shouldUnBank?: boolean } = {}): boolean {
+    checkDailyv2(
+        quest: number,
+        items: readonly string[] = [],
+        { any = true, shouldUnBank = true }: { any?: boolean; shouldUnBank?: boolean } = {},
+    ): boolean {
         const questData = Core.initializeWithRetries(() => Core.ensureLoad(quest));
         if (questData === null) {
             Core.logger(`Failed to load quest ${quest}`);
@@ -121,9 +132,15 @@ export class CoreDailies {
         bot.drops.add(...items);
 
         // Handle LOO dailies for quests within the specified range
-        if (quest >= 7156 && quest < 7166 && !Core.checkInventory(50741, 1, { toInv: false }) && !Core.isCompletedBefore(quest)) {
+        if (
+            quest >= 7156 &&
+            quest < 7166 &&
+            !Core.checkInventory(50741, 1, { toInv: false }) &&
+            !Core.isCompletedBefore(quest)
+        ) {
             for (let questId = 7156; questId < 7166; questId++)
-                if (!Core.isCompletedBefore(questId) && !bot.quests.isDailyComplete(questId)) bot.drops.add(...Core.questRewards(questId));
+                if (!Core.isCompletedBefore(questId) && !bot.quests.isDailyComplete(questId))
+                    bot.drops.add(...Core.questRewards(questId));
         }
 
         // Handle Doom Spins for quests within the specified range
@@ -178,7 +195,8 @@ export class CoreDailies {
             if (toBank && Core.checkInventory(metal, 1, { toInv: false })) Core.toBank(...metals);
         }
 
-        if (bot.quests.isInProgress(2091)) Core.logger(`All desired metals were found with the needed quantity (${quant}), quest not completed`);
+        if (bot.quests.isInProgress(2091))
+            Core.logger(`All desired metals were found with the needed quantity (${quant}), quest not completed`);
 
         Core.sleep();
     }
@@ -215,7 +233,8 @@ export class CoreDailies {
             }
             if (toBank && Core.checkInventory(metal, 1, { toInv: false })) Core.toBank(...metals);
         }
-        if (bot.quests.isInProgress(2098)) Core.logger(`All desired metals were found with the needed quantity (${quant}), quest not completed`);
+        if (bot.quests.isInProgress(2098))
+            Core.logger(`All desired metals were found with the needed quantity (${quant}), quest not completed`);
     }
 
     fungiforaFunGuy(): void {
@@ -252,7 +271,10 @@ export class CoreDailies {
             Core.logger("Skipped");
             return;
         }
-        if (!Core.checkInventory("Cysero's SUPER Hammer", 1, { toInv: false }) && Core.checkInventory("C-Hammer Token", 90)) {
+        if (
+            !Core.checkInventory("Cysero's SUPER Hammer", 1, { toInv: false }) &&
+            Core.checkInventory("C-Hammer Token", 90)
+        ) {
             Core.buyItem("deadmoor", 500, "Cysero's SUPER Hammer");
             return;
         }
@@ -274,7 +296,10 @@ export class CoreDailies {
             Core.logger("Skipped");
             return;
         }
-        if (!Core.checkInventory("Mad Weaponsmith", 1, { toInv: false }) && Core.checkInventory("C-Armor Token", 90, { toInv: false })) {
+        if (
+            !Core.checkInventory("Mad Weaponsmith", 1, { toInv: false }) &&
+            Core.checkInventory("C-Armor Token", 90, { toInv: false })
+        ) {
             Core.unbank("C-Armor Token");
             Core.buyItem("deadmoor", 500, "Mad Weaponsmith");
             return;
@@ -319,14 +344,26 @@ export class CoreDailies {
         if (this.checkDailyv2(1316, ["Token of Collection"])) {
             Core.equipClass(ClassType.Farm);
             Core.farmingLogger("Token of Collection", 90);
-            this.dailyRoutine(1316, "terrarium", "Carnivorous Cricket", "This Might Be A Token", 2, { isTemp: false, cell: "r2", pad: "Right" });
+            this.dailyRoutine(1316, "terrarium", "Carnivorous Cricket", "This Might Be A Token", 2, {
+                isTemp: false,
+                cell: "r2",
+                pad: "Right",
+            });
         }
         if (Core.isMember) {
             Core.farmingLogger("Token of Collection", 90);
             if (this.checkDailyv2(1331, ["Token of Collection"]))
-                this.dailyRoutine(1331, "terrarium", "Killer Cricket", "This Is Definitely A Token", 2, { isTemp: false, cell: "r2", pad: "Right" });
+                this.dailyRoutine(1331, "terrarium", "Killer Cricket", "This Is Definitely A Token", 2, {
+                    isTemp: false,
+                    cell: "r2",
+                    pad: "Right",
+                });
             if (this.checkDailyv2(1332, ["Token of Collection"]))
-                this.dailyRoutine(1332, "terrarium", "Killer Cricket", "This Could Be A Token", 2, { isTemp: false, cell: "r2", pad: "Right" });
+                this.dailyRoutine(1332, "terrarium", "Killer Cricket", "This Could Be A Token", 2, {
+                    isTemp: false,
+                    cell: "r2",
+                    pad: "Right",
+                });
         }
         if (Core.checkInventory("Token of Collection", 90)) Core.buyItem("Collection", 324, 30250, 1, 3015);
     }
@@ -380,7 +417,8 @@ export class CoreDailies {
             Core.buyItem("shadowfall", 1644, "ShadowScythe General");
             return;
         }
-        if (!this.checkDailyv2(3828, ["Shadow Shield"]) && Core.isMember && !this.checkDailyv2(3827, ["Shadow Shield"])) return;
+        if (!this.checkDailyv2(3828, ["Shadow Shield"]) && Core.isMember && !this.checkDailyv2(3827, ["Shadow Shield"]))
+            return;
         this.dailyRoutine(3828, "lightguardwar", "Citadel Crusader", "Broken Blade");
         if (Core.isMember) {
             this.dailyRoutine(3827, "lightguardwar", "Citadel Crusader", "Broken Blade");
@@ -393,14 +431,24 @@ export class CoreDailies {
     grumbleGrumble(): void {
         if (!Core.checkInventory(4845)) return;
         Core.logger("Daily: Grumble Grumble (Blood Gem of the Archfiend)");
-        if (!this.checkDailyv2(592, ["Diamond of Nulgath", "Blood Gem of the Archfiend"], { any: false, shouldUnBank: false })) return;
+        if (
+            !this.checkDailyv2(592, ["Diamond of Nulgath", "Blood Gem of the Archfiend"], {
+                any: false,
+                shouldUnBank: false,
+            })
+        )
+            return;
         Core.chainComplete(592);
         Core.toBank("Diamond of Nulgath", "Blood Gem of the Archfiend");
     }
 
     tenacityChallenge(item: string | null = null): void {
         if (!Core.checkInventory("Nulgath Challenge Pet") || !this.checkDailyv2(3319)) {
-            Core.logger(!this.checkDailyv2(3319) ? "Daily Not Avaiable" : 'You Don\'t Have "Nulgath Challenge Pet". Pet is required for doing the quests.');
+            Core.logger(
+                !this.checkDailyv2(3319)
+                    ? "Daily Not Avaiable"
+                    : 'You Don\'t Have "Nulgath Challenge Pet". Pet is required for doing the quests.',
+            );
             return;
         }
         Core.logger("Daily: Tenacity Challenge");
@@ -427,7 +475,10 @@ export class CoreDailies {
         Core.addDrop("Elders' Blood");
         Core.logger("Daily: Elders' Blood");
         Core.equipClass(ClassType.Farm);
-        this.dailyRoutine(802, "arcangrove", "Gorillaphant", "Slain Gorillaphant", 50, { cell: "LeftBack", pad: "Left" });
+        this.dailyRoutine(802, "arcangrove", "Gorillaphant", "Slain Gorillaphant", 50, {
+            cell: "LeftBack",
+            pad: "Left",
+        });
         bot.wait.forPickup("Elders' Blood");
     }
 
@@ -440,7 +491,9 @@ export class CoreDailies {
         }
 
         if (Core.checkInventory("Sparrow's Blood", quant)) {
-            Core.logger(`You already have enough Sparrow's Blood (${bot.inventory.getQuantity("Sparrow's Blood")}/${quant}). Skipped`);
+            Core.logger(
+                `You already have enough Sparrow's Blood (${bot.inventory.getQuantity("Sparrow's Blood")}/${quant}). Skipped`,
+            );
             return;
         }
 
@@ -460,10 +513,17 @@ export class CoreDailies {
 
     pearlOfNulgath(): void {
         Core.logger("Daily: Pearl of Nulgath");
-        if (!this.checkDailyv2(10047, ["Pearl of Nulgath"]) || Core.checkInventory("Pearl of Nulgath", 20) || !Core.checkInventory("Malakai's Katana Pet")) return;
+        if (
+            !this.checkDailyv2(10047, ["Pearl of Nulgath"]) ||
+            Core.checkInventory("Pearl of Nulgath", 20) ||
+            !Core.checkInventory("Malakai's Katana Pet")
+        )
+            return;
         Core.unbank("Unidentified 10");
         if (!Core.checkInventory("Unidentified 10", 25)) {
-            Core.logger(`You don't have enough Unidentified 10 (${bot.inventory.getQuantity("Unidentified 10")}/25). Skipped`);
+            Core.logger(
+                `You don't have enough Unidentified 10 (${bot.inventory.getQuantity("Unidentified 10")}/25). Skipped`,
+            );
             return;
         }
         Core.chainComplete(10047);
@@ -473,14 +533,19 @@ export class CoreDailies {
 
     shadowShroud(): void {
         Core.logger("Daily: Shadow Shroud");
-        if (!this.checkDailyv2(486, ["Shadow Shroud"]) || Core.checkInventory("Shadow Shroud", 15, { toInv: false })) return;
+        if (!this.checkDailyv2(486, ["Shadow Shroud"]) || Core.checkInventory("Shadow Shroud", 15, { toInv: false }))
+            return;
         this.dailyRoutine(486, "bludrut2", "Shadow Creeper", "Shadow Canvas", 5, { cell: "Enter", pad: "Down" });
         Core.toBank("Shadow Shroud");
     }
 
     dagesScrollFragment({ toBank = false }: { toBank?: boolean } = {}): void {
         Core.logger("Daily: Dage's Scroll Fragment");
-        if (!this.checkDailyv2(3596, ["Dage's Scroll Fragment"]) || Core.checkInventory("Dage's Scroll Fragment", 13, { toInv: false })) return;
+        if (
+            !this.checkDailyv2(3596, ["Dage's Scroll Fragment"]) ||
+            Core.checkInventory("Dage's Scroll Fragment", 13, { toInv: false })
+        )
+            return;
 
         this.dailyRoutine(3596, "mountdoomskull", "*", "Chaos Power Increased", 6, { cell: "b1", pad: "Left" });
 
@@ -490,7 +555,8 @@ export class CoreDailies {
 
     cryptoToken(): void {
         Core.logger("Daily: Crypto Token (/curio)");
-        if (!this.checkDailyv2(6187, ["Crypto Token"]) || Core.checkInventory("Crypto Token", 300, { toInv: false })) return;
+        if (!this.checkDailyv2(6187, ["Crypto Token"]) || Core.checkInventory("Crypto Token", 300, { toInv: false }))
+            return;
         Core.equipClass(ClassType.Farm);
         this.dailyRoutine(6187, "boxes", "Sneevil", "Metal Ore", 1, { cell: "Closet", pad: "Center" });
         Core.toBank("Crypto Token");
@@ -515,13 +581,25 @@ export class CoreDailies {
             Core.logger(`Failed to load quest ${1238}`);
             return;
         }
-        if (Core.checkInventory(questData.rewards.map((x) => x.name), 1, { toInv: false })) return;
+        if (
+            Core.checkInventory(
+                questData.rewards.map((x) => x.name),
+                1,
+                { toInv: false },
+            )
+        )
+            return;
 
         const preQuestInv = bot.inventory.items.map((x) => x.name);
 
-        if (Core.checkInventory("Magic Treasure Chest Key") && Core.checkInventory("Treasure Chest", 1)) bot.drops.add(...questData.rewards.map((x) => x.name));
+        if (Core.checkInventory("Magic Treasure Chest Key") && Core.checkInventory("Treasure Chest", 1))
+            bot.drops.add(...questData.rewards.map((x) => x.name));
 
-        while (!bot.shouldExit && Core.checkInventory("Magic Treasure Chest Key") && Core.checkInventory("Treasure Chest", 1)) {
+        while (
+            !bot.shouldExit &&
+            Core.checkInventory("Magic Treasure Chest Key") &&
+            Core.checkInventory("Treasure Chest", 1)
+        ) {
             Core.chainComplete(1238);
             bot.wait.forPickup("*");
         }
@@ -557,7 +635,9 @@ export class CoreDailies {
         bot.wait.forPickup("*");
 
         // Check for new items added to the inventory
-        const newItems: InventoryItem[] = bot.inventory.items.filter((x) => x && x.id > 0 && !preQuestInv.includes(x.id));
+        const newItems: InventoryItem[] = bot.inventory.items.filter(
+            (x) => x && x.id > 0 && !preQuestInv.includes(x.id),
+        );
 
         if (newItems.length <= 0) return;
 
@@ -567,7 +647,12 @@ export class CoreDailies {
     }
 
     nSoDDaily({ ignoreSwords = true }: { ignoreSwords?: boolean } = {}): void {
-        if (!ignoreSwords && Core.checkInventory(["Necrotic Sword of Doom", "Dual Necrotic Swords of Doom"], 1, { any: true }) && Core.checkInventory("Void Aura", 7500)) return;
+        if (
+            !ignoreSwords &&
+            Core.checkInventory(["Necrotic Sword of Doom", "Dual Necrotic Swords of Doom"], 1, { any: true }) &&
+            Core.checkInventory("Void Aura", 7500)
+        )
+            return;
 
         Core.logger("Daily: Void Auras");
         Core.equipClass(ClassType.Solo);
@@ -580,12 +665,27 @@ export class CoreDailies {
                 if (Core.isCompletedBefore(3119)) {
                     Core.addDrop("Kraken Doubloon");
                     Core.registerQuests(3119);
-                    while (!bot.shouldExit && !Core.checkInventory("Kraken Doubloon", 13)) Core.huntMonster("chaoskraken", "Chaos Kraken", "Kraken Keelhauled");
+                    while (!bot.shouldExit && !Core.checkInventory("Kraken Doubloon", 13))
+                        Core.huntMonster("chaoskraken", "Chaos Kraken", "Kraken Keelhauled");
                     Core.cancelRegisteredQuests();
-                } else Core.huntMonster("chaoskraken", "Chaos Kraken", "Kraken Doubloon", 13, { isTemp: false, publicRoom: true });
-                Core.killMonster("ancienttrigoras", "r2a", "Left", "Ancient Trigoras", "Ancient Trigora's Horns", 3, { isTemp: false });
+                } else
+                    Core.huntMonster("chaoskraken", "Chaos Kraken", "Kraken Doubloon", 13, {
+                        isTemp: false,
+                        publicRoom: true,
+                    });
+                Core.killMonster("ancienttrigoras", "r2a", "Left", "Ancient Trigoras", "Ancient Trigora's Horns", 3, {
+                    isTemp: false,
+                });
                 Core.equip("Yami no Ronin");
-                Core.killMonster("gravechallenge", "r19", "Left", "Graveclaw the Destroyer", "Graveclaw's Broken Axe", 1, { isTemp: false });
+                Core.killMonster(
+                    "gravechallenge",
+                    "r19",
+                    "Left",
+                    "Graveclaw the Destroyer",
+                    "Graveclaw's Broken Axe",
+                    1,
+                    { isTemp: false },
+                );
                 Core.ensureComplete(8652);
                 bot.wait.forPickup("Void Aura");
             }
@@ -598,7 +698,10 @@ export class CoreDailies {
             Core.equipClass(ClassType.Solo);
             Core.huntMonster("hydrachallenge", "Hydra Head 90", "Hydra Eyeball", 3, { isTemp: false });
             Core.equipClass(ClassType.Dodge);
-            Core.huntMonster("voidflibbi", "Flibbitiestgibbet", "Flibbitigiblets", 1, { isTemp: false, publicRoom: true });
+            Core.huntMonster("voidflibbi", "Flibbitiestgibbet", "Flibbitigiblets", 1, {
+                isTemp: false,
+                publicRoom: true,
+            });
             Core.ensureComplete(8653);
             bot.wait.forPickup("Void Aura");
         }
@@ -634,7 +737,10 @@ export class CoreDailies {
         }
 
         // Select reward based on the input or default to the lowest owned
-        const selectedReward = reward === DailyBoostRewards.LowestQuantOwned ? lowest() : (rewardQuantities.find(([r]) => r.id === reward) ?? lowest());
+        const selectedReward =
+            reward === DailyBoostRewards.LowestQuantOwned
+                ? lowest()
+                : (rewardQuantities.find(([r]) => r.id === reward) ?? lowest());
 
         if (!selectedReward) return;
         const [item, quantity] = selectedReward;
@@ -722,12 +828,16 @@ export class CoreDailies {
         if (!this.checkDailyv2(3898)) return;
 
         if (!Core.hasAchievement(30, "ip6")) {
-            Core.logger('"Break Into the Hoard" daily quest requires you to purchase BoneBreaker Adventure Pack to be able to complete it.');
+            Core.logger(
+                '"Break Into the Hoard" daily quest requires you to purchase BoneBreaker Adventure Pack to be able to complete it.',
+            );
             return;
         }
 
         if (!Core.isCompletedBefore(5981)) {
-            Core.logger("Requires storyline completetion, run the standalone daily (if you have the required items.)...)");
+            Core.logger(
+                "Requires storyline completetion, run the standalone daily (if you have the required items.)...)",
+            );
             return;
         }
 
@@ -744,7 +854,8 @@ export class CoreDailies {
         Core.ensureComplete(3898);
         bot.wait.forPickup("BoneBreaker Medallion");
 
-        if (bank) for (const item of questReward) if (Core.checkInventory(item.id, 1, { toInv: false })) Core.toBank(item.id);
+        if (bank)
+            for (const item of questReward) if (Core.checkInventory(item.id, 1, { toInv: false })) Core.toBank(item.id);
     }
 
     nCSGem(quant = 15): void {
@@ -767,7 +878,12 @@ export class CoreDailies {
         if (!this.checkDailyv2(9896, ["Elden Ruby"])) return;
         if (!Core.checkInventory("Compass Rose Skull")) {
             Core.logger("Getting the Compass Rose Skull.");
-            Core.huntMonsterQuest(9894, ["dracocon", "Treasure Pile", ClassType.Farm], ["battleundere", "Treasure Pile", ClassType.Farm], ["greed", "Treasure Pile", ClassType.Farm]);
+            Core.huntMonsterQuest(
+                9894,
+                ["dracocon", "Treasure Pile", ClassType.Farm],
+                ["battleundere", "Treasure Pile", ClassType.Farm],
+                ["greed", "Treasure Pile", ClassType.Farm],
+            );
         }
         if (!Core.checkInventory("Obsessor Captain")) {
             Core.logger("Getting the Obsessor Captain.");
@@ -777,7 +893,11 @@ export class CoreDailies {
         Core.unbank("Compass Rose Skull", "Obsessor Captain");
         Core.addDrop("Elden Ruby");
 
-        Core.huntMonsterQuest(9896, ["trygve", "Vindicator Recruit", ClassType.Farm], ["greed", "Cursed Treasure", ClassType.Solo]);
+        Core.huntMonsterQuest(
+            9896,
+            ["trygve", "Vindicator Recruit", ClassType.Farm],
+            ["greed", "Cursed Treasure", ClassType.Solo],
+        );
 
         Core.toBank("Compass Rose Skull", "Obsessor Captain");
     }
@@ -831,7 +951,9 @@ export class CoreDailies {
                         friends = Array.isArray(parsed) ? parsed.map(toFriendshipInfo) : [];
                         if (friends.length > 0) return true;
                     } catch (error) {
-                        Core.logger(`Failed to parse friendship data: ${error instanceof Error ? error.message : String(error)}`);
+                        Core.logger(
+                            `Failed to parse friendship data: ${error instanceof Error ? error.message : String(error)}`,
+                        );
                     }
                 }
 
@@ -894,7 +1016,10 @@ export class CoreDailies {
             if (friend.canTalk && friend.npc !== "Linus") {
                 sendWaitedPacket(`%xt%zm%friendshipTalk%${bot.map.roomId}%`);
                 sendWaitedPacket(`%xt%zm%friendshipChoice%${bot.map.roomId}%1%`);
-                friend = informLogger(`Talked to ${friend.npc}. Through the bot this has a 50% chance of giving hearts.`, friend);
+                friend = informLogger(
+                    `Talked to ${friend.npc}. Through the bot this has a 50% chance of giving hearts.`,
+                    friend,
+                );
             }
             if (friend.canGift) {
                 const giftIds: number[] = [...gifts];
@@ -909,12 +1034,14 @@ export class CoreDailies {
                         case FrGift.Sunflowers:
                         case FrGift.Tulips:
                             Core.equipClass(ClassType.Farm);
-                            while (!bot.shouldExit && !Core.checkInventory(giftIds, 1, { any: true })) Core.huntMonster("battleodium", "Widowing", null, 1, { log: false });
+                            while (!bot.shouldExit && !Core.checkInventory(giftIds, 1, { any: true }))
+                                Core.huntMonster("battleodium", "Widowing", null, 1, { log: false });
                             break;
 
                         case FrGift.Lilies:
                             Core.equipClass(ClassType.Farm);
-                            while (!bot.shouldExit && !Core.checkInventory(giftIds, 1, { any: true })) Core.huntMonster("greyguard", "Gloombloom", null, 1, { log: false });
+                            while (!bot.shouldExit && !Core.checkInventory(giftIds, 1, { any: true }))
+                                Core.huntMonster("greyguard", "Gloombloom", null, 1, { log: false });
                             break;
 
                         case FrGift.Chaos_Diemond:
@@ -938,7 +1065,9 @@ export class CoreDailies {
                         case FrGift.Blood_Roseberry:
                             Core.equipClass(ClassType.Farm);
                             Core.huntMonster("battleodium", "Widowing", "Roses", 1, { isTemp: false });
-                            Core.killMonster("battleodium", "r6", "Left", "Vileture", "Strawberries", 1, { isTemp: false });
+                            Core.killMonster("battleodium", "r6", "Left", "Vileture", "Strawberries", 1, {
+                                isTemp: false,
+                            });
                             Core.buyItem("battleodium", 2236, "Blood Roseberry");
                             break;
 
@@ -949,9 +1078,12 @@ export class CoreDailies {
                             } else {
                                 Core.equipClass(ClassType.Farm);
                                 Core.huntMonster("battleodium", "Widowing", "Roses", 1, { isTemp: false });
-                                Core.killMonster("battleodium", "r6", "Left", "Vileture", "Strawberries", 1, { isTemp: false });
+                                Core.killMonster("battleodium", "r6", "Left", "Vileture", "Strawberries", 1, {
+                                    isTemp: false,
+                                });
                                 //multiple items with name "Rubies"
-                                while (!bot.shouldExit && !Core.checkInventory(76286)) Core.killMonster("battleodium", "r6", "Left", "Diemond", null, 1, { log: false });
+                                while (!bot.shouldExit && !Core.checkInventory(76286))
+                                    Core.killMonster("battleodium", "r6", "Left", "Diemond", null, 1, { log: false });
                                 Core.chainComplete(9107);
                                 bot.wait.forPickup(gifts[0]);
                             }
@@ -964,12 +1096,14 @@ export class CoreDailies {
                         case FrGift.Oranges:
                         case FrGift.Strawberries:
                             Core.equipClass(ClassType.Farm);
-                            while (!bot.shouldExit && !Core.checkInventory(giftIds, 1, { any: true })) Core.killMonster("battleodium", "r6", "Left", "Vileture", null, 1, { log: false });
+                            while (!bot.shouldExit && !Core.checkInventory(giftIds, 1, { any: true }))
+                                Core.killMonster("battleodium", "r6", "Left", "Vileture", null, 1, { log: false });
                             break;
 
                         default:
                             Core.equipClass(ClassType.Farm);
-                            while (!bot.shouldExit && !Core.checkInventory(giftIds, 1, { any: true })) Core.killMonster("battleodium", "r6", "Left", "Diemond", null, 1, { log: false });
+                            while (!bot.shouldExit && !Core.checkInventory(giftIds, 1, { any: true }))
+                                Core.killMonster("battleodium", "r6", "Left", "Diemond", null, 1, { log: false });
                             break;
                     }
                 }
@@ -977,11 +1111,17 @@ export class CoreDailies {
                 Core.jumpWait();
                 const selectedGift = bot.inventory.items.find((x) => giftIds.includes(x.id));
                 if (!selectedGift) {
-                    if (gifts.length > 1) Core.logger("Failed to parse any of the following items from your inventory: " + gifts.map(giftName).join(" | "));
+                    if (gifts.length > 1)
+                        Core.logger(
+                            "Failed to parse any of the following items from your inventory: " +
+                                gifts.map(giftName).join(" | "),
+                        );
                     else Core.logger(`Failed to find "${giftName(gifts[0])}" in your inventory.`);
                     return;
                 }
-                sendWaitedPacket(`%xt%zm%friendshipGift%${bot.map.roomId}%${selectedGift.id}%${selectedGift.charItemId}%`);
+                sendWaitedPacket(
+                    `%xt%zm%friendshipGift%${bot.map.roomId}%${selectedGift.id}%${selectedGift.charItemId}%`,
+                );
                 informLogger(`Gifted ${selectedGift.name} to ${friend.npc}.`, friend);
                 if (bot.inventory.contains(selectedGift.id)) Core.toBank(selectedGift.id);
             }

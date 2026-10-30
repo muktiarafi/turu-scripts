@@ -17,24 +17,114 @@ const voidChasm = new VoidChasm();
 
 export class VoidChasmMerge {
     static readonly select = [
-        option.bool("83042", "Abyssal Gravity Ball", "Mode: [select] only\nShould the bot buy \"Abyssal Gravity Ball\" ?", false),
-        option.bool("83043", "Abyssal Gravity Balls", "Mode: [select] only\nShould the bot buy \"Abyssal Gravity Balls\" ?", false),
-        option.bool("83130", "Midnight Fiend of Nulgath", "Mode: [select] only\nShould the bot buy \"Midnight Fiend of Nulgath\" ?", false),
-        option.bool("83131", "Midnight Fiend Hood", "Mode: [select] only\nShould the bot buy \"Midnight Fiend Hood\" ?", false),
-        option.bool("83132", "Midnight Blood Moon", "Mode: [select] only\nShould the bot buy \"Midnight Blood Moon\" ?", false),
-        option.bool("83133", "Winged Midnight Fiend Cape", "Mode: [select] only\nShould the bot buy \"Winged Midnight Fiend Cape\" ?", false),
-        option.bool("83134", "Winged Bloodmoon Cape", "Mode: [select] only\nShould the bot buy \"Winged Bloodmoon Cape\" ?", false),
-        option.bool("83135", "Darksided Fiend Blade", "Mode: [select] only\nShould the bot buy \"Darksided Fiend Blade\" ?", false),
-        option.bool("83136", "Darksided Fiend Blades", "Mode: [select] only\nShould the bot buy \"Darksided Fiend Blades\" ?", false),
-        option.bool("83137", "Midnight Fiend Sword", "Mode: [select] only\nShould the bot buy \"Midnight Fiend Sword\" ?", false),
-        option.bool("83138", "Midnight Fiend Swords", "Mode: [select] only\nShould the bot buy \"Midnight Fiend Swords\" ?", false),
-        option.bool("83228", "Energized Archfiend Spines", "Mode: [select] only\nShould the bot buy \"Energized Archfiend Spines\" ?", false),
-        option.bool("83229", "Runed Archfiend Spines", "Mode: [select] only\nShould the bot buy \"Runed Archfiend Spines\" ?", false),
-        option.bool("69634", "Draconic Nation Double Axe", "Mode: [select] only\nShould the bot buy \"Draconic Nation Double Axe\" ?", false),
-        option.bool("69635", "Inferno Nation Double Axe", "Mode: [select] only\nShould the bot buy \"Inferno Nation Double Axe\" ?", false),
-        option.bool("83524", "Draconic Nation Double Axes", "Mode: [select] only\nShould the bot buy \"Draconic Nation Double Axes\" ?", false),
-        option.bool("83525", "Inferno Nation Double Axes", "Mode: [select] only\nShould the bot buy \"Inferno Nation Double Axes\" ?", false),
-        option.bool("70184", "Prime Fiend Shard", "Mode: [select] only\nShould the bot buy \"Prime Fiend Shard\" ?", false),
+        option.bool(
+            "83042",
+            "Abyssal Gravity Ball",
+            'Mode: [select] only\nShould the bot buy "Abyssal Gravity Ball" ?',
+            false,
+        ),
+        option.bool(
+            "83043",
+            "Abyssal Gravity Balls",
+            'Mode: [select] only\nShould the bot buy "Abyssal Gravity Balls" ?',
+            false,
+        ),
+        option.bool(
+            "83130",
+            "Midnight Fiend of Nulgath",
+            'Mode: [select] only\nShould the bot buy "Midnight Fiend of Nulgath" ?',
+            false,
+        ),
+        option.bool(
+            "83131",
+            "Midnight Fiend Hood",
+            'Mode: [select] only\nShould the bot buy "Midnight Fiend Hood" ?',
+            false,
+        ),
+        option.bool(
+            "83132",
+            "Midnight Blood Moon",
+            'Mode: [select] only\nShould the bot buy "Midnight Blood Moon" ?',
+            false,
+        ),
+        option.bool(
+            "83133",
+            "Winged Midnight Fiend Cape",
+            'Mode: [select] only\nShould the bot buy "Winged Midnight Fiend Cape" ?',
+            false,
+        ),
+        option.bool(
+            "83134",
+            "Winged Bloodmoon Cape",
+            'Mode: [select] only\nShould the bot buy "Winged Bloodmoon Cape" ?',
+            false,
+        ),
+        option.bool(
+            "83135",
+            "Darksided Fiend Blade",
+            'Mode: [select] only\nShould the bot buy "Darksided Fiend Blade" ?',
+            false,
+        ),
+        option.bool(
+            "83136",
+            "Darksided Fiend Blades",
+            'Mode: [select] only\nShould the bot buy "Darksided Fiend Blades" ?',
+            false,
+        ),
+        option.bool(
+            "83137",
+            "Midnight Fiend Sword",
+            'Mode: [select] only\nShould the bot buy "Midnight Fiend Sword" ?',
+            false,
+        ),
+        option.bool(
+            "83138",
+            "Midnight Fiend Swords",
+            'Mode: [select] only\nShould the bot buy "Midnight Fiend Swords" ?',
+            false,
+        ),
+        option.bool(
+            "83228",
+            "Energized Archfiend Spines",
+            'Mode: [select] only\nShould the bot buy "Energized Archfiend Spines" ?',
+            false,
+        ),
+        option.bool(
+            "83229",
+            "Runed Archfiend Spines",
+            'Mode: [select] only\nShould the bot buy "Runed Archfiend Spines" ?',
+            false,
+        ),
+        option.bool(
+            "69634",
+            "Draconic Nation Double Axe",
+            'Mode: [select] only\nShould the bot buy "Draconic Nation Double Axe" ?',
+            false,
+        ),
+        option.bool(
+            "69635",
+            "Inferno Nation Double Axe",
+            'Mode: [select] only\nShould the bot buy "Inferno Nation Double Axe" ?',
+            false,
+        ),
+        option.bool(
+            "83524",
+            "Draconic Nation Double Axes",
+            'Mode: [select] only\nShould the bot buy "Draconic Nation Double Axes" ?',
+            false,
+        ),
+        option.bool(
+            "83525",
+            "Inferno Nation Double Axes",
+            'Mode: [select] only\nShould the bot buy "Inferno Nation Double Axes" ?',
+            false,
+        ),
+        option.bool(
+            "70184",
+            "Prime Fiend Shard",
+            'Mode: [select] only\nShould the bot buy "Prime Fiend Shard" ?',
+            false,
+        ),
     ];
 
     private dontStopMissingIng = false;
@@ -53,10 +143,13 @@ export class VoidChasmMerge {
                 default:
                     const shouldStop = !Adv.matsOnly || !this.dontStopMissingIng;
                     Core.logger(
-                        `The bot hasn't been taught how to get ${req.name}.`
-                            + (shouldStop ? " Please report the issue." : " Skipping"), "", { messageBox: shouldStop, stopBot: shouldStop });
+                        `The bot hasn't been taught how to get ${req.name}.` +
+                            (shouldStop ? " Please report the issue." : " Skipping"),
+                        "",
+                        { messageBox: shouldStop, stopBot: shouldStop },
+                    );
                     break;
-        //#endregion
+                //#endregion
 
                 case "Void Remnant":
                     Core.farmingLogger(req.name, quant);
@@ -96,10 +189,9 @@ export const scriptOptions = defineScriptOptions(Adv.optionsStorage, [], true, {
 });
 
 export default function main(): void {
-        Core.bankingBlackList.push(...
-            [ "Void Remnant", "Tainted Gem", "Essence of Nulgath" ]);
-        Core.setOptions();
+    Core.bankingBlackList.push(...["Void Remnant", "Tainted Gem", "Essence of Nulgath"]);
+    Core.setOptions();
 
-        new VoidChasmMerge().buyAllMerge();
-        Core.setOptions(false);
+    new VoidChasmMerge().buyAllMerge();
+    Core.setOptions(false);
 }

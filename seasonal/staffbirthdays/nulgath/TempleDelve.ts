@@ -15,8 +15,7 @@ const TS = new TempleSiege();
 export class TempleDelve {
     storyline(): void {
         // Core.isCompletedBefore(9143) aways returns true...? evne if none of these are complete
-        if (!Core.isSeasonalMapActive("templedelve"))
-            return;
+        if (!Core.isSeasonalMapActive("templedelve")) return;
 
         TS.completeTempleSiege();
 
@@ -28,7 +27,13 @@ export class TempleDelve {
         //Stone Proxy (9081)
         if (!Story.questProgression(9081)) {
             Core.ensureAccept(9081);
-            Core.getMapItems([ [11160, 2], [11161, 2] ], "templedelve");
+            Core.getMapItems(
+                [
+                    [11160, 2],
+                    [11161, 2],
+                ],
+                "templedelve",
+            );
             Core.huntMonster("templedelve", "Doomed Troll", "Infested Troll Hide", 7);
             Core.ensureComplete(9081);
         }
@@ -62,7 +67,13 @@ export class TempleDelve {
         //Prephosphorus (9087)
         if (!Story.questProgression(9087)) {
             Core.ensureAccept(9087);
-            Core.getMapItems([ [11166, 1], [11167, 1] ], "templedelve");
+            Core.getMapItems(
+                [
+                    [11166, 1],
+                    [11167, 1],
+                ],
+                "templedelve",
+            );
             Core.huntMonster("templedelve", "Delirious Elemental", "Elemental Vanquished", 6);
             Core.ensureComplete(9087);
         }
@@ -134,8 +145,8 @@ export class TempleDelve {
 }
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new TempleDelve().storyline();
-        Core.setOptions(false);
+    new TempleDelve().storyline();
+    Core.setOptions(false);
 }

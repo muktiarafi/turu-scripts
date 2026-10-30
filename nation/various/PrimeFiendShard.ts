@@ -47,11 +47,11 @@ const voidChasmMerge = new VoidChasmMerge();
 
 export class PrimeFiendShard {
     storyline(): void {
-        if (Core.isCompletedBefore(9559))
-            return;
+        if (Core.isCompletedBefore(9559)) return;
 
         Core.logger(
-            "If you're going to use insingias for the roents, please do so before starting the script, as it will stop otherwise if dont have them.");
+            "If you're going to use insingias for the roents, please do so before starting the script, as it will stop otherwise if dont have them.",
+        );
 
         // Required Class
         VHL.getVHL();
@@ -90,7 +90,6 @@ export class PrimeFiendShard {
             // "Nation Soulstealer"
             Nation.farmDiamondofNulgath(20);
             Adv.buyItem("shadowblast", 1206, "Nation Soulstealer", 1, 3615, 1);
-
 
             // Ensure requirements are unbanked
             const quest = Core.initializeWithRetries(() => Core.ensureLoad(9555));
@@ -144,7 +143,7 @@ export class PrimeFiendShard {
         if (!Story.questProgression(9558)) {
             Core.ensureAccept(9558);
             voidAvengerScythe.skewsQuests();
-            nulgathDemandsWork.ndwQuest([ "Doomblade of Destruction" ]);
+            nulgathDemandsWork.ndwQuest(["Doomblade of Destruction"]);
             ArchfienddDeathLord.getArm(true, RewardChoice.Archfiend_DeathLord);
             wrathofNulgath.getSword();
             dilligasMerge.buyAllMerge("Ancient Shogun Armor");
@@ -187,20 +186,16 @@ export class PrimeFiendShard {
                 Nation.farmBloodGem(100);
             }
 
-
-            if (Core.checkInventory("Roentgenium of Nulgath", 10))
-            { // Ensure requirements are unbanked
+            if (Core.checkInventory("Roentgenium of Nulgath", 10)) {
+                // Ensure requirements are unbanked
                 const quest = Core.initializeWithRetries(() => Core.ensureLoad(9559));
                 // C# unbanks quest 8916's requirements (Book of Aether: Supernova).
-                Core.unbank(...quest!.requirements.map(x => x.id));
+                Core.unbank(...quest!.requirements.map((x) => x.id));
                 Core.ensureComplete(9559);
-            } else
-                Core.logger(
-                    `Not enough Roents ${bot.inventory.getQuantity("Roentgenium of Nulgath")} / 10`);
+            } else Core.logger(`Not enough Roents ${bot.inventory.getQuantity("Roentgenium of Nulgath")} / 10`);
         }
 
-        const filteredReceipts = Nation
-            .receipt.filter(item => !item.startsWith("Unidentified"));
+        const filteredReceipts = Nation.receipt.filter((item) => !item.startsWith("Unidentified"));
         Core.toBank(...filteredReceipts);
         Core.toBank(...Nation.tercessBags);
         Core.toBank(...Nation.bagDrops);
@@ -210,19 +205,19 @@ export class PrimeFiendShard {
 }
 
 export default function main(): void {
-        for (let questId = 9555; questId <= 9559; questId++) {
-            const quest = Core.initializeWithRetries(() => Core.ensureLoad(questId));
+    for (let questId = 9555; questId <= 9559; questId++) {
+        const quest = Core.initializeWithRetries(() => Core.ensureLoad(questId));
 
-            if (quest != null) {
-                for (const item of quest.requirements) {
-                    Core.bankingBlackList.push(item.name);
-                }
+        if (quest != null) {
+            for (const item of quest.requirements) {
+                Core.bankingBlackList.push(item.name);
             }
         }
+    }
 
-        Core.setOptions();
+    Core.setOptions();
 
-        new PrimeFiendShard().storyline();
+    new PrimeFiendShard().storyline();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

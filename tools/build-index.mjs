@@ -58,7 +58,10 @@ export function parseHeader(source) {
     }
     header.name = fields.name;
     header.description = fields.description;
-    header.tags = fields.tags.split(",").map((t) => t.trim()).filter(Boolean);
+    header.tags = fields.tags
+        .split(",")
+        .map((t) => t.trim())
+        .filter(Boolean);
     return header;
 }
 

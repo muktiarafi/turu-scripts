@@ -21,8 +21,7 @@ export class BattleUnder {
     }
 
     battleUnderA(): void {
-        if (Core.isCompletedBefore(377))
-            return;
+        if (Core.isCompletedBefore(377)) return;
 
         Story.preLoad(this.battleUnderA);
 
@@ -41,8 +40,7 @@ export class BattleUnder {
     }
 
     battleUnderB(): void {
-        if (Core.isCompletedBefore(935))
-            return;
+        if (Core.isCompletedBefore(935)) return;
 
         Story.preLoad(this.battleUnderB);
 
@@ -58,8 +56,7 @@ export class BattleUnder {
     }
 
     battleUnderC(): void {
-        if (Core.isCompletedBefore(939))
-            return;
+        if (Core.isCompletedBefore(939)) return;
 
         Story.preLoad(this.battleUnderC);
 
@@ -78,8 +75,7 @@ export class BattleUnder {
     }
 
     battleUnderD(): void {
-        if (!Core.isMember || Core.isCompletedBefore(2215))
-            return;
+        if (!Core.isMember || Core.isCompletedBefore(2215)) return;
 
         Story.preLoad(this.battleUnderD);
 
@@ -118,8 +114,7 @@ export class BattleUnder {
     }
 
     battleUnderE(): void {
-        if (Core.isCompletedBefore(5928))
-            return;
+        if (Core.isCompletedBefore(5928)) return;
 
         Story.preLoad(this.battleUnderE);
 
@@ -133,8 +128,7 @@ export class BattleUnder {
     }
 
     understone(): void {
-        if (Core.checkInventory("Understone"))
-            return;
+        if (Core.checkInventory("Understone")) return;
 
         Core.addDrop("Understone");
 
@@ -147,9 +141,9 @@ export class BattleUnder {
 }
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new BattleUnder().battleUnderAll();
+    new BattleUnder().battleUnderAll();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

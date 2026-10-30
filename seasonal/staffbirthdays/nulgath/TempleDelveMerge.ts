@@ -17,23 +17,98 @@ const TD = new TempleDelve();
 
 export class TempleDelveMerge {
     static readonly select = [
-        option.bool("75493", "Nation Ritualist Visage", "Mode: [select] only\nShould the bot buy \"Nation Ritualist Visage\" ?", false),
-        option.bool("75495", "Nation Ritualist Morph + Locks", "Mode: [select] only\nShould the bot buy \"Nation Ritualist Morph + Locks\" ?", false),
-        option.bool("75491", "Horned Void Nation Ritualist Visage", "Mode: [select] only\nShould the bot buy \"Horned Void Nation Ritualist Visage\" ?", false),
-        option.bool("75498", "Nation Ritualist Void Gate", "Mode: [select] only\nShould the bot buy \"Nation Ritualist Void Gate\" ?", false),
-        option.bool("75497", "Nation Ritualist Gateway", "Mode: [select] only\nShould the bot buy \"Nation Ritualist Gateway\" ?", false),
-        option.bool("75499", "Nation Ritualist Orb Pet", "Mode: [select] only\nShould the bot buy \"Nation Ritualist Orb Pet\" ?", false),
-        option.bool("75500", "Nation Ritualist Rune", "Mode: [select] only\nShould the bot buy \"Nation Ritualist Rune\" ?", false),
-        option.bool("75501", "Nation Ritualist's Sigil", "Mode: [select] only\nShould the bot buy \"Nation Ritualist's Sigil\" ?", false),
-        option.bool("75503", "Nation Ritualist's Dual Swirling Sigils", "Mode: [select] only\nShould the bot buy \"Nation Ritualist's Dual Swirling Sigils\" ?", false),
-        option.bool("75505", "Void Nation Ritualist Spear", "Mode: [select] only\nShould the bot buy \"Void Nation Ritualist Spear\" ?", false),
-        option.bool("75487", "Void Nation Caster", "Mode: [select] only\nShould the bot buy \"Void Nation Caster\" ?", false),
-        option.bool("75489", "Nation Caster", "Mode: [select] only\nShould the bot buy \"Nation Caster\" ?", false),
-        option.bool("75681", "Scholar of Nulgath", "Mode: [select] only\nShould the bot buy \"Scholar of Nulgath\" ?", false),
-        option.bool("75682", "Scholar of Nulgath Hair", "Mode: [select] only\nShould the bot buy \"Scholar of Nulgath Hair\" ?", false),
-        option.bool("75683", "Scholar of Nulgath Ponytail", "Mode: [select] only\nShould the bot buy \"Scholar of Nulgath Ponytail\" ?", false),
-        option.bool("75684", "Scholar of Nulgath Scarf", "Mode: [select] only\nShould the bot buy \"Scholar of Nulgath Scarf\" ?", false),
-        option.bool("75685", "Prof Polish", "Mode: [select] only\nShould the bot buy \"Prof Polish\" ?", false),
+        option.bool(
+            "75493",
+            "Nation Ritualist Visage",
+            'Mode: [select] only\nShould the bot buy "Nation Ritualist Visage" ?',
+            false,
+        ),
+        option.bool(
+            "75495",
+            "Nation Ritualist Morph + Locks",
+            'Mode: [select] only\nShould the bot buy "Nation Ritualist Morph + Locks" ?',
+            false,
+        ),
+        option.bool(
+            "75491",
+            "Horned Void Nation Ritualist Visage",
+            'Mode: [select] only\nShould the bot buy "Horned Void Nation Ritualist Visage" ?',
+            false,
+        ),
+        option.bool(
+            "75498",
+            "Nation Ritualist Void Gate",
+            'Mode: [select] only\nShould the bot buy "Nation Ritualist Void Gate" ?',
+            false,
+        ),
+        option.bool(
+            "75497",
+            "Nation Ritualist Gateway",
+            'Mode: [select] only\nShould the bot buy "Nation Ritualist Gateway" ?',
+            false,
+        ),
+        option.bool(
+            "75499",
+            "Nation Ritualist Orb Pet",
+            'Mode: [select] only\nShould the bot buy "Nation Ritualist Orb Pet" ?',
+            false,
+        ),
+        option.bool(
+            "75500",
+            "Nation Ritualist Rune",
+            'Mode: [select] only\nShould the bot buy "Nation Ritualist Rune" ?',
+            false,
+        ),
+        option.bool(
+            "75501",
+            "Nation Ritualist's Sigil",
+            'Mode: [select] only\nShould the bot buy "Nation Ritualist\'s Sigil" ?',
+            false,
+        ),
+        option.bool(
+            "75503",
+            "Nation Ritualist's Dual Swirling Sigils",
+            'Mode: [select] only\nShould the bot buy "Nation Ritualist\'s Dual Swirling Sigils" ?',
+            false,
+        ),
+        option.bool(
+            "75505",
+            "Void Nation Ritualist Spear",
+            'Mode: [select] only\nShould the bot buy "Void Nation Ritualist Spear" ?',
+            false,
+        ),
+        option.bool(
+            "75487",
+            "Void Nation Caster",
+            'Mode: [select] only\nShould the bot buy "Void Nation Caster" ?',
+            false,
+        ),
+        option.bool("75489", "Nation Caster", 'Mode: [select] only\nShould the bot buy "Nation Caster" ?', false),
+        option.bool(
+            "75681",
+            "Scholar of Nulgath",
+            'Mode: [select] only\nShould the bot buy "Scholar of Nulgath" ?',
+            false,
+        ),
+        option.bool(
+            "75682",
+            "Scholar of Nulgath Hair",
+            'Mode: [select] only\nShould the bot buy "Scholar of Nulgath Hair" ?',
+            false,
+        ),
+        option.bool(
+            "75683",
+            "Scholar of Nulgath Ponytail",
+            'Mode: [select] only\nShould the bot buy "Scholar of Nulgath Ponytail" ?',
+            false,
+        ),
+        option.bool(
+            "75684",
+            "Scholar of Nulgath Scarf",
+            'Mode: [select] only\nShould the bot buy "Scholar of Nulgath Scarf" ?',
+            false,
+        ),
+        option.bool("75685", "Prof Polish", 'Mode: [select] only\nShould the bot buy "Prof Polish" ?', false),
     ];
 
     private dontStopMissingIng = false;
@@ -52,10 +127,13 @@ export class TempleDelveMerge {
                 default:
                     const shouldStop = !Adv.matsOnly || !this.dontStopMissingIng;
                     Core.logger(
-                        `The bot hasn't been taught how to get ${req.name}.`
-                            + (shouldStop ? " Please report the issue." : " Skipping"), "", { messageBox: shouldStop, stopBot: shouldStop });
+                        `The bot hasn't been taught how to get ${req.name}.` +
+                            (shouldStop ? " Please report the issue." : " Skipping"),
+                        "",
+                        { messageBox: shouldStop, stopBot: shouldStop },
+                    );
                     break;
-        //#endregion
+                //#endregion
 
                 case "Doomed Extract":
                     Core.farmingLogger(req.name, quant);
@@ -91,8 +169,7 @@ export class TempleDelveMerge {
             }
         };
 
-        if (!Core.isSeasonalMapActive("templedelve"))
-            return;
+        if (!Core.isSeasonalMapActive("templedelve")) return;
 
         TD.storyline();
         //Only edit the map and shopID here
@@ -106,17 +183,18 @@ export const scriptOptions = defineScriptOptions(Adv.optionsStorage, [], true, {
 });
 
 export default function main(): void {
-        Core.bankingBlackList.push(...
-            [
-                "Doomed Extract",
-                "Tainted Gem",
-                "Dark Crystal Shard",
-                "Diamond of Nulgath",
-                "Nation Ritualist",
-                "Void Nation Ritualist",
-            ]);
-        Core.setOptions();
+    Core.bankingBlackList.push(
+        ...[
+            "Doomed Extract",
+            "Tainted Gem",
+            "Dark Crystal Shard",
+            "Diamond of Nulgath",
+            "Nation Ritualist",
+            "Void Nation Ritualist",
+        ],
+    );
+    Core.setOptions();
 
-        new TempleDelveMerge().buyAllMerge();
-        Core.setOptions(false);
+    new TempleDelveMerge().buyAllMerge();
+    Core.setOptions(false);
 }

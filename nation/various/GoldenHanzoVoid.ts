@@ -15,14 +15,13 @@ const Adv = new CoreAdvanced();
 
 export class GoldenHanzoVoid {
     getGHV(): void {
-        if (Core.checkInventory("Golden Hanzo Void"))
-            return;
+        if (Core.checkInventory("Golden Hanzo Void")) return;
 
         Nation.approvalAndFavor(50, 0);
         Nation.farmTaintedGem(45);
         Nation.theAssistant("Dark Crystal Shard", 45);
         Nation.farmDiamondofNulgath(75);
-        Nation.farmVoucher({ member:false });
+        Nation.farmVoucher({ member: false });
 
         // Buy GHV
         Adv.buyItem("evilwarnul", 456, 27843, 1, 2694);
@@ -31,9 +30,9 @@ export class GoldenHanzoVoid {
 }
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new GoldenHanzoVoid().getGHV();
+    new GoldenHanzoVoid().getGHV();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

@@ -35,8 +35,7 @@ export class CitadelRuins {
     }
 
     casparillasQuests(): void {
-        if (Core.isCompletedBefore(6682))
-            return;
+        if (Core.isCompletedBefore(6682)) return;
 
         Story.preLoad(this.casparillasQuests);
 
@@ -84,23 +83,19 @@ export class CitadelRuins {
         // Staying Humble
         Core.addDrop("Elite Void Sword Pet");
         //why the fuck was the class buffed!?
-        const usethis = bot
-            .inventory.items.concat(bot.bank.items)
-            .find(n =>
-                n.name === "Yami no Ronin" || n.name.startsWith("Chaos Slayer"));
+        const usethis = bot.inventory.items
+            .concat(bot.bank.items)
+            .find((n) => n.name === "Yami no Ronin" || n.name.startsWith("Chaos Slayer"));
         if (usethis != null) {
             Core.equip(usethis.id);
             Core.equip(...Core.farmGear);
-            if (usethis.name === "Yami no Ronin")
-                bot.skills.startAdvanced("1 | 4");
-        } else
-            Core.equipClass(ClassType.Dodge);
+            if (usethis.name === "Yami no Ronin") bot.skills.startAdvanced("1 | 4");
+        } else Core.equipClass(ClassType.Dodge);
         Story.killQuest(6682, "underlair", "ArchFiend DragonLord");
     }
 
     cutieMakaisQuest(): void {
-        if (Core.isCompletedBefore(4325))
-            return;
+        if (Core.isCompletedBefore(4325)) return;
 
         Story.preLoad(this.cutieMakaisQuest);
 
@@ -180,8 +175,7 @@ export class CitadelRuins {
     }
 
     murrysQuests(): void {
-        if (Core.isCompletedBefore(182))
-            return;
+        if (Core.isCompletedBefore(182)) return;
 
         Story.preLoad(this.murrysQuests);
 
@@ -193,8 +187,8 @@ export class CitadelRuins {
         Story.killQuest(148, "Citadel", "Inquisitor Guard");
         Story.killQuest(149, "Citadel", "Inquisitor Guard", { getReward: false });
         Story.killQuest(181, "Citadel", "Belrot The Fiend");
-        if (!Story.questProgression(182)) // 151 dcs you when u try to load it, and can be skipped.. somehow idk itd break otherwise.
-        {
+        if (!Story.questProgression(182)) {
+            // 151 dcs you when u try to load it, and can be skipped.. somehow idk itd break otherwise.
             Core.ensureAccept(182);
             Core.huntMonster("Citadel", "Grand Inquisitor", "Ring of Evil Intent");
             Core.ensureComplete(182);
@@ -202,17 +196,11 @@ export class CitadelRuins {
     }
 
     polishsQuestsTercessuinotlim(): void {
-        if (Core.isCompletedBefore(668))
-            return;
+        if (Core.isCompletedBefore(668)) return;
 
         Story.preLoad(this.polishsQuestsTercessuinotlim);
 
-        Core.addDrop(
-            "Unidentified 9", 
-            "Unidentified 28", 
-            "Dark Crystal Shard", 
-            "Claw of Nulgath", 
-            "Relic of Chaos");
+        Core.addDrop("Unidentified 9", "Unidentified 28", "Dark Crystal Shard", "Claw of Nulgath", "Relic of Chaos");
 
         // "Tercessuinotlim"
 
@@ -239,8 +227,7 @@ export class CitadelRuins {
     }
 
     polishsQuestsCitadelRuins(): void {
-        if (Core.isCompletedBefore(6182))
-            return;
+        if (Core.isCompletedBefore(6182)) return;
 
         Story.preLoad(this.polishsQuestsCitadelRuins);
 
@@ -286,7 +273,14 @@ export class CitadelRuins {
         //search the labs
         if (!Story.questProgression(6177)) {
             Core.ensureAccept(6177);
-            Core.getMapItems([ [5594, 1], [5595, 1], [5596, 1] ], "citadelruins");
+            Core.getMapItems(
+                [
+                    [5594, 1],
+                    [5595, 1],
+                    [5596, 1],
+                ],
+                "citadelruins",
+            );
             Core.huntMonster("citadelruins", "Inquisitor Hobo", "Inquisitors Defeated", 6);
             Core.ensureComplete(6177);
         }
@@ -305,7 +299,14 @@ export class CitadelRuins {
         //find the parts
         if (!Story.questProgression(6180)) {
             Core.ensureAccept(6180);
-            Core.getMapItems([ [5599, 1], [5600, 1], [5601, 1] ], "citadelruins");
+            Core.getMapItems(
+                [
+                    [5599, 1],
+                    [5600, 1],
+                    [5601, 1],
+                ],
+                "citadelruins",
+            );
             Core.huntMonster("citadelruins", "Inquisitor Hobo", "Missing Parts", 6);
             Core.ensureComplete(6180);
         }
@@ -320,8 +321,8 @@ export class CitadelRuins {
 }
 
 export default function main(): void {
-        Core.setOptions();
-        new CitadelRuins().doAll();
+    Core.setOptions();
+    new CitadelRuins().doAll();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

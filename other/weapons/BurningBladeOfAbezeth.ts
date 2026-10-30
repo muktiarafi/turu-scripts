@@ -14,7 +14,8 @@ const CAQ = new CelestialArenaQuests();
 
 export class BurningBladeOfAbezeth {
     getBBoA(): void {
-        if (Core.checkInventory("Burning Blade Of Abezeth")) //Other method until it's fixed
+        if (Core.checkInventory("Burning Blade Of Abezeth"))
+            //Other method until it's fixed
             return;
 
         CAQ.doAll();
@@ -28,9 +29,9 @@ export class BurningBladeOfAbezeth {
 }
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new BurningBladeOfAbezeth().getBBoA();
+    new BurningBladeOfAbezeth().getBBoA();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

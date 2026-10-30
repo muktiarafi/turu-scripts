@@ -18,8 +18,7 @@ export class Fiendshard_Story {
 
         Originul.originul_Questline();
 
-        Core.logger(
-            "Making sure portal quest is done.. appearntly its required...? (though not stated?)");
+        Core.logger("Making sure portal quest is done.. appearntly its required...? (though not stated?)");
         Core.join("tercessuinotlim");
 
         // Sneak Attack
@@ -85,9 +84,9 @@ export class Fiendshard_Story {
 }
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new Fiendshard_Story().fiendshard_QuestlineP1();
+    new Fiendshard_Story().fiendshard_QuestlineP1();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

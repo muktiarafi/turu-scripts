@@ -20,8 +20,7 @@ export class DragonFableOrigins {
     }
 
     greatFireWar(): void {
-        if (Core.isCompletedBefore(6299))
-            return;
+        if (Core.isCompletedBefore(6299)) return;
 
         Story.preLoad(this.greatFireWar);
 
@@ -54,8 +53,7 @@ export class DragonFableOrigins {
             Core.ensureAccept(6299);
             Core.equipClass(ClassType.Solo);
             Core.join("firewar", "r10", "Left");
-            if (bot.player.cell !== "r10")
-                Core.jump("r10", "Left");
+            if (bot.player.cell !== "r10") Core.jump("r10", "Left");
 
             while (!bot.shouldExit && !bot.tempInv.contains(43572)) {
                 bot.combat.attack("*");
@@ -67,8 +65,7 @@ export class DragonFableOrigins {
     }
 
     northMountain(): void {
-        if (Core.isCompletedBefore(6307))
-            return;
+        if (Core.isCompletedBefore(6307)) return;
 
         Story.preLoad(this.northMountain);
 
@@ -101,8 +98,7 @@ export class DragonFableOrigins {
     }
 
     charredPlains(): void {
-        if (Core.isCompletedBefore(6311))
-            return;
+        if (Core.isCompletedBefore(6311)) return;
 
         Story.preLoad(this.charredPlains);
 
@@ -120,8 +116,7 @@ export class DragonFableOrigins {
     }
 
     drakonnan(): void {
-        if (Core.isCompletedBefore(6325))
-            return;
+        if (Core.isCompletedBefore(6325)) return;
 
         Story.preLoad(this.drakonnan);
 
@@ -170,9 +165,9 @@ export class DragonFableOrigins {
 }
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new DragonFableOrigins().dragonFableOriginsAll();
+    new DragonFableOrigins().dragonFableOriginsAll();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

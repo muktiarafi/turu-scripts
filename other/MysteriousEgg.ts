@@ -13,15 +13,15 @@ const DD = new Core7DD();
 
 export class MysteriousEgg {
     getMysteriousEgg(): void {
-        if (Core.checkInventory("Mysterious Egg"))
-            return;
+        if (Core.checkInventory("Mysterious Egg")) return;
 
         if (Core.checkInventory("Manticore Cub Pet") && !Core.checkInventory("Mysterious Egg")) {
             Core.logger(
-                "You own the \"Manticore Cub Pet\" and thus dont need to farm for the \"Mysterious Egg\".\n"
-                    + "It's a lot quicker to use AQW's BuyBack function for the \"Mysterious Egg\". Please do so now\n"
-                    + "https://www.aq.com > Account > Manage Account > left hand side, \"Buy Back\"\n"
-                    + "Relogin and restart the script");
+                'You own the "Manticore Cub Pet" and thus dont need to farm for the "Mysterious Egg".\n' +
+                    "It's a lot quicker to use AQW's BuyBack function for the \"Mysterious Egg\". Please do so now\n" +
+                    'https://www.aq.com > Account > Manage Account > left hand side, "Buy Back"\n' +
+                    "Relogin and restart the script",
+            );
         }
 
         Core.addDrop("Mysterious Egg");
@@ -47,9 +47,9 @@ export class MysteriousEgg {
 }
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new MysteriousEgg().getMysteriousEgg();
+    new MysteriousEgg().getMysteriousEgg();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

@@ -17,26 +17,24 @@ const Glacera = new GlaceraStory();
 export class GlacialBerserker {
     getGB(rankUpClass = true): void {
         if (Core.checkInventory("Glacial Berserker")) {
-            if (rankUpClass)
-                Adv.rankUpClass("Glacial Berserker");
+            if (rankUpClass) Adv.rankUpClass("Glacial Berserker");
             return;
         }
 
         Glacera.doAll();
         Farm.glaceraREP();
         // Adv.BestGear(GenericGearBoost.rep);
-        if (!Core.checkInventory([ 38049, 38084 ], 1, { any: true }))
+        if (!Core.checkInventory([38049, 38084], 1, { any: true }))
             Adv.buyItem("icewindpass", 1339, "Glacial Berserker", 1, 22266);
 
-        if (rankUpClass)
-            Adv.rankUpClass("Glacial Berserker");
+        if (rankUpClass) Adv.rankUpClass("Glacial Berserker");
     }
 }
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new GlacialBerserker().getGB();
+    new GlacialBerserker().getGB();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

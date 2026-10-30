@@ -141,7 +141,14 @@ export class CoreAstravia {
         //A Castled King
         if (!Story.questProgression(7995)) {
             Core.ensureAccept(7995);
-            Core.getMapItems([ [8264, 1], [8265, 1], [8266, 1] ], "astravia");
+            Core.getMapItems(
+                [
+                    [8264, 1],
+                    [8265, 1],
+                    [8266, 1],
+                ],
+                "astravia",
+            );
             Core.huntMonster("astravia", "Astravian Mercenary", "Greedy Mercenaries", 6);
             Core.ensureComplete(7995);
         }
@@ -453,7 +460,7 @@ export class CoreAstravia {
         Story.killQuest(8635, "FirstObservatory", "Ancient Creature");
 
         //Libra Shamash
-        Story.mapItemQuest(8636, "FirstObservatory", [ 10086, 10087 ]);
+        Story.mapItemQuest(8636, "FirstObservatory", [10086, 10087]);
 
         //Auriga
         if (!Story.questProgression(8637)) {
@@ -464,7 +471,7 @@ export class CoreAstravia {
         }
 
         //Pisces Alrescha
-        Story.mapItemQuest(8638, "FirstObservatory", [ 10088, 10089 ]);
+        Story.mapItemQuest(8638, "FirstObservatory", [10088, 10089]);
 
         //Pisces Alpherg
         Story.mapItemQuest(8639, "FirstObservatory", 10090);
@@ -499,13 +506,13 @@ export class CoreAstravia {
         Story.killQuest(8679, "genesisgarden", "Drago's Soldier");
 
         //The High Priestess 8680
-        Story.mapItemQuest(8680, "genesisgarden", [ 10197, 10198, 10199 ]);
+        Story.mapItemQuest(8680, "genesisgarden", [10197, 10198, 10199]);
 
         //The Empress, Reversed 8681
         Story.killQuest(8681, "genesisgarden", "Drago's Soldier");
 
         //The Emperor 8682
-        Story.mapItemQuest(8682, "genesisgarden", [ 10200, 10201 ]);
+        Story.mapItemQuest(8682, "genesisgarden", [10200, 10201]);
 
         //The Hierophant 8683
         Story.mapItemQuest(8683, "genesisgarden", 10202, 5);

@@ -17,23 +17,108 @@ const SOWM = new CoreSoWMats();
 
 export class StreamwarMerge {
     static readonly select = [
-        option.bool("71904", "Bright Mana Flame", "Mode: [select] only\nShould the bot buy \"Bright Mana Flame\" ?", false),
-        option.bool("71899", "Bright Mana Flame Guard", "Mode: [select] only\nShould the bot buy \"Bright Mana Flame Guard\" ?", false),
-        option.bool("71900", "Bright Mana Flame Spikes", "Mode: [select] only\nShould the bot buy \"Bright Mana Flame Spikes\" ?", false),
-        option.bool("71901", "Bright Mana Flame Banner", "Mode: [select] only\nShould the bot buy \"Bright Mana Flame Banner\" ?", false),
-        option.bool("71902", "Bright Mana Flame Sabre", "Mode: [select] only\nShould the bot buy \"Bright Mana Flame Sabre\" ?", false),
-        option.bool("71903", "Bright Mana Flame Bow", "Mode: [select] only\nShould the bot buy \"Bright Mana Flame Bow\" ?", false),
-        option.bool("71827", "Green Dragon Slayer", "Mode: [select] only\nShould the bot buy \"Green Dragon Slayer\" ?", false),
-        option.bool("71828", "Green Dragon Slayer's Sallet", "Mode: [select] only\nShould the bot buy \"Green Dragon Slayer's Sallet\" ?", false),
-        option.bool("71829", "Green Dragon Slayer's Winged Sallet", "Mode: [select] only\nShould the bot buy \"Green Dragon Slayer's Winged Sallet\" ?", false),
-        option.bool("71830", "Green Dragon Slayer's Cloak", "Mode: [select] only\nShould the bot buy \"Green Dragon Slayer's Cloak\" ?", false),
-        option.bool("71831", "Green Dragon Slayer's Halberd", "Mode: [select] only\nShould the bot buy \"Green Dragon Slayer's Halberd\" ?", false),
-        option.bool("71905", "Dark Dragon Slayer", "Mode: [select] only\nShould the bot buy \"Dark Dragon Slayer\" ?", false),
-        option.bool("71906", "Dark Dragon Slayer's Sallet", "Mode: [select] only\nShould the bot buy \"Dark Dragon Slayer's Sallet\" ?", false),
-        option.bool("71907", "Dark Dragon Slayer's Winged Sallet", "Mode: [select] only\nShould the bot buy \"Dark Dragon Slayer's Winged Sallet\" ?", false),
-        option.bool("71908", "Dark Dragon Slayer's Cloak", "Mode: [select] only\nShould the bot buy \"Dark Dragon Slayer's Cloak\" ?", false),
-        option.bool("71909", "Dark Dragon Slayer's Halberd", "Mode: [select] only\nShould the bot buy \"Dark Dragon Slayer's Halberd\" ?", false),
-        option.bool("73356", "A Fragment of the Beginning", "Mode: [select] only\nShould the bot buy \"A Fragment of the Beginning\" ?", false),
+        option.bool(
+            "71904",
+            "Bright Mana Flame",
+            'Mode: [select] only\nShould the bot buy "Bright Mana Flame" ?',
+            false,
+        ),
+        option.bool(
+            "71899",
+            "Bright Mana Flame Guard",
+            'Mode: [select] only\nShould the bot buy "Bright Mana Flame Guard" ?',
+            false,
+        ),
+        option.bool(
+            "71900",
+            "Bright Mana Flame Spikes",
+            'Mode: [select] only\nShould the bot buy "Bright Mana Flame Spikes" ?',
+            false,
+        ),
+        option.bool(
+            "71901",
+            "Bright Mana Flame Banner",
+            'Mode: [select] only\nShould the bot buy "Bright Mana Flame Banner" ?',
+            false,
+        ),
+        option.bool(
+            "71902",
+            "Bright Mana Flame Sabre",
+            'Mode: [select] only\nShould the bot buy "Bright Mana Flame Sabre" ?',
+            false,
+        ),
+        option.bool(
+            "71903",
+            "Bright Mana Flame Bow",
+            'Mode: [select] only\nShould the bot buy "Bright Mana Flame Bow" ?',
+            false,
+        ),
+        option.bool(
+            "71827",
+            "Green Dragon Slayer",
+            'Mode: [select] only\nShould the bot buy "Green Dragon Slayer" ?',
+            false,
+        ),
+        option.bool(
+            "71828",
+            "Green Dragon Slayer's Sallet",
+            'Mode: [select] only\nShould the bot buy "Green Dragon Slayer\'s Sallet" ?',
+            false,
+        ),
+        option.bool(
+            "71829",
+            "Green Dragon Slayer's Winged Sallet",
+            'Mode: [select] only\nShould the bot buy "Green Dragon Slayer\'s Winged Sallet" ?',
+            false,
+        ),
+        option.bool(
+            "71830",
+            "Green Dragon Slayer's Cloak",
+            'Mode: [select] only\nShould the bot buy "Green Dragon Slayer\'s Cloak" ?',
+            false,
+        ),
+        option.bool(
+            "71831",
+            "Green Dragon Slayer's Halberd",
+            'Mode: [select] only\nShould the bot buy "Green Dragon Slayer\'s Halberd" ?',
+            false,
+        ),
+        option.bool(
+            "71905",
+            "Dark Dragon Slayer",
+            'Mode: [select] only\nShould the bot buy "Dark Dragon Slayer" ?',
+            false,
+        ),
+        option.bool(
+            "71906",
+            "Dark Dragon Slayer's Sallet",
+            'Mode: [select] only\nShould the bot buy "Dark Dragon Slayer\'s Sallet" ?',
+            false,
+        ),
+        option.bool(
+            "71907",
+            "Dark Dragon Slayer's Winged Sallet",
+            'Mode: [select] only\nShould the bot buy "Dark Dragon Slayer\'s Winged Sallet" ?',
+            false,
+        ),
+        option.bool(
+            "71908",
+            "Dark Dragon Slayer's Cloak",
+            'Mode: [select] only\nShould the bot buy "Dark Dragon Slayer\'s Cloak" ?',
+            false,
+        ),
+        option.bool(
+            "71909",
+            "Dark Dragon Slayer's Halberd",
+            'Mode: [select] only\nShould the bot buy "Dark Dragon Slayer\'s Halberd" ?',
+            false,
+        ),
+        option.bool(
+            "73356",
+            "A Fragment of the Beginning",
+            'Mode: [select] only\nShould the bot buy "A Fragment of the Beginning" ?',
+            false,
+        ),
     ];
 
     private dontStopMissingIng = false;
@@ -52,10 +137,13 @@ export class StreamwarMerge {
                 default:
                     const shouldStop = !Adv.matsOnly || !this.dontStopMissingIng;
                     Core.logger(
-                        `The bot hasn't been taught how to get ${req.name}.`
-                            + (shouldStop ? " Please report the issue." : " Skipping"), "", { messageBox: shouldStop, stopBot: shouldStop });
+                        `The bot hasn't been taught how to get ${req.name}.` +
+                            (shouldStop ? " Please report the issue." : " Skipping"),
+                        "",
+                        { messageBox: shouldStop, stopBot: shouldStop },
+                    );
                     break;
-        //#endregion
+                //#endregion
 
                 case "Avatar's Flame Bow":
                 case "Avatar's Flame Spikes":
@@ -98,22 +186,23 @@ export const scriptOptions = defineScriptOptions(Adv.optionsStorage, [], true, {
 });
 
 export default function main(): void {
-        Core.bankingBlackList.push(...
-            [
-                "Avatar's Flame",
-                "Prismatic Seams",
-                "Avatar's Flame Guard",
-                "Avatar's Flame Spikes",
-                "Avatar's Flame Banners",
-                "Avatar's Flame Sabre",
-                "Willpower",
-                "Garish Remnant",
-                "Avatar's Flame Bow",
-                "Unbound Thread",
-            ]);
-        Core.setOptions();
+    Core.bankingBlackList.push(
+        ...[
+            "Avatar's Flame",
+            "Prismatic Seams",
+            "Avatar's Flame Guard",
+            "Avatar's Flame Spikes",
+            "Avatar's Flame Banners",
+            "Avatar's Flame Sabre",
+            "Willpower",
+            "Garish Remnant",
+            "Avatar's Flame Bow",
+            "Unbound Thread",
+        ],
+    );
+    Core.setOptions();
 
-        new StreamwarMerge().buyAllMerge();
+    new StreamwarMerge().buyAllMerge();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

@@ -19,16 +19,15 @@ const DWLN = new DarkWarLegionandNation();
 
 export class WrathofNulgath {
     getSword(): void {
-        if (Core.checkInventory("Wrath of Nulgath"))
-            return;
+        if (Core.checkInventory("Wrath of Nulgath")) return;
 
         DWLN.doBoth();
 
         Core.logger("Farming Wrath of Nulgath.");
 
         juggernaut.juggItems(RewardsSelection.Overfiend_Blade_of_Nulgath);
-        Nation.farmVoucher({ member:false, keepVoucher: true });
-        Nation.farmVoucher({ member:true, keepVoucher: true });
+        Nation.farmVoucher({ member: false, keepVoucher: true });
+        Nation.farmVoucher({ member: true, keepVoucher: true });
         Nation.farmUni13(1);
         Nation.farmTaintedGem(80);
         Nation.farmDarkCrystalShard(60);
@@ -39,9 +38,9 @@ export class WrathofNulgath {
 }
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new WrathofNulgath().getSword();
+    new WrathofNulgath().getSword();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

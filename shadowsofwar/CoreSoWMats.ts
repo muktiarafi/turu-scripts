@@ -16,8 +16,7 @@ const SoW = new CoreSoW();
 
 export class CoreSoWMats {
     acquiescence(Quantity = 1000): void {
-        if (Core.checkInventory("Acquiescence", Quantity))
-            return;
+        if (Core.checkInventory("Acquiescence", Quantity)) return;
 
         SoW.shadowFlame();
 
@@ -36,14 +35,12 @@ export class CoreSoWMats {
     }
 
     elementalCore(Quantity = 500): void {
-        if (Core.checkInventory("Elemental Core", Quantity))
-            return;
+        if (Core.checkInventory("Elemental Core", Quantity)) return;
 
         SoW.manaCradle();
 
         if (!Core.isCompletedBefore(9126)) {
-            Core.logger(
-                "Once Upon Another Time 9126, missing quest progress (Group Boss - skua no can do)");
+            Core.logger("Once Upon Another Time 9126, missing quest progress (Group Boss - skua no can do)");
             return;
         }
 
@@ -65,8 +62,7 @@ export class CoreSoWMats {
     }
 
     garishRemnant(Quantity = 1000): void {
-        if (Core.checkInventory("Garish Remnant", Quantity))
-            return;
+        if (Core.checkInventory("Garish Remnant", Quantity)) return;
 
         SoW.timekeep();
 
@@ -104,8 +100,7 @@ export class CoreSoWMats {
     }
 
     unboundThread(Quantity = 1000): void {
-        if (Core.checkInventory("Unbound Thread", Quantity))
-            return;
+        if (Core.checkInventory("Unbound Thread", Quantity)) return;
 
         SoW.deadLines();
 
@@ -126,8 +121,7 @@ export class CoreSoWMats {
     }
 
     willpower(Quantity = 1000): void {
-        if (Core.checkInventory("Willpower", Quantity))
-            return;
+        if (Core.checkInventory("Willpower", Quantity)) return;
 
         SoW.ruinedCrown();
 

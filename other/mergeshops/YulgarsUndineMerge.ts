@@ -15,18 +15,73 @@ const AoR = new CoreAOR();
 
 export class YulgarsUndineMerge {
     static readonly select = [
-        option.bool("78285", "Poisonous Rogue", "Mode: [select] only\nShould the bot buy \"Poisonous Rogue\" ?", false),
-        option.bool("78286", "Nightshade Thorn Assasasin", "Mode: [select] only\nShould the bot buy \"Nightshade Thorn Assasasin\" ?", false),
-        option.bool("78293", "Reversed Blade of Thorns", "Mode: [select] only\nShould the bot buy \"Reversed Blade of Thorns\" ?", false),
-        option.bool("78294", "Reversed Daggers of Thorns", "Mode: [select] only\nShould the bot buy \"Reversed Daggers of Thorns\" ?", false),
-        option.bool("78296", "Envenomed Gauntlet", "Mode: [select] only\nShould the bot buy \"Envenomed Gauntlet\" ?", false),
-        option.bool("78295", "Envenomed Whip of Agony", "Mode: [select] only\nShould the bot buy \"Envenomed Whip of Agony\" ?", false),
-        option.bool("78288", "Elven Assassin's Scarf", "Mode: [select] only\nShould the bot buy \"Elven Assassin's Scarf\" ?", false),
-        option.bool("78290", "Elven Assassin's Scarf + Locks", "Mode: [select] only\nShould the bot buy \"Elven Assassin's Scarf + Locks\" ?", false),
-        option.bool("78292", "Nightshade Assassin Guardian", "Mode: [select] only\nShould the bot buy \"Nightshade Assassin Guardian\" ?", false),
-        option.bool("78287", "Elven Assassin's Hair", "Mode: [select] only\nShould the bot buy \"Elven Assassin's Hair\" ?", false),
-        option.bool("78289", "Elven Assassin Locks", "Mode: [select] only\nShould the bot buy \"Elven Assassin Locks\" ?", false),
-        option.bool("78291", "Poisonous Thorn Wreath", "Mode: [select] only\nShould the bot buy \"Poisonous Thorn Wreath\" ?", false),
+        option.bool("78285", "Poisonous Rogue", 'Mode: [select] only\nShould the bot buy "Poisonous Rogue" ?', false),
+        option.bool(
+            "78286",
+            "Nightshade Thorn Assasasin",
+            'Mode: [select] only\nShould the bot buy "Nightshade Thorn Assasasin" ?',
+            false,
+        ),
+        option.bool(
+            "78293",
+            "Reversed Blade of Thorns",
+            'Mode: [select] only\nShould the bot buy "Reversed Blade of Thorns" ?',
+            false,
+        ),
+        option.bool(
+            "78294",
+            "Reversed Daggers of Thorns",
+            'Mode: [select] only\nShould the bot buy "Reversed Daggers of Thorns" ?',
+            false,
+        ),
+        option.bool(
+            "78296",
+            "Envenomed Gauntlet",
+            'Mode: [select] only\nShould the bot buy "Envenomed Gauntlet" ?',
+            false,
+        ),
+        option.bool(
+            "78295",
+            "Envenomed Whip of Agony",
+            'Mode: [select] only\nShould the bot buy "Envenomed Whip of Agony" ?',
+            false,
+        ),
+        option.bool(
+            "78288",
+            "Elven Assassin's Scarf",
+            'Mode: [select] only\nShould the bot buy "Elven Assassin\'s Scarf" ?',
+            false,
+        ),
+        option.bool(
+            "78290",
+            "Elven Assassin's Scarf + Locks",
+            'Mode: [select] only\nShould the bot buy "Elven Assassin\'s Scarf + Locks" ?',
+            false,
+        ),
+        option.bool(
+            "78292",
+            "Nightshade Assassin Guardian",
+            'Mode: [select] only\nShould the bot buy "Nightshade Assassin Guardian" ?',
+            false,
+        ),
+        option.bool(
+            "78287",
+            "Elven Assassin's Hair",
+            'Mode: [select] only\nShould the bot buy "Elven Assassin\'s Hair" ?',
+            false,
+        ),
+        option.bool(
+            "78289",
+            "Elven Assassin Locks",
+            'Mode: [select] only\nShould the bot buy "Elven Assassin Locks" ?',
+            false,
+        ),
+        option.bool(
+            "78291",
+            "Poisonous Thorn Wreath",
+            'Mode: [select] only\nShould the bot buy "Poisonous Thorn Wreath" ?',
+            false,
+        ),
     ];
 
     private dontStopMissingIng = false;
@@ -45,10 +100,13 @@ export class YulgarsUndineMerge {
                 default:
                     const shouldStop = !Adv.matsOnly || !this.dontStopMissingIng;
                     Core.logger(
-                        `The bot hasn't been taught how to get ${req.name}.`
-                            + (shouldStop ? " Please report the issue." : " Skipping"), "", { messageBox: shouldStop, stopBot: shouldStop });
+                        `The bot hasn't been taught how to get ${req.name}.` +
+                            (shouldStop ? " Please report the issue." : " Skipping"),
+                        "",
+                        { messageBox: shouldStop, stopBot: shouldStop },
+                    );
                     break;
-        //#endregion
+                //#endregion
 
                 case "Venomous Rose":
                     Core.farmingLogger(req.name, quant);
@@ -64,7 +122,10 @@ export class YulgarsUndineMerge {
                 case "Undine Visitor Badge":
                     Core.farmingLogger(req.name, quant);
                     Core.equipClass(ClassType.Farm);
-                    Core.huntMonster("sunlightzone", "Astravian Illusion", req.name, quant, { isTemp: false, log: false });
+                    Core.huntMonster("sunlightzone", "Astravian Illusion", req.name, quant, {
+                        isTemp: false,
+                        log: false,
+                    });
                     break;
             }
         };
@@ -82,9 +143,9 @@ export const scriptOptions = defineScriptOptions(Adv.optionsStorage, [], true, {
 });
 
 export default function main(): void {
-        Core.bankingBlackList.push(...[ "Venomous Rose", "Undine Visitor Badge" ]);
-        Core.setOptions();
+    Core.bankingBlackList.push(...["Venomous Rose", "Undine Visitor Badge"]);
+    Core.setOptions();
 
-        new YulgarsUndineMerge().buyAllMerge();
-        Core.setOptions(false);
+    new YulgarsUndineMerge().buyAllMerge();
+    Core.setOptions(false);
 }

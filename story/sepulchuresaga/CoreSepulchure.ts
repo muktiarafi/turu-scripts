@@ -13,8 +13,7 @@ const Story = new CoreStory();
 
 export class CoreSepulchure {
     shadowfallRise(): void {
-        if (Core.isCompletedBefore(6592))
-            return;
+        if (Core.isCompletedBefore(6592)) return;
 
         Story.preLoad(this.shadowfallRise);
 

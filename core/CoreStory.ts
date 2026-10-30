@@ -86,7 +86,12 @@ export class CoreStory {
     }
 
     /** C# `KillQuest(int, string, string, ...)`. */
-    private killQuestOne(questId: number, mapName: string, monsterName: string, { getReward = true, reward = "All", autoCompleteQuest = true }: StoryOptions): void {
+    private killQuestOne(
+        questId: number,
+        mapName: string,
+        monsterName: string,
+        { getReward = true, reward = "All", autoCompleteQuest = true }: StoryOptions,
+    ): void {
         if (!mapName) throw new Error("MapName cannot be null or empty");
         if (!monsterName) throw new Error("MonsterName cannot be null or empty");
 
@@ -163,11 +168,19 @@ export class CoreStory {
     }
 
     /** C# `KillQuest(int, string, string[], ...)`. */
-    private killQuestMany(questId: number, mapName: string, monsterNames: readonly string[], { getReward = true, reward = "All", autoCompleteQuest = true }: StoryOptions): void {
+    private killQuestMany(
+        questId: number,
+        mapName: string,
+        monsterNames: readonly string[],
+        { getReward = true, reward = "All", autoCompleteQuest = true }: StoryOptions,
+    ): void {
         if (!mapName) throw new Error("MapName cannot be null or empty");
-        if (monsterNames.length === 0 || monsterNames.every((m) => !m)) throw new Error("MonsterNames cannot be null or empty");
+        if (monsterNames.length === 0 || monsterNames.every((m) => !m))
+            throw new Error("MonsterNames cannot be null or empty");
 
-        Core.debugLogger(`Starting KillQuest: QuestID=${questId}, Map=${mapName}, Monsters=[${monsterNames.join(", ")}]`);
+        Core.debugLogger(
+            `Starting KillQuest: QuestID=${questId}, Map=${mapName}, Monsters=[${monsterNames.join(", ")}]`,
+        );
 
         const questData = Core.initializeWithRetries(() => Core.ensureLoad(questId));
         if (questData === null) {
@@ -205,7 +218,9 @@ export class CoreStory {
             const monster = i < monsterNames.length && monsterNames[i] ? monsterNames[i] : lastMonster;
 
             itemToMonster.set(validRequirements[i].name, monster);
-            Core.logger(`[${questId}] Requirement ${validRequirements[i].name} mapped to monster ${monster} (index=${i})`);
+            Core.logger(
+                `[${questId}] Requirement ${validRequirements[i].name} mapped to monster ${monster} (index=${i})`,
+            );
         }
 
         // Snapshot CurrentRequirements to avoid nulls
@@ -263,7 +278,9 @@ export class CoreStory {
         bot.sleep(200);
         this.currentRequirements.length = 0;
 
-        Core.debugLogger(`Finished KillQuest: QuestID=${questId}. Items farmed: [${validRequirements.map((r) => r.name).join(", ")}]`);
+        Core.debugLogger(
+            `Finished KillQuest: QuestID=${questId}. Items farmed: [${validRequirements.map((r) => r.name).join(", ")}]`,
+        );
     }
 
     /**
@@ -287,7 +304,8 @@ export class CoreStory {
         }
 
         const sameName = (m: Monster) => formatForCompare(m.name) === formatForCompare(monster);
-        const sameText = (a: string | null | undefined, b: string | null | undefined) => (a ?? "").toLowerCase() === (b ?? "").toLowerCase();
+        const sameText = (a: string | null | undefined, b: string | null | undefined) =>
+            (a ?? "").toLowerCase() === (b ?? "").toLowerCase();
         const stillNeeded = () => this.currentRequirements.filter((r) => itemNames.includes(r.name) && !this.have(r));
 
         // Ensure we are on the correct map
@@ -300,12 +318,18 @@ export class CoreStory {
         let neededItems = stillNeeded();
 
         if (neededItems.length === 0) {
-            Core.logger(`All requested items for "${monster}" are already satisfied: [${itemNames.join(", ")}]`, "_MonsterHuntBatch");
+            Core.logger(
+                `All requested items for "${monster}" are already satisfied: [${itemNames.join(", ")}]`,
+                "_MonsterHuntBatch",
+            );
             return;
         }
 
         // **Important log moved here** — logs once per call
-        Core.logger(`Farming monster "${monster}" for items: [${neededItems.map((r) => `${r.name} x${r.quantity}`).join(", ")}]`, "_MonsterHuntBatch");
+        Core.logger(
+            `Farming monster "${monster}" for items: [${neededItems.map((r) => `${r.name} x${r.quantity}`).join(", ")}]`,
+            "_MonsterHuntBatch",
+        );
 
         while (!bot.shouldExit) {
             neededItems = stillNeeded();
@@ -317,7 +341,10 @@ export class CoreStory {
             const [targetCell, targetCount] = [...cells].sort((a, b) => b[1] - a[1])[0] ?? ["Enter", 0];
 
             if (!sameText(bot.player.cell, targetCell)) {
-                Core.debugLogger(`Jumping to cell '${targetCell}' with ${targetCount} ${monster}s`, "_MonsterHuntBatch");
+                Core.debugLogger(
+                    `Jumping to cell '${targetCell}' with ${targetCount} ${monster}s`,
+                    "_MonsterHuntBatch",
+                );
 
                 if (!sameText(bot.map.name, map)) {
                     Core.join(map);
@@ -360,7 +387,8 @@ export class CoreStory {
                     if (!bot.player.hasTarget || (bot.player.target?.hp ?? 0) <= 0) break;
 
                     const names = neededItems.map((r) => r.name);
-                    if (names.length > 0 && bot.drops.current.some((d) => names.includes(d.name))) bot.drops.pickup(...names);
+                    if (names.length > 0 && bot.drops.current.some((d) => names.includes(d.name)))
+                        bot.drops.pickup(...names);
 
                     neededItems = stillNeeded();
                 }
@@ -386,7 +414,13 @@ export class CoreStory {
      * @param mapItem ID of the map item, or a list of IDs (each grabbed `amount` times).
      * @param amount How many of each map item to grab.
      */
-    mapItemQuest(questId: number, mapName: string, mapItem: number | readonly number[], amount?: number, options?: StoryOptions): void;
+    mapItemQuest(
+        questId: number,
+        mapName: string,
+        mapItem: number | readonly number[],
+        amount?: number,
+        options?: StoryOptions,
+    ): void;
     /**
      * Gets map items spread over several maps for a quest (grouped per map), and turns in the
      * quest if possible.
@@ -410,7 +444,13 @@ export class CoreStory {
     }
 
     /** C# `MapItemQuest(int, string, int, ...)`. */
-    private mapItemQuestOne(questId: number, mapName: string, mapItemId: number, amount: number, { getReward = true, reward = "All", autoCompleteQuest = true }: StoryOptions): void {
+    private mapItemQuestOne(
+        questId: number,
+        mapName: string,
+        mapItemId: number,
+        amount: number,
+        { getReward = true, reward = "All", autoCompleteQuest = true }: StoryOptions,
+    ): void {
         const questData = Core.initializeWithRetries(() => Core.ensureLoad(questId));
         if (questData === null) {
             Core.logger(`Quest with ID ${questId} not found`);
@@ -426,7 +466,13 @@ export class CoreStory {
     }
 
     /** C# `MapItemQuest(int, string, int[], ...)`. */
-    private mapItemQuestIds(questId: number, mapName: string, mapItemIds: readonly number[], amount: number, { getReward = true, reward = "All", autoCompleteQuest = true }: StoryOptions): void {
+    private mapItemQuestIds(
+        questId: number,
+        mapName: string,
+        mapItemIds: readonly number[],
+        amount: number,
+        { getReward = true, reward = "All", autoCompleteQuest = true }: StoryOptions,
+    ): void {
         const questData = Core.initializeWithRetries(() => Core.ensureLoad(questId));
         if (questData === null) {
             Core.logger(`Quest with ID ${questId} not found`);
@@ -438,10 +484,14 @@ export class CoreStory {
         Core.ensureAccept(questId);
 
         // Build the list of map items to grab
-        const itemsToGrab = mapItemIds.filter((id) => !bot.tempInv.contains(id, amount)).map((id) => [id, amount] as const);
+        const itemsToGrab = mapItemIds
+            .filter((id) => !bot.tempInv.contains(id, amount))
+            .map((id) => [id, amount] as const);
 
         if (itemsToGrab.length > 0) {
-            Core.logger(`Grabbing items from map ${mapName}: ${itemsToGrab.map(([id, quantity]) => `${id} x${quantity}`).join(", ")}`);
+            Core.logger(
+                `Grabbing items from map ${mapName}: ${itemsToGrab.map(([id, quantity]) => `${id} x${quantity}`).join(", ")}`,
+            );
             Core.getMapItems(itemsToGrab, mapName);
         }
 
@@ -449,7 +499,11 @@ export class CoreStory {
     }
 
     /** C# `MapItemQuest(int, (int MapItemID, int Amount, string MapName)[], ...)`. */
-    private mapItemQuestEntries(questId: number, mapItems: readonly MapItemEntry[], { getReward = true, reward = "All", autoCompleteQuest = true }: StoryOptions): void {
+    private mapItemQuestEntries(
+        questId: number,
+        mapItems: readonly MapItemEntry[],
+        { getReward = true, reward = "All", autoCompleteQuest = true }: StoryOptions,
+    ): void {
         const questData = Core.initializeWithRetries(() => Core.ensureLoad(questId));
         if (questData === null) {
             Core.logger(`Quest with ID ${questId} not found`);
@@ -469,7 +523,9 @@ export class CoreStory {
 
         for (const [map, itemsToGrab] of itemsGroupedByMap) {
             if (itemsToGrab.length > 0) {
-                Core.logger(`Grabbing items from map ${map}: ${itemsToGrab.map(([id, quantity]) => `${id} x${quantity}`).join(", ")}`);
+                Core.logger(
+                    `Grabbing items from map ${map}: ${itemsToGrab.map(([id, quantity]) => `${id} x${quantity}`).join(", ")}`,
+                );
                 Core.join(map);
                 Core.getMapItems(itemsToGrab, map);
             }
@@ -491,7 +547,14 @@ export class CoreStory {
      * @param itemName Name of the item to buy.
      * @param amount The amount of `itemName` to buy.
      */
-    buyQuest(questId: number, mapName: string, shopId: number, itemName: string, amount = 1, { getReward = true, reward = "All", autoCompleteQuest = true }: StoryOptions = {}): void {
+    buyQuest(
+        questId: number,
+        mapName: string,
+        shopId: number,
+        itemName: string,
+        amount = 1,
+        { getReward = true, reward = "All", autoCompleteQuest = true }: StoryOptions = {},
+    ): void {
         const questData = Core.initializeWithRetries(() => Core.ensureLoad(questId));
         if (questData === null) {
             Core.logger(`Quest with ID ${questId} not found`);
@@ -509,7 +572,10 @@ export class CoreStory {
      * Accepts a quest and then turns it in again. Skipped when the quest was completed before.
      * @param questId ID of the quest.
      */
-    chainQuest(questId: number, { getReward = true, reward = "All", autoCompleteQuest = true }: StoryOptions = {}): void {
+    chainQuest(
+        questId: number,
+        { getReward = true, reward = "All", autoCompleteQuest = true }: StoryOptions = {},
+    ): void {
         const questData = Core.initializeWithRetries(() => Core.ensureLoad(questId));
         if (questData === null) {
             Core.logger(`Quest with ID ${questId} not found`);
@@ -552,7 +618,10 @@ export class CoreStory {
             });
 
         if (missingItems.length > 0) {
-            Core.logger(`Missing items for quest [${questData.id}] "${questData.name}": ${missingItems.join(", ")}`, "QuestProgression");
+            Core.logger(
+                `Missing items for quest [${questData.id}] "${questData.name}": ${missingItems.join(", ")}`,
+                "QuestProgression",
+            );
             return;
         }
 
@@ -578,7 +647,14 @@ export class CoreStory {
      * unlocked yet, it re-completes the previous quest of its chain, and relogs if that fails.
      * @param questId ID of the quest.
      */
-    questProgression(questId: number, { getReward = true, reward = "All", log = true }: Omit<StoryOptions, "autoCompleteQuest"> & { log?: boolean } = {}): boolean {
+    questProgression(
+        questId: number,
+        {
+            getReward = true,
+            reward = "All",
+            log = true,
+        }: Omit<StoryOptions, "autoCompleteQuest"> & { log?: boolean } = {},
+    ): boolean {
         if (questId <= 0) return false;
 
         // Cache previous result to avoid repeated processing in same loop tick
@@ -606,10 +682,14 @@ export class CoreStory {
         while (!bot.quests.isUnlocked(questId)) {
             Core.sleep(1000);
 
-            const currentValue = questData.slot > 0 ? bot.flash.callGameFunction<number>("world.getQuestValue", questData.slot) : 0;
+            const currentValue =
+                questData.slot > 0 ? bot.flash.callGameFunction<number>("world.getQuestValue", questData.slot) : 0;
 
             if (attempts === 0 || attempts % 3 === 0)
-                Core.logger(`Progress check: Slot ${questData.slot} | Current ${currentValue} / Target ${questData.value - 1}`, "QuestProgression");
+                Core.logger(
+                    `Progress check: Slot ${questData.slot} | Current ${currentValue} / Target ${questData.value - 1}`,
+                    "QuestProgression",
+                );
 
             // Find previous quest in same chain safely
             const prevQuest =
@@ -619,11 +699,16 @@ export class CoreStory {
 
             if (prevQuest !== null) {
                 // Safely gather requirements (quests may have null collections)
-                const prevReqs = [...(prevQuest.requirements ?? []), ...(prevQuest.acceptRequirements ?? [])].map((req) => req.name);
+                const prevReqs = [...(prevQuest.requirements ?? []), ...(prevQuest.acceptRequirements ?? [])].map(
+                    (req) => req.name,
+                );
 
                 // If we already have the items, re-complete the quest to repair the chain
                 if (prevReqs.length > 0 && Core.checkInventory(prevReqs)) {
-                    Core.logger(`Attempting recovery via re-completing previous quest: [${prevQuest.id}] "${prevQuest.name}"`, "QuestProgression");
+                    Core.logger(
+                        `Attempting recovery via re-completing previous quest: [${prevQuest.id}] "${prevQuest.name}"`,
+                        "QuestProgression",
+                    );
 
                     this.tryComplete(Core.ensureLoad(prevQuest.id), true);
                     attempts = 0;
@@ -642,7 +727,10 @@ export class CoreStory {
 
             // Relog after repeated failures
             if (attempts >= 5) {
-                Core.logger(`Quest [${questId}] "${questData.name}" still not unlocked after retries. Relogging...`, "QuestProgression");
+                Core.logger(
+                    `Quest [${questId}] "${questData.name}" still not unlocked after retries. Relogging...`,
+                    "QuestProgression",
+                );
                 Core.relogin("Quest progression recovery failed, relogging.");
                 attempts = 0;
             }
@@ -702,9 +790,15 @@ export class CoreStory {
         //Core.DL_Enable();
         Core.debugLogger("-------------\t");
         for (const quest of questData) {
-            const desiredQuestReward: QuestItem[] = quest.rewards.filter((r) => questData.some((q) => q.acceptRequirements.some((a) => sameItem(a, r))));
-            const requiredQuestId = questData.find((q) => q.rewards.some((r) => quest.acceptRequirements.some((a) => sameItem(a, r))))?.id ?? 0;
-            const requiredQuestReward: QuestItem[] = quest.acceptRequirements.filter((r) => questData.some((q) => q.rewards.some((a) => sameItem(a, r))));
+            const desiredQuestReward: QuestItem[] = quest.rewards.filter((r) =>
+                questData.some((q) => q.acceptRequirements.some((a) => sameItem(a, r))),
+            );
+            const requiredQuestId =
+                questData.find((q) => q.rewards.some((r) => quest.acceptRequirements.some((a) => sameItem(a, r))))
+                    ?.id ?? 0;
+            const requiredQuestReward: QuestItem[] = quest.acceptRequirements.filter((r) =>
+                questData.some((q) => q.rewards.some((a) => sameItem(a, r))),
+            );
 
             Core.debugLogger(`${quest.id}\t\t`);
             Core.debugLogger(`${desiredQuestReward[0]?.name ?? ""}\t`);
@@ -726,7 +820,10 @@ export class CoreStory {
             whereToGet.push({ desiredQuestId: quest.id, desiredQuestReward, requiredQuestId, requiredQuestReward });
         }
 
-        if (whereToGet.every((x) => x.desiredQuestReward.length === 0) || whereToGet.every((x) => x.requiredQuestReward?.length === 0)) {
+        if (
+            whereToGet.every((x) => x.desiredQuestReward.length === 0) ||
+            whereToGet.every((x) => x.requiredQuestReward?.length === 0)
+        ) {
             const ids = questData.map((q) => q.id).join(", ");
 
             Core.logger(
@@ -743,7 +840,9 @@ export class CoreStory {
             return;
         }
 
-        Core.logger(`Final quest in Legacy Quest Chain: [${finalItemQuest.desiredQuestId}] "${Core.ensureLoad(finalItemQuest.desiredQuestId).name}"`);
+        Core.logger(
+            `Final quest in Legacy Quest Chain: [${finalItemQuest.desiredQuestId}] "${Core.ensureLoad(finalItemQuest.desiredQuestId).name}"`,
+        );
 
         const finalRewardIds = () => Core.ensureLoad(finalItemQuest.desiredQuestId).rewards.map((x) => x.id);
 
@@ -767,7 +866,11 @@ export class CoreStory {
             }
 
             const desiredReward = runQuestData.desiredQuestReward.map((i) => i.id);
-            if (questId !== finalItemQuest.desiredQuestId ? Core.checkInventory(desiredReward) : Core.checkInventory(finalRewardIds())) {
+            if (
+                questId !== finalItemQuest.desiredQuestId
+                    ? Core.checkInventory(desiredReward)
+                    : Core.checkInventory(finalRewardIds())
+            ) {
                 Core.logger(`Already Completed: [${questId}] - "${quest.name}"`, "QuestProgression");
                 return;
             }
@@ -791,7 +894,8 @@ export class CoreStory {
 
         runQuest(finalItemQuest.desiredQuestId);
 
-        for (const l of whereToGet) if (l.requiredQuestReward !== null) Core.toBank(...l.requiredQuestReward.map((i) => i.id));
+        for (const l of whereToGet)
+            if (l.requiredQuestReward !== null) Core.toBank(...l.requiredQuestReward.map((i) => i.id));
     }
 
     /** The quest {@link legacyQuestManager} is running `questLogic` for. */
@@ -839,7 +943,12 @@ export class CoreStory {
             if (!/\d/.test(line)) continue;
 
             // C# removes spaces; the transpiled source is indented with tabs, so remove all whitespace.
-            const edittedLine = line.replace(/\s/g, "").replace(/!/g, "").replace(/\(/g, "").replace(/if/g, "").replace(/else/g, "");
+            const edittedLine = line
+                .replace(/\s/g, "")
+                .replace(/!/g, "")
+                .replace(/\(/g, "")
+                .replace(/if/g, "")
+                .replace(/else/g, "");
 
             if (!searchParam.some((x) => edittedLine.startsWith(x))) continue;
 
@@ -848,9 +957,12 @@ export class CoreStory {
             if (!questIds.includes(questId) && !tree.some((x) => x.id === questId)) questIds.push(questId);
         }
 
-        if (questIds.length + tree.length > Core.loadedQuestLimit && questIds.length < Core.loadedQuestLimit) bot.flash.set("world.questTree", {});
+        if (questIds.length + tree.length > Core.loadedQuestLimit && questIds.length < Core.loadedQuestLimit)
+            bot.flash.set("world.questTree", {});
         else if (questIds.length > Core.loadedQuestLimit - tree.length) {
-            Core.logger(`Found ${questIds.length} Quests, this exceeds the max amount of loaded quests (${Core.loadedQuestLimit}). No quests will be loaded.`);
+            Core.logger(
+                `Found ${questIds.length} Quests, this exceeds the max amount of loaded quests (${Core.loadedQuestLimit}). No quests will be loaded.`,
+            );
             return;
         }
 

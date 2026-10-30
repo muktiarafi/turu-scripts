@@ -13,11 +13,9 @@ const Story = new CoreStory();
 
 export class TempleSiege {
     completeTempleSiege(): void {
-        if (Core.isCompletedBefore(9067))
-            return;
+        if (Core.isCompletedBefore(9067)) return;
 
-        if (!Core.isSeasonalMapActive("templesiege"))
-            return;
+        if (!Core.isSeasonalMapActive("templesiege")) return;
 
         Story.preLoad(this.completeTempleSiege);
 
@@ -44,7 +42,7 @@ export class TempleSiege {
         }
 
         //Blessed Visage || 9061
-        Story.mapItemQuest(9061, "templesiege", [ 11130, 11131, 11132 ]);
+        Story.mapItemQuest(9061, "templesiege", [11130, 11131, 11132]);
 
         //Banging on Light's Door || 9062
         if (!Story.questProgression(9062)) {
@@ -78,8 +76,8 @@ export class TempleSiege {
 }
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new TempleSiege().completeTempleSiege();
-        Core.setOptions(false);
+    new TempleSiege().completeTempleSiege();
+    Core.setOptions(false);
 }

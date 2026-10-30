@@ -105,7 +105,12 @@ export enum PetChoice {
 export const scriptOptions = defineScriptOptions(
     "FarmerJoePet",
     [
-        option.bool("OutFit", "Get a Pre-Made Outfit, Curtious of the Community", "We are farmers, bum ba dum bum bum bum bum", false),
+        option.bool(
+            "OutFit",
+            "Get a Pre-Made Outfit, Curtious of the Community",
+            "We are farmers, bum ba dum bum bum bum bum",
+            false,
+        ),
         option.bool("EquipOutfit", "Equip our the FarmerJoe outfit at the end?", "Yay or Nay", false),
         option.bool("SellStarterClasses", "SellStarterClasses", "Yay or Nay", false),
         option.bool(
@@ -139,22 +144,27 @@ export class CoreFarmerJoe {
 
     private getClass(className: string): InventoryItem | null {
         const key = className.toLowerCase();
-        if (this._classCache.has(key))
-            return this._classCache.get(key) ?? null;
+        if (this._classCache.has(key)) return this._classCache.get(key) ?? null;
 
         const item =
             bot.inventory.items
                 .concat(bot.bank.items)
-                .find(i => i.name?.trim().toLowerCase() === key && i.category === "Class") ?? null;
+                .find((i) => i.name?.trim().toLowerCase() === key && i.category === "Class") ?? null;
 
         this._classCache.set(key, item); // cache result
         return item;
     }
 
     // Strongly-typed properties
-    private get classNinja(): InventoryItem | null { return this.getClass("Ninja"); }
-    private get classMage(): InventoryItem | null { return this.getClass("Mage"); }
-    private get classDragonOfTime(): InventoryItem | null { return this.getClass("Dragon of Time"); }
+    private get classNinja(): InventoryItem | null {
+        return this.getClass("Ninja");
+    }
+    private get classMage(): InventoryItem | null {
+        return this.getClass("Mage");
+    }
+    private get classDragonOfTime(): InventoryItem | null {
+        return this.getClass("Dragon of Time");
+    }
 
     //#endregion InvClasses
 
@@ -240,7 +250,9 @@ export class CoreFarmerJoe {
         this.beginnerItems();
 
         //safety incase it desyncs.. the relog fuction isnt exactly perfect
-        Core.logger("Class points may be desynced at Rank 9, if you are stuck at rank 9, please stop the bot & relog if this happens");
+        Core.logger(
+            "Class points may be desynced at Rank 9, if you are stuck at rank 9, please stop the bot & relog if this happens",
+        );
     }
 
     hasEnhancedThisBracket = false;
@@ -296,11 +308,13 @@ export class CoreFarmerJoe {
         ]);
 
         for (const level of [30, 50, 55, 60, 65, 70, 75, 80]) {
-            if (bot.player.level > 75)
-                this.hasEnhancedThisBracket = true;
+            if (bot.player.level > 75) this.hasEnhancedThisBracket = true;
 
             // // Smart enhance at start of each bracket
-            if (!this.hasEnhancedThisBracket || bot.inventory.items.some(x => x != null && x.enhancementLevel < bot.player.level)) {
+            if (
+                !this.hasEnhancedThisBracket ||
+                bot.inventory.items.some((x) => x != null && x.enhancementLevel < bot.player.level)
+            ) {
                 Adv.smartEnhance(bot.player.currentClass ?? "");
                 this.hasEnhancedThisBracket = true;
             }
@@ -332,8 +346,7 @@ export class CoreFarmerJoe {
 
     private handleLevel30(): void {
         if (!Core.checkInventory("Master Ranger", 1, { toInv: false }) || !CoreFarmerJoe.anyRank10(["Master Ranger"])) {
-            if (Core.checkInventory("Venom Head"))
-                Core.sellItem("Venom Head");
+            if (Core.checkInventory("Venom Head")) Core.sellItem("Venom Head");
 
             Core.logger("Level 30: Acquiring Master Ranger");
             this.setClass();
@@ -356,13 +369,19 @@ export class CoreFarmerJoe {
 
     private handleLevel50(): void {
         // --- SCARLET SORCERESS / FARM ALTERNATIVES ---
-        if (!Core.checkInventory("Scarlet Sorceress", 1, { toInv: false }) || !CoreFarmerJoe.anyRank10(["Scarlet Sorceress"])) {
+        if (
+            !Core.checkInventory("Scarlet Sorceress", 1, { toInv: false }) ||
+            !CoreFarmerJoe.anyRank10(["Scarlet Sorceress"])
+        ) {
             Core.logger("Level 50: Acquiring Scarlet Sorceress");
             this.setClass();
             SS.getSSorc();
         }
 
-        if (!Core.checkInventory("Dragonslayer General", 1, { toInv: false }) || !CoreFarmerJoe.anyRank10(["Dragonslayer General"])) {
+        if (
+            !Core.checkInventory("Dragonslayer General", 1, { toInv: false }) ||
+            !CoreFarmerJoe.anyRank10(["Dragonslayer General"])
+        ) {
             Core.logger("Level 50: Acquiring Dragonslayer General");
             this.setClass();
             DSG.getDSGeneral();
@@ -390,7 +409,10 @@ export class CoreFarmerJoe {
     }
 
     private handleLevel60(): void {
-        if (!Core.checkInventory("DragonSoul Shinobi", 1, { toInv: false }) || !CoreFarmerJoe.anyRank10(["DragonSoul Shinobi"])) {
+        if (
+            !Core.checkInventory("DragonSoul Shinobi", 1, { toInv: false }) ||
+            !CoreFarmerJoe.anyRank10(["DragonSoul Shinobi"])
+        ) {
             Core.logger("Level 60: Acquiring DragonSoul Shinobi");
             this.setClass();
             DS.getDSS();
@@ -400,7 +422,10 @@ export class CoreFarmerJoe {
     }
 
     private handleLevel65(): void {
-        if (!Core.checkInventory("Glacial Berserker", 1, { toInv: false }) || !CoreFarmerJoe.anyRank10(["Glacial Berserker"])) {
+        if (
+            !Core.checkInventory("Glacial Berserker", 1, { toInv: false }) ||
+            !CoreFarmerJoe.anyRank10(["Glacial Berserker"])
+        ) {
             Core.logger("Level 65: Acquiring Glacial Berserker");
             this.setClass();
             GB.getGB();
@@ -510,7 +535,7 @@ export class CoreFarmerJoe {
         this.setClass();
 
         // Bank any LoO rewards
-        Core.toBank(...Core.ensureLoad(7156).rewards.map(i => i.name));
+        Core.toBank(...Core.ensureLoad(7156).rewards.map((i) => i.name));
 
         const additionalClasses = ["Frost Spirit Reaver", "Northlands Monk", "Shaman"];
 
@@ -602,18 +627,18 @@ export class CoreFarmerJoe {
     endGame(): void {
         //#region Ending & Extras
 
-        if (configOr("OutFit", false))
-            this.outfit();
+        if (configOr("OutFit", false)) this.outfit();
 
         this.setClass();
 
         //#region  Prefarm some non-Skua-able items:
 
         //Prep for remaning Enh:
-        Core.logger("P5: Preparing for Remaining Enhancements: Heros Valiance, Elysium, Arcanas Concerto, Ravenous, DauntLess");
+        Core.logger(
+            "P5: Preparing for Remaining Enhancements: Heros Valiance, Elysium, Arcanas Concerto, Ravenous, DauntLess",
+        );
         unlockForgeEnhancements.herosValiance();
-        if (Core.checkInventory("The Divine Will"))
-            unlockForgeEnhancements.elysium();
+        if (Core.checkInventory("The Divine Will")) unlockForgeEnhancements.elysium();
         // unlockForgeEnhancements.arcanasConcerto();
         // unlockForgeEnhancements.dauntLess();
         if (Core.checkInventory("Void Highlord") && Core.checkInventory("Roentgenium of Nulgath", 10))
@@ -675,10 +700,8 @@ export class CoreFarmerJoe {
         // pets(HotMama) and pets(Akriloth) each get the chosen pet only.
         const configPetChoice = configOr("PetChoice", PetChoice.None);
 
-        if (configPetChoice === PetChoice.None)
-            return;
-        if (petChoice !== PetChoice.None && petChoice !== configPetChoice)
-            return;
+        if (configPetChoice === PetChoice.None) return;
+        if (petChoice !== PetChoice.None && petChoice !== configPetChoice) return;
 
         if (configPetChoice === PetChoice.HotMama && !Core.checkInventory("Hot Mama")) {
             this.setClass();
@@ -713,12 +736,14 @@ export class CoreFarmerJoe {
      * - **Equipping:** Equips the obtained item once acquired.
      */
     serversAreDown(): void {
-        if (Core.checkInventory("The Server is Down"))
-            return;
+        if (Core.checkInventory("The Server is Down")) return;
 
         Core.farmingLogger("The Server is Down", 1);
         this.setClass();
-        Core.huntMonster("undergroundlabb", "Rabid Server Hamster", "The Server is Down", 1, { isTemp: false, log: false });
+        Core.huntMonster("undergroundlabb", "Rabid Server Hamster", "The Server is Down", 1, {
+            isTemp: false,
+            log: false,
+        });
         bot.wait.forPickup("The Server is Down");
         Core.equip("The Server is Down");
     }
@@ -735,10 +760,12 @@ export class CoreFarmerJoe {
      */
     beginnerItems(): void {
         // Combined skip logic: skip if EITHER high-tier classes exist OR both beginner classes are rank 10+
-        const except = (list: string[], ...names: string[]) => list.filter(x => !names.includes(x));
+        const except = (list: string[], ...names: string[]) => list.filter((x) => !names.includes(x));
         const hasHighTier =
-            Core.checkInventory(except(this.soloClasses, "Assassin", "Ninja Warrior", "Ninja"), 1, { any: true, toInv: false }) &&
-            Core.checkInventory(except(this.farmClasses, "Mage", "Mage (rare)"), 1, { any: true, toInv: false });
+            Core.checkInventory(except(this.soloClasses, "Assassin", "Ninja Warrior", "Ninja"), 1, {
+                any: true,
+                toInv: false,
+            }) && Core.checkInventory(except(this.farmClasses, "Mage", "Mage (rare)"), 1, { any: true, toInv: false });
 
         const hasBothRank10Beginners =
             Core.checkInventory(["Assassin", "Ninja Warrior", "Ninja"], 1, { any: true, toInv: false }) &&
@@ -758,7 +785,7 @@ export class CoreFarmerJoe {
 
         // C# loops over every ItemCategory; only these three do anything.
         for (const category of ["Helm", "Cape", "Weapon"]) {
-            const equippedItem = bot.inventory.items.find(i => i.equipped && i.category === category);
+            const equippedItem = bot.inventory.items.find((i) => i.equipped && i.category === category);
 
             switch (category) {
                 case "Helm":
@@ -778,7 +805,7 @@ export class CoreFarmerJoe {
                 // C# runs this once per weapon category (Staff, Axe, Bow, ...); after the first
                 // the default weapon is sold, so once is the same.
                 case "Weapon": {
-                    const defaultWep = bot.inventory.items.find(x => x.name.startsWith("Default"));
+                    const defaultWep = bot.inventory.items.find((x) => x.name.startsWith("Default"));
 
                     if (defaultWep != null && Core.checkInventory(defaultWep.id)) {
                         Core.buyItem("classhalla", 299, "Battle Oracle Battlestaff");
@@ -799,7 +826,9 @@ export class CoreFarmerJoe {
 
         // Buy Rogue if we don't already own it.
         if (!Core.checkInventory(["Rogue (Rare)", "Rogue"], 1, { any: true, toInv: false })) {
-            Core.logger('Getting rogue.. so we can get ninja (there\'s a 10k hp "boss" to kill during the "Hit Job" quest.)');
+            Core.logger(
+                'Getting rogue.. so we can get ninja (there\'s a 10k hp "boss" to kill during the "Hit Job" quest.)',
+            );
 
             Adv.buyItem("classhalla", 172, "Rogue");
         }
@@ -839,8 +868,7 @@ export class CoreFarmerJoe {
         this._classCache.clear();
 
         // Skip if nothing meaningful changed
-        if (this.shouldSkipSetClass())
-            return;
+        if (this.shouldSkipSetClass()) return;
 
         // Resolve classes
         Core.soloClass = CoreFarmerJoe.resolveClass(Core.soloClass, this.soloClasses) ?? Core.soloClass;
@@ -856,8 +884,7 @@ export class CoreFarmerJoe {
             [Core.dodgeClass, "DodgeClass"],
         ];
 
-        for (const [className, label] of rankTargets)
-            CoreFarmerJoe.rankIfNeeded(className, label);
+        for (const [className, label] of rankTargets) CoreFarmerJoe.rankIfNeeded(className, label);
 
         bot.sleep(500);
 
@@ -874,9 +901,12 @@ export class CoreFarmerJoe {
 
         const levelIncreased = currentLevel > this._lastCheckedLevel;
 
-        const same = (a: string | null, b: string | null) => (a ?? "").toLowerCase() === (b ?? "").toLowerCase() && (a == null) === (b == null);
+        const same = (a: string | null, b: string | null) =>
+            (a ?? "").toLowerCase() === (b ?? "").toLowerCase() && (a == null) === (b == null);
         const classChanged =
-            !same(this._lastSolo, Core.soloClass) || !same(this._lastFarm, Core.farmClass) || !same(this._lastDodge, Core.dodgeClass);
+            !same(this._lastSolo, Core.soloClass) ||
+            !same(this._lastFarm, Core.farmClass) ||
+            !same(this._lastDodge, Core.dodgeClass);
 
         return !levelIncreased && !classChanged;
     }
@@ -886,32 +916,28 @@ export class CoreFarmerJoe {
         const invalid =
             !current ||
             current.toLowerCase() === "generic" ||
-            !pool.some(x => x.toLowerCase() === current.toLowerCase()) ||
+            !pool.some((x) => x.toLowerCase() === current.toLowerCase()) ||
             !Core.checkInventory(current);
 
-        if (!invalid)
-            return current;
+        if (!invalid) return current;
 
-        const found = pool.find(x => Core.checkInventory(x));
+        const found = pool.find((x) => Core.checkInventory(x));
         return found ?? current;
     }
 
     private static bankAllUnusedClasses(): void {
         // More explicit null handling instead of relying on spread operator
         const keepList: string[] = [];
-        if (Core.soloClass?.trim())
-            keepList.push(Core.soloClass);
-        if (Core.farmClass?.trim())
-            keepList.push(Core.farmClass);
-        if (Core.dodgeClass?.trim())
-            keepList.push(Core.dodgeClass);
+        if (Core.soloClass?.trim()) keepList.push(Core.soloClass);
+        if (Core.farmClass?.trim()) keepList.push(Core.farmClass);
+        if (Core.dodgeClass?.trim()) keepList.push(Core.dodgeClass);
 
-        const keep = keepList.map(x => x.toLowerCase());
+        const keep = keepList.map((x) => x.toLowerCase());
 
         // Get ALL classes from inventory (actual items)
         const toBank = bot.inventory.items
-            .filter(x => x != null && x.category === "Class" && !keep.includes(x.name.toLowerCase()))
-            .map(x => x.name);
+            .filter((x) => x != null && x.category === "Class" && !keep.includes(x.name.toLowerCase()))
+            .map((x) => x.name);
 
         if (toBank.length > 0) {
             Core.logger(`Banking unused classes: ${toBank.join(", ")}`);
@@ -922,16 +948,14 @@ export class CoreFarmerJoe {
     }
 
     private static rankIfNeeded(className: string | null, label: string): void {
-        if (!className)
-            return;
+        if (!className) return;
 
         if (!Core.checkInventory(className)) {
             Core.logger(`WARNING: ${label} class '${className}' not in inventory!`);
             return;
         }
 
-        if (Core.checkClassRank({ currentClass: false, className }) >= 10)
-            return;
+        if (Core.checkClassRank({ currentClass: false, className }) >= 10) return;
 
         Core.logger(`${label} resolved -> ${className}`);
         Adv.rankUpClass(className);

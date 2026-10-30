@@ -19,11 +19,9 @@ const nulgathDemandsWork = new NulgathDemandsWork();
 
 export class EnoughDOOMforanArchfiend {
     afdl(): void {
-        if (Core.checkInventory("ArchFiend DoomLord", 1, { toInv: false }))
-            return;
+        if (Core.checkInventory("ArchFiend DoomLord", 1, { toInv: false })) return;
 
-        const NDWRequiredItems: string[] =
-        [
+        const NDWRequiredItems: string[] = [
             "DoomLord's War Mask",
             "ShadowFiend Cloak",
             "Locks of the DoomLord",
@@ -31,18 +29,19 @@ export class EnoughDOOMforanArchfiend {
         ];
         Core.addDrop(...Nation.bagDrops);
         Core.addDrop(
-            "ArchFiend DoomLord", 
-            "Undead Essence", 
-            "Chaorruption Essence", 
-            "Essence Potion", 
-            "Essence of Klunk", 
-            "Living Star Essence", 
-            "Bone Dust", 
-            "Undead Energy", 
-            "DoomLord's War Mask", 
-            "ShadowFiend Cloak", 
-            "Locks of the DoomLord", 
-            "Doomblade of Destruction");
+            "ArchFiend DoomLord",
+            "Undead Essence",
+            "Chaorruption Essence",
+            "Essence Potion",
+            "Essence of Klunk",
+            "Living Star Essence",
+            "Bone Dust",
+            "Undead Energy",
+            "DoomLord's War Mask",
+            "ShadowFiend Cloak",
+            "Locks of the DoomLord",
+            "Doomblade of Destruction",
+        );
 
         Farm.experience(75);
 
@@ -52,10 +51,10 @@ export class EnoughDOOMforanArchfiend {
         nulgathDemandsWork.ndwQuest(NDWRequiredItems);
 
         //Quest Turnin Items:
-        nulgathDemandsWork.ndwQuest([ "Unidentified 35" ]);
+        nulgathDemandsWork.ndwQuest(["Unidentified 35"]);
         // WillpowerExtraction.Unidentified34(4);
         Nation.farmBloodGem(10);
-        Nation.farmVoucher({ member:false });
+        Nation.farmVoucher({ member: false });
         Nation.essenceofNulgath(100);
         Farm.battleUnderB("Undead Essence", 1000);
         Core.ensureAccept(5260);
@@ -63,8 +62,7 @@ export class EnoughDOOMforanArchfiend {
         Core.huntMonster("orecavern", "Chaorrupted Good Soldier", "Chaorruption Essence", 75, { isTemp: false });
         Core.huntMonster("starsinc", "Living Star", "Living Star Essence", 100, { isTemp: false });
 
-        if (!Core.checkInventory("Aelita's Emerald"))
-            Core.buyItem("yulgar", 16, "Aelita's Emerald");
+        if (!Core.checkInventory("Aelita's Emerald")) Core.buyItem("yulgar", 16, "Aelita's Emerald");
         Adv.buyItem("alchemyacademy", 2115, "Essence Potion", 5, 8580); // see if this works
         // if (!Core.CheckInventory("Essence Potion", 5))
         // {
@@ -85,21 +83,22 @@ export class EnoughDOOMforanArchfiend {
 }
 
 export default function main(): void {
-        Core.bankingBlackList.push(...Nation.bagDrops);
-        Core.bankingBlackList.push(...
-            [
-                "ArchFiend DoomLord",
-                "Undead Essence",
-                "Chaorruption Essence",
-                "Essence Potion",
-                "Essence of Klunk",
-                "Living Star Essence",
-                "Bone Dust",
-                "Undead Energy",
-            ]);
-        Core.setOptions();
+    Core.bankingBlackList.push(...Nation.bagDrops);
+    Core.bankingBlackList.push(
+        ...[
+            "ArchFiend DoomLord",
+            "Undead Essence",
+            "Chaorruption Essence",
+            "Essence Potion",
+            "Essence of Klunk",
+            "Living Star Essence",
+            "Bone Dust",
+            "Undead Energy",
+        ],
+    );
+    Core.setOptions();
 
-        new EnoughDOOMforanArchfiend().afdl();
+    new EnoughDOOMforanArchfiend().afdl();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

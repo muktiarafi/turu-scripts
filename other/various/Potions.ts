@@ -25,36 +25,44 @@ const flag = (name: string) => (): boolean => bot.config.get<boolean>(name);
  * (`DontPreconfigure = true`), `Core.setOptions()` opens that window on start until
  * `Core.skipOptions` is ticked.
  */
-export const scriptOptions = defineScriptOptions("Potionv2", [
-    option.bool("BuyReagents", "Buy Reagents?", "Use gold to buy the reagents for the Potions [this takes ALOT of gold.]."),
-    option.int("PotionQuant", "Potion Quantity", "Desired stack amount [max - 300]", 0),
-    option.bool("MaxAll", "Max all Potions within the script.", "as the name says"),
+export const scriptOptions = defineScriptOptions(
+    "Potionv2",
+    [
+        option.bool(
+            "BuyReagents",
+            "Buy Reagents?",
+            "Use gold to buy the reagents for the Potions [this takes ALOT of gold.].",
+        ),
+        option.int("PotionQuant", "Potion Quantity", "Desired stack amount [max - 300]", 0),
+        option.bool("MaxAll", "Max all Potions within the script.", "as the name says"),
 
-    Core.skipOptions,
+        Core.skipOptions,
 
-    // Tonic
-    option.bool("FarmFate", "Fate", "Should the bot Farm Fate Tonics?"),
-    option.bool("FarmSage", "Sage", "Should the bot Farm Sage Tonics?"),
-    option.bool("FarmMight", "Might", "Should the bot Farm Might Tonics?"),
-    option.bool("FarmFortitude", "Fortitude", "Should the bot Farm Fortitude Tonics?"),
-    option.bool("FarmJudgment", "Judgment", "Should the bot Farm Judgment Tonics?"),
+        // Tonic
+        option.bool("FarmFate", "Fate", "Should the bot Farm Fate Tonics?"),
+        option.bool("FarmSage", "Sage", "Should the bot Farm Sage Tonics?"),
+        option.bool("FarmMight", "Might", "Should the bot Farm Might Tonics?"),
+        option.bool("FarmFortitude", "Fortitude", "Should the bot Farm Fortitude Tonics?"),
+        option.bool("FarmJudgment", "Judgment", "Should the bot Farm Judgment Tonics?"),
 
-    // Elixir
-    option.bool("FarmBattle", "Battle", "Should the bot Farm Battle Elixirs?"),
-    option.bool("FarmMalevolence", "Malevolence", "Should the bot Farm Malevolence Elixirs?"),
-    option.bool("FarmDivine", "Divine", "Should the bot Farm Unstable Divine Elixirs?"),
-    option.bool("FarmRevitalize", "Revitalize", "Should the bot Farm Potent Revitalize Elixirs"),
-    option.bool("FarmDestruction", "Destruction", "Should the bot Farm Potent Destruction Elixir?"),
-    option.bool("FarmFelicitousPhiltre", "Felicitous Philtre", "Should the bot get Felicitous Philtre?"),
-    option.bool("FarmEnduranceDraught", "Endurance Draught", "Should the bot get Endurance Draught?"),
+        // Elixir
+        option.bool("FarmBattle", "Battle", "Should the bot Farm Battle Elixirs?"),
+        option.bool("FarmMalevolence", "Malevolence", "Should the bot Farm Malevolence Elixirs?"),
+        option.bool("FarmDivine", "Divine", "Should the bot Farm Unstable Divine Elixirs?"),
+        option.bool("FarmRevitalize", "Revitalize", "Should the bot Farm Potent Revitalize Elixirs"),
+        option.bool("FarmDestruction", "Destruction", "Should the bot Farm Potent Destruction Elixir?"),
+        option.bool("FarmFelicitousPhiltre", "Felicitous Philtre", "Should the bot get Felicitous Philtre?"),
+        option.bool("FarmEnduranceDraught", "Endurance Draught", "Should the bot get Endurance Draught?"),
 
-    // Potion
-    option.bool("FarmMalice", "Malice", "Should the bot Farm Malice Potions?"),
-    option.bool("FarmHonor", "Honor", "Should the bot Farm Honor Potions?"),
-    option.bool("FarmLife", "Life", "Should the bot Farm Potent Life Potion?"),
-    option.bool("FarmBody", "Body", "Should the bot Farm Body Tonics?"),
-    option.bool("FarmSoul", "Soul", "Should the bot Farm Soul Potions?"),
-], true);
+        // Potion
+        option.bool("FarmMalice", "Malice", "Should the bot Farm Malice Potions?"),
+        option.bool("FarmHonor", "Honor", "Should the bot Farm Honor Potions?"),
+        option.bool("FarmLife", "Life", "Should the bot Farm Potent Life Potion?"),
+        option.bool("FarmBody", "Body", "Should the bot Farm Body Tonics?"),
+        option.bool("FarmSoul", "Soul", "Should the bot Farm Soul Potions?"),
+    ],
+    true,
+);
 
 /** Every potion the script farms, in C# order (`MaxAll` farms them all). */
 const allPotions = [
@@ -166,7 +174,11 @@ export function needYourStrongestPotions(args: NeedYourStrongestPotionsArgs = {}
 
     const shouldFarmPotion = (potion: string): boolean => maxAll || separate || (selection.get(potion)?.() ?? false);
 
-    if ((!separate && !maxAll && ![...selection.values()].some((select) => select())) || potionQuant < 1 || potionQuant > 300) {
+    if (
+        (!separate && !maxAll && ![...selection.values()].some((select) => select())) ||
+        potionQuant < 1 ||
+        potionQuant > 300
+    ) {
         Core.logger("No Potions selected or invalid quantity. Stopping.", "", { messageBox: true, stopBot: true });
         return;
     }
@@ -186,19 +198,22 @@ export function needYourStrongestPotions(args: NeedYourStrongestPotionsArgs = {}
 
         switch (ingredient) {
             case "Ice Vapor":
-                if (!buyReagents) Core.killMonster("lair", "Enter", "Spawn", "*", "Ice Vapor", 2, { isTemp: false, log: false });
+                if (!buyReagents)
+                    Core.killMonster("lair", "Enter", "Spawn", "*", "Ice Vapor", 2, { isTemp: false, log: false });
                 else Adv.buyItem("alchemyacademy", 397, 11478, ingreQuant, 1235);
                 break;
 
             case "Moglin Tears":
                 if (!Core.isMember && !buyReagents) Core.logger("Farming map is members only, buying the materials");
 
-                if (!buyReagents && Core.isMember) Core.huntMonster("twig", "Sweetish Fish", ingredient, ingreQuant, { isTemp: false });
+                if (!buyReagents && Core.isMember)
+                    Core.huntMonster("twig", "Sweetish Fish", ingredient, ingreQuant, { isTemp: false });
                 else Adv.buyItem("alchemyacademy", 397, 11472, ingreQuant, 1229);
                 break;
 
             case "Lemurphant Tears":
-                if (!buyReagents) Core.huntMonster("ravinetemple", "Lemurphant", ingredient, ingreQuant, { isTemp: false });
+                if (!buyReagents)
+                    Core.huntMonster("ravinetemple", "Lemurphant", ingredient, ingreQuant, { isTemp: false });
                 else Adv.buyItem("alchemyacademy", 397, 11479, ingreQuant, 1236);
                 break;
 
@@ -222,7 +237,8 @@ export function needYourStrongestPotions(args: NeedYourStrongestPotionsArgs = {}
 
             case "Doomatter":
                 if (!buyReagents) {
-                    if (bot.player.isMember) Core.huntMonster("Creepy", "Fear Feeder", ingredient, ingreQuant, { isTemp: false });
+                    if (bot.player.isMember)
+                        Core.huntMonster("Creepy", "Fear Feeder", ingredient, ingreQuant, { isTemp: false });
                     else Core.huntMonster("maul", "Creature Creation", ingredient, ingreQuant, { isTemp: false });
                 } else {
                     Adv.buyItem("alchemyacademy", 397, 11477, ingreQuant, 1234);
@@ -235,12 +251,14 @@ export function needYourStrongestPotions(args: NeedYourStrongestPotionsArgs = {}
                 break;
 
             case "Nimblestem":
-                if (!buyReagents) Core.huntMonster("mudluk", "Swamp Frogdrake", "Nimblestem", ingreQuant, { isTemp: false });
+                if (!buyReagents)
+                    Core.huntMonster("mudluk", "Swamp Frogdrake", "Nimblestem", ingreQuant, { isTemp: false });
                 else Adv.buyItem("alchemyacademy", 397, 11469, ingreQuant, 1226);
                 break;
 
             case "Trollola Nectar":
-                if (!buyReagents) Core.huntMonster("bloodtusk", "Trollola Plant", ingredient, ingreQuant, { isTemp: false });
+                if (!buyReagents)
+                    Core.huntMonster("bloodtusk", "Trollola Plant", ingredient, ingreQuant, { isTemp: false });
                 else Adv.buyItem("alchemyacademy", 397, 11476, ingreQuant, 1233);
                 break;
 
@@ -261,20 +279,25 @@ export function needYourStrongestPotions(args: NeedYourStrongestPotionsArgs = {}
                 break;
 
             case "Roc Tongue":
-                if (!buyReagents) Core.huntMonster("roc", "Rock Roc", ingredient, ingreQuant, { isTemp: false, log: false });
+                if (!buyReagents)
+                    Core.huntMonster("roc", "Rock Roc", ingredient, ingreQuant, { isTemp: false, log: false });
                 else Adv.buyItem("alchemyacademy", 397, 11471, ingreQuant, 1228);
                 break;
 
             case "Necrot":
                 if (!buyReagents) {
-                    Core.huntMonster("deathsrealm", "Skeleton Fighter", ingredient, ingreQuant, { isTemp: false, log: false });
+                    Core.huntMonster("deathsrealm", "Skeleton Fighter", ingredient, ingreQuant, {
+                        isTemp: false,
+                        log: false,
+                    });
                 } else {
                     Adv.buyItem("alchemyacademy", 397, 11480, ingreQuant, 1237);
                 }
                 break;
 
             case "Rhison Blood":
-                if (!buyReagents) Core.huntMonster("bloodtusk", "Rhison", ingredient, ingreQuant, { isTemp: false, log: false });
+                if (!buyReagents)
+                    Core.huntMonster("bloodtusk", "Rhison", ingredient, ingreQuant, { isTemp: false, log: false });
                 else Adv.buyItem("alchemyacademy", 397, 11470, ingreQuant, 1227);
                 break;
 

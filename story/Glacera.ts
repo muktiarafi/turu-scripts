@@ -25,8 +25,7 @@ export class GlaceraStory {
     }
 
     frozenTower(Cryomancer = false): void {
-        if (Core.isCompletedBefore(3937))
-            return;
+        if (Core.isCompletedBefore(3937)) return;
 
         Story.preLoad(this.frozenTower);
 
@@ -163,13 +162,11 @@ export class GlaceraStory {
             Core.ensureComplete(3937);
         }
 
-        if (Cryomancer)
-            return;
+        if (Cryomancer) return;
     }
 
     frozenRuins(): void {
-        if (Core.isCompletedBefore(3946))
-            return;
+        if (Core.isCompletedBefore(3946)) return;
 
         this.frozenTower();
 
@@ -199,15 +196,13 @@ export class GlaceraStory {
         // Glacera
         if (!Story.questProgression(3946)) {
             Core.ensureAccept(3946);
-            if (!Core.checkInventory(27357))
-                Core.huntMonster("frozenruins", "Frost Reaper", "Mercury");
+            if (!Core.checkInventory(27357)) Core.huntMonster("frozenruins", "Frost Reaper", "Mercury");
             Core.ensureComplete(3946);
         }
     }
 
     glacera(): void {
-        if (Core.isCompletedBefore(3950))
-            return;
+        if (Core.isCompletedBefore(3950)) return;
 
         this.frozenRuins();
         // Glaera
@@ -228,8 +223,7 @@ export class GlaceraStory {
     }
 
     glacera1(): void {
-        if (Core.isCompletedBefore(3950))
-            return;
+        if (Core.isCompletedBefore(3950)) return;
 
         this.glacera();
 
@@ -241,8 +235,7 @@ export class GlaceraStory {
     }
 
     frozenRuins2(): void {
-        if (Core.isCompletedBefore(3954))
-            return;
+        if (Core.isCompletedBefore(3954)) return;
 
         this.glacera1();
 
@@ -266,8 +259,7 @@ export class GlaceraStory {
     }
 
     northstar(): void {
-        if (Core.isCompletedBefore(3971))
-            return;
+        if (Core.isCompletedBefore(3971)) return;
 
         this.frozenRuins2();
 
@@ -294,7 +286,14 @@ export class GlaceraStory {
         // Saving Syrrus' Spirit
         if (!Story.questProgression(3961)) {
             Core.ensureAccept(3961);
-            Core.getMapItems([ [3060, 5], [3061, 7], [3073, 5] ], "northstar");
+            Core.getMapItems(
+                [
+                    [3060, 5],
+                    [3061, 7],
+                    [3073, 5],
+                ],
+                "northstar",
+            );
             Core.huntMonster("northstar", "Frost Reaper", "Lodestone Piece", 10);
             Core.ensureComplete(3961);
         }
@@ -325,8 +324,7 @@ export class GlaceraStory {
     }
 
     frostRuins(): void {
-        if (Core.isCompletedBefore(3954))
-            return;
+        if (Core.isCompletedBefore(3954)) return;
         this.glacera1();
 
         // Rescue the Refugees
@@ -343,8 +341,7 @@ export class GlaceraStory {
     }
 
     iceWindPass(): void {
-        if (Core.isCompletedBefore(5601))
-            return;
+        if (Core.isCompletedBefore(5601)) return;
         this.frostRuins();
 
         // Where is Karok?
@@ -410,8 +407,7 @@ export class GlaceraStory {
     }
 
     iceDungeon(): void {
-        if (Core.isCompletedBefore(7841))
-            return;
+        if (Core.isCompletedBefore(7841)) return;
         this.iceWindPass();
 
         // Cold Open
@@ -489,9 +485,9 @@ export class GlaceraStory {
 }
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new GlaceraStory().doAll();
+    new GlaceraStory().doAll();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

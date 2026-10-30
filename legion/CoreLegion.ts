@@ -27,8 +27,7 @@ export class CoreLegion {
     ];
 
     boneSigil(quant = 1): void {
-        if (Core.checkInventory("Bone Sigil", quant))
-            return;
+        if (Core.checkInventory("Bone Sigil", quant)) return;
 
         Core.equipClass(ClassType.Farm);
 
@@ -43,18 +42,15 @@ export class CoreLegion {
     }
 
     soulForgeHammer(): void {
-        if (Core.checkInventory("SoulForge Hammer"))
-            return;
+        if (Core.checkInventory("SoulForge Hammer")) return;
 
         Core.equipClass(ClassType.Solo);
 
         Core.addDrop("SoulForge Hammer");
         Core.ensureAccept(2741);
         Core.huntMonster("forest", "Zardman Grunt", "Zardman's StoneHammer", undefined, { isTemp: false });
-        if (Core.checkInventory(319))
-            Core.buyItem("swordhaven", 179, "Iron Hammer");
-        else
-            Core.huntMonster("battleundera", "Skeletal Warrior", "Iron Hammer", undefined, { isTemp: false });
+        if (Core.checkInventory(319)) Core.buyItem("swordhaven", 179, "Iron Hammer");
+        else Core.huntMonster("battleundera", "Skeletal Warrior", "Iron Hammer", undefined, { isTemp: false });
         Core.huntMonster("bludrut", "Rock Elemental", "Elemental Rock Hammer", undefined, { isTemp: false });
         Core.ensureComplete(2741);
         bot.wait.forPickup("SoulForge Hammer");
@@ -70,8 +66,7 @@ export class CoreLegion {
         //     Core.ToBank("Legion Token");
         // }
 
-        if (Core.checkInventory("Legion Token", quant))
-            return;
+        if (Core.checkInventory("Legion Token", quant)) return;
 
         this.joinLegion();
 
@@ -93,11 +88,7 @@ export class CoreLegion {
     }
 
     ltHardCoreParagon(quant = 50000): void {
-        if (
-            Core.checkInventory("Legion Token", quant)
-            || !Core.checkInventory("Hardcore Paragon Pet")
-        )
-            return;
+        if (Core.checkInventory("Legion Token", quant) || !Core.checkInventory("Hardcore Paragon Pet")) return;
         Core.bankingBlackList.push("Legion Token");
         Core.equipClass(ClassType.Solo);
 
@@ -119,10 +110,7 @@ export class CoreLegion {
     }
 
     ltInfernalLegionBetrayal(quant = 50000): void {
-        if (
-            Core.checkInventory("Legion Token", quant) || !Core.checkInventory("Infernal Caladbolg")
-        )
-            return;
+        if (Core.checkInventory("Legion Token", quant) || !Core.checkInventory("Infernal Caladbolg")) return;
 
         this.joinLegion();
 
@@ -131,8 +119,7 @@ export class CoreLegion {
         Core.farmingLogger("Legion Token", quant);
         Core.addDrop("Legion Token");
 
-        Core.registerQuests(
-            ...Core.checkInventory("Shogun Paragon Pet") ? [ 3722, 5755 ] : [ 3722 ]);
+        Core.registerQuests(...(Core.checkInventory("Shogun Paragon Pet") ? [3722, 5755] : [3722]));
         while (!bot.shouldExit && !Core.checkInventory("Legion Token", quant)) {
             Core.huntMonster("fotia", "Fotia Elemental", "Betrayer Extinguished", 5);
             Core.huntMonster("evilwardage", "Dreadfiend of Nulgath", "Fiend Felled", 2);
@@ -141,8 +128,7 @@ export class CoreLegion {
     }
 
     ltuw3017(quant = 50000): void {
-        if (Core.checkInventory("Legion Token", quant) || !Core.checkInventory("UW3017 Pet"))
-            return;
+        if (Core.checkInventory("Legion Token", quant) || !Core.checkInventory("UW3017 Pet")) return;
 
         this.joinLegion();
 
@@ -160,11 +146,7 @@ export class CoreLegion {
     }
 
     ltHolidayParagon(quant = 50000): void {
-        if (
-            Core.checkInventory("Legion Token", quant)
-            || !Core.checkInventory("Holiday Paragon Pet")
-        )
-            return;
+        if (Core.checkInventory("Legion Token", quant) || !Core.checkInventory("Holiday Paragon Pet")) return;
 
         this.joinLegion();
 
@@ -182,10 +164,7 @@ export class CoreLegion {
     }
 
     ltFestiveParagonDracolichRider(quant = 50000): void {
-        if (
-            Core.checkInventory("Legion Token", quant)
-            || !Core.checkInventory("Festive Paragon Dracolich Rider")
-        )
+        if (Core.checkInventory("Legion Token", quant) || !Core.checkInventory("Festive Paragon Dracolich Rider"))
             return;
 
         this.joinLegion();
@@ -197,18 +176,14 @@ export class CoreLegion {
         Core.registerQuests(3968, 3969);
         while (!bot.shouldExit && !Core.checkInventory("Legion Token", quant)) {
             Core.killMonster("frozenruins", "r1", "Left", "*");
-            if (Core.checkInventory("Legion Token", quant))
-                break;
+            if (Core.checkInventory("Legion Token", quant)) break;
         }
         bot.wait.forPickup("Legion Token");
         Core.cancelRegisteredQuests();
     }
 
     ltBrightParagon(quant = 50000): void {
-        if (
-            Core.checkInventory("Legion Token", quant) || !Core.checkInventory("Bright Paragon Pet")
-        )
-            return;
+        if (Core.checkInventory("Legion Token", quant) || !Core.checkInventory("Bright Paragon Pet")) return;
 
         this.joinLegion();
 
@@ -231,13 +206,18 @@ export class CoreLegion {
 
         // [PetID, MainQuestID, SideQuestID]
         const questData: [number, number, number][] = [
-            [84900, 9649, 9648], [84899, 9646, 9645], [84965, 9663, 9662],
-            [49926, 7073, 7072], [47578, 6750, 6749], [47614, 6756, 6754],
-            [38792, 5756, 5754], [38621, 5755, 5753],
+            [84900, 9649, 9648],
+            [84899, 9646, 9645],
+            [84965, 9663, 9662],
+            [49926, 7073, 7072],
+            [47578, 6750, 6749],
+            [47614, 6756, 6754],
+            [38792, 5756, 5754],
+            [38621, 5755, 5753],
         ];
 
-        const ownedItemIds = new Set(bot.inventory.items.concat(bot.bank.items).map(i => i.id));
-        const [PetID, MainQuestID, SideQuestID] = questData.find(q => ownedItemIds.has(q[0])) ?? [0, 0, 0];
+        const ownedItemIds = new Set(bot.inventory.items.concat(bot.bank.items).map((i) => i.id));
+        const [PetID, MainQuestID, SideQuestID] = questData.find((q) => ownedItemIds.has(q[0])) ?? [0, 0, 0];
         if (PetID === 0) {
             Core.logger("No Pet owned for 'Time for Some Spring Cleaning' or pet missing from our list");
             return;
@@ -262,9 +242,11 @@ export class CoreLegion {
         }
 
         for (const quest of questList)
-            Core.addDrop(...new Set(quest.rewards.filter(r => r != null && r.quantity < r.maxStack).map(r => r.name)));
+            Core.addDrop(
+                ...new Set(quest.rewards.filter((r) => r != null && r.quantity < r.maxStack).map((r) => r.name)),
+            );
 
-        bot.log(`✔️ Quest Pet Owned\nPetID: [${PetID}]\nQuestID(s): [${(questList.map(q => q.id)).join(", ")}]`);
+        bot.log(`✔️ Quest Pet Owned\nPetID: [${PetID}]\nQuestID(s): [${questList.map((q) => q.id).join(", ")}]`);
 
         const requirements = new Map<number, [QuestItem, number]>();
         for (const quest of questList)
@@ -275,16 +257,23 @@ export class CoreLegion {
         Core.equipClass(ClassType.Farm);
         Core.farmingLogger("Legion Token", quant);
         Core.addDrop("Legion Token");
-        Core.registerQuests(...questList.map(q => q.id));
+        Core.registerQuests(...questList.map((q) => q.id));
 
         while (!bot.shouldExit && !Core.checkInventory("Legion Token", quant)) {
             for (const [questItem, itemQuant] of requirements.values()) {
-                if (bot.tempInv.contains(questItem.name, itemQuant))
-                    continue;
+                if (bot.tempInv.contains(questItem.name, itemQuant)) continue;
 
                 const femmeSoul = questItem.name === "Femme Cult Worshipper's Soul";
 
-                Core.killMonster("fotia", femmeSoul ? "r5" : "Enter", femmeSoul ? "Left" : "Spawn", femmeSoul ? "Femme Cult Worshiper" : "*", questItem.name, itemQuant, { log: Logger });
+                Core.killMonster(
+                    "fotia",
+                    femmeSoul ? "r5" : "Enter",
+                    femmeSoul ? "Left" : "Spawn",
+                    femmeSoul ? "Femme Cult Worshiper" : "*",
+                    questItem.name,
+                    itemQuant,
+                    { log: Logger },
+                );
 
                 if (Core.checkInventory("Legion Token", quant)) {
                     Core.logger("Legion Tokens maxed!");
@@ -297,13 +286,10 @@ export class CoreLegion {
     }
 
     ltParagon(quant = 50000, FromStandAlone = false): void {
-        if (Core.checkInventory("Legion Token", quant))
-            return;
+        if (Core.checkInventory("Legion Token", quant)) return;
 
         if (!Core.checkInventory(11260)) {
-            if (FromStandAlone)
-                Core.logger(
-                    "Missing `Paragon Pet` (the pets actual name.. not just \a paragon pet\")");
+            if (FromStandAlone) Core.logger('Missing `Paragon Pet` (the pets actual name.. not just \a paragon pet")');
             return;
         }
 
@@ -320,17 +306,17 @@ export class CoreLegion {
     }
 
     ltFirstClassEntertainment(quant = 50000, onlyWithParty = false, partySize = 4, ReturnIfNoPeople = false): void {
-        if (Core.checkInventory("Legion Token", quant))
-            return;
+        if (Core.checkInventory("Legion Token", quant)) return;
 
         this.joinLegion();
 
         Core.join("legionarena", undefined, undefined, { publicRoom: true });
         if (bot.map.playerCount < partySize && onlyWithParty) {
             Core.join("legionarena", undefined, undefined, { publicRoom: true, ignoreCheck: true });
-            if (ReturnIfNoPeople && bot.map.playerCount < partySize)
-                return;
-            while (!bot.shouldExit && bot.map.playerCount < partySize) { bot.sleep(500); }
+            if (ReturnIfNoPeople && bot.map.playerCount < partySize) return;
+            while (!bot.shouldExit && bot.map.playerCount < partySize) {
+                bot.sleep(500);
+            }
             Core.logger(`Party gathered [${bot.map.playerNames!.length}/${partySize}]`);
         }
 
@@ -344,8 +330,7 @@ export class CoreLegion {
     }
 
     ltDreadrock(quant = 50000): void {
-        if (Core.checkInventory("Legion Token", quant))
-            return;
+        if (Core.checkInventory("Legion Token", quant)) return;
 
         this.joinLegion();
         Adv.buyItem("underworld", 216, "Undead Champion");
@@ -360,10 +345,7 @@ export class CoreLegion {
     }
 
     ltArcaneParagon(quant = 50000): void {
-        if (
-            Core.checkInventory("Legion Token", quant) || !Core.checkInventory("Arcane Paragon Pet")
-        )
-            return;
+        if (Core.checkInventory("Legion Token", quant) || !Core.checkInventory("Arcane Paragon Pet")) return;
 
         this.joinLegion();
 
@@ -371,11 +353,12 @@ export class CoreLegion {
 
         Core.farmingLogger("Legion Token", quant);
         Core.addDrop(
-            "Legion Token", 
-            "Granite Dracolich Soul", 
-            "Tempest Dracolich Soul", 
-            "Deluge Dracolich Soul", 
-            "Inferno Dracolich Soul");
+            "Legion Token",
+            "Granite Dracolich Soul",
+            "Tempest Dracolich Soul",
+            "Deluge Dracolich Soul",
+            "Inferno Dracolich Soul",
+        );
         Core.registerQuests(4896);
         while (!bot.shouldExit && !Core.checkInventory("Legion Token", quant)) {
             Core.huntMonster("dragonheart", "Granite Dracolich", "Granite Dracolich Soul", 4, { isTemp: false });
@@ -387,11 +370,7 @@ export class CoreLegion {
     }
 
     ltThanatosParagon(quant = 50000): void {
-        if (
-            Core.checkInventory("Legion Token", quant)
-            || !Core.checkInventory("Thanatos Paragon Pet")
-        )
-            return;
+        if (Core.checkInventory("Legion Token", quant) || !Core.checkInventory("Thanatos Paragon Pet")) return;
 
         this.joinLegion();
 
@@ -405,11 +384,7 @@ export class CoreLegion {
     }
 
     ltDreadnaughtParagon(quant = 50000): void {
-        if (
-            Core.checkInventory("Legion Token", quant)
-            || !Core.checkInventory("Paragon Dreadnaught Pet")
-        )
-            return;
+        if (Core.checkInventory("Legion Token", quant) || !Core.checkInventory("Paragon Dreadnaught Pet")) return;
 
         Core.equipClass(ClassType.Farm);
 
@@ -425,11 +400,7 @@ export class CoreLegion {
     }
 
     ltMountedParagonPet(quant = 50000): void {
-        if (
-            Core.checkInventory("Legion Token", quant)
-            || !Core.checkInventory("Mounted Paragon Pet")
-        )
-            return;
+        if (Core.checkInventory("Legion Token", quant) || !Core.checkInventory("Mounted Paragon Pet")) return;
 
         this.joinLegion();
 
@@ -446,11 +417,7 @@ export class CoreLegion {
     }
 
     ltAscendedParagon(quant = 50000): void {
-        if (
-            Core.checkInventory("Legion Token", quant)
-            || !Core.checkInventory("Ascended Paragon Pet")
-        )
-            return;
+        if (Core.checkInventory("Legion Token", quant) || !Core.checkInventory("Ascended Paragon Pet")) return;
 
         this.joinLegion();
 
@@ -470,20 +437,17 @@ export class CoreLegion {
     }
 
     joinLegion(): void {
-        if (Core.isCompletedBefore(793))
-            return;
+        if (Core.isCompletedBefore(793)) return;
 
         const SellUW = bot.showMessageBox(
-            "Do you want the bot to sell the \"Undead Warrior\" armor after it has succesfully joined the legion. This will return 1080 AC to you",
-            "Sell \"Undead Warrior\"?",
+            'Do you want the bot to sell the "Undead Warrior" armor after it has succesfully joined the legion. This will return 1080 AC to you',
+            'Sell "Undead Warrior"?',
             true,
         );
 
-        if (!Core.isCompletedBefore(792))
-            Farm.bludrutBrawlBoss(undefined, 200);
+        if (!Core.isCompletedBefore(792)) Farm.bludrutBrawlBoss(undefined, 200);
 
-        if (!Core.checkInventory("Undead Warrior"))
-            Core.buyItem("underworld", 215, "Undead Warrior");
+        if (!Core.checkInventory("Undead Warrior")) Core.buyItem("underworld", 215, "Undead Warrior");
 
         // Undead Champion Initiation
         if (!Story.questProgression(789)) {
@@ -530,8 +494,7 @@ export class CoreLegion {
     }
 
     obsidianRock(quant = 666): void {
-        if (Core.checkInventory("Obsidian Rock", quant))
-            return;
+        if (Core.checkInventory("Obsidian Rock", quant)) return;
 
         this.soulForgeHammer();
 
@@ -539,31 +502,43 @@ export class CoreLegion {
         Core.addDrop("Obsidian Rock");
         Core.logger(!Core.isMember ? "Using Non-Member Method" : "Using Members Method");
 
-        if (!Core.isMember)
-            bot.quests.updateQuest(1542);
+        if (!Core.isMember) bot.quests.updateQuest(1542);
 
         Core.registerQuests(2742);
-        Core.killMonster(Core.isMember ? "hydra" : "firestorm", Core.isMember ? "Rune2" : "r8", Core.isMember ? "Right" : "Left", Core.isMember ? "Fire Imp" : "Firestorm Hatchling", "Obsidian Rock", quant, { isTemp: false, log: false });
+        Core.killMonster(
+            Core.isMember ? "hydra" : "firestorm",
+            Core.isMember ? "Rune2" : "r8",
+            Core.isMember ? "Right" : "Left",
+            Core.isMember ? "Fire Imp" : "Firestorm Hatchling",
+            "Obsidian Rock",
+            quant,
+            { isTemp: false, log: false },
+        );
 
         bot.wait.forPickup("Obsidian Rock");
         Core.cancelRegisteredQuests();
     }
 
-    dagePvP(trophyQuant = 4000, techniqueQuant = 1000, scrollQuant = 1000, canSoloBoss = true, enableDebug = false): void {
+    dagePvP(
+        trophyQuant = 4000,
+        techniqueQuant = 1000,
+        scrollQuant = 1000,
+        canSoloBoss = true,
+        enableDebug = false,
+    ): void {
         // C# local functions
         const logFarmingProgress = (): void => {
-            if (trophyQuant > 0)
-                Core.farmingLogger("Legion Combat Trophy", trophyQuant);
-            if (techniqueQuant > 0)
-                Core.farmingLogger("Technique Observed", techniqueQuant);
-            if (scrollQuant > 0)
-                Core.farmingLogger("Sword Scroll Fragment", scrollQuant);
+            if (trophyQuant > 0) Core.farmingLogger("Legion Combat Trophy", trophyQuant);
+            if (techniqueQuant > 0) Core.farmingLogger("Technique Observed", techniqueQuant);
+            if (scrollQuant > 0) Core.farmingLogger("Sword Scroll Fragment", scrollQuant);
         };
 
         const checkInventoryCompletion = (): boolean => {
-            return Core.checkInventory("Legion Combat Trophy", trophyQuant)
-                && Core.checkInventory("Technique Observed", techniqueQuant)
-                && Core.checkInventory("Sword Scroll Fragment", scrollQuant);
+            return (
+                Core.checkInventory("Legion Combat Trophy", trophyQuant) &&
+                Core.checkInventory("Technique Observed", techniqueQuant) &&
+                Core.checkInventory("Sword Scroll Fragment", scrollQuant)
+            );
         };
 
         // C# `Exit(cell, ref exitAttempt)`: works on a copy of the counter, and always runs the
@@ -578,8 +553,7 @@ export class CoreLegion {
                     bot.wait.forCombatExit();
                     bot.map.join("battleon-999999");
                     Core.sleep(1500);
-                    if (bot.map.name !== "battleon")
-                        Core.logger("Failed!? HOW.. try agian");
+                    if (bot.map.name !== "battleon") Core.logger("Failed!? HOW.. try agian");
                     else {
                         Core.logger("Successful!");
                         exitAttempt = 0;
@@ -595,8 +569,7 @@ export class CoreLegion {
                 bot.map.join("battleon-999999");
                 bot.wait.forMapLoad("battleon");
                 Core.sleep(1500);
-                if (bot.map.name !== "battleon")
-                    Core.logger("Failed!? HOW.. try agian");
+                if (bot.map.name !== "battleon") Core.logger("Failed!? HOW.. try agian");
                 else {
                     Core.logger("Successful!");
                     exitAttempt = 0;
@@ -607,8 +580,7 @@ export class CoreLegion {
         };
 
         const farmScrollArea = (): void => {
-            if (scrollQuant === 0)
-                return;
+            if (scrollQuant === 0) return;
 
             Core.pvpMove(11, "r7", 513, 286);
             Core.pvpMove(15, "r10", 832, 347);
@@ -640,8 +612,7 @@ export class CoreLegion {
             Core.pvpMove(14, "r6", 482, 483);
         };
 
-        if (checkInventoryCompletion())
-            return;
+        if (checkInventoryCompletion()) return;
 
         // C# assigns CBOBool's result, which is whether the key is set, not its value: fixed, the
         // CBO value wins when set, else the argument.
@@ -652,8 +623,7 @@ export class CoreLegion {
 
         let exitAttempt = 0;
 
-        if (enableDebug)
-            Core.dlEnable();
+        if (enableDebug) Core.dlEnable();
 
         // C# `Start:` ... `goto Start` restarts this loop.
         while (!bot.shouldExit && !checkInventoryCompletion()) {
@@ -668,12 +638,11 @@ export class CoreLegion {
             Core.pvpMove(9, "r6", 937, 389);
 
             //if scroll quant > 0, farm scroll, then return to r6 to cotniue
-            if (scrollQuant > 0)
-                farmScrollArea();
+            if (scrollQuant > 0) farmScrollArea();
 
             if (
-                (trophyQuant === 0 || Core.checkInventory("Legion Combat Trophy", trophyQuant))
-                && (techniqueQuant === 0 || Core.checkInventory("Technique Observed", techniqueQuant))
+                (trophyQuant === 0 || Core.checkInventory("Legion Combat Trophy", trophyQuant)) &&
+                (techniqueQuant === 0 || Core.checkInventory("Technique Observed", techniqueQuant))
             ) {
                 exit("Enter0", exitAttempt);
                 continue;
@@ -681,8 +650,7 @@ export class CoreLegion {
 
             Core.pvpMove(12, "r12", 758, 338);
 
-            if (!canSoloBoss)
-                Core.pvpKilling();
+            if (!canSoloBoss) Core.pvpKilling();
 
             if (!bot.player.alive || bot.player.cell === "Enter0") {
                 Core.debugLogger("You're dead stupid");
@@ -690,8 +658,7 @@ export class CoreLegion {
                 continue;
             }
             Core.pvpMove(23, "r13", 933, 394);
-            if (!canSoloBoss)
-                Core.pvpKilling();
+            if (!canSoloBoss) Core.pvpKilling();
 
             if (!bot.player.alive || bot.player.cell === "Enter0") {
                 Core.debugLogger("You're dead stupid");
@@ -700,8 +667,7 @@ export class CoreLegion {
             }
             Core.pvpMove(25, "r14", 846, 181);
 
-            if (!canSoloBoss)
-                Core.pvpKilling();
+            if (!canSoloBoss) Core.pvpKilling();
 
             if (!bot.player.alive || bot.player.cell === "Enter0") {
                 Core.debugLogger("You're dead stupid");
@@ -731,7 +697,12 @@ export class CoreLegion {
             let techniqueNow = bot.inventory.getQuantity("Technique Observed");
             let scrollNow = bot.inventory.getQuantity("Sword Scroll Fragment");
 
-            while (!bot.shouldExit && trophyNow <= startTrophy && techniqueNow <= startTechnique && scrollNow <= startScroll) {
+            while (
+                !bot.shouldExit &&
+                trophyNow <= startTrophy &&
+                techniqueNow <= startTechnique &&
+                scrollNow <= startScroll
+            ) {
                 Core.sleep(500);
 
                 trophyNow = bot.inventory.getQuantity("Legion Combat Trophy");
@@ -743,8 +714,6 @@ export class CoreLegion {
             exit("Enter0", exitAttempt);
         }
         // Ensure we exit the map before going esle where
-        if (bot.map.name === "dagepvp")
-            Core.join("Battleon-99999");
+        if (bot.map.name === "dagepvp") Core.join("Battleon-99999");
     }
-
 }

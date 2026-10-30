@@ -19,38 +19,36 @@ const Dailies = new CoreDailies();
 
 export class FrostSpiritReaver {
     getFSR(rankUpClass = true): void {
-        if (Core.checkInventory(59178))
-            return;
+        if (Core.checkInventory(59178)) return;
 
         Glacera.doAll();
         if (Farm.factionRank("Glacera") < 10) {
             // Attempt to relog so the rep works.
             Core.relogin(
-                "\"GlaceraREP\" wont work, unless its relogged after doing the story... ae really needs to fix this.");
+                '"GlaceraREP" wont work, unless its relogged after doing the story... ae really needs to fix this.',
+            );
             Farm.glaceraREP();
         }
-        if (!Core.checkInventory("Cryomancer"))
-            Dailies.cryomancer();
+        if (!Core.checkInventory("Cryomancer")) Dailies.cryomancer();
 
         if (!Core.checkInventory("Frost Sigil")) {
-            Core.logger(
-                "\"Frost Sigil\" for \"IceNinth\"(Quest `Cold Hearted`), Comeback tomarrow.");
+            Core.logger('"Frost Sigil" for "IceNinth"(Quest `Cold Hearted`), Comeback tomarrow.');
             return;
         }
         Farm.experience(60);
 
         if (!Core.checkInventory("Envoy of Kyanos")) {
             if (!Core.checkInventory("Envoy of Kyanos"))
-                Core.logger("Getting Quest Item Requirements for \"Ice See You\"");
+                Core.logger('Getting Quest Item Requirements for "Ice See You"');
 
             if (!Core.checkInventory("Favored of Kyanos")) {
-                Core.logger("Farming the requirements to buy \"Favored of Kyanos\"");
+                Core.logger('Farming the requirements to buy "Favored of Kyanos"');
                 Core.huntMonster("icedungeon", "Shade of Kyanos", "Warrior of Kyanos", 1, { isTemp: false });
                 this.tokens(25, 15, 10, 5);
 
                 Adv.buyItem("icedungeon", 1948, "Favored of Kyanos");
             }
-            Core.logger("Farming the requirements to buy \"Envoy of Kyanos\"");
+            Core.logger('Farming the requirements to buy "Envoy of Kyanos"');
             this.tokens(50, 30, 20, 10);
 
             Adv.buyItem("icedungeon", 1948, "Envoy of Kyanos");
@@ -62,13 +60,11 @@ export class FrostSpiritReaver {
         Core.chainComplete(7922);
         bot.wait.forPickup("Frost SpiritReaver");
 
-        if (rankUpClass)
-            Adv.rankUpClass("Frost SpititReaver");
+        if (rankUpClass) Adv.rankUpClass("Frost SpititReaver");
     }
 
     iceNinth(quant: number): void {
-        if (Core.checkInventory("Ice-Ninth", quant))
-            return;
+        if (Core.checkInventory("Ice-Ninth", quant)) return;
 
         Core.addDrop("Ice-Ninth", "Ice Diamond");
         Core.farmingLogger("Ice-Ninth", quant);
@@ -77,9 +73,15 @@ export class FrostSpiritReaver {
         //////////////////////////////////////////////
         //#region "Quest Prerequisites
 
-        if (!Core.checkInventory(25464) && Core.checkInventory([ 27437, 27525 ], 1, { any: true })) {
+        if (!Core.checkInventory(25464) && Core.checkInventory([27437, 27525], 1, { any: true })) {
             //Frost Sigil
-            Core.buyItem("icedungeon", Core.checkInventory(27437) ? 2294 : 2295, 25464, 1, Core.checkInventory(27437) ? 48001 : 48002);
+            Core.buyItem(
+                "icedungeon",
+                Core.checkInventory(27437) ? 2294 : 2295,
+                25464,
+                1,
+                Core.checkInventory(27437) ? 48001 : 48002,
+            );
             Core.toBank(27437, 27525);
         }
 
@@ -94,7 +96,7 @@ export class FrostSpiritReaver {
 
         //cryomancer unbank
         if (!Core.checkInventory("Fallen Scythe of Vengeance")) {
-            Core.logger("Getting the quest item requirements for \"Cold Hearted\"");
+            Core.logger('Getting the quest item requirements for "Cold Hearted"');
             Core.equipClass(ClassType.Solo);
             Core.huntMonster("Northstar", "Karok The Fallen", "Karok's Glaceran Gem", 1, { isTemp: false });
             Adv.buyItem("Glacera", 1055, "Scythe of Vengeance");
@@ -130,26 +132,24 @@ export class FrostSpiritReaver {
     }
 
     glaceranAttunement(quant: number): void {
-        if (Core.checkInventory("Glaceran Attunement", quant))
-            return;
+        if (Core.checkInventory("Glaceran Attunement", quant)) return;
 
         //to unlock the quest
         if (!Core.isCompletedBefore(7921)) {
-            Core.logger("Doing prerequisets for \"Cold Blooded\" [1x \"Ice Ninth\"]");
+            Core.logger('Doing prerequisets for "Cold Blooded" [1x "Ice Ninth"]');
             this.iceNinth(1);
         }
 
         Farm.glaceraREP();
         if (!Core.checkInventory(39011)) {
             //FrostSlayer
-            Core.logger("Getting the quest item required to start \"Cold Blooded\"");
+            Core.logger('Getting the quest item required to start "Cold Blooded"');
             Core.addDrop(39011);
             Core.equipClass(ClassType.Solo);
             while (!bot.shouldExit && !Core.checkInventory(39011)) {
                 Core.huntMonster("iceplane", "Enfield", "FrostSlayer", 1, { isTemp: false, log: false });
             }
-        } else
-            Core.logger("Got the Item requirement for \"Cold Blooded\"");
+        } else Core.logger('Got the Item requirement for "Cold Blooded"');
 
         Core.addDrop(59216);
         Core.farmingLogger("Glaceran Attunement", quant);
@@ -209,7 +209,9 @@ export class FrostSpiritReaver {
             Core.registerQuests(7840);
             while (!bot.shouldExit && !Core.checkInventory("Icy Token III", Token3)) {
                 Core.huntMonster("icedungeon", "Living Ice", "Living Ice Defeated", 5, { log: false });
-                Core.huntMonster("icedungeon", "Crystallized Elemental", "Crystallized Elemental Defeated", 5, { log: false });
+                Core.huntMonster("icedungeon", "Crystallized Elemental", "Crystallized Elemental Defeated", 5, {
+                    log: false,
+                });
                 Core.huntMonster("icedungeon", "Frozen Demon", "Frozen Demon Defeated", 5, { log: false });
 
                 bot.wait.forPickup("Icy Token III");
@@ -236,9 +238,9 @@ export class FrostSpiritReaver {
 }
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new FrostSpiritReaver().getFSR();
+    new FrostSpiritReaver().getFSR();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

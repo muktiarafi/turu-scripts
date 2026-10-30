@@ -17,19 +17,74 @@ const SoW = new CoreSoW();
 
 export class ManaCradleMerge {
     static readonly select = [
-        option.bool("76482", "Dragon's Tear", "Mode: [select] only\nShould the bot buy \"Dragon's Tear\" ?", false),
-        option.bool("73781", "Shadowflame Vanguard", "Mode: [select] only\nShould the bot buy \"Shadowflame Vanguard\" ?", false),
-        option.bool("73784", "Mana Overdrive Armet", "Mode: [select] only\nShould the bot buy \"Mana Overdrive Armet\" ?", false),
-        option.bool("73785", "Mana Overdrive Armet Locks", "Mode: [select] only\nShould the bot buy \"Mana Overdrive Armet Locks\" ?", false),
-        option.bool("73787", "Mana Overdrive Shroud", "Mode: [select] only\nShould the bot buy \"Mana Overdrive Shroud\" ?", false),
-        option.bool("73789", "Mana Overdriven Devastation", "Mode: [select] only\nShould the bot buy \"Mana Overdriven Devastation\" ?", false),
-        option.bool("73791", "Mana Overdriven Spear", "Mode: [select] only\nShould the bot buy \"Mana Overdriven Spear\" ?", false),
-        option.bool("73792", "Mana Surge Gauntlet", "Mode: [select] only\nShould the bot buy \"Mana Surge Gauntlet\" ?", false),
-        option.bool("73793", "Mana Surge Gauntlets", "Mode: [select] only\nShould the bot buy \"Mana Surge Gauntlets\" ?", false),
-        option.bool("76566", "Mainyu Tail and Rune", "Mode: [select] only\nShould the bot buy \"Mainyu Tail and Rune\" ?", false),
-        option.bool("76565", "Mainyu Wings and Rune", "Mode: [select] only\nShould the bot buy \"Mainyu Wings and Rune\" ?", false),
-        option.bool("76564", "Mainyu Wings and Tail", "Mode: [select] only\nShould the bot buy \"Mainyu Wings and Tail\" ?", false),
-        option.bool("76563", "Mainyu Aspects", "Mode: [select] only\nShould the bot buy \"Mainyu Aspects\" ?", false),
+        option.bool("76482", "Dragon's Tear", 'Mode: [select] only\nShould the bot buy "Dragon\'s Tear" ?', false),
+        option.bool(
+            "73781",
+            "Shadowflame Vanguard",
+            'Mode: [select] only\nShould the bot buy "Shadowflame Vanguard" ?',
+            false,
+        ),
+        option.bool(
+            "73784",
+            "Mana Overdrive Armet",
+            'Mode: [select] only\nShould the bot buy "Mana Overdrive Armet" ?',
+            false,
+        ),
+        option.bool(
+            "73785",
+            "Mana Overdrive Armet Locks",
+            'Mode: [select] only\nShould the bot buy "Mana Overdrive Armet Locks" ?',
+            false,
+        ),
+        option.bool(
+            "73787",
+            "Mana Overdrive Shroud",
+            'Mode: [select] only\nShould the bot buy "Mana Overdrive Shroud" ?',
+            false,
+        ),
+        option.bool(
+            "73789",
+            "Mana Overdriven Devastation",
+            'Mode: [select] only\nShould the bot buy "Mana Overdriven Devastation" ?',
+            false,
+        ),
+        option.bool(
+            "73791",
+            "Mana Overdriven Spear",
+            'Mode: [select] only\nShould the bot buy "Mana Overdriven Spear" ?',
+            false,
+        ),
+        option.bool(
+            "73792",
+            "Mana Surge Gauntlet",
+            'Mode: [select] only\nShould the bot buy "Mana Surge Gauntlet" ?',
+            false,
+        ),
+        option.bool(
+            "73793",
+            "Mana Surge Gauntlets",
+            'Mode: [select] only\nShould the bot buy "Mana Surge Gauntlets" ?',
+            false,
+        ),
+        option.bool(
+            "76566",
+            "Mainyu Tail and Rune",
+            'Mode: [select] only\nShould the bot buy "Mainyu Tail and Rune" ?',
+            false,
+        ),
+        option.bool(
+            "76565",
+            "Mainyu Wings and Rune",
+            'Mode: [select] only\nShould the bot buy "Mainyu Wings and Rune" ?',
+            false,
+        ),
+        option.bool(
+            "76564",
+            "Mainyu Wings and Tail",
+            'Mode: [select] only\nShould the bot buy "Mainyu Wings and Tail" ?',
+            false,
+        ),
+        option.bool("76563", "Mainyu Aspects", 'Mode: [select] only\nShould the bot buy "Mainyu Aspects" ?', false),
     ];
 
     private dontStopMissingIng = false;
@@ -48,10 +103,13 @@ export class ManaCradleMerge {
                 default:
                     const shouldStop = !Adv.matsOnly || !this.dontStopMissingIng;
                     Core.logger(
-                        `The bot hasn't been taught how to get ${req.name}.`
-                            + (shouldStop ? " Please report the issue." : " Skipping"), "", { messageBox: shouldStop, stopBot: shouldStop });
+                        `The bot hasn't been taught how to get ${req.name}.` +
+                            (shouldStop ? " Please report the issue." : " Skipping"),
+                        "",
+                        { messageBox: shouldStop, stopBot: shouldStop },
+                    );
                     break;
-        //#endregion
+                //#endregion
 
                 case "Willpower":
                     Core.addDrop("ShadowFlame Healer", "ShadowFlame Mage");
@@ -105,20 +163,21 @@ export const scriptOptions = defineScriptOptions(Adv.optionsStorage, [], true, {
 });
 
 export default function main(): void {
-        Core.bankingBlackList.push(...
-            [
-                "Willpower",
-                "Garish Remnant",
-                "Prismatic Seams",
-                "Unbound Thread",
-                "Acquiescence",
-                "Elemental Core",
-                "Mainyu Tail",
-                "Mainyu Rune",
-                "Mainyu Wings",
-            ]);
-        Core.setOptions();
+    Core.bankingBlackList.push(
+        ...[
+            "Willpower",
+            "Garish Remnant",
+            "Prismatic Seams",
+            "Unbound Thread",
+            "Acquiescence",
+            "Elemental Core",
+            "Mainyu Tail",
+            "Mainyu Rune",
+            "Mainyu Wings",
+        ],
+    );
+    Core.setOptions();
 
-        new ManaCradleMerge().buyAllMerge();
-        Core.setOptions(false);
+    new ManaCradleMerge().buyAllMerge();
+    Core.setOptions(false);
 }

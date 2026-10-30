@@ -18,8 +18,7 @@ export class Lair {
     }
 
     galanoth(): void {
-        if (Core.isCompletedBefore(169))
-            return;
+        if (Core.isCompletedBefore(169)) return;
 
         Story.preLoad(this.galanoth);
         //#region no longer needed
@@ -55,8 +54,7 @@ export class Lair {
             return;
         }
 
-        if (Core.isCompletedBefore(1495))
-            return;
+        if (Core.isCompletedBefore(1495)) return;
 
         Story.preLoad(this.duncan);
 
@@ -79,8 +77,7 @@ export class Lair {
             return;
         }
 
-        if (Core.isCompletedBefore(1507))
-            return;
+        if (Core.isCompletedBefore(1507)) return;
 
         Story.preLoad(this.ferzana);
 
@@ -105,9 +102,9 @@ export class Lair {
 }
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new Lair().doAll();
+    new Lair().doAll();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

@@ -13,8 +13,7 @@ const Story = new CoreStory();
 
 export class CoreSummer {
     collector(): void {
-        if (Core.isCompletedBefore(1348))
-            return;
+        if (Core.isCompletedBefore(1348)) return;
 
         Story.preLoad(this.collector);
 
@@ -34,10 +33,10 @@ export class CoreSummer {
         Story.killQuest(1297, "Terrarium", "Death on Wings");
 
         // Can you find them?
-        Story.mapItemQuest(1298, "Terrarium", [ 589, 590, 591, 592, 593 ]);
+        Story.mapItemQuest(1298, "Terrarium", [589, 590, 591, 592, 593]);
 
         // You've Been Looking Everywhere!
-        Story.mapItemQuest(1299, "Terrarium", [ 593, 594, 595, 596, 604 ]);
+        Story.mapItemQuest(1299, "Terrarium", [593, 594, 595, 596, 604]);
 
         // Go for Grease!
         Story.killQuest(1300, "Terrarium", "Death on Wings");

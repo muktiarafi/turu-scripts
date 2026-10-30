@@ -32,8 +32,7 @@ export class SepulchuresOriginalHelm {
     ];
 
     doAll(): void {
-        if (Core.checkInventory("Sepulchure's Original Helm"))
-            return;
+        if (Core.checkInventory("Sepulchure's Original Helm")) return;
 
         Story.preLoad(this.doAll);
 
@@ -49,14 +48,7 @@ export class SepulchuresOriginalHelm {
         DW.aqwZombies();
         TOD.mysteriousDungeon();
         LOC.hero();
-        if (
-            !Core.checkInventory(
-                [
-                    "Lore's Champion Seal",
-                    "Gravelyn's DoomFire Token",
-                    "Royal ShadowScythe Blade",
-                ])
-        ) {
+        if (!Core.checkInventory(["Lore's Champion Seal", "Gravelyn's DoomFire Token", "Royal ShadowScythe Blade"])) {
             this.gravelynsDoomFireToken();
             this.royalShadowScytheBlade();
             Core.buyItem(bot.map.name, 993, "Lore's Champion Seal");
@@ -67,8 +59,7 @@ export class SepulchuresOriginalHelm {
     }
 
     gravelynsDoomFireToken(): void {
-        if (Core.checkInventory(37033))
-            return;
+        if (Core.checkInventory(37033)) return;
 
         Core.addDrop(...this.gravelynsDoomFireTokenItems);
 
@@ -76,19 +67,14 @@ export class SepulchuresOriginalHelm {
             Core.ensureAccept(5461);
             // Check for "Gravelyn's Blessing"
             if (!Core.checkInventory(37034)) {
-                if (Core.checkInventory("Necrotic Sword of Doom"))
-                    Core.chainComplete(5455);
-                else if (Core.checkInventory("Sepulchure's DoomKnight Armor"))
-                    Core.chainComplete(5456);
+                if (Core.checkInventory("Necrotic Sword of Doom")) Core.chainComplete(5455);
+                else if (Core.checkInventory("Sepulchure's DoomKnight Armor")) Core.chainComplete(5456);
                 else {
                     // Handle the case when none of the above conditions match
                     Farm.evilREP(10);
                     Core.ensureAccept(5457);
                     while (!bot.shouldExit && !Core.checkInventory(37039))
-                        Core.huntMonsterMapID(
-                            "necrodungeon", 
-                            9, 
-                            "Essence of the Doomlord", 1, { log: false });
+                        Core.huntMonsterMapID("necrodungeon", 9, "Essence of the Doomlord", 1, { log: false });
                     Core.ensureComplete(5457);
                     bot.wait.forPickup(37034);
                 }
@@ -127,8 +113,7 @@ export class SepulchuresOriginalHelm {
     }
 
     royalShadowScytheBlade(): void {
-        if (Core.checkInventory("Royal ShadowScythe Blade"))
-            return;
+        if (Core.checkInventory("Royal ShadowScythe Blade")) return;
 
         Farm.gold(1000000);
         Farm.evilREP(10);
@@ -137,11 +122,10 @@ export class SepulchuresOriginalHelm {
 }
 
 export default function main(): void {
-        Core.bankingBlackList.push(...
-            [ "Necrotic Sword of Doom", "Sepulchure's DoomKnight Armor" ]);
-        Core.setOptions();
+    Core.bankingBlackList.push(...["Necrotic Sword of Doom", "Sepulchure's DoomKnight Armor"]);
+    Core.setOptions();
 
-        new SepulchuresOriginalHelm().doAll();
+    new SepulchuresOriginalHelm().doAll();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

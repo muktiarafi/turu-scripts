@@ -15,20 +15,20 @@ const Under = new BattleUnder();
 
 export class Bamboozle {
     bamboozleQuest(): void {
-        if (Core.isCompletedBefore(7292))
-            return;
+        if (Core.isCompletedBefore(7292)) return;
 
         Story.preLoad(this.bamboozleQuest);
 
         Core.addDrop(
-            "Floozer", 
-            "Ice Diamond", 
-            "Dark Bloodstone", 
-            "Songstone", 
-            "Butterfly Sapphire", 
-            "Understone", 
-            "Rainbow Moonstone", 
-            "Time Quartz");
+            "Floozer",
+            "Ice Diamond",
+            "Dark Bloodstone",
+            "Songstone",
+            "Butterfly Sapphire",
+            "Understone",
+            "Rainbow Moonstone",
+            "Time Quartz",
+        );
 
         //Star of the Sandsea
         if (!Story.questProgression(7277)) {
@@ -128,9 +128,9 @@ export class Bamboozle {
 }
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new Bamboozle().bamboozleQuest();
+    new Bamboozle().bamboozleQuest();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

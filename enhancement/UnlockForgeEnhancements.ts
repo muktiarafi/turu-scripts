@@ -74,17 +74,19 @@ export class UnlockForgeEnhancements {
         const selectedHelmEnhancements = configOr("ForgeQuestHelm", ForgeQuestHelm.ForgeHelmEnhancement);
 
         if (
-            selectedCapeEnhancements === ForgeQuestCape.None
-            && selectedWeaponEnhancements === ForgeQuestWeapon.None
-            && selectedHelmEnhancements === ForgeQuestHelm.None
+            selectedCapeEnhancements === ForgeQuestCape.None &&
+            selectedWeaponEnhancements === ForgeQuestWeapon.None &&
+            selectedHelmEnhancements === ForgeQuestHelm.None
         )
-            Core.logger(
-                "All settings are set to None, no Forge Quest to do. Stopping script.", undefined, { stopBot: true });
+            Core.logger("All settings are set to None, no Forge Quest to do. Stopping script.", undefined, {
+                stopBot: true,
+            });
 
         if (selectedWeaponEnhancements !== ForgeQuestWeapon.None) {
             if (selectedWeaponEnhancements !== ForgeQuestWeapon.All)
                 Core.logger(
-                    `Selected Forge Weapon Enhancement: ${configOr("ForgeQuestWeapon", ForgeQuestWeapon.ForgeWeaponEnhancement)}`);
+                    `Selected Forge Weapon Enhancement: ${configOr("ForgeQuestWeapon", ForgeQuestWeapon.ForgeWeaponEnhancement)}`,
+                );
 
             switch (selectedWeaponEnhancements) {
                 case ForgeQuestWeapon.ForgeWeaponEnhancement:
@@ -224,16 +226,13 @@ export class UnlockForgeEnhancements {
     }
 
     forgeWeaponEnhancement(): void {
-        if (Core.isCompletedBefore(8738))
-            return;
+        if (Core.isCompletedBefore(8738)) return;
 
         Core.logger("Unlocking Enhancement: Forge (Weapon)");
 
         Farm.experience(30);
         LOC.escherion();
-        Farm.blacksmithingREP(
-            4, 
-            configOr("UseGold", false));
+        Farm.blacksmithingREP(4, configOr("UseGold", false));
 
         Core.equipClass(ClassType.Solo);
         Core.ensureAccept(8738);
@@ -248,8 +247,7 @@ export class UnlockForgeEnhancements {
     }
 
     lacerate(): void {
-        if (Core.isCompletedBefore(8739))
-            return;
+        if (Core.isCompletedBefore(8739)) return;
 
         Core.logger("Unlocking Enhancement: Lacerate");
 
@@ -278,9 +276,7 @@ export class UnlockForgeEnhancements {
         }
 
         Farm.experience(40);
-        Farm.blacksmithingREP(
-            5, 
-            configOr("UseGold", false));
+        Farm.blacksmithingREP(5, configOr("UseGold", false));
 
         Core.ensureAccept(8739);
 
@@ -316,15 +312,12 @@ export class UnlockForgeEnhancements {
     }
 
     smite(): void {
-        if (Core.isCompletedBefore(8740))
-            return;
+        if (Core.isCompletedBefore(8740)) return;
 
         Core.logger("Unlocking Enhancement: Smite");
 
         Farm.experience(60);
-        Farm.blacksmithingREP(
-            6, 
-            configOr("UseGold", false));
+        Farm.blacksmithingREP(6, configOr("UseGold", false));
         CoreSS.shadowfallRise();
 
         Core.ensureAccept(8740);
@@ -341,15 +334,12 @@ export class UnlockForgeEnhancements {
     }
 
     praxis(): void {
-        if (Core.isCompletedBefore(9171))
-            return;
+        if (Core.isCompletedBefore(9171)) return;
 
         Core.logger("Unlocking Enhancement: Praxis");
 
         Core.ensureAccept(9171);
-        Farm.blacksmithingREP(
-            6, 
-            configOr("UseGold", false));
+        Farm.blacksmithingREP(6, configOr("UseGold", false));
 
         Adv.buyItem("thespan", 439, "Thief of Hours Armor");
         Adv.buyItem("yulgar", 69, "Hashashin Armor");
@@ -375,25 +365,23 @@ export class UnlockForgeEnhancements {
     }
 
     herosValiance(): void {
-        if (Core.isCompletedBefore(8741))
-            return;
+        if (Core.isCompletedBefore(8741)) return;
 
         Core.logger("Unlocking Enhancement: Hero's Valiance");
 
         Farm.experience(100);
-        Farm.blacksmithingREP(
-            10, 
-            configOr("UseGold", false));
+        Farm.blacksmithingREP(10, configOr("UseGold", false));
 
         FCA.getFireChampsArmor();
         DOT.getDoT(undefined, false);
         ED.getSet(true, "Drakath the Eternal");
         if (!Core.checkInventory("Drakath the Eternal")) {
             Core.logger(
-                "Hero Valiance cannot finish without Drakath the Eternal. Continuing with the remaining materials. Check the earlier Drakath prerequisite messages.\n"
-                    + `\"Drakath Armor\": x${bot.inventory.getQuantity("Drakath Armor")}\n`
-                    + `\"Dage's Scroll Fragment\" x${bot.inventory.getQuantity("Dage's Scroll Fragment")}\n`
-                    + `\"Drakath the Eternal\" x${bot.inventory.getQuantity("Drakath the Eternal")}`);
+                "Hero Valiance cannot finish without Drakath the Eternal. Continuing with the remaining materials. Check the earlier Drakath prerequisite messages.\n" +
+                    `\"Drakath Armor\": x${bot.inventory.getQuantity("Drakath Armor")}\n` +
+                    `\"Dage's Scroll Fragment\" x${bot.inventory.getQuantity("Dage's Scroll Fragment")}\n` +
+                    `\"Drakath the Eternal\" x${bot.inventory.getQuantity("Drakath the Eternal")}`,
+            );
         }
 
         LOO.getLoO();
@@ -415,7 +403,8 @@ export class UnlockForgeEnhancements {
 
         if (!Core.isCompletedBefore(7165)) {
             Core.logger(
-                "Quest Progrestion not available For LoO (requires last quest to be complete and these are dailies)");
+                "Quest Progrestion not available For LoO (requires last quest to be complete and these are dailies)",
+            );
             return;
         }
 
@@ -426,23 +415,23 @@ export class UnlockForgeEnhancements {
             Core.logger("Enhancement Unlocked: Hero's Valiance");
         } else
             Core.logger(
-                "Hero Valiance was not completed because Drakath the Eternal is missing. Check the earlier Drakath prerequisite messages before farming more daily fragments.");
+                "Hero Valiance was not completed because Drakath the Eternal is missing. Check the earlier Drakath prerequisite messages before farming more daily fragments.",
+            );
     }
 
     arcanasConcerto(): void {
-        if (Core.isCompletedBefore(8742))
-            return;
+        if (Core.isCompletedBefore(8742)) return;
 
         Core.logger("Unlocking Enhancement: Arcana's Concerto");
 
         Astravia.completeCoreAstravia();
         Farm.experience(100);
-        Farm.blacksmithingREP(
-            10, 
-            configOr("UseGold", false));
+        Farm.blacksmithingREP(10, configOr("UseGold", false));
 
         if (!Core.isCompletedBefore(8746)) {
-            Core.logger("You must have faced Darkon the Conductor and done the weekly quest in order to unlock \"Arcana's Concerto\".");
+            Core.logger(
+                'You must have faced Darkon the Conductor and done the weekly quest in order to unlock "Arcana\'s Concerto".',
+            );
             return;
         }
 
@@ -452,7 +441,9 @@ export class UnlockForgeEnhancements {
         // Prince Darkon's Poleaxe is an actual requirement for Arcana's Concerto.
         // Do not claim Quest 8742 is complete until we have it.
         if (!Core.checkInventory("Prince Darkon's Poleaxe")) {
-            Core.logger("\"Prince Darkon's Poleaxe\" is required to continue the Arcana's Concerto unlock. Farm/merge it at /ultradrago.");
+            Core.logger(
+                "\"Prince Darkon's Poleaxe\" is required to continue the Arcana's Concerto unlock. Farm/merge it at /ultradrago.",
+            );
             return;
         }
 
@@ -466,7 +457,9 @@ export class UnlockForgeEnhancements {
             }
 
             if (!Core.checkInventory("Darkon's Debris 2 (Recovered)")) {
-                Core.logger("Darkon's Debris 2 (Recovered) could not be purchased. Stopping before farming the remaining materials.");
+                Core.logger(
+                    "Darkon's Debris 2 (Recovered) could not be purchased. Stopping before farming the remaining materials.",
+                );
                 return;
             }
 
@@ -477,35 +470,44 @@ export class UnlockForgeEnhancements {
 
             if (configOr("UseInsignOnArcanasConcerto", false)) {
                 if (!Core.checkInventory("Darkon Insignia", 20)) {
-                    Core.logger("x20 \"Darkon Insignia\" is required to continue the quest. Our bots cannot *currently* kill this mob; use Grim (different client) & @InsertNameHere's ultra bot.");
+                    Core.logger(
+                        'x20 "Darkon Insignia" is required to continue the quest. Our bots cannot *currently* kill this mob; use Grim (different client) & @InsertNameHere\'s ultra bot.',
+                    );
                     return;
                 }
 
-                Adv.buyItem(
-                    "ultradarkon", 
-                    2147, 
-                    "Darkon's Debris 2 (Reconstructed)");
+                Adv.buyItem("ultradarkon", 2147, "Darkon's Debris 2 (Reconstructed)");
             } else {
-                Core.logger("\"UseInsignOnArcanasConcerto\" is set to false. Please buy \"Darkon's Debris 2 (Reconstructed)\" from the shop manually, then complete QuestID 8742 yourself.");
+                Core.logger(
+                    '"UseInsignOnArcanasConcerto" is set to false. Please buy "Darkon\'s Debris 2 (Reconstructed)" from the shop manually, then complete QuestID 8742 yourself.',
+                );
                 return;
             }
         }
 
         // Quest 8742 also requires these insignias.
         if (!Core.checkInventory("King Drago Insignia", 5)) {
-            Core.logger("x5 \"King Drago Insignia\" is required to continue the quest. Our bots cannot *currently* kill this mob; use Grim (different client) & @InsertNameHere's ultra bot.");
+            Core.logger(
+                'x5 "King Drago Insignia" is required to continue the quest. Our bots cannot *currently* kill this mob; use Grim (different client) & @InsertNameHere\'s ultra bot.',
+            );
             return;
         }
 
         if (!Core.checkInventory("Darkon Insignia", 5)) {
-            Core.logger("x5 \"Darkon Insignia\" is required to continue the quest. Our bots cannot *currently* kill this mob; use Grim (different client) & @InsertNameHere's ultra bot.");
+            Core.logger(
+                'x5 "Darkon Insignia" is required to continue the quest. Our bots cannot *currently* kill this mob; use Grim (different client) & @InsertNameHere\'s ultra bot.',
+            );
             return;
         }
 
         // Final sanity check: both actual Arcana's Concerto items must exist.
-        if (!Core.checkInventory("Prince Darkon's Poleaxe") ||
-            !Core.checkInventory("Darkon's Debris 2 (Reconstructed)")) {
-            Core.logger("Arcana's Concerto requirements are not complete. \"Prince Darkon's Poleaxe\" and \"Darkon's Debris 2 (Reconstructed)\" are both required.");
+        if (
+            !Core.checkInventory("Prince Darkon's Poleaxe") ||
+            !Core.checkInventory("Darkon's Debris 2 (Reconstructed)")
+        ) {
+            Core.logger(
+                'Arcana\'s Concerto requirements are not complete. "Prince Darkon\'s Poleaxe" and "Darkon\'s Debris 2 (Reconstructed)" are both required.',
+            );
             return;
         }
 
@@ -513,30 +515,26 @@ export class UnlockForgeEnhancements {
             Core.chainComplete(8742);
             Core.logger("Enhancement Unlocked: Arcana's Concerto");
         } else {
-            Core.logger("\"UseInsignOnArcanasConcerto\" is set to false. Please complete QuestID 8742 manually.");
+            Core.logger('"UseInsignOnArcanasConcerto" is set to false. Please complete QuestID 8742 manually.');
         }
     }
 
     acheron(): void {
-        if (
-            Core.isCompletedBefore(8820)
-            || !Core.checkInventory([ 38566, 38567 ], undefined, { toInv: false })
-        ) {
+        if (Core.isCompletedBefore(8820) || !Core.checkInventory([38566, 38567], undefined, { toInv: false })) {
             Core.logger(
                 Core.isCompletedBefore(8820)
-                    ? "Skipped: \"Acheron\" (8820) is already completed."
-                    : "Skipped: Required items (Dark Box, Dark Key) are missing from inventory.");
+                    ? 'Skipped: "Acheron" (8820) is already completed.'
+                    : "Skipped: Required items (Dark Box, Dark Key) are missing from inventory.",
+            );
 
-            Core.logger(`Dark Key: ${(Core.checkInventory(38567, undefined, { toInv: false }) ? "✔️" : "❌")}`);
-            Core.logger(`Dark Box: ${(Core.checkInventory(38566, undefined, { toInv: false }) ? "✔️" : "❌")}`);
+            Core.logger(`Dark Key: ${Core.checkInventory(38567, undefined, { toInv: false }) ? "✔️" : "❌"}`);
+            Core.logger(`Dark Box: ${Core.checkInventory(38566, undefined, { toInv: false }) ? "✔️" : "❌"}`);
             return;
         }
 
         Core.logger("Unlocking Enhancement: Acheron");
 
-        Farm.blacksmithingREP(
-            8, 
-            configOr("UseGold", false));
+        Farm.blacksmithingREP(8, configOr("UseGold", false));
         Core.ensureAccept(8820);
 
         this.voidLodestone();
@@ -552,8 +550,7 @@ export class UnlockForgeEnhancements {
         while (!bot.shouldExit && !Core.checkInventory("Dark Potion", 20)) {
             if (!Core.isMember)
                 Core.huntMonster("darkfortress", "Dark Elemental", "Dark Gem", undefined, { isTemp: false });
-            else
-                Core.huntMonster("ruins", "Dark Elemental", "Dark Gem", undefined, { isTemp: false });
+            else Core.huntMonster("ruins", "Dark Elemental", "Dark Gem", undefined, { isTemp: false });
         }
         Core.cancelRegisteredQuests();
 
@@ -566,23 +563,21 @@ export class UnlockForgeEnhancements {
     }
 
     elysium(): void {
-        if (Core.isCompletedBefore(8821))
-            return;
+        if (Core.isCompletedBefore(8821)) return;
 
         Core.logger("Unlocking Enhancement: Elysium");
 
-        Farm.blacksmithingREP(
-            10, 
-            configOr("UseGold", false));
+        Farm.blacksmithingREP(10, configOr("UseGold", false));
 
         Core.ensureAccept(8821);
         CorNSOD.bonesVoidRealm(15);
         YNR.blademasterSwordScroll();
-        NDW.ndwQuest([ "Archfiend Essence Fragment" ], 3);
+        NDW.ndwQuest(["Archfiend Essence Fragment"], 3);
         awescended.getAwe();
         if (!Core.checkInventory("The Divine Will")) {
             Core.logger(
-                "\"Azalith\" is not Soloable, please go kill it otherwise for the Drop \"The Divine Will\", and return here and re-run the script.");
+                '"Azalith" is not Soloable, please go kill it otherwise for the Drop "The Divine Will", and return here and re-run the script.',
+            );
             return;
         }
         Core.ensureComplete(8821);
@@ -590,24 +585,21 @@ export class UnlockForgeEnhancements {
     }
 
     dauntLess(): void {
-        if (Core.isCompletedBefore(9172))
-            return;
+        if (Core.isCompletedBefore(9172)) return;
 
         Core.logger("Unlocking Enhancement: Dauntless");
 
-        Farm.blacksmithingREP(
-            10, 
-            configOr("UseGold", false));
+        Farm.blacksmithingREP(10, configOr("UseGold", false));
 
-        const DauntlessItems: string[] =
-        [
+        const DauntlessItems: string[] = [
             "ShadowLord's Helm",
             "Malgor the ShadowLord",
             "Malgor's ShadowFlame Blade",
             "Infernal Flame Pyromancer",
         ];
         Core.logger(
-            `The only items the bot can get are: \"Malgor the ShadowLord\" and \"ShadowLord's Helm\". Unless \`UseInsignOnDaunt\` is enabled: ${configOr("UseInsignOnDaunt", false)}`);
+            `The only items the bot can get are: \"Malgor the ShadowLord\" and \"ShadowLord's Helm\". Unless \`UseInsignOnDaunt\` is enabled: ${configOr("UseInsignOnDaunt", false)}`,
+        );
 
         // Base Quest Req. for dauntless
         let Malgorinsig = 5;
@@ -628,7 +620,9 @@ export class UnlockForgeEnhancements {
                 SOWM.elementalCore(20);
                 Adv.gearStore(true, { enhAfter: true });
                 Core.equipClass(ClassType.Solo);
-                Core.huntMonster("shadowgrove", "Titan Shadow Dragonlord", "ShadowFlame Dragon Blade", undefined, { isTemp: false });
+                Core.huntMonster("shadowgrove", "Titan Shadow Dragonlord", "ShadowFlame Dragon Blade", undefined, {
+                    isTemp: false,
+                });
             }
             //#endregion
 
@@ -656,21 +650,16 @@ export class UnlockForgeEnhancements {
                 //ensure in inv
                 Core.unbank("Malgor Insignia", "Avatar Tyndarius Insignia");
 
-                if (
-                    !Core.checkInventory("Malgor's ShadowFlame Blade")
-                    && Core.checkInventory("Malgor Insignia", 20)
-                )
+                if (!Core.checkInventory("Malgor's ShadowFlame Blade") && Core.checkInventory("Malgor Insignia", 20))
                     Adv.buyItem("ultraspeaker", 2248, "Malgor's ShadowFlame Blade");
-                else
-                    Malgorinsig += 20;
+                else Malgorinsig += 20;
 
                 if (
-                    !Core.checkInventory("Infernal Flame Pyromancer")
-                    && Core.checkInventory("Avatar Tyndarius Insignia", 20)
+                    !Core.checkInventory("Infernal Flame Pyromancer") &&
+                    Core.checkInventory("Avatar Tyndarius Insignia", 20)
                 )
                     Adv.buyItem("fireavatar", 2038, "Infernal Flame Pyromancer");
-                else
-                    AvatarTyndInsig += 20;
+                else AvatarTyndInsig += 20;
             }
 
             // totals:
@@ -680,15 +669,15 @@ export class UnlockForgeEnhancements {
 
         // Unlock Dauntless if items are owned.
         if (
-            Core.checkInventory(DauntlessItems)
-            && Core.checkInventory("Malgor Insignia", 5)
-            && Core.checkInventory("Avatar Tyndarius Insignia", 10)
+            Core.checkInventory(DauntlessItems) &&
+            Core.checkInventory("Malgor Insignia", 5) &&
+            Core.checkInventory("Avatar Tyndarius Insignia", 10)
         ) {
             Core.chainComplete(9172);
             Core.logger("Enhancement Unlocked: Dauntless");
         } else {
             Core.logger("Items still needed(the bot cannot farm these):");
-            for (const item of DauntlessItems.filter(item => !Core.checkInventory(item)))
+            for (const item of DauntlessItems.filter((item) => !Core.checkInventory(item)))
                 Core.logger(`Missing \"${item}\" x1`);
 
             Core.logger(`Missing \"Malgor Insignia\" x ${Malgorinsig}`);
@@ -698,8 +687,7 @@ export class UnlockForgeEnhancements {
     }
 
     ravenous(): void {
-        if (Core.isCompletedBefore(9560))
-            return;
+        if (Core.isCompletedBefore(9560)) return;
 
         Core.logger("Unlocking Enhancement: Ravenous");
 
@@ -707,16 +695,15 @@ export class UnlockForgeEnhancements {
         PFS.storyline();
 
         Adv.buyItem(bot.map.name, 2411, "Gluttonous Maw");
-        if (Core.checkInventory("Gluttonous Maw"))
-            Core.chainComplete(9560);
+        if (Core.checkInventory("Gluttonous Maw")) Core.chainComplete(9560);
         else
             Core.logger(
-                "Cannot complete Ravenous: Requires Gluttonous Maw, which needs 10 Roentgeniums of Nulgath (daily). Try again tomorrow.");
+                "Cannot complete Ravenous: Requires Gluttonous Maw, which needs 10 Roentgeniums of Nulgath (daily). Try again tomorrow.",
+            );
     }
 
     forgeCapeEnhancement(): void {
-        if (Core.isCompletedBefore(8758))
-            return;
+        if (Core.isCompletedBefore(8758)) return;
 
         Core.logger("Unlocking Enhancement: Forge (Cape)");
 
@@ -727,7 +714,9 @@ export class UnlockForgeEnhancements {
         Core.equipClass(ClassType.Solo);
         Core.ensureAccept(8758);
 
-        Core.huntMonster("lostruinswar", "Diabolical Warlord", "Prismatic Celestial Wings", undefined, { isTemp: false });
+        Core.huntMonster("lostruinswar", "Diabolical Warlord", "Prismatic Celestial Wings", undefined, {
+            isTemp: false,
+        });
         Core.huntMonster("lostruins", "Infernal Warlord", "Broken Wings", undefined, { isTemp: false });
         Core.huntMonster("infernalspire", "Azkorath", "Shadow's Wings", undefined, { isTemp: false });
         Core.huntMonster("infernalspire", "Malxas", "Wings Of Destruction", undefined, { isTemp: false });
@@ -737,16 +726,13 @@ export class UnlockForgeEnhancements {
     }
 
     absolution(): void {
-        if (Core.isCompletedBefore(8743))
-            return;
+        if (Core.isCompletedBefore(8743)) return;
 
         Core.logger("Unlocking Enhancement: Absolution");
 
         Farm.experience(90);
         Farm.goodREP(10);
-        Farm.blacksmithingREP(
-            9, 
-            configOr("UseGold", false));
+        Farm.blacksmithingREP(9, configOr("UseGold", false));
 
         let SlimeSigil = 150;
 
@@ -757,7 +743,7 @@ export class UnlockForgeEnhancements {
         ]);
 
         // Deduct points for found items
-        itemsToCheck.forEach((value, key) => SlimeSigil -= Core.checkInventory(key) ? value : 0);
+        itemsToCheck.forEach((value, key) => (SlimeSigil -= Core.checkInventory(key) ? value : 0));
 
         Core.equipClass(ClassType.Farm);
         bot.quests.updateQuest(5807);
@@ -772,17 +758,14 @@ export class UnlockForgeEnhancements {
     }
 
     vainglory(): void {
-        if (Core.isCompletedBefore(8744))
-            return;
+        if (Core.isCompletedBefore(8744)) return;
 
         this.absolution();
 
         Core.logger("Unlocking Enhancement: Vainglory");
         Core.ensureAccept(8744);
 
-        Farm.blacksmithingREP(
-            9, 
-            configOr("UseGold", false));
+        Farm.blacksmithingREP(9, configOr("UseGold", false));
         Core.equipClass(ClassType.Solo);
 
         if (Core.isMember) {
@@ -798,8 +781,7 @@ export class UnlockForgeEnhancements {
 
                 Core.buyItem("museum", 1129, "Pauldron Relic");
             }
-        } else
-            Awe.getAweRelic("Pauldron", 4160, 15, 15, "gravestrike", "Ultra Akriloth");
+        } else Awe.getAweRelic("Pauldron", 4160, 15, 15, "gravestrike", "Ultra Akriloth");
         Awe.getAweRelic("Breastplate", 4163, 10, 10, "aqlesson", "Carnax");
         Awe.getAweRelic("Vambrace", 4166, 15, 15, "bloodtitan", "Ultra Blood Titan");
         Awe.getAweRelic("Gauntlet", 4169, 25, 5, "alteonbattle", "ULTRA Alteon");
@@ -810,15 +792,12 @@ export class UnlockForgeEnhancements {
     }
 
     avarice(): void {
-        if (Core.isCompletedBefore(8745))
-            return;
+        if (Core.isCompletedBefore(8745)) return;
 
         this.vainglory();
         Core.logger("Unlocking Enhancement: Avarice");
 
-        Farm.blacksmithingREP(
-            9, 
-            configOr("UseGold", false));
+        Farm.blacksmithingREP(9, configOr("UseGold", false));
 
         Core.ensureAccept(8745);
 
@@ -831,15 +810,12 @@ export class UnlockForgeEnhancements {
     }
 
     penitence(): void {
-        if (Core.isCompletedBefore(8822))
-            return;
+        if (Core.isCompletedBefore(8822)) return;
 
         this.avarice();
         Core.logger("Unlocking Enhancement: Penitence");
 
-        Farm.blacksmithingREP(
-            9, 
-            configOr("UseGold", false));
+        Farm.blacksmithingREP(9, configOr("UseGold", false));
 
         Core.ensureAccept(8822);
         Core.equipClass(ClassType.Solo);
@@ -855,18 +831,15 @@ export class UnlockForgeEnhancements {
         Core.huntMonster("icewing", "Warlord Icewing", "Boreal Cavalier Bardiche", undefined, { isTemp: false });
 
         //why the fuck was the class buffed!?
-        const usethis = bot
-            .inventory.items.concat(bot.bank.items)
-            .find(n =>
-                n.name === "Yami no Ronin" || n.name.startsWith("Chaos Slayer"));
+        const usethis = bot.inventory.items
+            .concat(bot.bank.items)
+            .find((n) => n.name === "Yami no Ronin" || n.name.startsWith("Chaos Slayer"));
 
         if (usethis != null) {
             Core.equip(usethis.id);
             Core.equip(...Core.farmGear);
-            if (usethis.name === "Yami no Ronin")
-                bot.skills.startAdvanced("1 | 4");
-        } else
-            Core.equipClass(ClassType.Dodge);
+            if (usethis.name === "Yami no Ronin") bot.skills.startAdvanced("1 | 4");
+        } else Core.equipClass(ClassType.Dodge);
         Core.huntMonster("underlair", "ArchFiend DragonLord", "Void Scale", 13, { isTemp: false });
 
         Core.ensureComplete(8822);
@@ -874,22 +847,18 @@ export class UnlockForgeEnhancements {
     }
 
     lament(): void {
-        if (Core.isCompletedBefore(8823))
-            return;
+        if (Core.isCompletedBefore(8823)) return;
 
         this.penitence();
         Core.logger("Unlocking Enhancement: Lament");
 
-        Farm.blacksmithingREP(
-            9, 
-            configOr("UseGold", false));
+        Farm.blacksmithingREP(9, configOr("UseGold", false));
 
         Core.equipClass(ClassType.Solo);
         Core.ensureAccept(8823);
 
         Core.huntMonster("sepulchurebattle", "ULTRA Sepulchure", "Doom Heart", undefined, { isTemp: false });
-        if (!Core.checkInventory("Heart of the Sun"))
-            TSS.storyLine(true); //sun heart thing
+        if (!Core.checkInventory("Heart of the Sun")) TSS.storyLine(true); //sun heart thing
         Core.huntMonster("ashfallcamp", "Smoldur", "Flame Heart", 10, { isTemp: false });
         DD.sloth();
         Adv.gearStore(undefined, { enhAfter: true });
@@ -902,14 +871,11 @@ export class UnlockForgeEnhancements {
     }
 
     forgeHelmEnhancement(): void {
-        if (Core.isCompletedBefore(8828))
-            return;
+        if (Core.isCompletedBefore(8828)) return;
 
         Core.logger("Unlocking Enhancement: Forge (Helm)");
         Farm.experience(30);
-        Farm.blacksmithingREP(
-            4, 
-            configOr("UseGold", false));
+        Farm.blacksmithingREP(4, configOr("UseGold", false));
 
         Core.equipClass(ClassType.Solo);
         Core.ensureAccept(8828);
@@ -924,15 +890,12 @@ export class UnlockForgeEnhancements {
     }
 
     vim(): void {
-        if (Core.isCompletedBefore(8824))
-            return;
+        if (Core.isCompletedBefore(8824)) return;
 
         this.forgeHelmEnhancement();
         Core.logger("Unlocking Enhancement: Vim");
 
-        Farm.blacksmithingREP(
-            7, 
-            configOr("UseGold", false));
+        Farm.blacksmithingREP(7, configOr("UseGold", false));
         Adv.gearStore(undefined, { enhAfter: true });
         Core.ensureAccept(8824);
 
@@ -944,14 +907,12 @@ export class UnlockForgeEnhancements {
         Core.killMonster("Towerofdoom10", "r8", "Left", "*", "Ethereal Essence", 250, { isTemp: false });
 
         Core.ensureComplete(8824);
-        if (configOr("SellQuestClass", false))
-            Core.sellItem("Rogue");
+        if (configOr("SellQuestClass", false)) Core.sellItem("Rogue");
         Core.logger("Enhancement Unlocked: Vim");
     }
 
     examen(): void {
-        if (Core.isCompletedBefore(8825))
-            return;
+        if (Core.isCompletedBefore(8825)) return;
 
         this.vim();
         Core.logger("Unlocking Enhancement: Examen");
@@ -966,14 +927,12 @@ export class UnlockForgeEnhancements {
         Core.killMonster("Towerofdoom10", "r8", "Left", "*", "Ethereal Essence", 250, { isTemp: false });
 
         Core.ensureComplete(8825);
-        if (configOr("SellQuestClass", false))
-            Core.sellItem("Healer");
+        if (configOr("SellQuestClass", false)) Core.sellItem("Healer");
         Core.logger("Enhancement Unlocked: Examen");
     }
 
     anima(): void {
-        if (Core.isCompletedBefore(8826))
-            return;
+        if (Core.isCompletedBefore(8826)) return;
 
         this.examen();
         Core.logger("Unlocking Enhancement: Anima");
@@ -989,14 +948,12 @@ export class UnlockForgeEnhancements {
         Core.killMonster("Towerofdoom10", "r8", "Left", "*", "Ethereal Essence", 650, { isTemp: false });
 
         Core.ensureComplete(8826);
-        if (configOr("SellQuestClass", false))
-            Core.sellItem("Warrior");
+        if (configOr("SellQuestClass", false)) Core.sellItem("Warrior");
         Core.logger("Enhancement Unlocked: Anima");
     }
 
     pneuma(): void {
-        if (Core.isCompletedBefore(8827))
-            return;
+        if (Core.isCompletedBefore(8827)) return;
 
         this.anima();
         Core.logger("Unlocking Enhancement: Pneuma");
@@ -1012,14 +969,12 @@ export class UnlockForgeEnhancements {
         Core.killMonster("Towerofdoom10", "r8", "Left", "*", "Ethereal Essence", 650, { isTemp: false });
 
         Core.ensureComplete(8827);
-        if (configOr("SellQuestClass", false))
-            Core.sellItem("Mage");
+        if (configOr("SellQuestClass", false)) Core.sellItem("Mage");
         Core.logger("Enhancement Unlocked: Pneuma");
     }
 
     voidLodestone(): void {
-        if (Core.checkInventory("Void Lodestone"))
-            return;
+        if (Core.checkInventory("Void Lodestone")) return;
 
         // Arcane Lodestone
         if (!Core.checkInventory("Arcane Lodestone")) {
@@ -1037,7 +992,7 @@ export class UnlockForgeEnhancements {
                 Core.buyItem(bot.map.name, 336, "Golden Key");
                 Core.ensureComplete(5723);
             } else {
-                Core.logger("Cannot Accept Quest Without Item \"???\"");
+                Core.logger('Cannot Accept Quest Without Item "???"');
                 return;
             }
         }
@@ -1054,7 +1009,7 @@ export class UnlockForgeEnhancements {
     }
 
     theDarkBox(itemID: number, quant = 1): void {
-        const Reward = Core.ensureLoad(5710).rewards.find(x => x.id === itemID);
+        const Reward = Core.ensureLoad(5710).rewards.find((x) => x.id === itemID);
         if (Reward == null) {
             Core.logger(`ERROR: itemID ${itemID} was not found in quest 5710`);
             return;
@@ -1063,7 +1018,7 @@ export class UnlockForgeEnhancements {
         Core.addDrop("Dark Potion", Reward.name);
 
         Daily.monthlyTreasureChestKeys();
-        if (!Core.checkInventory([ "Dark Box", "Dark Key" ])) {
+        if (!Core.checkInventory(["Dark Box", "Dark Key"])) {
             Core.logger("Dark Box & Key Not Found, Cannot Continue with Enh");
             return;
         }
@@ -1071,10 +1026,8 @@ export class UnlockForgeEnhancements {
         Core.logger("Pray to RNGsus for your item");
         while (!bot.shouldExit && !Core.checkInventory(Reward.id, quant)) {
             Core.ensureAccept(5710);
-            if (Core.isMember)
-                Core.huntMonster("ruins", "Dark Elemental", "Dark Gem", undefined, { isTemp: false });
-            else
-                Core.huntMonster("darkfortress", "Dark Elemental", "Dark Gem", undefined, { isTemp: false });
+            if (Core.isMember) Core.huntMonster("ruins", "Dark Elemental", "Dark Gem", undefined, { isTemp: false });
+            else Core.huntMonster("darkfortress", "Dark Elemental", "Dark Gem", undefined, { isTemp: false });
             Core.ensureComplete(5710);
             bot.wait.forPickup(Reward.id);
         }
@@ -1117,21 +1070,58 @@ export enum ForgeQuestHelm {
     All = "All",
 }
 
-export const scriptOptions = defineScriptOptions("Forge Ehn Unlocks", [
-    Core.skipOptions,
-    option.choice("ForgeQuestWeapon", "Weapon Enhancement", "Forge Quests to unlock Weapon Enhancement, change to none to unselect", choices(ForgeQuestWeapon), ForgeQuestWeapon.None),
-    option.choice("ForgeQuestCape", "Cape Enhancement", "Forge Quests to unlock Cape Enhancement, change to none to unselect", choices(ForgeQuestCape), ForgeQuestCape.None),
-    option.choice("ForgeQuestHelm", "Helm Enhancement", "Forge Quests to unlock Helm Enhancement, change to none to unselect", choices(ForgeQuestHelm), ForgeQuestHelm.None),
-    option.bool("UseGold", "Use Gold", "Speed the BlacksmithingREP grind up with Gold?", false),
-    option.bool("SellQuestClass", "Sell quest classes", "sell the classes backa after the Anima, Pneuma, Examen, and Vim quests", false),
-    option.bool("UseInsignOnDaunt", "Use Insignia for dauntless", "Use your Insignia to buy the `Malgor's ShadowFlame Blade`[Malgor] & `Infernal Flame Pyromancer`[Avatar Tyndarius]", false),
-    option.bool("UseInsignOnArcanasConcerto", "Use Insignias for Arcana's Concerto", "Use insignias to buy Darkon's Debris 2 (Reconstructed), Prince Darkon's Poleaxe, and complete the quest.", false),
-], true);
+export const scriptOptions = defineScriptOptions(
+    "Forge Ehn Unlocks",
+    [
+        Core.skipOptions,
+        option.choice(
+            "ForgeQuestWeapon",
+            "Weapon Enhancement",
+            "Forge Quests to unlock Weapon Enhancement, change to none to unselect",
+            choices(ForgeQuestWeapon),
+            ForgeQuestWeapon.None,
+        ),
+        option.choice(
+            "ForgeQuestCape",
+            "Cape Enhancement",
+            "Forge Quests to unlock Cape Enhancement, change to none to unselect",
+            choices(ForgeQuestCape),
+            ForgeQuestCape.None,
+        ),
+        option.choice(
+            "ForgeQuestHelm",
+            "Helm Enhancement",
+            "Forge Quests to unlock Helm Enhancement, change to none to unselect",
+            choices(ForgeQuestHelm),
+            ForgeQuestHelm.None,
+        ),
+        option.bool("UseGold", "Use Gold", "Speed the BlacksmithingREP grind up with Gold?", false),
+        option.bool(
+            "SellQuestClass",
+            "Sell quest classes",
+            "sell the classes backa after the Anima, Pneuma, Examen, and Vim quests",
+            false,
+        ),
+        option.bool(
+            "UseInsignOnDaunt",
+            "Use Insignia for dauntless",
+            "Use your Insignia to buy the `Malgor's ShadowFlame Blade`[Malgor] & `Infernal Flame Pyromancer`[Avatar Tyndarius]",
+            false,
+        ),
+        option.bool(
+            "UseInsignOnArcanasConcerto",
+            "Use Insignias for Arcana's Concerto",
+            "Use insignias to buy Darkon's Debris 2 (Reconstructed), Prince Darkon's Poleaxe, and complete the quest.",
+            false,
+        ),
+    ],
+    true,
+);
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new UnlockForgeEnhancements().forgeUnlocks();
+    new UnlockForgeEnhancements().forgeUnlocks();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

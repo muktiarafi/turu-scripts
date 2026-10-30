@@ -13,8 +13,7 @@ const Adv = new CoreAdvanced();
 
 export class NorthlandsMonk {
     getNlMonk(rankUpClass = true): void {
-        if (!Core.isSeasonalMapActive("frozensoul"))
-            return;
+        if (!Core.isSeasonalMapActive("frozensoul")) return;
 
         if (Core.checkInventory(52413)) {
             Adv.rankUpClass("Northlands Monk", { gearRestore: true });
@@ -27,14 +26,13 @@ export class NorthlandsMonk {
         while (!bot.shouldExit && !Core.checkInventory("Northlands Monk"))
             Core.killMonster("frozensoul", "r4", "Left", "Frozensoul Queen", "Northlands Monk", 1, { isTemp: false });
 
-        if (rankUpClass)
-            Adv.rankUpClass("Northlands Monk", { gearRestore: true });
+        if (rankUpClass) Adv.rankUpClass("Northlands Monk", { gearRestore: true });
     }
 }
 
 export default function main(): void {
-        Core.setOptions();
-        new NorthlandsMonk().getNlMonk();
+    Core.setOptions();
+    new NorthlandsMonk().getNlMonk();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

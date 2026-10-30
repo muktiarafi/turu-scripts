@@ -14,8 +14,7 @@ const Adv = new CoreAdvanced();
 
 export class Paladin {
     getPaladin(rankUpClass = true): void {
-        if (Core.checkInventory("Paladin") || !Core.isMember)
-            return;
+        if (Core.checkInventory("Paladin") || !Core.isMember) return;
 
         Core.buyItem("necropolis", 26, "Warrior");
         Core.buyItem("necropolis", 26, "Healer");
@@ -27,15 +26,14 @@ export class Paladin {
 
         Core.buyItem("necropolis", 26, "Paladin");
 
-        if (rankUpClass)
-            Adv.rankUpClass("Paladin");
+        if (rankUpClass) Adv.rankUpClass("Paladin");
     }
 }
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new Paladin().getPaladin();
+    new Paladin().getPaladin();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

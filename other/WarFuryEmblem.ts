@@ -12,8 +12,7 @@ const SoW = new CoreSoW();
 
 export class WarfuryEmblem {
     warfuryEmblemFarm(quant = 60): void {
-        if (Core.checkInventory("Warfury Emblem", quant))
-            return;
+        if (Core.checkInventory("Warfury Emblem", quant)) return;
 
         SoW.tyndarius();
 
@@ -28,9 +27,9 @@ export class WarfuryEmblem {
 }
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new WarfuryEmblem().warfuryEmblemFarm();
+    new WarfuryEmblem().warfuryEmblemFarm();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

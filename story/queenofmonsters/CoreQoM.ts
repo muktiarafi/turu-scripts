@@ -14,8 +14,7 @@ const Story = new CoreStory();
 export class CoreQOM {
     theReshaper(TerraneMerge = false): void {
         //Progress Check
-        if (Core.isCompletedBefore(5877))
-            return;
+        if (Core.isCompletedBefore(5877)) return;
 
         //Preload Quests
         Story.preLoad(this.theReshaper);
@@ -124,8 +123,7 @@ export class CoreQOM {
             Core.killMonster("guardiantree", "r12", "Left", "Terrane");
             Core.ensureComplete(6286);
         }
-        if (TerraneMerge)
-            return;
+        if (TerraneMerge) return;
 
         //Explore the Cavern
         if (!Story.questProgression(5856)) {

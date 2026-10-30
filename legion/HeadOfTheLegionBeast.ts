@@ -39,11 +39,10 @@ export class HeadoftheLegionBeast {
     legionBeastHead(badge = false): void {
         const HeadName = "Head of the Legion Beast";
         const hasHead = Core.checkInventory(HeadName);
-        const wantBadge = (configOr("badge", false)) || badge;
+        const wantBadge = configOr("badge", false) || badge;
         const hasBadge = Core.hasWebBadge(HeadName);
 
-        if (hasHead && (!wantBadge || hasBadge))
-            return;
+        if (hasHead && (!wantBadge || hasBadge)) return;
 
         if (hasHead && wantBadge && !hasBadge) {
             this.doBadgeQuest();
@@ -61,9 +60,12 @@ export class HeadoftheLegionBeast {
         Adv.gearStore(false, { enhAfter: true });
         if (Core.checkInventory("ArchPaladin")) {
             Core.equip("ArchPaladin");
-        } else
-            Core.equipClass(ClassType.Solo);
-        Core.killMonster("sevencircleswar", "r17", "Left", "The Beast", "Beast Soul", 15, { isTemp: false, log: false, publicRoom: true });
+        } else Core.equipClass(ClassType.Solo);
+        Core.killMonster("sevencircleswar", "r17", "Left", "The Beast", "Beast Soul", 15, {
+            isTemp: false,
+            log: false,
+            publicRoom: true,
+        });
         Adv.gearStore(true, { enhAfter: true });
 
         Adv.buyItem("sevencircleswar", 1984, HeadName);
@@ -80,16 +82,14 @@ export class HeadoftheLegionBeast {
         Adv.gearStore(false);
         if (Core.checkInventory("ArchPaladin")) {
             Core.equip("ArchPaladin");
-        } else
-            Core.equipClass(ClassType.Solo);
+        } else Core.equipClass(ClassType.Solo);
         Core.huntMonster("sevencircleswar", "The Beast", "Beast Slain");
         Adv.gearStore(true);
         Core.ensureComplete(8082);
     }
 
     helmSevenCircles(): void {
-        if (Core.checkInventory(60137))
-            return;
+        if (Core.checkInventory(60137)) return;
 
         Core.addDrop(...this.headLegionBeast);
 
@@ -115,7 +115,10 @@ export class HeadoftheLegionBeast {
         Core.farmingLogger("Essence of Wrath", quant);
         Core.registerQuests(7979);
 
-        Core.killMonster("sevencircleswar", "Enter", "Spawn", "*", "Essence of Wrath", quant, { isTemp: false, log: false });
+        Core.killMonster("sevencircleswar", "Enter", "Spawn", "*", "Essence of Wrath", quant, {
+            isTemp: false,
+            log: false,
+        });
         bot.wait.forDrop("Essence of Wrath");
 
         Core.cancelRegisteredQuests();
@@ -134,7 +137,10 @@ export class HeadoftheLegionBeast {
         Core.farmingLogger("Essence of Violence", quant);
         Core.registerQuests(7985);
 
-        Core.killMonster("sevencircleswar", "r9", "Left", "Violence Guard", "Essence of Violence", quant, { isTemp: false, log: false });
+        Core.killMonster("sevencircleswar", "r9", "Left", "Violence Guard", "Essence of Violence", quant, {
+            isTemp: false,
+            log: false,
+        });
         bot.wait.forDrop("Essence of Violence");
 
         Core.cancelRegisteredQuests();
@@ -153,7 +159,10 @@ export class HeadoftheLegionBeast {
         Core.farmingLogger("Essence of Treachery", quant);
         Core.registerQuests(7988);
 
-        Core.killMonster("sevencircleswar", "r13", "Left", "Treachery Guard", "Essence of Treachery", quant, { isTemp: false, log: false });
+        Core.killMonster("sevencircleswar", "r13", "Left", "Treachery Guard", "Essence of Treachery", quant, {
+            isTemp: false,
+            log: false,
+        });
         bot.wait.forDrop("Essence of Treachery");
 
         Core.cancelRegisteredQuests();
@@ -199,7 +208,10 @@ export class HeadoftheLegionBeast {
             // Log progress every 25 kills or when we hit major milestones
             if (killCount % 25 === 0 || currentSouls >= lastLoggedProgress + 50) {
                 const soulsInThisSession = currentSouls - soulsOnHandStart;
-                Core.logger(`Collected: ${soulsInThisSession}/${quant} | Inventory: ${currentSouls}/${SOULS_MAX_STACK} | Kills: ${killCount}`, "SoulsHeresy");
+                Core.logger(
+                    `Collected: ${soulsInThisSession}/${quant} | Inventory: ${currentSouls}/${SOULS_MAX_STACK} | Kills: ${killCount}`,
+                    "SoulsHeresy",
+                );
                 lastLoggedProgress = currentSouls;
             }
         }
@@ -208,209 +220,194 @@ export class HeadoftheLegionBeast {
         const totalCollected = soulsAtEnd - soulsOnHandStart;
 
         Core.cancelRegisteredQuests();
-        Core.logger(`✓ Collected ${totalCollected} souls | Final: ${soulsAtEnd}/${SOULS_MAX_STACK} | Kills: ${killCount}`, "SoulsHeresy");
+        Core.logger(
+            `✓ Collected ${totalCollected} souls | Final: ${soulsAtEnd}/${SOULS_MAX_STACK} | Kills: ${killCount}`,
+            "SoulsHeresy",
+        );
     }
 
     penance(quant = 300): void {
-    if (Core.checkInventory("Penance", quant)) {
+        if (Core.checkInventory("Penance", quant)) {
+            Core.farmingLogger("Penance", quant);
+            Core.logger(`Already have ${quant} Penance. Skipping.`, "Penance");
+            return;
+        }
+
+        Core.addDrop(...this.headLegionBeast);
         Core.farmingLogger("Penance", quant);
-        Core.logger(`Already have ${quant} Penance. Skipping.`, "Penance");
-        return;
-    }
+        Core.equipClass(ClassType.Farm);
 
-    Core.addDrop(...this.headLegionBeast);
-    Core.farmingLogger("Penance", quant);
-    Core.equipClass(ClassType.Farm);
+        const essencePerPenance = 1;
+        const soulsPerPenance = 15;
+        const soulsMaxStack = 300;
+        const maxPenancePerSoulStack = Math.trunc(soulsMaxStack / soulsPerPenance);
 
-    const essencePerPenance = 1;
-    const soulsPerPenance = 15;
-    const soulsMaxStack = 300;
-    const maxPenancePerSoulStack = Math.trunc(soulsMaxStack / soulsPerPenance);
+        let currentPenance = bot.inventory.getQuantity("Penance");
+        let penanceBought = currentPenance;
+        let totalSoulsUsed = 0;
 
-    let currentPenance = bot.inventory.getQuantity("Penance");
-    let penanceBought = currentPenance;
-    let totalSoulsUsed = 0;
+        Core.logger("", "Penance");
+        Core.logger("┌─ PHASE 1: Penance Material Farming", "Penance");
+        Core.logger(
+            `│ Target: ${quant} Penance | Existing: ${currentPenance} | Remaining: ${quant - currentPenance}`,
+            "Penance",
+        );
+        Core.logger(`│ Cost: ${essencePerPenance} of each essence + ${soulsPerPenance} Souls per Penance`, "Penance");
+        Core.logger(`│ Souls max stack: ${soulsMaxStack} (${maxPenancePerSoulStack} Penance)`, "Penance");
+        Core.logger("├────────────────────────────────────────", "Penance");
 
-    Core.logger("", "Penance");
-    Core.logger("┌─ PHASE 1: Penance Material Farming", "Penance");
-    Core.logger(
-        `│ Target: ${quant} Penance | Existing: ${currentPenance} | Remaining: ${quant - currentPenance}`, 
-        "Penance");
-    Core.logger(
-        `│ Cost: ${essencePerPenance} of each essence + ${soulsPerPenance} Souls per Penance`, 
-        "Penance");
-    Core.logger(
-        `│ Souls max stack: ${soulsMaxStack} (${maxPenancePerSoulStack} Penance)`, 
-        "Penance");
-    Core.logger("├────────────────────────────────────────", "Penance");
-
-    while (!bot.shouldExit && penanceBought < quant) {
-        currentPenance = bot.inventory.getQuantity("Penance");
-        const penanceRemaining = quant - currentPenance;
-
-        if (penanceRemaining <= 0)
-            break;
-
-        let wrath = bot.inventory.getQuantity("Essence of Wrath");
-        let violence = bot.inventory.getQuantity("Essence of Violence");
-        let treachery = bot.inventory.getQuantity("Essence of Treachery");
-        let souls = bot.inventory.getQuantity("Souls of Heresy");
-
-        // Merge anything we can immediately make from existing materials.
-        let craftableFromEssences = Math.min(
-            Math.trunc(wrath / essencePerPenance), 
-            Math.min(
-                Math.trunc(violence / essencePerPenance), 
-                Math.trunc(treachery / essencePerPenance)));
-
-        let craftableFromSouls = Math.trunc(souls / soulsPerPenance); // C# int division
-
-        let immediatelyCraftable = Math.min(
-            penanceRemaining, 
-            Math.min(craftableFromEssences, craftableFromSouls));
-
-        if (immediatelyCraftable > 0) {
-            const soulsCost = immediatelyCraftable * soulsPerPenance;
-
-            Core.logger(
-                `│ → Merging ${immediatelyCraftable} Penance ` +
-                `(${immediatelyCraftable * essencePerPenance} each essence + ${soulsCost} souls)...`, 
-                "Penance");
-
-            Core.buyItem(
-                "sevencircleswar", 
-                1984, 
-                "Penance", 
-                immediatelyCraftable);
-
-            bot.wait.forPickup("Penance");
-
+        while (!bot.shouldExit && penanceBought < quant) {
             currentPenance = bot.inventory.getQuantity("Penance");
-            penanceBought = currentPenance;
-            totalSoulsUsed += soulsCost;
+            const penanceRemaining = quant - currentPenance;
 
-            Core.logger(
-                `│ ✓ Penance: ${penanceBought}/${quant} | ` +
-                `Souls remaining: ${bot.inventory.getQuantity("Souls of Heresy")}/${soulsMaxStack}`, 
-                "Penance");
+            if (penanceRemaining <= 0) break;
+
+            let wrath = bot.inventory.getQuantity("Essence of Wrath");
+            let violence = bot.inventory.getQuantity("Essence of Violence");
+            let treachery = bot.inventory.getQuantity("Essence of Treachery");
+            let souls = bot.inventory.getQuantity("Souls of Heresy");
+
+            // Merge anything we can immediately make from existing materials.
+            let craftableFromEssences = Math.min(
+                Math.trunc(wrath / essencePerPenance),
+                Math.min(Math.trunc(violence / essencePerPenance), Math.trunc(treachery / essencePerPenance)),
+            );
+
+            let craftableFromSouls = Math.trunc(souls / soulsPerPenance); // C# int division
+
+            let immediatelyCraftable = Math.min(penanceRemaining, Math.min(craftableFromEssences, craftableFromSouls));
+
+            if (immediatelyCraftable > 0) {
+                const soulsCost = immediatelyCraftable * soulsPerPenance;
+
+                Core.logger(
+                    `│ → Merging ${immediatelyCraftable} Penance ` +
+                        `(${immediatelyCraftable * essencePerPenance} each essence + ${soulsCost} souls)...`,
+                    "Penance",
+                );
+
+                Core.buyItem("sevencircleswar", 1984, "Penance", immediatelyCraftable);
+
+                bot.wait.forPickup("Penance");
+
+                currentPenance = bot.inventory.getQuantity("Penance");
+                penanceBought = currentPenance;
+                totalSoulsUsed += soulsCost;
+
+                Core.logger(
+                    `│ ✓ Penance: ${penanceBought}/${quant} | ` +
+                        `Souls remaining: ${bot.inventory.getQuantity("Souls of Heresy")}/${soulsMaxStack}`,
+                    "Penance",
+                );
+
+                Core.sleep(500);
+                continue;
+            }
+
+            // Prepare only enough materials for the next batch.
+            // A full 300 Souls stack supports exactly 20 Penance.
+            const batchSize = Math.min(penanceRemaining, maxPenancePerSoulStack);
+            const essenceTarget = batchSize * essencePerPenance;
+            const soulsTarget = batchSize * soulsPerPenance;
+
+            // Farm only the missing Essence of Wrath.
+            wrath = bot.inventory.getQuantity("Essence of Wrath");
+
+            if (wrath < essenceTarget) {
+                Core.logger(
+                    `│ ↓ Farming ${essenceTarget - wrath} Essence of Wrath ` + `(${wrath}/${essenceTarget})...`,
+                    "Penance",
+                );
+
+                this.essenceWrath(essenceTarget);
+
+                if (bot.shouldExit) break;
+            }
+
+            // Farm only the missing Essence of Violence.
+            violence = bot.inventory.getQuantity("Essence of Violence");
+
+            if (violence < essenceTarget) {
+                Core.logger(
+                    `│ ↓ Farming ${essenceTarget - violence} Essence of Violence ` +
+                        `(${violence}/${essenceTarget})...`,
+                    "Penance",
+                );
+
+                this.essenceViolence(essenceTarget);
+
+                if (bot.shouldExit) break;
+            }
+
+            // Farm only the missing Essence of Treachery.
+            treachery = bot.inventory.getQuantity("Essence of Treachery");
+
+            if (treachery < essenceTarget) {
+                Core.logger(
+                    `│ ↓ Farming ${essenceTarget - treachery} Essence of Treachery ` +
+                        `(${treachery}/${essenceTarget})...`,
+                    "Penance",
+                );
+
+                this.essenceTreachery(essenceTarget);
+
+                if (bot.shouldExit) break;
+            }
+
+            // Recheck essence quantities after farming.
+            wrath = bot.inventory.getQuantity("Essence of Wrath");
+            violence = bot.inventory.getQuantity("Essence of Violence");
+            treachery = bot.inventory.getQuantity("Essence of Treachery");
+            souls = bot.inventory.getQuantity("Souls of Heresy");
+
+            craftableFromEssences = Math.min(
+                Math.trunc(wrath / essencePerPenance),
+                Math.min(Math.trunc(violence / essencePerPenance), Math.trunc(treachery / essencePerPenance)),
+            );
+
+            craftableFromSouls = Math.trunc(souls / soulsPerPenance); // C# int division
+
+            immediatelyCraftable = Math.min(penanceRemaining, Math.min(craftableFromEssences, craftableFromSouls));
+
+            // If the essences are ready but Souls are not, farm only the
+            // missing Souls required for this batch.
+            if (immediatelyCraftable <= 0 && souls < soulsTarget) {
+                const soulsNeeded = Math.min(soulsTarget - souls, soulsMaxStack - souls);
+
+                if (soulsNeeded > 0) {
+                    Core.logger(
+                        `│ ↓ Farming ${soulsNeeded} Souls of Heresy ` + `(${souls}/${soulsMaxStack})...`,
+                        "Penance",
+                    );
+
+                    // SoulsHeresy() takes the amount to farm.
+                    this.soulsHeresy(soulsTarget);
+
+                    souls = bot.inventory.getQuantity("Souls of Heresy");
+
+                    Core.logger(`│ ↑ Souls complete: ${souls}/${soulsMaxStack}`, "Penance");
+                }
+            }
 
             Core.sleep(500);
-            continue;
         }
 
-        // Prepare only enough materials for the next batch.
-        // A full 300 Souls stack supports exactly 20 Penance.
-        const batchSize = Math.min(penanceRemaining, maxPenancePerSoulStack);
-        const essenceTarget = batchSize * essencePerPenance;
-        const soulsTarget = batchSize * soulsPerPenance;
+        penanceBought = bot.inventory.getQuantity("Penance");
 
-        // Farm only the missing Essence of Wrath.
-        wrath = bot.inventory.getQuantity("Essence of Wrath");
-
-        if (wrath < essenceTarget) {
-            Core.logger(
-                `│ ↓ Farming ${essenceTarget - wrath} Essence of Wrath ` +
-                `(${wrath}/${essenceTarget})...`, 
-                "Penance");
-
-            this.essenceWrath(essenceTarget);
-
-            if (bot.shouldExit)
-                break;
-        }
-
-        // Farm only the missing Essence of Violence.
-        violence = bot.inventory.getQuantity("Essence of Violence");
-
-        if (violence < essenceTarget) {
-            Core.logger(
-                `│ ↓ Farming ${essenceTarget - violence} Essence of Violence ` +
-                `(${violence}/${essenceTarget})...`, 
-                "Penance");
-
-            this.essenceViolence(essenceTarget);
-
-            if (bot.shouldExit)
-                break;
-        }
-
-        // Farm only the missing Essence of Treachery.
-        treachery = bot.inventory.getQuantity("Essence of Treachery");
-
-        if (treachery < essenceTarget) {
-            Core.logger(
-                `│ ↓ Farming ${essenceTarget - treachery} Essence of Treachery ` +
-                `(${treachery}/${essenceTarget})...`, 
-                "Penance");
-
-            this.essenceTreachery(essenceTarget);
-
-            if (bot.shouldExit)
-                break;
-        }
-
-        // Recheck essence quantities after farming.
-        wrath = bot.inventory.getQuantity("Essence of Wrath");
-        violence = bot.inventory.getQuantity("Essence of Violence");
-        treachery = bot.inventory.getQuantity("Essence of Treachery");
-        souls = bot.inventory.getQuantity("Souls of Heresy");
-
-        craftableFromEssences = Math.min(
-            Math.trunc(wrath / essencePerPenance), 
-            Math.min(
-                Math.trunc(violence / essencePerPenance), 
-                Math.trunc(treachery / essencePerPenance)));
-
-        craftableFromSouls = Math.trunc(souls / soulsPerPenance); // C# int division
-
-        immediatelyCraftable = Math.min(
-            penanceRemaining, 
-            Math.min(craftableFromEssences, craftableFromSouls));
-
-        // If the essences are ready but Souls are not, farm only the
-        // missing Souls required for this batch.
-        if (immediatelyCraftable <= 0 && souls < soulsTarget) {
-            const soulsNeeded = Math.min(
-                soulsTarget - souls, 
-                soulsMaxStack - souls);
-
-            if (soulsNeeded > 0) {
-                Core.logger(
-                    `│ ↓ Farming ${soulsNeeded} Souls of Heresy ` +
-                    `(${souls}/${soulsMaxStack})...`, 
-                    "Penance");
-
-                // SoulsHeresy() takes the amount to farm.
-                this.soulsHeresy(soulsTarget);
-
-                souls = bot.inventory.getQuantity("Souls of Heresy");
-
-                Core.logger(
-                    `│ ↑ Souls complete: ${souls}/${soulsMaxStack}`, 
-                    "Penance");
-            }
-        }
-
-        Core.sleep(500);
-    }
-
-    penanceBought = bot.inventory.getQuantity("Penance");
-
-    Core.logger("Penance: ├────────────────────────────────────────");
-    Core.logger(`Penance: └─ ✓ Phase Complete! ${penanceBought}/${quant} Penance`);
-    Core.logger(`Penance: ✓ Souls used: ${totalSoulsUsed}`);
-    Core.logger("Penance: ");
-    Core.logger(`╔${"═".repeat(this.boxWidth)}╗`);
-    Core.logger(`║${this.centerWithFill("✦ PENANCE FARMING SESSION COMPLETE ✦")}║`);
-    Core.logger(`╚${"═".repeat(this.boxWidth)}╝`);
+        Core.logger("Penance: ├────────────────────────────────────────");
+        Core.logger(`Penance: └─ ✓ Phase Complete! ${penanceBought}/${quant} Penance`);
+        Core.logger(`Penance: ✓ Souls used: ${totalSoulsUsed}`);
+        Core.logger("Penance: ");
+        Core.logger(`╔${"═".repeat(this.boxWidth)}╗`);
+        Core.logger(`║${this.centerWithFill("✦ PENANCE FARMING SESSION COMPLETE ✦")}║`);
+        Core.logger(`╚${"═".repeat(this.boxWidth)}╝`);
     }
 
     // C#: a local function of Penance (an odd nesting in the C# file).
     private centerWithFill(text: string): string {
         const decorated = ` ${text} `;
 
-        if (decorated.length >= this.boxWidth)
-            return decorated;
+        if (decorated.length >= this.boxWidth) return decorated;
 
         const fillTotal = this.boxWidth - decorated.length;
         const left = Math.trunc(fillTotal / 2);
@@ -436,10 +433,7 @@ export class HeadoftheLegionBeast {
         Core.logger(`Current: ${currentQuantity} | Deficit: ${deficit} | Target: ${quant}`, "Indulgence");
 
         // Calculate targets based on deficit
-        const soulsTarget =
-            deficit >= 3 ? 75
-            : deficit === 2 ? 50
-            : 25;
+        const soulsTarget = deficit >= 3 ? 75 : deficit === 2 ? 50 : 25;
         const essenceTarget = deficit >= 3 ? 3 : deficit;
 
         Core.logger(`Soul target: ${soulsTarget} | Essence target: ${essenceTarget} per essence`, "Indulgence");
@@ -451,14 +445,25 @@ export class HeadoftheLegionBeast {
             Core.equipClass(ClassType.Farm);
 
             Core.logger(`Farming ${soulsTarget} Souls of Limbo...`, "Indulgence");
-            Core.killMonster("sevencircles", "r2", "Left", "Limbo Guard", "Souls of Limbo", soulsTarget, { log: false });
+            Core.killMonster("sevencircles", "r2", "Left", "Limbo Guard", "Souls of Limbo", soulsTarget, {
+                log: false,
+            });
 
             Core.equipClass(ClassType.Solo);
 
             Core.logger(`Farming essences...`, "Indulgence");
-            Core.killMonster("sevencircles", "r4", "Left", "Luxuria", "Essence of Luxuria", essenceTarget, { isTemp: false, log: false });
-            Core.killMonster("sevencircles", "r6", "Left", "Gluttony", "Essence of Gluttony", essenceTarget, { isTemp: false, log: false });
-            Core.killMonster("sevencircles", "r8", "Left", "Avarice", "Essence of Avarice", essenceTarget, { isTemp: false, log: false });
+            Core.killMonster("sevencircles", "r4", "Left", "Luxuria", "Essence of Luxuria", essenceTarget, {
+                isTemp: false,
+                log: false,
+            });
+            Core.killMonster("sevencircles", "r6", "Left", "Gluttony", "Essence of Gluttony", essenceTarget, {
+                isTemp: false,
+                log: false,
+            });
+            Core.killMonster("sevencircles", "r8", "Left", "Avarice", "Essence of Avarice", essenceTarget, {
+                isTemp: false,
+                log: false,
+            });
 
             Core.logger(`Completing quest...`, "Indulgence");
             Core.ensureCompleteMulti(7978);
@@ -494,17 +499,21 @@ export class HeadoftheLegionBeast {
     }
 }
 
-export const scriptOptions = defineScriptOptions("hotlb", [
-    Core.skipOptions,
-    option.bool("badge", "Farm Badge", "Set to true to farm the Head of the Legion Beast char page badge", false),
-], true);
+export const scriptOptions = defineScriptOptions(
+    "hotlb",
+    [
+        Core.skipOptions,
+        option.bool("badge", "Farm Badge", "Set to true to farm the Head of the Legion Beast char page badge", false),
+    ],
+    true,
+);
 
 export default function main(): void {
     const script = new HeadoftheLegionBeast();
-        Core.bankingBlackList.push(...script.headLegionBeast);
-        Core.setOptions();
+    Core.bankingBlackList.push(...script.headLegionBeast);
+    Core.setOptions();
 
-        script.legionBeastHead();
+    script.legionBeastHead();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

@@ -14,7 +14,7 @@ const Story = new CoreStory();
 const Adv = new CoreAdvanced();
 
 export class CoreSoW {
-    mainyuDrops: string[] = [ "Mainyu Rune", "Mainyu Tail", "Mainyu Wings" ];
+    mainyuDrops: string[] = ["Mainyu Rune", "Mainyu Tail", "Mainyu Wings"];
 
     malgorDrops: string[] = [
         "Shadow DragonMaster",
@@ -54,8 +54,7 @@ export class CoreSoW {
     }
 
     shadowWar(): void {
-        if (Core.isCompletedBefore(6852))
-            return;
+        if (Core.isCompletedBefore(6852)) return;
 
         Story.preLoad(this.shadowWar);
 
@@ -110,8 +109,7 @@ export class CoreSoW {
     }
 
     shadowlordKeep(): void {
-        if (Core.isCompletedBefore(6864))
-            return;
+        if (Core.isCompletedBefore(6864)) return;
 
         Story.preLoad(this.shadowlordKeep);
 
@@ -129,9 +127,8 @@ export class CoreSoW {
         //Build a Bomb (6858)
         if (!Story.questProgression(6858)) {
             Core.ensureAccept(6858);
-            while (
-                !bot.shouldExit && (!Core.checkInventory(48347) || !Core.checkInventory(48348, 8))
-            ) //Torch && Scrap of Cloth
+            while (!bot.shouldExit && (!Core.checkInventory(48347) || !Core.checkInventory(48348, 8)))
+                //Torch && Scrap of Cloth
                 Core.huntMonster("shadowlordkeep", "Shadow Mage", null, 1, { log: false });
             Core.ensureComplete(6858);
         }
@@ -161,8 +158,7 @@ export class CoreSoW {
     }
 
     timestream(): void {
-        if (Core.isCompletedBefore(6867))
-            return;
+        if (Core.isCompletedBefore(6867)) return;
 
         this.shadowlordKeep();
 
@@ -179,8 +175,7 @@ export class CoreSoW {
     }
 
     graniteCove(): void {
-        if (Core.isCompletedBefore(6883))
-            return;
+        if (Core.isCompletedBefore(6883)) return;
 
         Story.preLoad(this.graniteCove);
 
@@ -191,7 +186,7 @@ export class CoreSoW {
         Story.mapItemQuest(6874, "granitecove", 6433);
 
         //Gather Information (6875)
-        Story.mapItemQuest(6875, "granitecove", [ 6434, 6435, 6436 ]);
+        Story.mapItemQuest(6875, "granitecove", [6434, 6435, 6436]);
 
         //Find the Missing Pages (6876)
         Story.killQuest(6876, "granitecove", "Jungle Treeant");
@@ -219,8 +214,7 @@ export class CoreSoW {
     }
 
     blackseaKeep(): void {
-        if (Core.isCompletedBefore(6896))
-            return;
+        if (Core.isCompletedBefore(6896)) return;
 
         Story.preLoad(this.blackseaKeep);
 
@@ -269,8 +263,7 @@ export class CoreSoW {
     }
 
     junkhoard(): void {
-        if (Core.isCompletedBefore(6960))
-            return;
+        if (Core.isCompletedBefore(6960)) return;
 
         Story.preLoad(this.junkhoard);
 
@@ -312,8 +305,7 @@ export class CoreSoW {
     }
 
     junkheap(): void {
-        if (Core.isCompletedBefore(6974))
-            return;
+        if (Core.isCompletedBefore(6974)) return;
 
         this.junkhoard();
 
@@ -383,8 +375,7 @@ export class CoreSoW {
     }
 
     shadowgrove(): void {
-        if (Core.isCompletedBefore(6999))
-            return;
+        if (Core.isCompletedBefore(6999)) return;
 
         Story.preLoad(this.shadowgrove);
 
@@ -415,8 +406,7 @@ export class CoreSoW {
     }
 
     aozoraHills(): void {
-        if (Core.isCompletedBefore(7062))
-            return;
+        if (Core.isCompletedBefore(7062)) return;
 
         Story.preLoad(this.aozoraHills);
 
@@ -482,8 +472,7 @@ export class CoreSoW {
     }
 
     ghostNexus(): void {
-        if (Core.isCompletedBefore(7118))
-            return;
+        if (Core.isCompletedBefore(7118)) return;
 
         this.aozoraHills();
 
@@ -540,8 +529,7 @@ export class CoreSoW {
     }
 
     shadowsong(): void {
-        if (Core.isCompletedBefore(7348))
-            return;
+        if (Core.isCompletedBefore(7348)) return;
 
         Story.preLoad(this.shadowsong);
 
@@ -581,8 +569,7 @@ export class CoreSoW {
     }
 
     darkAlly(): void {
-        if (Core.isCompletedBefore(7428))
-            return;
+        if (Core.isCompletedBefore(7428)) return;
 
         Story.preLoad(this.darkAlly);
 
@@ -634,8 +621,7 @@ export class CoreSoW {
     }
 
     darkAlliance(): void {
-        if (Core.isCompletedBefore(7460))
-            return;
+        if (Core.isCompletedBefore(7460)) return;
 
         this.darkAlly();
         Story.preLoad(this.darkAlliance);
@@ -683,8 +669,7 @@ export class CoreSoW {
     }
 
     innerShadows(): void {
-        if (Core.isCompletedBefore(7472))
-            return;
+        if (Core.isCompletedBefore(7472)) return;
 
         this.darkAlliance();
         Story.preLoad(this.innerShadows);
@@ -737,8 +722,7 @@ export class CoreSoW {
     }
 
     tyndarius(WarTrainingMerge = false): void {
-        if (Core.isCompletedBefore(8243))
-            return;
+        if (Core.isCompletedBefore(8243)) return;
 
         this.innerShadows();
 
@@ -919,8 +903,7 @@ export class CoreSoW {
 
         //The Goddess of War
         Story.killQuest(8203, "wartraining", "Varga");
-        if (WarTrainingMerge)
-            return;
+        if (WarTrainingMerge) return;
 
         // Warfury Training
         Story.killQuest(8204, "wartraining", "Warfury Soldier");
@@ -973,11 +956,10 @@ export class CoreSoW {
     }
 
     ruinedCrown(): void {
-        if (Core.isCompletedBefore(8787))
-            return;
+        if (Core.isCompletedBefore(8787)) return;
 
         // 8778 Mental Damage Sponge
-        Story.mapItemQuest(8778, "ruinedcrown", [ 10380, 10382, 10383 ]);
+        Story.mapItemQuest(8778, "ruinedcrown", [10380, 10382, 10383]);
 
         // 8779 Scraping the Barrel
         if (!Story.questProgression(8779)) {
@@ -1034,13 +1016,12 @@ export class CoreSoW {
     }
 
     timekeep(): void {
-        if (Core.isCompletedBefore(8813))
-            return;
+        if (Core.isCompletedBefore(8813)) return;
 
         this.ruinedCrown();
 
         // 8803|Mood Pendulum
-        Story.mapItemQuest(8803, "Timekeep", [ 10455, 10456, 10457 ]);
+        Story.mapItemQuest(8803, "Timekeep", [10455, 10456, 10457]);
 
         // 8804|Bug Issue
         Story.killQuest(8804, "Timekeep", "Decaying Locust");
@@ -1055,7 +1036,7 @@ export class CoreSoW {
         Story.killQuest(8807, "Timekeep", "Mana-Burdened Mage");
 
         // 8808|Caution! Wet Floor
-        Story.mapItemQuest(8808, "Timekeep", [ 10459, 10460 ]);
+        Story.mapItemQuest(8808, "Timekeep", [10459, 10460]);
 
         // 8809|Reflection in the Puddle
         Story.killQuest(8809, "Timekeep", "Mumbler");
@@ -1090,8 +1071,7 @@ export class CoreSoW {
     }
 
     timestreamWar(): void {
-        if (Core.isCompletedBefore(8819))
-            return;
+        if (Core.isCompletedBefore(8819)) return;
 
         this.timekeep();
 
@@ -1116,8 +1096,7 @@ export class CoreSoW {
     }
 
     deadLines(): void {
-        if (Core.isCompletedBefore(8868))
-            return;
+        if (Core.isCompletedBefore(8868)) return;
 
         this.timestreamWar();
 
@@ -1137,7 +1116,13 @@ export class CoreSoW {
         //Eternal Flame 8861
         if (!Story.questProgression(8861)) {
             Core.ensureAccept(8861);
-            Core.getMapItems([ [10603, 1], [10604, 1] ], "DeadLines");
+            Core.getMapItems(
+                [
+                    [10603, 1],
+                    [10604, 1],
+                ],
+                "DeadLines",
+            );
             Core.huntMonster("deadlines", "Shadowfall Warrior", "Shadowfall Helm", 7);
             Core.ensureComplete(8861);
         }
@@ -1145,7 +1130,13 @@ export class CoreSoW {
         //The Wolf Cries 8862
         if (!Story.questProgression(8862)) {
             Core.ensureAccept(8862);
-            Core.getMapItems([ [10605, 1], [10606, 1] ], "DeadLines");
+            Core.getMapItems(
+                [
+                    [10605, 1],
+                    [10606, 1],
+                ],
+                "DeadLines",
+            );
             Core.huntMonster("deadlines", "Swordhaven Knight", "Knight's Crest", 7);
             Core.ensureComplete(8862);
         }
@@ -1153,7 +1144,13 @@ export class CoreSoW {
         //Breaking Down 8863
         if (!Story.questProgression(8863)) {
             Core.ensureAccept(8863);
-            Core.getMapItems([ [10607, 1], [10608, 1] ], "DeadLines");
+            Core.getMapItems(
+                [
+                    [10607, 1],
+                    [10608, 1],
+                ],
+                "DeadLines",
+            );
             Core.huntMonster("deadlines", "Shadowfall Warrior", "Shadowfall Bones", 7);
             Core.ensureComplete(8863);
         }
@@ -1161,7 +1158,13 @@ export class CoreSoW {
         //Growth Through Hardship 8864
         if (!Story.questProgression(8864)) {
             Core.ensureAccept(8864);
-            Core.getMapItems([ [10609, 1], [10610, 1] ], "DeadLines");
+            Core.getMapItems(
+                [
+                    [10609, 1],
+                    [10610, 1],
+                ],
+                "DeadLines",
+            );
             Core.huntMonster("deadlines", "Swordhaven Knight", "Knight's Armaments", 7);
             Core.ensureComplete(8864);
         }
@@ -1169,7 +1172,13 @@ export class CoreSoW {
         //Arteries 8865
         if (!Story.questProgression(8865)) {
             Core.ensureAccept(8865);
-            Core.getMapItems([ [10611, 1], [10612, 1] ], "DeadLines");
+            Core.getMapItems(
+                [
+                    [10611, 1],
+                    [10612, 1],
+                ],
+                "DeadLines",
+            );
             Core.huntMonster("deadlines", "Frenzied Mana", "Mana Dissipated", 6);
             Core.ensureComplete(8865);
         }
@@ -1196,8 +1205,7 @@ export class CoreSoW {
     }
 
     shadowFlame(): void {
-        if (Core.isCompletedBefore(8965))
-            return;
+        if (Core.isCompletedBefore(8965)) return;
 
         this.deadLines();
 
@@ -1267,8 +1275,7 @@ export class CoreSoW {
     }
 
     manaCradle(): void {
-        if (Core.isCompletedBefore(9126))
-            return;
+        if (Core.isCompletedBefore(9126)) return;
 
         this.shadowFlame();
 
@@ -1311,7 +1318,6 @@ export class CoreSoW {
             Core.huntMonster("manacradle", "Dark Tainted Mana", "Dark Residue", 10);
             Core.ensureComplete(9123);
         }
-
 
         // If Dodge Class was found, kill Malgor & The Mainyu with it, else use what you have on.
         Core.equipClass(ClassType.Dodge);

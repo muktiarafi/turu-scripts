@@ -139,7 +139,12 @@ export class CoreNation {
     ];
 
     /** Shadow Blast Arena medals. */
-    nationMedals: string[] = ["Nation Round 1 Medal", "Nation Round 2 Medal", "Nation Round 3 Medal", "Nation Round 4 Medal"];
+    nationMedals: string[] = [
+        "Nation Round 1 Medal",
+        "Nation Round 2 Medal",
+        "Nation Round 3 Medal",
+        "Nation Round 4 Medal",
+    ];
 
     receipt: string[] = [
         "Unidentified 1",
@@ -167,7 +172,13 @@ export class CoreNation {
         "Relic of Chaos",
     ];
 
-    swindlesReturn: string[] = ["Unidentified 1", "Unidentified 6", "Unidentified 9", "Unidentified 16", "Unidentified 20"];
+    swindlesReturn: string[] = [
+        "Unidentified 1",
+        "Unidentified 6",
+        "Unidentified 9",
+        "Unidentified 16",
+        "Unidentified 20",
+    ];
 
     swindlesReturnRewards: string[] = [
         "Tainted Gem",
@@ -234,14 +245,20 @@ export class CoreNation {
      * @param quant Desired quantity to get.
      */
     newWorldsNewOpportunities(item: string | null = null, quant = 1): void {
-        if ((item !== null && Core.checkInventory(item, quant)) || !Core.checkInventory(["Nulgath's Birthday Gift", "Bounty Hunter's Drone Pet"], 1, { any: true })) return;
+        if (
+            (item !== null && Core.checkInventory(item, quant)) ||
+            !Core.checkInventory(["Nulgath's Birthday Gift", "Bounty Hunter's Drone Pet"], 1, { any: true })
+        )
+            return;
 
         Core.addDrop(...Core.questRewards(Core.checkInventory("Bounty Hunter's Drone Pet") ? 6183 : 6697));
         Core.equipClass(ClassType.Farm);
 
         Core.registerQuests(Core.checkInventory("Bounty Hunter's Drone Pet") ? 6183 : 6697);
         if (item === null) {
-            const questRewards = Core.ensureLoad(Core.checkInventory("Bounty Hunter's Drone Pet") ? 6183 : 6697).rewards;
+            const questRewards = Core.ensureLoad(
+                Core.checkInventory("Bounty Hunter's Drone Pet") ? 6183 : 6697,
+            ).rewards;
             for (const reward of questRewards) {
                 if (Core.checkInventory(reward.name, reward.maxStack)) continue;
 
@@ -263,7 +280,9 @@ export class CoreNation {
 
                     Core.killMonster("tercessuinotlim", "m2", "Top", "Dark Makai", "Makai Fang", 10, { log: false });
                     Core.killMonster("hydra", "Rune2", "Left", "Fire Imp", "Imp Flame", 6, { log: false });
-                    Core.killMonster("greenguardwest", "West12", "Up", "Big Bad Boar", "Wereboar Tusk", 4, { log: false });
+                    Core.killMonster("greenguardwest", "West12", "Up", "Big Bad Boar", "Wereboar Tusk", 4, {
+                        log: false,
+                    });
                 }
             }
             Core.logger("all items quant maxed");
@@ -299,7 +318,11 @@ export class CoreNation {
      * @param quantFavor Desired quantity for Favors, 5000 = max stack.
      */
     approvalAndFavor(quantApproval = 5000, quantFavor = 5000): void {
-        if (Core.checkInventory("Nulgath's Approval", quantApproval) && Core.checkInventory("Archfiend's Favor", quantFavor)) return;
+        if (
+            Core.checkInventory("Nulgath's Approval", quantApproval) &&
+            Core.checkInventory("Archfiend's Favor", quantFavor)
+        )
+            return;
 
         Core.addDrop("Nulgath's Approval", "Archfiend's Favor");
 
@@ -308,7 +331,11 @@ export class CoreNation {
 
         Core.equipClass(ClassType.Farm);
         // C# checks ShouldExit only with the Approvals: `(!ShouldExit && approvals < quant) || favors < quant`.
-        while (!bot.shouldExit && (bot.inventory.getQuantity("Nulgath's Approval") < quantApproval || bot.inventory.getQuantity("Archfiend's Favor") < quantFavor)) {
+        while (
+            !bot.shouldExit &&
+            (bot.inventory.getQuantity("Nulgath's Approval") < quantApproval ||
+                bot.inventory.getQuantity("Archfiend's Favor") < quantFavor)
+        ) {
             if (bot.map.name !== "evilwarnul") {
                 Core.join("evilwarnul");
                 bot.wait.forMapLoad("evilwarnul");
@@ -403,11 +430,14 @@ export class CoreNation {
 
             const target = quant > 1 ? quant : reward.maxStack;
             Core.farmingLogger(reward.name, target);
-            while (!bot.shouldExit && !Core.checkInventory(reward.name, target)) exchange(reward.name, target, "Diamond of Nulgath");
+            while (!bot.shouldExit && !Core.checkInventory(reward.name, target))
+                exchange(reward.name, target, "Diamond of Nulgath");
         } else {
             for (const thing of rewards) {
                 // C# falls back to an empty ItemBase (null name: counts as owned).
-                const reward: { name: string | null; maxStack: number } = Core.ensureLoad(870).rewards.find((x) => x.name === thing) ?? {
+                const reward: { name: string | null; maxStack: number } = Core.ensureLoad(870).rewards.find(
+                    (x) => x.name === thing,
+                ) ?? {
                     name: null,
                     maxStack: 0,
                 };
@@ -445,7 +475,12 @@ export class CoreNation {
             return;
         }
 
-        for (const medal of ["Nation Round 1 Medal", "Nation Round 2 Medal", "Nation Round 3 Medal", "Nation Round 4 Medal"]) {
+        for (const medal of [
+            "Nation Round 1 Medal",
+            "Nation Round 2 Medal",
+            "Nation Round 3 Medal",
+            "Nation Round 4 Medal",
+        ]) {
             Core.addDrop(medal);
             if (Core.checkInventory(medal)) {
                 Core.logger(`"${medal}" owned.`);
@@ -512,7 +547,13 @@ export class CoreNation {
      */
     supplies(item: string | null = null, quant = 1, options: SuppliesOptions = {}): void {
         let { ultraAlteon = false, returnPolicyDuringSupplies = false } = options;
-        const { keepVoucher = false, assistantDuring = false, returnItem = null, voucherItemDuring = false, hydraChallenge = false } = options;
+        const {
+            keepVoucher = false,
+            assistantDuring = false,
+            returnItem = null,
+            voucherItemDuring = false,
+            hydraChallenge = false,
+        } = options;
 
         // Early exits: item already owned
         if (item !== null && Core.checkInventory(item, quant)) return;
@@ -534,12 +575,23 @@ export class CoreNation {
         // Resolve settings
         this.sellMemVoucher = Core.cboBool("Nation_SellMemVoucher") === true;
         ultraAlteon = ultraAlteon || Core.cboBool("UltraAlteonForSupplies") === true;
-        returnPolicyDuringSupplies = returnPolicyDuringSupplies || Core.cboBool("Nation_ReturnPolicyDuringSupplies") === true;
+        returnPolicyDuringSupplies =
+            returnPolicyDuringSupplies || Core.cboBool("Nation_ReturnPolicyDuringSupplies") === true;
 
         if (keepVoucher) this.sellMemVoucher = false;
         else if (this.sellMemVoucher && bot.player.gold >= 100000000) this.sellMemVoucher = false;
 
-        this.logSuppliesConfig(item, quant, ultraAlteon, hydraChallenge, keepVoucher, this.sellMemVoucher, assistantDuring, returnPolicyDuringSupplies, returnItem);
+        this.logSuppliesConfig(
+            item,
+            quant,
+            ultraAlteon,
+            hydraChallenge,
+            keepVoucher,
+            this.sellMemVoucher,
+            assistantDuring,
+            returnPolicyDuringSupplies,
+            returnItem,
+        );
 
         // Quest registration
         const quests = [2857];
@@ -555,14 +607,33 @@ export class CoreNation {
         drops.push(...this.suppliesRewards);
         if (this.sellMemVoucher) drops.push("Voucher of Nulgath");
         drops.push("Relic of Chaos");
-        if (returnPolicyDuringSupplies) drops.push(this.uni(1), this.uni(6), this.uni(9), this.uni(16), this.uni(20), "Receipt of Swindle");
+        if (returnPolicyDuringSupplies)
+            drops.push(this.uni(1), this.uni(6), this.uni(9), this.uni(16), this.uni(20), "Receipt of Swindle");
 
         Core.addDrop(...drops);
         Core.equipClass(ClassType.Solo);
 
-        if (item === null || item === "All") this.farmAllSupplies(ultraAlteon, hydraChallenge, keepVoucher, assistantDuring, returnItem, returnPolicyDuringSupplies);
+        if (item === null || item === "All")
+            this.farmAllSupplies(
+                ultraAlteon,
+                hydraChallenge,
+                keepVoucher,
+                assistantDuring,
+                returnItem,
+                returnPolicyDuringSupplies,
+            );
         else
-            this.farmSingleSupply(item, quant, ultraAlteon, hydraChallenge, keepVoucher, assistantDuring, returnItem, returnPolicyDuringSupplies, voucherItemDuring);
+            this.farmSingleSupply(
+                item,
+                quant,
+                ultraAlteon,
+                hydraChallenge,
+                keepVoucher,
+                assistantDuring,
+                returnItem,
+                returnPolicyDuringSupplies,
+                voucherItemDuring,
+            );
 
         Core.cancelRegisteredQuests();
     }
@@ -580,13 +651,22 @@ export class CoreNation {
             if (!rewardItem) continue;
 
             if (!ultraAlteon && !hydraChallenge && (Core.checkInventory(this.cragName) || this.hasOBoNPet)) {
-                this.bambloozevsDrudgen(rewardItem.name, rewardItem.maxStack, { keepVoucher, assistantDuring, returnItem, camefromSupplies: true });
+                this.bambloozevsDrudgen(rewardItem.name, rewardItem.maxStack, {
+                    keepVoucher,
+                    assistantDuring,
+                    returnItem,
+                    camefromSupplies: true,
+                });
                 continue;
             }
 
             while (!bot.shouldExit && !Core.checkInventory(rewardItem.id, rewardItem.maxStack)) {
                 if (hydraChallenge) this.killHydra();
-                else if (ultraAlteon) Core.killMonster("ultraalteon", "r10", "Left", "Ultra Chaos Alteon", "Relic of Chaos", 1, { isTemp: false, log: false });
+                else if (ultraAlteon)
+                    Core.killMonster("ultraalteon", "r10", "Left", "Ultra Chaos Alteon", "Relic of Chaos", 1, {
+                        isTemp: false,
+                        log: false,
+                    });
                 else Core.killEscherion("Relic of Chaos", 1, { log: false, fromSupplies: true });
 
                 this.sellVoucherOfNulgath(this.sellMemVoucher, null);
@@ -639,7 +719,8 @@ export class CoreNation {
 
         while (!bot.shouldExit && !Core.checkInventory(item, quant)) {
             if (hydraChallenge) this.killHydra();
-            else if (ultraAlteon) Core.killMonster("ultraalteon", "r10", "Left", "*", null, 1, { isTemp: false, log: false });
+            else if (ultraAlteon)
+                Core.killMonster("ultraalteon", "r10", "Left", "*", null, 1, { isTemp: false, log: false });
             else Core.killEscherion(null, 1, { log: false, fromSupplies: true });
 
             this.sellVoucherOfNulgath(this.sellMemVoucher, item);
@@ -656,7 +737,8 @@ export class CoreNation {
      * Diamonds, so it kept spending vouchers on Gems that were already maxed.
      */
     private handleVoucherConversions(item: string): void {
-        if (!Core.checkInventory("Voucher of Nulgath (non-mem)") || !Core.checkInventory("Essence of Nulgath", 60)) return;
+        if (!Core.checkInventory("Voucher of Nulgath (non-mem)") || !Core.checkInventory("Essence of Nulgath", 60))
+            return;
 
         const diamondsMaxed = Core.checkInventory("Diamond of Nulgath", 1000);
         const gemsMaxed = Core.checkInventory("Gem of Nulgath", 1000);
@@ -786,7 +868,12 @@ export class CoreNation {
      * @param farmGold Farm 1M gold before each turn-in.
      * @param reward Swindles Return Policy reward to pick when it runs during the farm.
      */
-    theAssistant(item: string | null = null, quant = 1000, farmGold = true, reward: SwindlesReturnReward = SwindlesReturnReward.None): void {
+    theAssistant(
+        item: string | null = null,
+        quant = 1000,
+        farmGold = true,
+        reward: SwindlesReturnReward = SwindlesReturnReward.None,
+    ): void {
         if (item !== null && Core.checkInventory(item, quant)) return;
 
         // C# retries each load forever (goto Retry...); Core.ensureLoad adds the rewards' max stacks.
@@ -819,7 +906,11 @@ export class CoreNation {
 
         // Check if return policy is active
         this.returnPolicyDuringSupplies = Core.cboBool("Nation_ReturnPolicyDuringSupplies") === true;
-        Core.logger(this.returnPolicyDuringSupplies ? "Return Policy During Supplies: true" : "Return Policy During Supplies: false");
+        Core.logger(
+            this.returnPolicyDuringSupplies
+                ? "Return Policy During Supplies: true"
+                : "Return Policy During Supplies: false",
+        );
 
         if (this.returnPolicyDuringSupplies) {
             Core.addDrop(this.uni(1), this.uni(6), this.uni(9), this.uni(16), this.uni(20));
@@ -828,13 +919,16 @@ export class CoreNation {
 
         // C# passes the enum's name without "_" ("TaintedGem", "None"), which matches no reward, so
         // its return policy never runs here. Turu passes the reward's name, or null (any) for None.
-        const rewardName = reward === SwindlesReturnReward.None ? null : SwindlesReturnReward[reward].replace(/_/g, " ");
+        const rewardName =
+            reward === SwindlesReturnReward.None ? null : SwindlesReturnReward[reward].replace(/_/g, " ");
 
         // Register the "Swindles Return Policy" quest if specified
-        if (this.returnPolicyDuringSupplies && reward !== SwindlesReturnReward.None) this.doSwindlesReturnArea(this.returnPolicyDuringSupplies, rewardName);
+        if (this.returnPolicyDuringSupplies && reward !== SwindlesReturnReward.None)
+            this.doSwindlesReturnArea(this.returnPolicyDuringSupplies, rewardName);
 
         const voucherItem = (): void => {
-            if (!Core.checkInventory("Voucher of Nulgath (non-mem)") || !Core.checkInventory("Essence of Nulgath", 60)) return;
+            if (!Core.checkInventory("Voucher of Nulgath (non-mem)") || !Core.checkInventory("Essence of Nulgath", 60))
+                return;
             const diamondsMaxed = Core.checkInventory("Diamond of Nulgath", 1000);
             // C# checks the Diamonds here; 6136 is Gem of Nulgath (see handleVoucherConversions).
             const gemsMaxed = Core.checkInventory("Gem of Nulgath", 1000);
@@ -844,7 +938,8 @@ export class CoreNation {
                 if (diamondsMaxed && !totemsMaxed) Core.ensureCompleteMulti(4778, -1, 5357); // Totems
             } else if (item?.toLowerCase() === "totem of nulgath") {
                 if (totemsMaxed && !gemsMaxed) Core.ensureCompleteMulti(4778, -1, 6136); // Gems
-            } else if (!totemsMaxed) Core.ensureCompleteMulti(4778, -1, 5357); // Prioritize Totems
+            } else if (!totemsMaxed)
+                Core.ensureCompleteMulti(4778, -1, 5357); // Prioritize Totems
             else if (!gemsMaxed) Core.ensureCompleteMulti(4778, -1, 6136); // Then Gems
         };
 
@@ -937,7 +1032,9 @@ export class CoreNation {
         const sellMemVoucher = !keepVoucher && Core.cboBool("Nation_SellMemVoucher") === true;
 
         if (!camefromSupplies)
-            Core.logger(`Bamblooze mode → Item: ${item ?? "All"} | Keep:${keepVoucher ? "True" : "False"} Assist:${assistantDuring ? "True" : "False"}`);
+            Core.logger(
+                `Bamblooze mode → Item: ${item ?? "All"} | Keep:${keepVoucher ? "True" : "False"} Assist:${assistantDuring ? "True" : "False"}`,
+            );
 
         this.sellVoucherOfNulgath(sellMemVoucher, item);
 
@@ -991,11 +1088,18 @@ export class CoreNation {
                 }
 
                 Core.pause(500);
-                if (returnPolicyDuringSupplies && (item === "Diamond of Nulgath" || item === null) && !Core.checkInventory("Diamond of Nulgath", 1000))
+                if (
+                    returnPolicyDuringSupplies &&
+                    (item === "Diamond of Nulgath" || item === null) &&
+                    !Core.checkInventory("Diamond of Nulgath", 1000)
+                )
                     this.cragsThirst();
 
                 Core.pause(500);
-                if (Core.checkInventory("Voucher of Nulgath (non-mem)") && Core.checkInventory("Essence of Nulgath", 60)) {
+                if (
+                    Core.checkInventory("Voucher of Nulgath (non-mem)") &&
+                    Core.checkInventory("Essence of Nulgath", 60)
+                ) {
                     const diamondsMaxed = Core.checkInventory("Diamond of Nulgath", 1000);
                     // C# checks the Diamonds here; 6136 is Gem of Nulgath (see handleVoucherConversions).
                     const gemsMaxed = Core.checkInventory("Gem of Nulgath", 1000);
@@ -1007,7 +1111,8 @@ export class CoreNation {
                         if (totemsMaxed && !gemsMaxed) Core.ensureCompleteMulti(4778, -1, 6136); // Gems
                     } else {
                         // item == null or any other item
-                        if (!totemsMaxed) Core.ensureCompleteMulti(4778, -1, 5357); // Prioritize Totems
+                        if (!totemsMaxed)
+                            Core.ensureCompleteMulti(4778, -1, 5357); // Prioritize Totems
                         else if (!gemsMaxed) Core.ensureCompleteMulti(4778, -1, 6136); // Then Gems
                     }
                 }
@@ -1022,7 +1127,11 @@ export class CoreNation {
      * @param item The item to obtain (null: max every reward).
      */
     voidKnightSwordQuest(item: string | null = null, quant = 1): void {
-        if ((item !== null && Core.checkInventory(item, quant)) || !Core.checkInventory([38275, 38254], 1, { any: true })) return;
+        if (
+            (item !== null && Core.checkInventory(item, quant)) ||
+            !Core.checkInventory([38275, 38254], 1, { any: true })
+        )
+            return;
 
         Core.addDrop(...this.bagDrops);
         if (item !== null) Core.addDrop(item);
@@ -1073,15 +1182,25 @@ export class CoreNation {
      * Diamonds first if needed.
      */
     diamondExchange(farmDiamond = true): void {
-        if ((!Core.checkInventory("Diamond of Nulgath", 15) && !farmDiamond) || !Core.checkInventory(this.cragName) || Core.checkInventory(this.uni(13), 13))
+        if (
+            (!Core.checkInventory("Diamond of Nulgath", 15) && !farmDiamond) ||
+            !Core.checkInventory(this.cragName) ||
+            Core.checkInventory(this.uni(13), 13)
+        )
             return;
 
         Core.addDrop("Diamond of Nulgath");
 
-        if (farmDiamond) if (this.hasOBoNPet || Core.checkInventory(this.cragName)) this.bambloozevsDrudgen("Diamond of Nulgath", 15);
+        if (farmDiamond)
+            if (this.hasOBoNPet || Core.checkInventory(this.cragName))
+                this.bambloozevsDrudgen("Diamond of Nulgath", 15);
 
         Core.equipClass(ClassType.Farm);
-        while (!bot.shouldExit && Core.checkInventory("Diamond of Nulgath", 15) && !Core.checkInventory(this.uni(13), 13)) {
+        while (
+            !bot.shouldExit &&
+            Core.checkInventory("Diamond of Nulgath", 15) &&
+            !Core.checkInventory(this.uni(13), 13)
+        ) {
             Core.resetQuest(869);
             Core.darkMakaiItem("Dark Makai Sigil");
             Core.ensureCompleteMulti(869);
@@ -1096,7 +1215,8 @@ export class CoreNation {
     contractExchange(rewardEnum: ContractExchangeRewards, quant: number, farmUni13 = true): void {
         const reward = ContractExchangeRewards[rewardEnum].replace(/_/g, " ");
         if ((!Core.checkInventory(this.uni(13)) && !farmUni13) || !Core.checkInventory("Drudgen the Assistant")) {
-            if (!Core.checkInventory(this.uni(13)) && !farmUni13) Core.logger(`${farmUni13 ? "True" : "False"} is probably set to false, please have a dev change it`);
+            if (!Core.checkInventory(this.uni(13)) && !farmUni13)
+                Core.logger(`${farmUni13 ? "True" : "False"} is probably set to false, please have a dev change it`);
             if (!Core.checkInventory("Drudgen the Assistant")) Core.logger('Missing "Drudgen the Assistant"');
             return;
         }
@@ -1113,7 +1233,13 @@ export class CoreNation {
         }
     }
 
-    private static readonly sroeValidSet = new Set(["Blood Gem of the Archfiend", "Dark Crystal Shard", "Gem of Nulgath", "Tainted Gem", "Totem of Nulgath"]);
+    private static readonly sroeValidSet = new Set([
+        "Blood Gem of the Archfiend",
+        "Dark Crystal Shard",
+        "Gem of Nulgath",
+        "Tainted Gem",
+        "Totem of Nulgath",
+    ]);
 
     /**
      * Does Swindle's Dirt-y Deeds Done Dirt Cheap quest (7818) for Unidentified 10. Only use if
@@ -1135,7 +1261,9 @@ export class CoreNation {
 
         Core.equipClass(ClassType.Solo);
         Core.killEscherion("Emerald Pickaxe");
-        Core.killMonster("legioncrypt", "r1", "Top", "Gravedigger", "Seraphic Grave Digger Spade", 1, { isTemp: false });
+        Core.killMonster("legioncrypt", "r1", "Top", "Gravedigger", "Seraphic Grave Digger Spade", 1, {
+            isTemp: false,
+        });
 
         let itemsToBuy: CoreShopItem[] | null = null;
         if (sroe) {
@@ -1144,7 +1272,10 @@ export class CoreNation {
             const selectedSet = !buyAll && sroeItems && sroeItems.length > 0 ? new Set(sroeItems) : null;
 
             const build = shopItems.filter(
-                (item) => item && CoreNation.sroeValidSet.has(item.name) && (buyAll || (selectedSet !== null && selectedSet.has(item.name))),
+                (item) =>
+                    item &&
+                    CoreNation.sroeValidSet.has(item.name) &&
+                    (buyAll || (selectedSet !== null && selectedSet.has(item.name))),
             );
             if (build.length > 0) itemsToBuy = build;
         }
@@ -1152,9 +1283,14 @@ export class CoreNation {
         while (!bot.shouldExit && !Core.checkInventory("Unidentified 10", quant)) {
             Core.ensureAccept(7818);
 
-            Core.huntMonster("towerofdoom10", "Slugbutter", "Slugbutter Digging Advice", 1, { publicRoom: true, log: false });
+            Core.huntMonster("towerofdoom10", "Slugbutter", "Slugbutter Digging Advice", 1, {
+                publicRoom: true,
+                log: false,
+            });
             Core.huntMonster("crownsreach", "Chaos Tunneler", "Chaotic Tunneling Techniques", 2, { log: false });
-            Core.huntMonster("downward", "Crystal Mana Construct", "Crystalized Corporate Digging Secrets", 3, { log: false });
+            Core.huntMonster("downward", "Crystal Mana Construct", "Crystalized Corporate Digging Secrets", 3, {
+                log: false,
+            });
 
             Core.ensureComplete(7818);
             Core.farmingLogger("Unidentified 10", quant);
@@ -1193,7 +1329,8 @@ export class CoreNation {
         Core.addDrop(this.uni(13));
         quant = quant > 13 ? 13 : quant;
 
-        if (Core.checkInventory(this.cragName)) while (!bot.shouldExit && !Core.checkInventory(this.uni(13), quant)) this.diamondExchange();
+        if (Core.checkInventory(this.cragName))
+            while (!bot.shouldExit && !Core.checkInventory(this.uni(13), quant)) this.diamondExchange();
         this.newWorldsNewOpportunities(this.uni(13), quant); // 1minute turning = 1x guaranteed
         this.voidKnightSwordQuest(this.uni(13), quant);
         this.supplies(this.uni(13), quant);
@@ -1221,7 +1358,8 @@ export class CoreNation {
         Core.addDrop("Dark Crystal Shard");
         this.farmContractExchage("Dark Crystal Shard", quant);
         this.newWorldsNewOpportunities("Dark Crystal Shard", quant); // 1minute turning = 1x guaranteed
-        if (Core.checkInventory(this.cragName)) this.supplies("Dark Crystal Shard", quant, { returnItem: "Dark Crystal Shard" }); // 10% chance
+        if (Core.checkInventory(this.cragName))
+            this.supplies("Dark Crystal Shard", quant, { returnItem: "Dark Crystal Shard" }); // 10% chance
         this.voidKnightSwordQuest("Dark Crystal Shard", quant);
         this.supplies("Dark Crystal Shard", quant, { returnItem: "Dark Crystal Shard" }); // 10% chance
         this.essenceofDefeatReagent(quant);
@@ -1245,7 +1383,8 @@ export class CoreNation {
         )
             this.cragsThirst(quant);
 
-        if (Core.checkInventory(this.cragName)) this.supplies("Diamond of Nulgath", quant, { returnItem: "Diamond of Nulgath" });
+        if (Core.checkInventory(this.cragName))
+            this.supplies("Diamond of Nulgath", quant, { returnItem: "Diamond of Nulgath" });
 
         this.voidKnightSwordQuest("Diamond of Nulgath", quant);
         this.supplies("Diamond of Nulgath", quant, { returnItem: "Diamond of Nulgath" });
@@ -1260,7 +1399,8 @@ export class CoreNation {
 
         Core.addDrop("Gem of Nulgath");
         this.farmContractExchage("Gem of Nulgath", quant);
-        if (Core.checkInventory(this.cragName)) this.supplies("Gem of Nulgath", quant, { returnItem: "Gem of Nulgath" });
+        if (Core.checkInventory(this.cragName))
+            this.supplies("Gem of Nulgath", quant, { returnItem: "Gem of Nulgath" });
         this.voidKnightSwordQuest("Gem of Nulgath", quant);
         this.supplies("Gem of Nulgath", quant, { returnItem: "Gem of Nulgath" });
     }
@@ -1297,7 +1437,13 @@ export class CoreNation {
         if (Core.isCompletedBefore(169)) return;
 
         const questIds = [165, 166, 167, 168, 169];
-        const questMonsterNames = ["Water Draconian", "Bronze Draconian", "Golden Draconian", "Red Dragon", "Water Draconian"];
+        const questMonsterNames = [
+            "Water Draconian",
+            "Bronze Draconian",
+            "Golden Draconian",
+            "Red Dragon",
+            "Water Draconian",
+        ];
         const questClasses = [ClassType.Farm, ClassType.Farm, ClassType.Farm, ClassType.Solo, ClassType.Farm];
 
         for (let i = 0; i < questIds.length; i++) {
@@ -1337,7 +1483,9 @@ export class CoreNation {
         if (Core.checkInventory("Totem of Nulgath", quant)) return;
 
         if (Core.isMember && !Core.checkInventory("Purified Claymore of Destiny")) {
-            Core.logger(`Player is a member, we'll use the better farming method for the "Taro's Manslayer", first we need to get some prereqs.`);
+            Core.logger(
+                `Player is a member, we'll use the better farming method for the "Taro's Manslayer", first we need to get some prereqs.`,
+            );
             CoreNation.farm.goodREP();
             this.getPCoD();
         }
@@ -1448,11 +1596,20 @@ export class CoreNation {
 
     /** Crag's Thirst (quest 600): turns 100 Unidentified 10 into Diamonds of Nulgath. */
     cragsThirst(quant = 1000): void {
-        if (!Core.checkInventory(this.cragName) || Core.checkInventory("Diamond of Nulgath", quant) || !Core.checkInventory(this.uni(10), 100)) return;
+        if (
+            !Core.checkInventory(this.cragName) ||
+            Core.checkInventory("Diamond of Nulgath", quant) ||
+            !Core.checkInventory(this.uni(10), 100)
+        )
+            return;
 
         bot.log("Doing crags thirst");
 
-        while (!bot.shouldExit && Core.checkInventory(this.uni(10), 100) && !Core.checkInventory("Diamond of Nulgath", quant)) {
+        while (
+            !bot.shouldExit &&
+            Core.checkInventory(this.uni(10), 100) &&
+            !Core.checkInventory("Diamond of Nulgath", quant)
+        ) {
             Core.resetQuest(600);
             Core.ensureAccept(600);
             Core.darkMakaiItem("Dark Makai Rune");
@@ -1467,9 +1624,19 @@ export class CoreNation {
      * @param quant Desired quantity, 100 = max stack.
      */
     kisstheVoid(quant = 100, betrayalBlade: string | null = null, keepVoucher = false): void {
-        if (betrayalBlade === null ? Core.checkInventory("Blood Gem of the Archfiend", quant) : Core.checkInventory(betrayalBlade)) return;
+        if (
+            betrayalBlade === null
+                ? Core.checkInventory("Blood Gem of the Archfiend", quant)
+                : Core.checkInventory(betrayalBlade)
+        )
+            return;
 
-        Core.addDrop(betrayalBlade ?? "Tendurrr The Assistant", "Fragment of Chaos", "Blood Gem of the Archfiend", "Broken Betrayal Blade");
+        Core.addDrop(
+            betrayalBlade ?? "Tendurrr The Assistant",
+            "Fragment of Chaos",
+            "Blood Gem of the Archfiend",
+            "Broken Betrayal Blade",
+        );
         Core.equipClass(ClassType.Farm);
 
         if (betrayalBlade === null) Core.farmingLogger("Blood Gem of the Archfiend", quant);
@@ -1481,31 +1648,41 @@ export class CoreNation {
         const returnPolicyDuringSupplies = Core.cboBool("Nation_ReturnPolicyDuringSupplies") === true;
 
         Core.logger(
-            `Do Return Policy?: ${returnPolicyDuringSupplies ? "True" : "False"}\n` + `Sell Voucher of Nulgath: ${this.sellMemVoucher ? "True" : "False"}`,
+            `Do Return Policy?: ${returnPolicyDuringSupplies ? "True" : "False"}\n` +
+                `Sell Voucher of Nulgath: ${this.sellMemVoucher ? "True" : "False"}`,
         );
 
         Core.addDrop(
             ...this.suppliesRewards,
             ...(this.sellMemVoucher ? ["Voucher of Nulgath"] : []),
             "Relic of Chaos",
-            ...(returnPolicyDuringSupplies ? [this.uni(1), this.uni(6), this.uni(9), this.uni(16), this.uni(20), "Receipt of Swindle"] : []),
+            ...(returnPolicyDuringSupplies
+                ? [this.uni(1), this.uni(6), this.uni(9), this.uni(16), this.uni(20), "Receipt of Swindle"]
+                : []),
         );
 
         Core.registerQuests(2857);
 
         while (
             !bot.shouldExit &&
-            (betrayalBlade === null ? !Core.checkInventory("Blood Gem of the Archfiend", quant) : !Core.checkInventory(betrayalBlade))
+            (betrayalBlade === null
+                ? !Core.checkInventory("Blood Gem of the Archfiend", quant)
+                : !Core.checkInventory(betrayalBlade))
         ) {
             Core.ensureAccept(3743);
 
             if (!Core.checkInventory("Tendurrr The Assistant")) {
-                Core.killMonster("tercessuinotlim", "m2", "Left", "*", "Tendurrr The Assistant", 1, { isTemp: false, log: false });
+                Core.killMonster("tercessuinotlim", "m2", "Left", "*", "Tendurrr The Assistant", 1, {
+                    isTemp: false,
+                    log: false,
+                });
                 Core.jumpWait();
             }
 
             Core.killMonster("blindingsnow", "r17", "Left", "*", "Fragment of Chaos", 80, { isTemp: false });
-            Core.killMonster("evilwarnul", "r13", "Left", "Legion Fenrir", "Broken Betrayal Blade", 8, { isTemp: false });
+            Core.killMonster("evilwarnul", "r13", "Left", "Legion Fenrir", "Broken Betrayal Blade", 8, {
+                isTemp: false,
+            });
             Core.ensureComplete(3743);
             bot.wait.forQuestComplete(3743);
 
@@ -1517,7 +1694,8 @@ export class CoreNation {
             this.sellVoucherOfNulgath(!keepVoucher && this.sellMemVoucher, itemToPickup);
 
             // if `Blood Gem of the Archfiend` isnt max stack, do the quest if enabled.
-            if (!Core.checkInventory("Blood Gem of the Archfiend", 100)) this.doSwindlesReturnArea(returnPolicyDuringSupplies, "Blood Gem of the Archfiend");
+            if (!Core.checkInventory("Blood Gem of the Archfiend", 100))
+                this.doSwindlesReturnArea(returnPolicyDuringSupplies, "Blood Gem of the Archfiend");
             // C# checks the Diamonds here; 6136 is Gem of Nulgath (see handleVoucherConversions).
             if (
                 Core.checkInventory("Voucher of Nulgath (non-mem)") &&
@@ -1606,8 +1784,18 @@ export class CoreNation {
             const unluckyExplorerCount = Core.isMember ? 8 : 10;
             const spacetimeAnomalyCount = Core.isMember ? 5 : 7;
 
-            Core.killMonster("crashruins", "r2", "Left", "Unlucky Explorer", "Ancient Treasure", unluckyExplorerCount, { log: false });
-            Core.killMonster("crashruins", "r2", "Left", "Spacetime Anomaly", "Pieces of Future Tech", spacetimeAnomalyCount, { log: false });
+            Core.killMonster("crashruins", "r2", "Left", "Unlucky Explorer", "Ancient Treasure", unluckyExplorerCount, {
+                log: false,
+            });
+            Core.killMonster(
+                "crashruins",
+                "r2",
+                "Left",
+                "Spacetime Anomaly",
+                "Pieces of Future Tech",
+                spacetimeAnomalyCount,
+                { log: false },
+            );
             Core.huntMonster("crashruins", "Cluckmoo Idol", "Idol Heart", 1, { log: false });
         }
 
@@ -1661,7 +1849,13 @@ export class CoreNation {
             }
         }
 
-        Core.addDrop("Gem of Nulgath", "Bloodstone of Nulgath", "Quartz of Nulgath", "Tanzanite of Nulgath", "Unidentified Gemstone of Nulgath");
+        Core.addDrop(
+            "Gem of Nulgath",
+            "Bloodstone of Nulgath",
+            "Quartz of Nulgath",
+            "Tanzanite of Nulgath",
+            "Unidentified Gemstone of Nulgath",
+        );
 
         while (
             !bot.shouldExit &&
@@ -1713,7 +1907,11 @@ export class CoreNation {
      *   (non-mem). `keepVoucher`: don't sell the voucher.
      */
     farmVoucher({ member, keepVoucher = false }: { member: boolean; keepVoucher?: boolean }): void {
-        if ((Core.checkInventory("Voucher of Nulgath (non-mem)") && !member) || (Core.checkInventory("Voucher of Nulgath") && member)) return;
+        if (
+            (Core.checkInventory("Voucher of Nulgath (non-mem)") && !member) ||
+            (Core.checkInventory("Voucher of Nulgath") && member)
+        )
+            return;
 
         const voucher = member ? "Voucher of Nulgath" : "Voucher of Nulgath (non-mem)";
         Core.addDrop(voucher);

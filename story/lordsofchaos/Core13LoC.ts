@@ -16,7 +16,6 @@ const Adv = new CoreAdvanced();
 
 export class Core13LoC {
     complete13LOC(withExtras = false): void {
-
         this.prologue();
         this.escherion();
         this.vath();
@@ -38,8 +37,7 @@ export class Core13LoC {
     }
 
     prologue(): void {
-        if (Core.isCompletedBefore(6219))
-            return;
+        if (Core.isCompletedBefore(6219)) return;
 
         Story.preLoad(this.prologue);
 
@@ -70,8 +68,7 @@ export class Core13LoC {
             Core.join("castleundead", "King2", "Center");
             Core.join("Shadowfall");
             Core.sendPackets("%xt%zm%updateQuest%73922%43%1%");
-            bot.send.packet(
-                `%xt%zm%updateQuest%188220%41%${(Core.heroAlignment > 1 ? 1 : Core.heroAlignment)}%`);
+            bot.send.packet(`%xt%zm%updateQuest%188220%41%${Core.heroAlignment > 1 ? 1 : Core.heroAlignment}%`);
             Core.sleep(2000);
             Core.join("shadowfall");
             Core.sleep(2000);
@@ -107,8 +104,7 @@ export class Core13LoC {
     }
 
     escherion(): void {
-        if (Core.isCompletedBefore(272))
-            return;
+        if (Core.isCompletedBefore(272)) return;
 
         Story.preLoad(this.escherion);
 
@@ -189,7 +185,7 @@ export class Core13LoC {
         Story.killQuest(270, "relativity", "Head Gargoyle");
 
         //The Lake Hydra
-        Story.mapItemQuest(271, "hydra", [ 50, 51, 52 ]);
+        Story.mapItemQuest(271, "hydra", [50, 51, 52]);
 
         //Escherion
         if (!Story.questProgression(272)) {
@@ -200,8 +196,7 @@ export class Core13LoC {
     }
 
     vath(): void {
-        if (Core.isCompletedBefore(363))
-            return;
+        if (Core.isCompletedBefore(363)) return;
 
         Story.preLoad(this.vath);
 
@@ -371,8 +366,7 @@ export class Core13LoC {
     }
 
     kitsune(): void {
-        if (Core.isCompletedBefore(488))
-            return;
+        if (Core.isCompletedBefore(488)) return;
 
         Story.preLoad(this.kitsune);
 
@@ -499,8 +493,7 @@ export class Core13LoC {
     }
 
     wolfwing(): void {
-        if (Core.isCompletedBefore(597) || Core.isCompletedBefore(598))
-            return;
+        if (Core.isCompletedBefore(597) || Core.isCompletedBefore(598)) return;
 
         Story.preLoad(this.wolfwing);
 
@@ -628,15 +621,13 @@ export class Core13LoC {
 
         //Wolfwing
         if (!Story.questProgression(597)) {
-            if (Core.heroAlignment !== 1)
-                Core.changeAlignment(Alignment.Good);
+            if (Core.heroAlignment !== 1) Core.changeAlignment(Alignment.Good);
             Story.chainQuest(597);
         }
     }
 
     kimberly(): void {
-        if (Core.isCompletedBefore(710))
-            return;
+        if (Core.isCompletedBefore(710)) return;
 
         Story.preLoad(this.kimberly);
 
@@ -729,8 +720,7 @@ export class Core13LoC {
     }
 
     ledgermayne(): void {
-        if (Core.isCompletedBefore(847))
-            return;
+        if (Core.isCompletedBefore(847)) return;
 
         Story.preLoad(this.ledgermayne);
 
@@ -891,8 +881,7 @@ export class Core13LoC {
     }
 
     private killLedgermayne(): void {
-        if (Story.questProgression(847) || !Core.ensureAccept(847))
-            return;
+        if (Story.questProgression(847) || !Core.ensureAccept(847)) return;
 
         bot.events.off("extensionPacket", this.ledgermayneZoneListener);
         bot.events.on("extensionPacket", this.ledgermayneZoneListener);
@@ -908,38 +897,33 @@ export class Core13LoC {
 
     // C#: an `async void` handler; arrow function so on/off get the same listener.
     private readonly ledgermayneZoneListener = (packet: any): void => {
-        if (bot.shouldExit
-            || bot.player?.alive !== true
-            || bot.map?.name?.toLowerCase() !== "ledgermayne"
-            || packet?.["params"]?.type?.toString() !== "json")
+        if (
+            bot.shouldExit ||
+            bot.player?.alive !== true ||
+            bot.map?.name?.toLowerCase() !== "ledgermayne" ||
+            packet?.["params"]?.type?.toString() !== "json"
+        )
             return;
 
         const data = packet["params"].dataObj;
-        if (data?.cmd?.toString() !== "event")
-            return;
+        if (data?.cmd?.toString() !== "event") return;
 
         const zoneSet = data?.args?.zoneSet?.toString();
-        if (zoneSet == null)
-            return;
+        if (zoneSet == null) return;
 
         let x: number;
         let y: number;
 
-        if (zoneSet.toLowerCase() === "a")
-            [x, y] = [292, 355];
-        else if (zoneSet.toLowerCase() === "b")
-            [x, y] = [750, 350];
-        else if (zoneSet.length === 0)
-            [x, y] = [592, 250];
-        else
-            return;
+        if (zoneSet.toLowerCase() === "a") [x, y] = [292, 355];
+        else if (zoneSet.toLowerCase() === "b") [x, y] = [750, 350];
+        else if (zoneSet.length === 0) [x, y] = [592, 250];
+        else return;
 
         bot.player.walkTo(x, y, 9);
     };
 
     tibicenas(): void {
-        if (Core.isCompletedBefore(1005))
-            return;
+        if (Core.isCompletedBefore(1005)) return;
 
         Story.preLoad(this.tibicenas);
 
@@ -1070,8 +1054,7 @@ export class Core13LoC {
     }
 
     khasaandaHorc(): void {
-        if (Core.isCompletedBefore(1473))
-            return;
+        if (Core.isCompletedBefore(1473)) return;
 
         Story.preLoad(this.khasaandaHorc);
 
@@ -1139,7 +1122,7 @@ export class Core13LoC {
 
         //Has the Land Been Tainted?
         Story.mapItemQuest(1281, "ravinetemple", 554, 5);
-        Story.mapItemQuest(1281, "ravinetemple", [ 555, 556 ], 10);
+        Story.mapItemQuest(1281, "ravinetemple", [555, 556], 10);
 
         //Tears of the Mountain
         Story.killQuest(1282, "ravinetemple", "Temple Guardian");
@@ -1156,7 +1139,7 @@ export class Core13LoC {
         Story.killQuest(1284, "ravinetemple", "Temple Guardian");
 
         //Scout and Return
-        Story.mapItemQuest(1375, "alliance", [ 679, 680 ]);
+        Story.mapItemQuest(1375, "alliance", [679, 680]);
 
         //Good and Evil Not Always Right
         if (!Story.questProgression(1376)) {
@@ -1226,7 +1209,7 @@ export class Core13LoC {
         Story.killQuest(1460, "orecavern", "Naga Baas");
 
         //Know the Nexus
-        Story.mapItemQuest(1469, "dreamnexus", [ 734, 735, 736, 737 ]);
+        Story.mapItemQuest(1469, "dreamnexus", [734, 735, 736, 737]);
 
         //Secure a Route Home
         if (!Story.questProgression(1470)) {
@@ -1256,15 +1239,16 @@ export class Core13LoC {
         if (!Story.questProgression(1473)) {
             Core.equipClass(ClassType.Solo);
             Core.ensureAccept(1473);
-            Core.killMonster("dreamnexus", "r17a", "Up", "Khasaanda", "Khasaanda Defeated!", undefined, { publicRoom: false });
+            Core.killMonster("dreamnexus", "r17a", "Up", "Khasaanda", "Khasaanda Defeated!", undefined, {
+                publicRoom: false,
+            });
             Core.ensureComplete(1473);
             bot.wait.forQuestComplete(1473);
         }
     }
 
     khasaandaTroll(): void {
-        if (Core.isCompletedBefore(1468))
-            return;
+        if (Core.isCompletedBefore(1468)) return;
 
         Story.preLoad(this.khasaandaTroll);
 
@@ -1303,8 +1287,7 @@ export class Core13LoC {
         }
 
         //She Who asks 1
-        if (!Story.questProgression(1230))
-            Story.chainQuest(1230);
+        if (!Story.questProgression(1230)) Story.chainQuest(1230);
 
         //The Troll Inside
         if (!Story.questProgression(1231)) {
@@ -1335,7 +1318,7 @@ export class Core13LoC {
 
         //Evidence of Chaos
         Story.mapItemQuest(1275, "ravinetemple", 554, 5);
-        Story.mapItemQuest(1275, "ravinetemple", [ 555, 556 ], 10);
+        Story.mapItemQuest(1275, "ravinetemple", [555, 556], 10);
 
         //Learn More of the Ore
         Story.killQuest(1276, "ravinetemple", "Temple Guardian");
@@ -1352,7 +1335,7 @@ export class Core13LoC {
         Story.killQuest(1278, "ravinetemple", "Temple Guardian");
 
         //The Headquartes of Good and Evil
-        Story.mapItemQuest(1369, "alliance", [ 679, 680 ]);
+        Story.mapItemQuest(1369, "alliance", [679, 680]);
 
         //Treat Nullification, Good and Bad
         if (!Story.questProgression(1370)) {
@@ -1420,7 +1403,7 @@ export class Core13LoC {
         Story.killQuest(1455, "orecavern", "Naga Baas");
 
         //Know the Nexus
-        Story.mapItemQuest(1464, "dreamnexus", [ 734, 735, 736, 737 ]);
+        Story.mapItemQuest(1464, "dreamnexus", [734, 735, 736, 737]);
 
         //Secure a Route Home
         if (!Story.questProgression(1465)) {
@@ -1449,13 +1432,12 @@ export class Core13LoC {
     }
 
     iadoa(): void {
-        if (Core.isCompletedBefore(2519))
-            return;
+        if (Core.isCompletedBefore(2519)) return;
 
         Story.preLoad(this.iadoa);
 
         //Time to Learn the Truth
-        Story.mapItemQuest(2239, "thespan", [ 1358, 1359, 1360, 1361, 1362, 1363 ]);
+        Story.mapItemQuest(2239, "thespan", [1358, 1359, 1360, 1361, 1362, 1363]);
 
         //Gain Access to Doors
         if (!Story.questProgression(2240)) {
@@ -1478,7 +1460,7 @@ export class Core13LoC {
         if (!Story.questProgression(2242)) {
             Core.ensureAccept(2242);
             Core.huntMonster("timelibrary", "Tog", "Elemental Orb Knowledge", 8);
-            Core.huntMonster("timelibrary", "Tog", "\"Draconic Prophecy\" Page", 6);
+            Core.huntMonster("timelibrary", "Tog", '"Draconic Prophecy" Page', 6);
             Story.mapItemQuest(2242, "timelibrary", 1366, 2);
         }
 
@@ -1528,7 +1510,7 @@ export class Core13LoC {
         }
 
         //Clock of the Long Now
-        Story.mapItemQuest(2257, "timevoid", [ 1440, 1441, 1442, 1443 ]);
+        Story.mapItemQuest(2257, "timevoid", [1440, 1441, 1442, 1443]);
 
         //Unending Avatar
         Story.killQuest(2258, "timevoid", "Unending Avatar", { autoCompleteQuest: false });
@@ -1546,7 +1528,13 @@ export class Core13LoC {
         //Bolster the Elements
         if (!Story.questProgression(2379)) {
             Core.ensureAccept(2379);
-            Core.getMapItems([ [1470, 3], [1471, 3] ], "aqlesson");
+            Core.getMapItems(
+                [
+                    [1470, 3],
+                    [1471, 3],
+                ],
+                "aqlesson",
+            );
             Core.huntMonster("aqlesson", "Eternite Ore", "TimeSpark Acquired", 3);
             Core.huntMonster("aqlesson", "Water Elemental", "Tears of Joy Acquired", 3);
             Core.ensureComplete(2379);
@@ -1555,7 +1543,13 @@ export class Core13LoC {
         //Maintain Elemental Strength
         if (!Story.questProgression(2380)) {
             Core.ensureAccept(2380);
-            Core.getMapItems([ [1473, 3], [1472, 3] ], "aqlesson");
+            Core.getMapItems(
+                [
+                    [1473, 3],
+                    [1472, 3],
+                ],
+                "aqlesson",
+            );
             Core.huntMonster("aqlesson", "Ice Elemental", "Frigid Liquid Acquired", 3);
             Core.huntMonster("aqlesson", "Fire Elemental", "Heart of Lava Acquired", 3);
             Core.ensureComplete(2380);
@@ -1694,8 +1688,7 @@ export class Core13LoC {
             Core.ensureAccept(2519);
             Core.equipClass(ClassType.Solo);
             if (!Core.checkInventory("Dragonoid of Hours")) {
-                Core.logger(
-                    "Getting \"Dragonoid of Hours\" from \"Dragonoid\" in \"mqlesson\" to make Iadoa easier.");
+                Core.logger('Getting "Dragonoid of Hours" from "Dragonoid" in "mqlesson" to make Iadoa easier.');
                 Core.huntMonster("mqlesson", "Dragonoid", "Dragonoid of Hours", undefined, { isTemp: false });
             }
             Core.huntMonster("timespace", "Chaos Lord Iadoa", "Iadoa Defeated");
@@ -1715,8 +1708,7 @@ export class Core13LoC {
     }
 
     lionfang(): void {
-        if (Core.isCompletedBefore(2814))
-            return;
+        if (Core.isCompletedBefore(2814)) return;
 
         Story.preLoad(this.lionfang);
 
@@ -1757,7 +1749,7 @@ export class Core13LoC {
         Story.mapItemQuest(2621, "blackhorn", 1619);
 
         //Lion Hunting
-        Story.mapItemQuest(2622, "onslaughttower", [ 1620, 1621, 1622, 1623 ]);
+        Story.mapItemQuest(2622, "onslaughttower", [1620, 1621, 1622, 1623]);
 
         //Secret Of The Death Fog
         Story.killQuest(2623, "onslaughttower", "Golden Caster");
@@ -1917,8 +1909,8 @@ export class Core13LoC {
         }
 
         //New Shoes
-        if (!Story.questProgression(2806)) //quest was fucky for no reason. hopefully a fix.
-        {
+        if (!Story.questProgression(2806)) {
+            //quest was fucky for no reason. hopefully a fix.
             Core.ensureAccept(2806);
             Core.killMonster("stormtemple", "r1", "Left", "*", "Lightning Boots");
             Core.ensureComplete(2806);
@@ -1950,8 +1942,7 @@ export class Core13LoC {
     }
 
     xiang(): void {
-        if (Core.isCompletedBefore(3189))
-            return;
+        if (Core.isCompletedBefore(3189)) return;
 
         Story.preLoad(this.xiang);
 
@@ -2036,7 +2027,13 @@ export class Core13LoC {
         //Nope, Still a Ghost
         if (!Story.questProgression(3167)) {
             Core.ensureAccept(3167);
-            Core.getMapItems([ [2178, 1], [2179, 1] ], "reddeath");
+            Core.getMapItems(
+                [
+                    [2178, 1],
+                    [2179, 1],
+                ],
+                "reddeath",
+            );
             Core.huntMonster("reddeath", "RedDeath Moglin", "Boneweed", 5);
             Core.ensureComplete(3167);
         }
@@ -2062,15 +2059,11 @@ export class Core13LoC {
         if (!Core.isCompletedBefore(3188)) {
             Core.ensureAccept(3187);
             Core.equipClass(ClassType.Farm);
-            Core.addDrop(
-                "Harpy Feather", 
-                "Perfect Prism", 
-                "Unchaorrupted Sample", 
-                "Shriekward Potion");
+            Core.addDrop("Harpy Feather", "Perfect Prism", "Unchaorrupted Sample", "Shriekward Potion");
 
             //Reflect the Damage
             Core.registerQuests(3184);
-            while ((!Core.checkInventory("Perfect Prism")))
+            while (!Core.checkInventory("Perfect Prism"))
                 Core.huntMonster("earthstorm", "Shard Spinner", "Reflective Fragment", 5);
             Core.cancelRegisteredQuests();
             bot.wait.forPickup("Perfect Prism");
@@ -2129,8 +2122,7 @@ export class Core13LoC {
     }
 
     alteon(): void {
-        if (Core.isCompletedBefore(3160))
-            return;
+        if (Core.isCompletedBefore(3160)) return;
 
         Story.preLoad(this.alteon);
 
@@ -2259,8 +2251,7 @@ export class Core13LoC {
     }
 
     hero(): void {
-        if (Core.isCompletedBefore(3799) && Core.isCompletedBefore(3881))
-            return;
+        if (Core.isCompletedBefore(3799) && Core.isCompletedBefore(3881)) return;
 
         Story.preLoad(this.hero);
 
@@ -2466,8 +2457,7 @@ export class Core13LoC {
         if (!Core.isCompletedBefore(3880)) {
             Core.ensureAccept(3880);
             Core.join("chaoslord");
-            if (bot.player.cell !== "r2")
-                Core.jump("r2", "Left");
+            if (bot.player.cell !== "r2") Core.jump("r2", "Left");
             Core.equipClass(ClassType.Solo);
             while (!bot.shouldExit) {
                 bot.combat.attack("*");
@@ -2489,8 +2479,7 @@ export class Core13LoC {
         if (!Core.isCompletedBefore(3881)) {
             Core.ensureAccept(3881);
             Core.join("finalshowdown");
-            if (bot.player.cell !== "r2")
-                Core.jump("r2", "Left");
+            if (bot.player.cell !== "r2") Core.jump("r2", "Left");
             while (!bot.shouldExit) {
                 bot.combat.attack("*");
                 Core.sleep();
@@ -2510,19 +2499,18 @@ export class Core13LoC {
     }
 
     private resetShadowAttack(): void {
-            Core.logger("Resetting shadowAttack Map");
-            Core.jumpWait();
-            Core.sleep(2500);
-            Core.join("whitemap-100000");
-            Core.sleep(2500);
-            bot.map.join(`shadowattack-` + Core.privateRoomNumber, undefined, undefined, undefined, false);
-            bot.wait.forMapLoad("shadowattack");
-            Core.sleep(2500);
+        Core.logger("Resetting shadowAttack Map");
+        Core.jumpWait();
+        Core.sleep(2500);
+        Core.join("whitemap-100000");
+        Core.sleep(2500);
+        bot.map.join(`shadowattack-` + Core.privateRoomNumber, undefined, undefined, undefined, false);
+        bot.wait.forMapLoad("shadowattack");
+        Core.sleep(2500);
     }
 
     extra(): void {
-        if (Core.isCompletedBefore(3824))
-            return;
+        if (Core.isCompletedBefore(3824)) return;
 
         Story.preLoad(this.extra);
 

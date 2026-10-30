@@ -13,11 +13,7 @@ import { CoreNation } from "../CoreNation";
 const Nation = new CoreNation();
 
 export class TheLeeryContract {
-    readonly rewards: string[] = [
-        "Ddog Sea Serpent Sword",
-        "Godly Golden Dragon Axe",
-        "Corpse Maker of Nulgath",
-    ];
+    readonly rewards: string[] = ["Ddog Sea Serpent Sword", "Godly Golden Dragon Axe", "Corpse Maker of Nulgath"];
 
     questItems(reward: RewardsSelection = RewardsSelection.All): void {
         if (!Core.isMember) {
@@ -25,7 +21,7 @@ export class TheLeeryContract {
             return;
         }
 
-        const RewardOptions = Core.ensureLoad(554).rewards.map(x => x.name);
+        const RewardOptions = Core.ensureLoad(554).rewards.map((x) => x.name);
         Core.addDrop(...RewardOptions);
         // C# reads the "RewardSelect" option here and ignores `reward`, so DirtlickersMerge's
         // Corpse Maker request did nothing from DoAll: fixed, main() passes the option instead.
@@ -33,13 +29,12 @@ export class TheLeeryContract {
 
         let item: RewardItem | null = null;
         if (!getAll) {
-            item = Core.ensureLoad(554).rewards.find(x => x.id === reward) ?? null;
+            item = Core.ensureLoad(554).rewards.find((x) => x.id === reward) ?? null;
             if (item == null) {
                 Core.logger(`${RewardsSelection[reward] ?? reward} not found in Quest Rewards`);
                 return;
             }
-            if (Core.checkInventory(item.name))
-                return;
+            if (Core.checkInventory(item.name)) return;
             Core.farmingLogger(item.name, 1);
         }
 
@@ -48,10 +43,8 @@ export class TheLeeryContract {
             Nation.farmUni13(1);
             Core.huntMonster("EvilWarNul", "Undead Legend", "Undead Legend Rune");
 
-            if (!getAll)
-                Core.ensureComplete(554, item!.id);
-            else
-                Core.ensureCompleteChoose(554);
+            if (!getAll) Core.ensureComplete(554, item!.id);
+            else Core.ensureCompleteChoose(554);
         }
     }
 }
@@ -63,10 +56,20 @@ export enum RewardsSelection {
     All = 9999,
 }
 
-export const scriptOptions = defineScriptOptions("The Leery Contract", [
-    Core.skipOptions,
-    option.choice("RewardSelect", "Choose Your Quest Reward", "Select Your Quest Reward for The Leary Contract.", choices(RewardsSelection), "Godly_Golden_Dragon_Axe"),
-], true);
+export const scriptOptions = defineScriptOptions(
+    "The Leery Contract",
+    [
+        Core.skipOptions,
+        option.choice(
+            "RewardSelect",
+            "Choose Your Quest Reward",
+            "Select Your Quest Reward for The Leary Contract.",
+            choices(RewardsSelection),
+            "Godly_Golden_Dragon_Axe",
+        ),
+    ],
+    true,
+);
 
 export default function main(): void {
     const script = new TheLeeryContract();

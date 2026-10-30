@@ -18,8 +18,7 @@ export class CoreLynaria {
     }
 
     bocklinGrove(): void {
-        if (Core.isCompletedBefore(10239))
-            return;
+        if (Core.isCompletedBefore(10239)) return;
 
         Story.preLoad(this.bocklinGrove);
 
@@ -55,7 +54,7 @@ export class CoreLynaria {
         }
 
         // 10233 | Sacred Grove
-        Story.mapItemQuest(10233, "bocklingrove", [ 14430, 14431 ]);
+        Story.mapItemQuest(10233, "bocklingrove", [14430, 14431]);
 
         // 10234 | Chained Prometheus
         if (!Story.questProgression(10234)) {
@@ -73,14 +72,18 @@ export class CoreLynaria {
         }
 
         // 10237 | Ruins in Moonlight
-        Story.mapItemQuest(10237, [ [14432, 1, "bocklingrove"], [14433, 5, "bocklingrove"] ]);
+        Story.mapItemQuest(10237, [
+            [14432, 1, "bocklingrove"],
+            [14433, 5, "bocklingrove"],
+        ]);
 
         // 10238 | Wandering Light
         if (!Story.questProgression(10238)) {
             Core.huntMonsterQuest(
-                10238, 
+                10238,
                 ["bocklingrove", UseableMonsters[5], ClassType.Farm],
-                ["bocklingrove", UseableMonsters[4], ClassType.Farm]);
+                ["bocklingrove", UseableMonsters[4], ClassType.Farm],
+            );
         }
 
         // 10239 | Death Plays the Fiddle
@@ -90,8 +93,7 @@ export class CoreLynaria {
     }
 
     bocklinCastle(): void {
-        if (Core.isCompletedBefore(10252))
-            return;
+        if (Core.isCompletedBefore(10252)) return;
 
         this.bocklinGrove();
         Story.preLoad(this.bocklinCastle);
@@ -123,14 +125,15 @@ export class CoreLynaria {
         }
 
         // 10245 | Hermit
-        Story.mapItemQuest(10245, "bocklincastle", [ 14451, 14447 ]);
+        Story.mapItemQuest(10245, "bocklincastle", [14451, 14447]);
 
         // 10246 | Ruins Near Kehl
         if (!Story.questProgression(10246)) {
             Core.huntMonsterQuest(
-                10246, 
+                10246,
                 ["bocklincastle", UseableMonsters[0], ClassType.Farm],
-                ["bocklincastle", UseableMonsters[1], ClassType.Farm]);
+                ["bocklincastle", UseableMonsters[1], ClassType.Farm],
+            );
         }
 
         // 10247 | Whistling Blackbird
@@ -160,9 +163,10 @@ export class CoreLynaria {
         // 10251 | Bacchanalia
         if (!Story.questProgression(10251)) {
             Core.huntMonsterQuest(
-                10251, 
+                10251,
                 ["bocklincastle", UseableMonsters[2], ClassType.Farm],
-                ["bocklincastle", UseableMonsters[4], ClassType.Farm]);
+                ["bocklincastle", UseableMonsters[4], ClassType.Farm],
+            );
         }
 
         // 10252 | Euterpe and Deer
@@ -183,8 +187,7 @@ export class CoreLynaria {
         ];
         //#endregion Useable Monsters
 
-        if (Core.isCompletedBefore(10265))
-            return;
+        if (Core.isCompletedBefore(10265)) return;
 
         this.bocklinCastle();
         Story.preLoad(this.bocklinSanctum);
@@ -207,9 +210,10 @@ export class CoreLynaria {
         // 10259 | Gilded Peace
         if (!Story.questProgression(10259)) {
             Core.huntMonsterQuest(
-                10259, 
+                10259,
                 ["bocklinsanctum", UseableMonsters[1], ClassType.Farm],
-                ["bocklinsanctum", UseableMonsters[0], ClassType.Farm]);
+                ["bocklinsanctum", UseableMonsters[0], ClassType.Farm],
+            );
         }
 
         // 10260 | Towards Reunion
@@ -241,15 +245,16 @@ export class CoreLynaria {
 
         // 10263 | The Light Protects You
         if (!Story.questProgression(10263)) {
-            Story.mapItemQuest(10263, "bocklinsanctum", [ 14481, 14482 ]);
+            Story.mapItemQuest(10263, "bocklinsanctum", [14481, 14482]);
         }
 
         // 10264 | Cure-All
         if (!Story.questProgression(10264)) {
             Core.huntMonsterQuest(
-                10264, 
+                10264,
                 ["bocklinsanctum", UseableMonsters[3], ClassType.Solo],
-                ["bocklinsanctum", UseableMonsters[4], ClassType.Solo]);
+                ["bocklinsanctum", UseableMonsters[4], ClassType.Solo],
+            );
         }
 
         // 10265 | The Thronekeeper

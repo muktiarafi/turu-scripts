@@ -12,8 +12,7 @@ const Egg = new HatchTheEgg();
 
 export class GetSDD {
     shadowDragonDefender(): void {
-        if (Core.checkInventory("Shadow Dragon Defender"))
-            return;
+        if (Core.checkInventory("Shadow Dragon Defender")) return;
 
         Egg.hatch();
 
@@ -23,9 +22,9 @@ export class GetSDD {
 }
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new GetSDD().shadowDragonDefender();
+    new GetSDD().shadowDragonDefender();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

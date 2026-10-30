@@ -47,13 +47,7 @@ export class CoreAOR {
     }
 
     terminaTemple(seaVoice = false, coldThunder = false): void {
-        if (
-            Core.isCompletedBefore(
-                coldThunder ? 9851
-                : seaVoice ? 9351
-                : 10438)
-        )
-            return;
+        if (Core.isCompletedBefore(coldThunder ? 9851 : seaVoice ? 9351 : 10438)) return;
 
         SoW.manaCradle();
         Story.preLoad(this.terminaTemple);
@@ -61,7 +55,14 @@ export class CoreAOR {
         // Familiar Faces (9213)
         if (!Story.questProgression(9213)) {
             Core.ensureAccept(9213);
-            Core.getMapItems([ [11625, 1], [11626, 1], [11627, 1] ], "terminatemple");
+            Core.getMapItems(
+                [
+                    [11625, 1],
+                    [11626, 1],
+                    [11627, 1],
+                ],
+                "terminatemple",
+            );
             Core.logger("resetting map data ( mobs can bug out and become unattackable)");
             Core.join("whitemap-100000");
             Core.join("terminatemple");
@@ -72,34 +73,36 @@ export class CoreAOR {
         // Loaded Resume (9214)
         if (!Story.questProgression(9214)) {
             Core.ensureAccept(9214);
-            Core.getMapItems([ [11628, 1], [11629, 1], [11630, 1] ], "terminatemple");
+            Core.getMapItems(
+                [
+                    [11628, 1],
+                    [11629, 1],
+                    [11630, 1],
+                ],
+                "terminatemple",
+            );
             Core.huntMonster("terminatemple", "Clandestine Guard", "Guard Fought", 7);
             Core.ensureComplete(9214);
         }
 
-        if (!seaVoice && !coldThunder)
-            return;
+        if (!seaVoice && !coldThunder) return;
 
         // If seaVoice or coldThunder & quest isnt unlocked
-        if (seaVoice || coldThunder && !Core.isCompletedBefore(9348))
-            this.seaVoice();
+        if (seaVoice || (coldThunder && !Core.isCompletedBefore(9348))) this.seaVoice();
 
         // Mopping Up (9351)
-        Story.mapItemQuest(9351, "terminatemple", [ 12050, 12051 ]);
+        Story.mapItemQuest(9351, "terminatemple", [12050, 12051]);
 
-        if (seaVoice && !coldThunder)
-            return;
+        if (seaVoice && !coldThunder) return;
 
-        if (coldThunder)
-            this.coldThunder();
+        if (coldThunder) this.coldThunder();
 
         // Tell-Tale Heart (9851)
-        Story.mapItemQuest(9851, "terminatemple", [ 13541, 13542 ]);
+        Story.mapItemQuest(9851, "terminatemple", [13541, 13542]);
     }
 
     ashrayVillage(seaVoice = false, coldThunder = false): void {
-        if (Core.isCompletedBefore(9234))
-            return;
+        if (Core.isCompletedBefore(9234)) return;
 
         this.terminaTemple(seaVoice, coldThunder);
 
@@ -109,7 +112,13 @@ export class CoreAOR {
         // Angry Angler (9226)
         if (!Story.questProgression(9226)) {
             Core.ensureAccept(9226);
-            Core.getMapItems([ [11663, 1], [11664, 1] ], "ashray");
+            Core.getMapItems(
+                [
+                    [11663, 1],
+                    [11664, 1],
+                ],
+                "ashray",
+            );
             Core.huntMonster("ashray", "Ashray Fisherman", "Fisherman's Trident", 4);
             Core.ensureComplete(9226);
         }
@@ -153,15 +162,14 @@ export class CoreAOR {
         }
 
         // Duck Dive (9233)
-        Story.mapItemQuest(9233, "ashray", [ 11669, 11670 ]);
+        Story.mapItemQuest(9233, "ashray", [11669, 11670]);
 
         // Faces in the Foam (9234)
         Story.killQuest(9234, "ashray", "Seafoam Elemental");
     }
 
     sunlightZone(seaVoice = false, coldThunder = false): void {
-        if (Core.isCompletedBefore(9251))
-            return;
+        if (Core.isCompletedBefore(9251)) return;
 
         this.ashrayVillage(seaVoice, coldThunder);
 
@@ -174,7 +182,13 @@ export class CoreAOR {
         // Efficient Division (9244)
         if (!Story.questProgression(9244)) {
             Core.ensureAccept(9244);
-            Core.getMapItems([ [11705, 1], [11706, 1] ], "sunlightzone");
+            Core.getMapItems(
+                [
+                    [11705, 1],
+                    [11706, 1],
+                ],
+                "sunlightzone",
+            );
             Core.huntMonster("sunlightzone", "Blighted Water", "Mopped Water", 6);
             Core.ensureComplete(9244);
         }
@@ -196,7 +210,7 @@ export class CoreAOR {
         }
 
         // Shared History (9247)
-        Story.mapItemQuest(9247, "sunlightzone", [ 11708, 11709, 11710 ]);
+        Story.mapItemQuest(9247, "sunlightzone", [11708, 11709, 11710]);
 
         // Flat Scares (9248)
         if (!Story.questProgression(9248)) {
@@ -227,8 +241,7 @@ export class CoreAOR {
     }
 
     twilightZone(seaVoice = false, coldThunder = false): void {
-        if (Core.isCompletedBefore(9268))
-            return;
+        if (Core.isCompletedBefore(9268)) return;
 
         this.sunlightZone(seaVoice, coldThunder);
 
@@ -251,7 +264,7 @@ export class CoreAOR {
         }
 
         // Morning Stretches (9262)
-        Story.mapItemQuest(9262, "twilightzone", [ 11751, 11752 ]);
+        Story.mapItemQuest(9262, "twilightzone", [11751, 11752]);
 
         // Natural Empathy (9263)
         Story.killQuest(9263, "twilightzone", "Decay Spirit");
@@ -260,7 +273,7 @@ export class CoreAOR {
         Story.killQuest(9264, "twilightzone", "Ice Guardian");
 
         // Whale Watching (9265)
-        Story.mapItemQuest(9265, "twilightzone", [ 11753, 11754, 11755 ]);
+        Story.mapItemQuest(9265, "twilightzone", [11753, 11754, 11755]);
 
         // Exhausted Spirits (9266)
         if (!Story.questProgression(9266)) {
@@ -283,8 +296,7 @@ export class CoreAOR {
     }
 
     yulgarAria(seaVoice = false, coldThunder = false): void {
-        if (Core.isCompletedBefore(9274))
-            return;
+        if (Core.isCompletedBefore(9274)) return;
 
         this.twilightZone(seaVoice, coldThunder);
 
@@ -315,13 +327,12 @@ export class CoreAOR {
     }
 
     midnightZone(seaVoice = false, coldThunder = false): void {
-        if (Core.isCompletedBefore(9301))
-            return;
+        if (Core.isCompletedBefore(9301)) return;
 
         this.twilightZone(seaVoice, coldThunder);
 
         // Motivation Malady (9292)
-        Story.mapItemQuest(9292, "midnightzone", [ 11842, 11843, 11844 ]);
+        Story.mapItemQuest(9292, "midnightzone", [11842, 11843, 11844]);
 
         // Radical Renovation (9293)
         if (!Story.questProgression(9293)) {
@@ -389,8 +400,7 @@ export class CoreAOR {
     }
 
     abyssalZone(seaVoice = false, coldThunder = false): void {
-        if (Core.isCompletedBefore(9315))
-            return;
+        if (Core.isCompletedBefore(9315)) return;
 
         this.midnightZone(seaVoice, coldThunder);
 
@@ -459,8 +469,7 @@ export class CoreAOR {
     }
 
     deepWater(panopticonMerge = false, seaVoice = false, coldThunder = false): void {
-        if (Core.isCompletedBefore(9338))
-            return;
+        if (Core.isCompletedBefore(9338)) return;
 
         this.abyssalZone(seaVoice, coldThunder);
 
@@ -485,8 +494,7 @@ export class CoreAOR {
 
         // Guardian Spirits (9332)
         Story.killQuest(9332, "trenchobserve", "Venerated Wraith");
-        if (panopticonMerge)
-            return;
+        if (panopticonMerge) return;
 
         // Enemy in Need (9333)
         if (!Story.questProgression(9333)) {
@@ -497,7 +505,7 @@ export class CoreAOR {
         }
 
         // Here Lies Shadow (9334)
-        Story.mapItemQuest(9334, "trenchobserve", [ 11979, 11981 ]);
+        Story.mapItemQuest(9334, "trenchobserve", [11979, 11981]);
         Story.mapItemQuest(9334, "trenchobserve", 11980, 2);
 
         // Nature's White Noise (9335)
@@ -525,8 +533,7 @@ export class CoreAOR {
     }
 
     seaVoice(): void {
-        if (Core.isCompletedBefore(9348))
-            return;
+        if (Core.isCompletedBefore(9348)) return;
 
         SoW.manaCradle();
         this.deepWater(false, false, false);
@@ -541,8 +548,7 @@ export class CoreAOR {
     }
 
     balemorale(seaVoice = false, coldThunder = false): void {
-        if (Core.isCompletedBefore(9729))
-            return;
+        if (Core.isCompletedBefore(9729)) return;
 
         this.terminaTemple(seaVoice, coldThunder);
 
@@ -558,12 +564,18 @@ export class CoreAOR {
         Story.killQuest(9721, "balemorale", "Noble's Knight");
 
         // Cellar Secrets (9722)
-        Story.mapItemQuest(9722, "balemorale", [ 13177, 13178 ]);
+        Story.mapItemQuest(9722, "balemorale", [13177, 13178]);
 
         // Chaotic Roots (9723)
         if (!Story.questProgression(9723)) {
             Core.ensureAccept(9723);
-            Core.getMapItems([ [13179, 1], [13180, 1] ], "balemorale");
+            Core.getMapItems(
+                [
+                    [13179, 1],
+                    [13180, 1],
+                ],
+                "balemorale",
+            );
             Core.huntMonster("balemorale", "Chaos Spider", "Spider Legs", 128);
             Core.ensureComplete(9723);
         }
@@ -606,8 +618,7 @@ export class CoreAOR {
     }
 
     castleeblana(seaVoice = false, coldThunder = false): void {
-        if (Core.isCompletedBefore(9741))
-            return;
+        if (Core.isCompletedBefore(9741)) return;
 
         this.balemorale(seaVoice, coldThunder);
 
@@ -652,7 +663,7 @@ export class CoreAOR {
             Core.ensureComplete(9738);
         }
         // Find Shelter in... 9739
-        Story.mapItemQuest(9739, "castleeblana", [ 13207, 13208 ]);
+        Story.mapItemQuest(9739, "castleeblana", [13207, 13208]);
 
         // Heavy Handed 9740
         Story.killQuest(9740, "castleeblana", "Skye Warrior");
@@ -663,8 +674,7 @@ export class CoreAOR {
     }
 
     loughshine(seaVoice = false, coldThunder = false): void {
-        if (Core.isCompletedBefore(9764))
-            return;
+        if (Core.isCompletedBefore(9764)) return;
 
         this.castleeblana(seaVoice, coldThunder);
 
@@ -727,8 +737,7 @@ export class CoreAOR {
     }
 
     naoiseGrave(seaVoice = false, coldThunder = false): void {
-        if (Core.isCompletedBefore(9777))
-            return;
+        if (Core.isCompletedBefore(9777)) return;
 
         this.loughshine(seaVoice, coldThunder);
 
@@ -749,7 +758,7 @@ export class CoreAOR {
         }
 
         // Glacial Seal (9774)
-        Story.mapItemQuest(9774, "naoisegrave", [ 13298, 13299 ]);
+        Story.mapItemQuest(9774, "naoisegrave", [13298, 13299]);
 
         // The Cold Wind Guides (9770)
         if (!Story.questProgression(9770)) {
@@ -788,8 +797,7 @@ export class CoreAOR {
     }
 
     liaTaraHill(seaVoice = false, coldThunder = false): void {
-        if (Core.isCompletedBefore(9814))
-            return;
+        if (Core.isCompletedBefore(9814)) return;
 
         this.naoiseGrave(seaVoice, coldThunder);
 
@@ -808,7 +816,7 @@ export class CoreAOR {
         }
 
         // Deafly Pride (9808)
-        Story.mapItemQuest(9808, "liatarahill", [ 13364, 13365 ]);
+        Story.mapItemQuest(9808, "liatarahill", [13364, 13365]);
 
         // King of Briars and Smoke (9809)
         if (!Story.questProgression(9809)) {
@@ -855,8 +863,7 @@ export class CoreAOR {
     }
 
     castleGaheris(seaVoice = false, coldThunder = false): void {
-        if (Core.isCompletedBefore(9828))
-            return;
+        if (Core.isCompletedBefore(9828)) return;
 
         this.liaTaraHill(seaVoice, coldThunder);
 
@@ -872,7 +879,7 @@ export class CoreAOR {
         Story.killQuest(9820, "castlegaheris", "Ice Guardian");
 
         // Childhood Memories (9821)
-        Story.mapItemQuest(9821, "castlegaheris", [ 13379, 13380, 13381 ]);
+        Story.mapItemQuest(9821, "castlegaheris", [13379, 13380, 13381]);
 
         // Strangled Sobs (9822)
         if (!Story.questProgression(9822)) {
@@ -892,7 +899,7 @@ export class CoreAOR {
         Story.killQuest(9825, "castlegaheris", "Elemental Hybrid");
 
         // Honor Thy Family (9826)
-        Story.mapItemQuest(9826, "castlegaheris", [ 13382, 13383 ]);
+        Story.mapItemQuest(9826, "castlegaheris", [13382, 13383]);
 
         // Life's Latest Lows (9827)
         if (!Story.questProgression(9827)) {
@@ -911,8 +918,7 @@ export class CoreAOR {
     }
 
     coldThunder(): void {
-        if (Core.isCompletedBefore(9851))
-            return;
+        if (Core.isCompletedBefore(9851)) return;
 
         this.castleGaheris(false, false);
 
@@ -929,8 +935,7 @@ export class CoreAOR {
     }
 
     thelimaCity(seaVoice = false, coldThunder = false): void {
-        if (Core.isCompletedBefore(10356))
-            return;
+        if (Core.isCompletedBefore(10356)) return;
 
         this.terminaTemple(seaVoice, coldThunder);
 
@@ -948,21 +953,21 @@ export class CoreAOR {
         //#endregion Useable Monsters
 
         // 10347 | Sister Statues
-        Story.mapItemQuest(10347, "thelimacity", [ 14770, 14771 ]);
+        Story.mapItemQuest(10347, "thelimacity", [14770, 14771]);
 
         // 10348 | Starstruck Chivalry
-        if (!Story.questProgression(10348))
-            Core.huntMonsterQuest(10348, "thelimacity", UseableMonsters[0]);
+        if (!Story.questProgression(10348)) Core.huntMonsterQuest(10348, "thelimacity", UseableMonsters[0]);
 
         // 10349 | Black Dahlia
-        Story.mapItemQuest(10349, "thelimacity", [ 14772, 14773 ]);
+        Story.mapItemQuest(10349, "thelimacity", [14772, 14773]);
 
         // 10350 | Talls and Stouts
         if (!Story.questProgression(10350)) {
             Core.huntMonsterQuest(
-                10350, 
+                10350,
                 ["thelimacity", UseableMonsters[2], ClassType.Farm],
-                ["thelimacity", UseableMonsters[1], ClassType.Farm]);
+                ["thelimacity", UseableMonsters[1], ClassType.Farm],
+            );
         }
 
         // 10351 | A Lost Matchstick
@@ -989,9 +994,10 @@ export class CoreAOR {
         // 10355 | Putrefaction
         if (!Story.questProgression(10355)) {
             Core.huntMonsterQuest(
-                10355, 
+                10355,
                 ["thelimacity", UseableMonsters[3], ClassType.Solo],
-                ["thelimacity", UseableMonsters[4], ClassType.Farm]);
+                ["thelimacity", UseableMonsters[4], ClassType.Farm],
+            );
         }
 
         // 10356 | Enatiodromia
@@ -1002,8 +1008,7 @@ export class CoreAOR {
     }
 
     mountMaleno(seaVoice = false, coldThunder = false): void {
-        if (Core.isCompletedBefore(10368))
-            return;
+        if (Core.isCompletedBefore(10368)) return;
 
         this.thelimaCity(seaVoice, true);
 
@@ -1031,18 +1036,22 @@ export class CoreAOR {
         }
 
         // 10361 | Echolocation
-        Story.mapItemQuest(10361, [ [14806, 1, "mountmaleno"], [14807, 5, "mountmaleno"] ]);
+        Story.mapItemQuest(10361, [
+            [14806, 1, "mountmaleno"],
+            [14807, 5, "mountmaleno"],
+        ]);
 
         // 10362 | Chymerical Ash
         if (!Story.questProgression(10362)) {
             Core.huntMonsterQuest(
-                10362, 
+                10362,
                 ["mountmaleno", UseableMonsters[0], ClassType.Farm],
-                ["mountmaleno", UseableMonsters[1], ClassType.Farm]);
+                ["mountmaleno", UseableMonsters[1], ClassType.Farm],
+            );
         }
 
         // 10363 | Journey Through the Dark Night
-        Story.mapItemQuest(10363, "mountmaleno", [ 14808, 14809 ]);
+        Story.mapItemQuest(10363, "mountmaleno", [14808, 14809]);
 
         // 10364 | Lunar Caustic
         if (!Story.questProgression(10364)) {
@@ -1066,9 +1075,10 @@ export class CoreAOR {
         // 10367 | Blithe Hospitality
         if (!Story.questProgression(10367)) {
             Core.huntMonsterQuest(
-                10367, 
+                10367,
                 ["mountmaleno", UseableMonsters[3], ClassType.Farm],
-                ["mountmaleno", UseableMonsters[2], ClassType.Solo]);
+                ["mountmaleno", UseableMonsters[2], ClassType.Solo],
+            );
         }
 
         // 10368 | Sal Volatile
@@ -1078,8 +1088,7 @@ export class CoreAOR {
     }
 
     sanctuaryAiwass(seaVoice = false, coldThunder = false): void {
-        if (Core.isCompletedBefore(10384))
-            return;
+        if (Core.isCompletedBefore(10384)) return;
 
         this.mountMaleno(seaVoice, coldThunder);
 
@@ -1136,8 +1145,7 @@ export class CoreAOR {
         //        Map items: Blue arrows (14869) x8, Strange Scroll (14870)
         if (!Story.questProgression(10383)) {
             Core.ensureAccept(10383);
-            for (let i = 0; i < 8; i++)
-                Core.getMapItem(14869, undefined, "sanctuaryaiwass"); // Click blue arrows 8 times
+            for (let i = 0; i < 8; i++) Core.getMapItem(14869, undefined, "sanctuaryaiwass"); // Click blue arrows 8 times
             Core.getMapItem(14870, undefined, "sanctuaryaiwass"); // Read Strange Scroll
             Core.ensureComplete(10383);
         }
@@ -1147,8 +1155,7 @@ export class CoreAOR {
     }
 
     forgeAlbedo(seaVoice = false, coldThunder = false): void {
-        if (Core.isCompletedBefore(10422))
-            return;
+        if (Core.isCompletedBefore(10422)) return;
 
         this.sanctuaryAiwass(seaVoice, coldThunder);
 
@@ -1170,7 +1177,7 @@ export class CoreAOR {
         }
 
         // 10414 | Model Students
-        Story.mapItemQuest(10414, "forgealbedo", [ 14959, 14960, 14961 ]);
+        Story.mapItemQuest(10414, "forgealbedo", [14959, 14960, 14961]);
 
         // 10415 | System Delusion
         if (!Story.questProgression(10415)) {
@@ -1217,9 +1224,10 @@ export class CoreAOR {
         // 10421 | Lost Admin Privileges
         if (!Story.questProgression(10421)) {
             Core.huntMonsterQuest(
-                10421, 
+                10421,
                 ["forgealbedo", UseableMonsters[1], ClassType.Farm],
-                ["forgealbedo", UseableMonsters[5], ClassType.Farm]);
+                ["forgealbedo", UseableMonsters[5], ClassType.Farm],
+            );
         }
 
         // 10422 | Conscious Unconsciousness
@@ -1229,8 +1237,7 @@ export class CoreAOR {
     }
 
     fortLuma(seaVoice = false, coldThunder = false): void {
-        if (Core.isCompletedBefore(10618))
-            return;
+        if (Core.isCompletedBefore(10618)) return;
 
         this.forgeAlbedo(seaVoice, coldThunder);
         Story.preLoad(this.fortLuma);
@@ -1251,31 +1258,24 @@ export class CoreAOR {
         // 10609 | Xanthosis
         if (!Story.questProgression(10609)) {
             Story.mapItemQuest(10609, "fortluma", 15542);
-            Core.huntMonsterQuest(10609, 
-                ["fortluma", UseableMonsters[0], ClassType.Solo]);
+            Core.huntMonsterQuest(10609, ["fortluma", UseableMonsters[0], ClassType.Solo]);
         }
-
 
         // 10610 | Golden Lead
         if (!Story.questProgression(10610)) {
             Story.mapItemQuest(10610, "fortluma", 15543);
-            Core.huntMonsterQuest(10610, 
-                ["fortluma", UseableMonsters[1], ClassType.Farm]);
+            Core.huntMonsterQuest(10610, ["fortluma", UseableMonsters[1], ClassType.Farm]);
         }
-
 
         // 10611 | Luminary Vision
         if (!Story.questProgression(10611)) {
-            Story.mapItemQuest(10611, "fortluma", [ 15544, 15545 ]);
+            Story.mapItemQuest(10611, "fortluma", [15544, 15545]);
         }
-
 
         // 10612 | Premature Sunrise
         if (!Story.questProgression(10612)) {
-            Core.huntMonsterQuest(10612, 
-                ["fortluma", UseableMonsters[2], ClassType.Farm]);
+            Core.huntMonsterQuest(10612, ["fortluma", UseableMonsters[2], ClassType.Farm]);
         }
-
 
         // 10613 | Blinded by the Light
         if (!Story.questProgression(10613)) {
@@ -1283,7 +1283,6 @@ export class CoreAOR {
             Core.huntMonsterMapID("fortluma", 10, "Astero's Aurum");
             Core.ensureComplete(10613);
         }
-
 
         // 10614 | Wayward Wisewoman
         if (!Story.questProgression(10614)) {
@@ -1296,8 +1295,7 @@ export class CoreAOR {
         }
 
         bot.sleep(2500);
-        if (bot.player.cell.includes("Cut"))
-            Core.jumpWait();
+        if (bot.player.cell.includes("Cut")) Core.jumpWait();
 
         // 10615 | Incognizance
         if (!Story.questProgression(10615)) {
@@ -1306,13 +1304,10 @@ export class CoreAOR {
             Story.mapItemQuest(10615, "fortluma", 15547);
         }
 
-
         // 10616 | Flowers of Luma
         if (!Story.questProgression(10616)) {
-            Core.huntMonsterQuest(10616, 
-                ["fortluma", UseableMonsters[5], ClassType.Solo]);
+            Core.huntMonsterQuest(10616, ["fortluma", UseableMonsters[5], ClassType.Solo]);
         }
-
 
         // 10617 | Quid Pro Quo
         if (!Story.questProgression(10617)) {
@@ -1321,22 +1316,21 @@ export class CoreAOR {
             Story.mapItemQuest(10617, "fortluma", 15548);
         }
 
-
         // 10618 |Drowned King in Yellow
         if (!Story.questProgression(10618)) {
-            bot.log("**Boss Gear Suggestion**\nSuggested Class and Enh for this boss if your stuck, swap your Solo class to: Dragon of time(or any decent HoT class)\n--With these enhancements--\n" + "Class: Healer\nHelm: Healer\nWeapon: Elysium/Healer\nCape: Absolution/Healer");
-            Core.huntMonsterQuest(10618, 
-                ["fortluma", UseableMonsters[6], ClassType.Solo]);
+            bot.log(
+                "**Boss Gear Suggestion**\nSuggested Class and Enh for this boss if your stuck, swap your Solo class to: Dragon of time(or any decent HoT class)\n--With these enhancements--\n" +
+                    "Class: Healer\nHelm: Healer\nWeapon: Elysium/Healer\nCape: Absolution/Healer",
+            );
+            Core.huntMonsterQuest(10618, ["fortluma", UseableMonsters[6], ClassType.Solo]);
             bot.wait.forQuestComplete(10618);
             bot.sleep(2500);
             Core.jumpWait();
-
         }
     }
 
     warWickForest(seaVoice = false, coldThunder = false): void {
-        if (Core.isCompletedBefore(10687))
-            return;
+        if (Core.isCompletedBefore(10687)) return;
         this.fortLuma(seaVoice, coldThunder);
 
         Story.preLoad(this.warWickForest);
@@ -1355,28 +1349,24 @@ export class CoreAOR {
         // 10678 | A Phoenix's Repeated Demise
         if (!Story.questProgression(10678)) {
             Story.mapItemQuest(10678, "warwickforest", 15656);
-            Core.huntMonsterQuest(10678, 
-                ["warwickforest", UseableMonsters[0], ClassType.Solo]);
+            Core.huntMonsterQuest(10678, ["warwickforest", UseableMonsters[0], ClassType.Solo]);
         }
 
         // 10679 | Reopened Scar
         if (!Story.questProgression(10679)) {
             Story.mapItemQuest(10679, "warwickforest", 15657);
-            Core.huntMonsterQuest(10679, 
-                ["warwickforest", UseableMonsters[1], ClassType.Solo]);
+            Core.huntMonsterQuest(10679, ["warwickforest", UseableMonsters[1], ClassType.Solo]);
         }
 
         // 10680 | Pyroclast Breath
         if (!Story.questProgression(10680)) {
-            Core.huntMonsterQuest(10680, 
-                ["warwickforest", UseableMonsters[3], ClassType.Solo]);
+            Core.huntMonsterQuest(10680, ["warwickforest", UseableMonsters[3], ClassType.Solo]);
         }
 
         // 10681 | Smoke Signals
         if (!Story.questProgression(10681)) {
             Story.mapItemQuest(10681, "warwickforest", 15658);
-            Core.huntMonsterQuest(10681, 
-                ["warwickforest", UseableMonsters[1], ClassType.Solo]);
+            Core.huntMonsterQuest(10681, ["warwickforest", UseableMonsters[1], ClassType.Solo]);
         }
 
         // 10682 | Reflection in Oil
@@ -1390,8 +1380,7 @@ export class CoreAOR {
         // 10683 | Iosis of the Soul
         if (!Story.questProgression(10683)) {
             Story.mapItemQuest(10683, "warwickforest", 15660);
-            Core.huntMonsterQuest(10683, 
-                ["warwickforest", UseableMonsters[2], ClassType.Solo]);
+            Core.huntMonsterQuest(10683, ["warwickforest", UseableMonsters[2], ClassType.Solo]);
         }
 
         // 10684 | The Scorpion and the Fox
@@ -1400,7 +1389,6 @@ export class CoreAOR {
             Story.mapItemQuest(10684, "warwickforest", 15661);
             Core.killMonster("warwickforest", "r2", "Left", "*", "Philosopher's Eye", 15);
             Core.ensureComplete(10684);
-
         }
 
         // 10685 | Dalitong Keli
@@ -1410,30 +1398,24 @@ export class CoreAOR {
 
         // 10686 | The Ideal Champion
         if (!Story.questProgression(10686)) {
-            Core.huntMonsterQuest(10686, 
-                ["warwickforest", UseableMonsters[4], ClassType.Solo]);
+            Core.huntMonsterQuest(10686, ["warwickforest", UseableMonsters[4], ClassType.Solo]);
         }
 
         // 10687 | Kolr
         if (!Story.questProgression(10687)) {
-            Core.huntMonsterQuest(10687, 
-                ["warwickforest", UseableMonsters[5], ClassType.Solo]);
+            Core.huntMonsterQuest(10687, ["warwickforest", UseableMonsters[5], ClassType.Solo]);
         }
     }
 
     magnumOpus(seaVoice = false, coldThunder = false): void {
         // C# local function (async void): walks out of the zone the boss is about to hit.
         const flameoftheBeyond = (packet: any): void => {
-            if (packet?.["params"]?.type?.toString() !== "json")
-                return;
-            if (!bot.player.alive)
-                return;
+            if (packet?.["params"]?.type?.toString() !== "json") return;
+            if (!bot.player.alive) return;
             const data = packet["params"].dataObj;
-            if (data?.cmd?.toString() !== "event")
-                return;
+            if (data?.cmd?.toString() !== "event") return;
             const zoneSet = data?.args?.zoneSet?.toString();
-            if (!zoneSet)
-                return;
+            if (!zoneSet) return;
 
             const px = bot.player.x;
             const py = bot.player.y;
@@ -1444,8 +1426,7 @@ export class CoreAOR {
                 x: 550, y: 339
                 x: 678, y: 465
                 */
-                if (px >= 550 && px <= 678 && py >= 339 && py <= 465)
-                    return;
+                if (px >= 550 && px <= 678 && py >= 339 && py <= 465) return;
 
                 const randX = randomInt(550, 678);
                 const randY = randomInt(339, 465);
@@ -1459,8 +1440,7 @@ export class CoreAOR {
                 x: 426, y: 359
                 x: 211, y: 445
                 */
-                if (px >= 211 && px <= 426 && py >= 359 && py <= 445)
-                    return;
+                if (px >= 211 && px <= 426 && py >= 359 && py <= 445) return;
 
                 const randX = randomInt(211, 426);
                 const randY = randomInt(359, 445);
@@ -1469,8 +1449,7 @@ export class CoreAOR {
             }
         };
 
-        if (Core.isCompletedBefore(10705))
-            return;
+        if (Core.isCompletedBefore(10705)) return;
 
         this.warWickForest(true, true);
         Story.preLoad(this.magnumOpus);
@@ -1485,39 +1464,33 @@ export class CoreAOR {
         // 10704 | Hic Iacet Revelatio
         if (!Story.questProgression(10704)) {
             Core.ensureAccept(10704);
-            if (!!Core.bossClass)
-                Core.equipClass(ClassType.Boss);
+            if (!!Core.bossClass) Core.equipClass(ClassType.Boss);
             else {
-                bot.log("BossClass is empty/unselected in CBO, we'll use the Solo class or if thats empty, the currently equipped class.");
+                bot.log(
+                    "BossClass is empty/unselected in CBO, we'll use the Solo class or if thats empty, the currently equipped class.",
+                );
                 Core.equipClass(ClassType.Solo);
             }
             bot.events.on("extensionPacket", flameoftheBeyond);
 
             while (!bot.shouldExit && !bot.tempInv.contains("Flame of the Beyond Defeated")) {
-                if (bot.map.name !== "magnumopus")
-                    Core.join("magnumopus");
+                if (bot.map.name !== "magnumopus") Core.join("magnumopus");
 
-                if (bot.player.cell !== "r2")
-                    Core.jump("r2", "bottom");
+                if (bot.player.cell !== "r2") Core.jump("r2", "bottom");
 
                 bot.combat.attack("*");
 
                 bot.sleep(200);
-                if (bot.tempInv.contains("Flame of the Beyond Defeated"))
-                    break;
+                if (bot.tempInv.contains("Flame of the Beyond Defeated")) break;
             }
 
             bot.events.off("extensionPacket", flameoftheBeyond);
             Core.ensureComplete(10704);
         }
-
-
-
     }
 
     rubedoPeak(seaVoice = false, coldThunder = false): void {
-        if (Core.isCompletedBefore(10714))
-            return;
+        if (Core.isCompletedBefore(10714)) return;
 
         this.magnumOpus(seaVoice, coldThunder);
 
@@ -1528,8 +1501,7 @@ export class CoreAOR {
     }
 
     forgeCitrinitas(seaVoice = false, coldThunder = false): void {
-        if (Core.isCompletedBefore(10736))
-            return;
+        if (Core.isCompletedBefore(10736)) return;
 
         this.rubedoPeak(seaVoice, coldThunder);
         Story.preLoad(this.forgeCitrinitas);
@@ -1547,88 +1519,73 @@ export class CoreAOR {
 
         // 10725 | The Tarnished Ideal
         if (!Story.questProgression(10725)) {
-            Core.huntMonsterQuest(10725, 
-                ["forgecitrinitas", UseableMonsters[0], ClassType.Farm]);
+            Core.huntMonsterQuest(10725, ["forgecitrinitas", UseableMonsters[0], ClassType.Farm]);
         }
-
 
         // 10726 | Pointed Suggestions
         if (!Story.questProgression(10726)) {
-            Story.mapItemQuest(10726, "forgecitrinitas", [ 15820, 15821 ]);
+            Story.mapItemQuest(10726, "forgecitrinitas", [15820, 15821]);
         }
-
 
         // 10727 | Bite the Bullet
         if (!Story.questProgression(10727)) {
-            Core.huntMonsterQuest(10727, 
-                ["forgecitrinitas", UseableMonsters[1], ClassType.Farm]);
+            Core.huntMonsterQuest(10727, ["forgecitrinitas", UseableMonsters[1], ClassType.Farm]);
         }
-
 
         // 10728 | Pain and Ecstasy
         if (!Story.questProgression(10728)) {
-            Core.huntMonsterQuest(10728, 
-                ["forgecitrinitas", UseableMonsters[3], ClassType.Farm]);
+            Core.huntMonsterQuest(10728, ["forgecitrinitas", UseableMonsters[3], ClassType.Farm]);
         }
-
 
         // 10729 | Reincubation
         if (!Story.questProgression(10729)) {
             Story.mapItemQuest(10729, "forgecitrinitas", 15822);
         }
 
-
         // 10730 | Server Reboot
         if (!Story.questProgression(10730)) {
-            Core.huntMonsterQuest(10730, 
-                ["forgecitrinitas", UseableMonsters[4], ClassType.Farm]);
+            Core.huntMonsterQuest(10730, ["forgecitrinitas", UseableMonsters[4], ClassType.Farm]);
         }
-
 
         // 10731 | Of Pyrite and Nickel
         if (!Story.questProgression(10731)) {
-            Core.huntMonsterQuest(10731, 
-                ["forgecitrinitas", "Citrinitas Match", ClassType.Farm]);
+            Core.huntMonsterQuest(10731, ["forgecitrinitas", "Citrinitas Match", ClassType.Farm]);
         }
-
 
         // 10732 | Skin Deep
         if (!Story.questProgression(10732)) {
-            Core.huntMonsterQuest(10732, 
-                ["forgecitrinitas", UseableMonsters[3], ClassType.Farm]);
+            Core.huntMonsterQuest(10732, ["forgecitrinitas", UseableMonsters[3], ClassType.Farm]);
         }
-
 
         // 10733 | Break Room
         if (!Story.questProgression(10733)) {
-            Story.mapItemQuest(10733, "forgecitrinitas", [ 15823, 15824, 15825 ]);
+            Story.mapItemQuest(10733, "forgecitrinitas", [15823, 15824, 15825]);
         }
-
 
         // 10734 | Clematis' Aspirations
         if (!Story.questProgression(10734)) {
-            Core.huntMonsterQuest(10734, 
-                ["forgecitrinitas", UseableMonsters[5], ClassType.Solo]);
+            Core.huntMonsterQuest(10734, ["forgecitrinitas", UseableMonsters[5], ClassType.Solo]);
         }
-
 
         if (Core.isMember) {
             // 10735 | Silica Spring
             if (!Story.questProgression(10735)) {
-                Core.huntMonsterQuest(10735, 
+                Core.huntMonsterQuest(
+                    10735,
                     ["forgecitrinitas", UseableMonsters[5], ClassType.Solo],
                     ["forgecitrinitas", UseableMonsters[3], ClassType.Farm],
-                    ["forgecitrinitas", UseableMonsters[4], ClassType.Farm]);
+                    ["forgecitrinitas", UseableMonsters[4], ClassType.Farm],
+                );
             }
-        }
-
-        else {
+        } else {
             // 10736 | Silica Spring (Legend)
             if (!Story.questProgression(10736)) {
-                Core.huntMonsterQuest(10736, 
+                Core.huntMonsterQuest(
+                    10736,
                     ["forgecitrinitas", UseableMonsters[5], ClassType.Solo],
                     ["forgecitrinitas", UseableMonsters[3], ClassType.Farm],
-                    ["forgecitrinitas", UseableMonsters[4], ClassType.Farm]);
+                    ["forgecitrinitas", UseableMonsters[4], ClassType.Farm],
+                );
             }
         }
     }
@@ -1644,17 +1601,12 @@ export class CoreAOR {
                     case "ct":
                         if (data.anims != null) {
                             for (const a of data.anims) {
-                                if (a == null)
-                                    continue;
+                                if (a == null) continue;
 
-                                if (
-                                    a.msg != null
-                                    && a.msg === "The skies rumble. Prepare yourself!"
-                                ) {
+                                if (a.msg != null && a.msg === "The skies rumble. Prepare yourself!") {
                                     needsPotion = true;
                                     potionApplied = false;
-                                    Core.logger(
-                                        "Event detected: The skies rumble. Prepare yourself! - Potion needed.");
+                                    Core.logger("Event detected: The skies rumble. Prepare yourself! - Potion needed.");
                                 }
                             }
                         }
@@ -1663,10 +1615,7 @@ export class CoreAOR {
             }
         };
 
-        if (
-            item != null
-            && (isTemp ? bot.tempInv.contains(item, quant) : Core.checkInventory(item, quant))
-        ) {
+        if (item != null && (isTemp ? bot.tempInv.contains(item, quant) : Core.checkInventory(item, quant))) {
             bot.events.off("extensionPacket", listener);
             Core.jumpWait();
             return;
@@ -1680,8 +1629,7 @@ export class CoreAOR {
 
         bot.events.on("extensionPacket", listener);
 
-        if (!isTemp && item != null)
-            Core.addDrop(item);
+        if (!isTemp && item != null) Core.addDrop(item);
 
         //get, equip, and use safe pot (potions buggy af ae.. fix this)
         Core.buyItem("mirrorportal", 774, "Shriekward Potion", 99);
@@ -1698,24 +1646,20 @@ export class CoreAOR {
         bot.wait.forActionCooldown("equipItem");
         Core.sleep();
 
-        Core.logger(
-            "About to attack Cold Thunder boss. It's very unstable; recommended to do it with more accounts.");
+        Core.logger("About to attack Cold Thunder boss. It's very unstable; recommended to do it with more accounts.");
 
         while (
-            !bot.shouldExit
-            && item != null
-            && (isTemp ? !bot.tempInv.contains(item, quant) : !Core.checkInventory(item, quant))
+            !bot.shouldExit &&
+            item != null &&
+            (isTemp ? !bot.tempInv.contains(item, quant) : !Core.checkInventory(item, quant))
         ) {
-            if (bot.map.name !== "coldthunder")
-                Core.join("coldthunder");
+            if (bot.map.name !== "coldthunder") Core.join("coldthunder");
 
-            if (bot.player.cell !== "r3")
-                Core.jump("r3");
+            if (bot.player.cell !== "r3") Core.jump("r3");
 
             // Check if potion is needed and handle it
             if (needsPotion && !potionApplied) {
-                Core.logger(
-                    "Detected 'The skies rumble. Prepare yourself!' - applying Bananach's Last Will potion...");
+                Core.logger("Detected 'The skies rumble. Prepare yourself!' - applying Bananach's Last Will potion...");
 
                 // Keep trying to use potion until it's successfully applied
                 while (!bot.shouldExit && needsPotion && !potionApplied) {
@@ -1726,7 +1670,7 @@ export class CoreAOR {
 
                     // Check if Bananach's Last Will potion was applied
                     // You might need to adjust the aura name based on what this potion actually provides
-                    if (bot.self.auras.some(a => a != null && a.name === "Bananach's Last Will")) {
+                    if (bot.self.auras.some((a) => a != null && a.name === "Bananach's Last Will")) {
                         potionApplied = true;
                         needsPotion = false;
                         Core.logger("Bananach's Last Will potion successfully applied!");
@@ -1741,10 +1685,7 @@ export class CoreAOR {
                 bot.combat.attack("*");
             }
 
-            if (
-                item != null
-                && (isTemp ? bot.tempInv.contains(item, quant) : Core.checkInventory(item, quant))
-            ) {
+            if (item != null && (isTemp ? bot.tempInv.contains(item, quant) : Core.checkInventory(item, quant))) {
                 Core.jumpWait();
                 break;
             }
@@ -1764,28 +1705,30 @@ export class CoreAOR {
     fightVoiceInTheSea(item: string, quant = 1, isTemp = false): void {
         // C# local functions
         const finished = (): boolean => {
-            if (isTemp)
-                return bot.tempInv.contains(item, quant);
+            if (isTemp) return bot.tempInv.contains(item, quant);
             return bot.inventory.contains(item, quant);
         };
 
-        if (!isTemp)
-            Core.unbank(item);
-        if (finished())
-            return;
-        if (!isTemp)
-            Core.addDrop(item);
+        if (!isTemp) Core.unbank(item);
+        if (finished()) return;
+        if (!isTemp) Core.addDrop(item);
 
         // Vainglory compounds the healing reduction from Voice in the Sea.
-        const cape = bot.inventory.items.find(i => i.equipped
-            && i.category === "Cape"
-            && i.enhancementPatternId === CapeSpecial.Vainglory);
+        const cape = bot.inventory.items.find(
+            (i) => i.equipped && i.category === "Cape" && i.enhancementPatternId === CapeSpecial.Vainglory,
+        );
         if (cape != null)
             Adv.enhanceItem(
-                cape.name, 
-                EnhancementType.Lucky, 
+                cape.name,
+                EnhancementType.Lucky,
                 // C# also passes `logging: false`, which Turu's enhanceItem doesn't take.
-                { cSpecial: CapeSpecial.None, hSpecial: HelmSpecial.None, wSpecial: WeaponSpecial.None, bypassDisableAutoEnhance: true });
+                {
+                    cSpecial: CapeSpecial.None,
+                    hSpecial: HelmSpecial.None,
+                    wSpecial: WeaponSpecial.None,
+                    bypassDisableAutoEnhance: true,
+                },
+            );
 
         Core.join("seavoice");
         Adv.buyItem("seavoice", 2320, "Vigil", 1000, 12023);
@@ -1808,13 +1751,16 @@ export class CoreAOR {
                     bot.sleep(500);
                     continue;
                 }
-                if (bot.player.cell !== "r2")
-                    Core.jump("r2", "Left");
+                if (bot.player.cell !== "r2") Core.jump("r2", "Left");
 
                 if (this._voiceChargeDetected) {
-                    while (!bot.shouldExit && bot.player.alive && bot.player.hasTarget && !bot.self.hasActiveAura("Vigil")) {
-                        if (bot.skills.canUseSkill(5))
-                            bot.skills.useSkill(5);
+                    while (
+                        !bot.shouldExit &&
+                        bot.player.alive &&
+                        bot.player.hasTarget &&
+                        !bot.self.hasActiveAura("Vigil")
+                    ) {
+                        if (bot.skills.canUseSkill(5)) bot.skills.useSkill(5);
                         bot.sleep(50);
                     }
                     this._voiceChargeDetected = false;
@@ -1825,8 +1771,7 @@ export class CoreAOR {
                 }
 
                 const target = bot.player.target;
-                if (target == null || target.mapId !== 1 || target.hp <= 0)
-                    bot.combat.attack(1);
+                if (target == null || target.mapId !== 1 || target.hp <= 0) bot.combat.attack(1);
                 bot.sleep(500);
             }
         } finally {
@@ -1839,11 +1784,9 @@ export class CoreAOR {
 
     private readonly seaVoiceFlashListener = (packet: unknown): void => {
         try {
-            if (packet == null || this._voiceChargeDetected)
-                return;
+            if (packet == null || this._voiceChargeDetected) return;
             const rawPacket = JSON.stringify(packet);
-            if (!rawPacket.toLowerCase().includes("you will not resist!"))
-                return;
+            if (!rawPacket.toLowerCase().includes("you will not resist!")) return;
             bot.skills.pause();
             this._voiceChargeDetected = true;
             Core.logger("Charge detected. Class skills paused for Vigil.");

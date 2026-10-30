@@ -17,8 +17,7 @@ const Adv = new CoreAdvanced();
 export class Cryomancer {
     doCryomancer(rankUpClass = true): void {
         if (Core.checkInventory("Cryomancer")) {
-            if (rankUpClass)
-                Adv.rankUpClass("Cryomancer");
+            if (rankUpClass) Adv.rankUpClass("Cryomancer");
             return;
         }
 
@@ -27,15 +26,14 @@ export class Cryomancer {
 
         Daily.cryomancer();
 
-        if (rankUpClass)
-            Adv.rankUpClass("Cryomancer");
+        if (rankUpClass) Adv.rankUpClass("Cryomancer");
     }
 }
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new Cryomancer().doCryomancer();
+    new Cryomancer().doCryomancer();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

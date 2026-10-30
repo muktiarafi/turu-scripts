@@ -14,8 +14,7 @@ const VR = new VoidRefuge();
 
 export class VoidChasm {
     storyline(): void {
-        if (Core.isCompletedBefore(9552))
-            return;
+        if (Core.isCompletedBefore(9552)) return;
 
         VR.storyline();
 
@@ -36,7 +35,7 @@ export class VoidChasm {
         }
 
         // Tangled Aortas 9546
-        Story.mapItemQuest(9546, "voidchasm", [ 12620, 12621 ]);
+        Story.mapItemQuest(9546, "voidchasm", [12620, 12621]);
 
         // Nation Code 9547
         if (!Story.questProgression(9547)) {
@@ -52,7 +51,14 @@ export class VoidChasm {
         // Faustian Leftovers 9549
         if (!Story.questProgression(9549)) {
             Core.ensureAccept(9549);
-            Core.getMapItems([ [12623, 1], [12627, 1], [12628, 1] ], "voidchasm");
+            Core.getMapItems(
+                [
+                    [12623, 1],
+                    [12627, 1],
+                    [12628, 1],
+                ],
+                "voidchasm",
+            );
             Core.huntMonster("voidchasm", "The Hushed", "Phantom's Sigh", 5);
             Core.ensureComplete(9549);
         }
@@ -70,7 +76,13 @@ export class VoidChasm {
         Core.equipClass(ClassType.Solo);
         if (!Story.questProgression(9551)) {
             Core.ensureAccept(9551);
-            Core.getMapItems([ [12625, 1], [12626, 1] ], "voidchasm");
+            Core.getMapItems(
+                [
+                    [12625, 1],
+                    [12626, 1],
+                ],
+                "voidchasm",
+            );
             Core.huntMonster("voidchasm", "Carnage", "Voided Blood Sample", 1);
             Core.ensureComplete(9551);
         }
@@ -81,9 +93,9 @@ export class VoidChasm {
 }
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new VoidChasm().storyline();
+    new VoidChasm().storyline();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

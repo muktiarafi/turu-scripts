@@ -12,8 +12,7 @@ const Story = new CoreStory();
 
 export class SevenCircles {
     circles(): void {
-        if (Core.isCompletedBefore(7977))
-            return;
+        if (Core.isCompletedBefore(7977)) return;
 
         Story.preLoad(this.circles);
 
@@ -64,16 +63,11 @@ export class SevenCircles {
     }
 
     circlesWar(excludeBoss = false, StopForGoldFarm = false): void {
-        if (excludeBoss ? Core.isCompletedBefore(7989) : Core.isCompletedBefore(7990))
-            return;
+        if (excludeBoss ? Core.isCompletedBefore(7989) : Core.isCompletedBefore(7990)) return;
 
         this.circles();
 
-        Core.addDrop(
-            "Essence of Treachery", 
-            "Essence of Violence", 
-            "Souls of Heresy", 
-            "Essence of Wrath");
+        Core.addDrop("Essence of Treachery", "Essence of Violence", "Souls of Heresy", "Essence of Wrath");
 
         //Guards of Wrath
         Core.equipClass(ClassType.Farm);
@@ -85,8 +79,7 @@ export class SevenCircles {
         //Mega War Medals
         Story.killQuest(7981, "sevencircleswar", "Wrath Guard");
 
-        if (StopForGoldFarm)
-            return;
+        if (StopForGoldFarm) return;
 
         //Wrath Against the Machine
         Core.equipClass(ClassType.Solo);
@@ -119,15 +112,12 @@ export class SevenCircles {
         Core.equipClass(ClassType.Solo);
         Story.killQuest(7989, "sevencircleswar", "Treachery");
 
-        if (excludeBoss)
-            return;
+        if (excludeBoss) return;
 
         //The Beast
         if (!Story.questProgression(7990)) {
-            if (Core.checkInventory("ArchPaladin"))
-                Core.equip("ArchPaladin");
-            else
-                Core.equipClass(ClassType.Solo);
+            if (Core.checkInventory("ArchPaladin")) Core.equip("ArchPaladin");
+            else Core.equipClass(ClassType.Solo);
 
             Core.ensureAccept(7990);
             Core.killMonster("sevencircleswar", "r17", "Left", "The Beast", "The Beast Defeated");
@@ -137,9 +127,9 @@ export class SevenCircles {
 }
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new SevenCircles().circlesWar();
+    new SevenCircles().circlesWar();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

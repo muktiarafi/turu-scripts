@@ -24,27 +24,22 @@ export class LordOfOrder {
 
         // Check if the item is already in inventory or if extras are needed
         if (
-            (
-                Core.checkInventory([ 50741, 50576 ], 1, { any: true, toInv: false })
-                && !getExtras
-                && Core.isCompletedBefore(7165)
-            )
-            || (
-                getExtras
-                && Core.checkInventory(Core.questRewards(7165), 1, { toInv: false })
-                && Core.isCompletedBefore(7165)
-            )
+            (Core.checkInventory([50741, 50576], 1, { any: true, toInv: false }) &&
+                !getExtras &&
+                Core.isCompletedBefore(7165)) ||
+            (getExtras &&
+                Core.checkInventory(Core.questRewards(7165), 1, { toInv: false }) &&
+                Core.isCompletedBefore(7165))
         ) {
-            if (rankUpClass)
-                Adv.rankUpClass("Lord of Order");
-            if (getExtras)
-                Core.logger("All desired rewards owned for LOO.");
+            if (rankUpClass) Adv.rankUpClass("Lord of Order");
+            if (getExtras) Core.logger("All desired rewards owned for LOO.");
             return;
         }
 
         Core.logger("⚔️ Daily: Lord of Order Class");
         Core.logger(
-            "It's a DAILY quest chain, 10 quests total, up to [7165]. One completes per run, per day. Read the logs below before you file a bug report.");
+            "It's a DAILY quest chain, 10 quests total, up to [7165]. One completes per run, per day. Read the logs below before you file a bug report.",
+        );
 
         Farm.experience(50);
 
@@ -68,7 +63,9 @@ export class LordOfOrder {
 
             Core.ensureComplete(7156);
             Core.toBank(...Core.questRewards(7156));
-            Core.logger("✅ [1/10] Heart of Servitude [7156] complete. Servitude served. This is a DAILY — the chain continues tomorrow, not right now, calm down.");
+            Core.logger(
+                "✅ [1/10] Heart of Servitude [7156] complete. Servitude served. This is a DAILY — the chain continues tomorrow, not right now, calm down.",
+            );
             return;
         }
 
@@ -80,12 +77,16 @@ export class LordOfOrder {
             Core.equipClass(ClassType.Solo);
             Core.huntMonster("dwarfprison", "Warden Elfis", "Warden Elfis Detained", 1, { isTemp: false });
             Core.huntMonster("prison", "Piggy Drake", "Piggy Drake Punished", 1, { isTemp: false });
-            Core.huntMonster("mysteriousdungeon", "Mysterious Stranger", "Mysterious Stranger Foiled", 1, { isTemp: false });
+            Core.huntMonster("mysteriousdungeon", "Mysterious Stranger", "Mysterious Stranger Foiled", 1, {
+                isTemp: false,
+            });
             Core.huntMonster("dreammaster", "Calico Cobby", "Calico Cobby Crushed", 1, { isTemp: false });
 
             Core.ensureComplete(7157);
             Core.toBank(...Core.questRewards(7157));
-            Core.logger("✅ [2/10] Spirit of Justice [7157] complete. Justice: served, piping hot. DAILY quest — see you in the next 24h for #3.");
+            Core.logger(
+                "✅ [2/10] Spirit of Justice [7157] complete. Justice: served, piping hot. DAILY quest — see you in the next 24h for #3.",
+            );
             return;
         }
 
@@ -104,7 +105,9 @@ export class LordOfOrder {
 
             Core.ensureComplete(7158);
             Core.toBank(...Core.questRewards(7158));
-            Core.logger("✅ [3/10] Purification of Chaos [7158] complete. Chaos purified, mildly inconvenienced. It's a DAILY — quest #4 unlocks tomorrow, patience.");
+            Core.logger(
+                "✅ [3/10] Purification of Chaos [7158] complete. Chaos purified, mildly inconvenienced. It's a DAILY — quest #4 unlocks tomorrow, patience.",
+            );
             return;
         }
 
@@ -114,18 +117,26 @@ export class LordOfOrder {
             Core.addDrop(...Core.questRewards(7159));
 
             Core.equipClass(ClassType.Solo);
-            Core.huntMonster("gaiazor", "Gaiazor", "Gaiazor's Cornerstone", 1, { isTemp: false, publicRoom: Core.publicDifficult });
+            Core.huntMonster("gaiazor", "Gaiazor", "Gaiazor's Cornerstone", 1, {
+                isTemp: false,
+                publicRoom: Core.publicDifficult,
+            });
             bot.quests.updateQuest(4361);
             bot.sleep(2000);
             Core.huntMonster("treetitanbattle", "Dakka the Dire Dragon", "Dakka's Crystal", 1, { isTemp: false });
             Core.huntMonster("andre", "Giant Necklace", "Andre's Necklace Fragment", 1, { isTemp: false });
             // Perma-Aggroed mob escape.
             Core.jumpWait();
-            Core.huntMonster("desolich", "Desolich", "Desolich's Skull", 1, { isTemp: false, publicRoom: Core.publicDifficult });
+            Core.huntMonster("desolich", "Desolich", "Desolich's Skull", 1, {
+                isTemp: false,
+                publicRoom: Core.publicDifficult,
+            });
 
             Core.ensureComplete(7159);
             Core.toBank(...Core.questRewards(7159));
-            Core.logger("✅ [4/10] Steadfast Will [7159] complete. Will: steadfast'd. DAILY quest, meaning daily — quest #5 waits for the sun to reset.");
+            Core.logger(
+                "✅ [4/10] Steadfast Will [7159] complete. Will: steadfast'd. DAILY quest, meaning daily — quest #5 waits for the sun to reset.",
+            );
             return;
         }
 
@@ -153,7 +164,9 @@ export class LordOfOrder {
             }
             Core.ensureComplete(7160);
             Core.toBank(...Core.questRewards(7160));
-            Core.logger("✅ [5/10] Strike of Order [7160] complete. Halfway there. Still a DAILY. Still resets tomorrow. Still not a bug.");
+            Core.logger(
+                "✅ [5/10] Strike of Order [7160] complete. Halfway there. Still a DAILY. Still resets tomorrow. Still not a bug.",
+            );
             return;
         }
 
@@ -172,7 +185,9 @@ export class LordOfOrder {
 
             Core.ensureComplete(7161);
             Core.toBank(...Core.questRewards(7161));
-            Core.logger("✅ [6/10] Harmony [7161] complete. Everyone's vibing. DAILY quest, quest #7 drops after your next reset — go touch grass.");
+            Core.logger(
+                "✅ [6/10] Harmony [7161] complete. Everyone's vibing. DAILY quest, quest #7 drops after your next reset — go touch grass.",
+            );
             return;
         }
 
@@ -192,7 +207,9 @@ export class LordOfOrder {
 
             Core.ensureComplete(7162);
             Core.toBank(...Core.questRewards(7162));
-            Core.logger("✅ [7/10] Ordinance [7162] complete. Ordinance ordinanced. DAILY quest — 2 left after this, they're not going anywhere but neither is the reset timer.");
+            Core.logger(
+                "✅ [7/10] Ordinance [7162] complete. Ordinance ordinanced. DAILY quest — 2 left after this, they're not going anywhere but neither is the reset timer.",
+            );
             return;
         }
 
@@ -211,7 +228,9 @@ export class LordOfOrder {
 
             Core.ensureComplete(7163);
             Core.toBank(...Core.questRewards(7163));
-            Core.logger("✅ [8/10] Axiom [7163] complete. The Law of Low Drop Rates remains undefeated. DAILY quest — one more after tomorrow's reset, hang tight.");
+            Core.logger(
+                "✅ [8/10] Axiom [7163] complete. The Law of Low Drop Rates remains undefeated. DAILY quest — one more after tomorrow's reset, hang tight.",
+            );
             return;
         }
 
@@ -232,7 +251,9 @@ export class LordOfOrder {
 
             Core.ensureComplete(7164);
             Core.toBank(...Core.questRewards(7164));
-            Core.logger("✅ [9/10] Blessing of Order [7164] complete. That's the last DAILY of the set — tomorrow's reset unlocks The Final Challenge. Almost there, don't rage quit now.");
+            Core.logger(
+                "✅ [9/10] Blessing of Order [7164] complete. That's the last DAILY of the set — tomorrow's reset unlocks The Final Challenge. Almost there, don't rage quit now.",
+            );
             return;
         }
 
@@ -242,7 +263,10 @@ export class LordOfOrder {
 
             Core.ensureAccept(7165);
             Core.equipClass(ClassType.Solo);
-            Core.huntMonster("ultradrakath", "Champion of Chaos", "Champion of Chaos Confronted", 1, { isTemp: false, publicRoom: Core.publicDifficult });
+            Core.huntMonster("ultradrakath", "Champion of Chaos", "Champion of Chaos Confronted", 1, {
+                isTemp: false,
+                publicRoom: Core.publicDifficult,
+            });
             bot.drops.add(50741);
             // If quest 7165 is not completed and either missing extras or missing key items
             if (!Core.isCompletedBefore(7165)) {
@@ -250,20 +274,21 @@ export class LordOfOrder {
                 bot.wait.forPickup(50741);
 
                 Core.ensureCompleteChoose(7165);
-                Core.toBank(...Core.questRewards(7165).filter(x => x !== "Lord of Order"));
-                Core.logger("🏆 [10/10] The Final Challenge [7165] complete. That's all 10 LOO dailies down — Lord of Order is FULLY finished. No more dailies today, no more quests, nothing. Go outside.");
+                Core.toBank(...Core.questRewards(7165).filter((x) => x !== "Lord of Order"));
+                Core.logger(
+                    "🏆 [10/10] The Final Challenge [7165] complete. That's all 10 LOO dailies down — Lord of Order is FULLY finished. No more dailies today, no more quests, nothing. Go outside.",
+                );
 
-                if (rankUpClass)
-                    Adv.rankUpClass("Lord of Order");
+                if (rankUpClass) Adv.rankUpClass("Lord of Order");
             }
         }
     }
 }
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new LordOfOrder().getLoO();
+    new LordOfOrder().getLoO();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

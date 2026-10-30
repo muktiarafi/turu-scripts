@@ -65,14 +65,12 @@ export class CoreBLOD {
     private lightMergeShopItems: CoreShopItem[] | null = null;
 
     blindingLightOfDestiny(method: BLODMethod = BLODMethod.Optimized): void {
-        if (Core.checkInventory("Blinding Light of Destiny"))
-            return;
+        if (Core.checkInventory("Blinding Light of Destiny")) return;
 
         Core.addDrop(40187);
-        if (!Core.checkInventory(40187)) // Get your Blinding Light of Destiny
-        {
-            if (Core.isCompletedBefore(7673))
-                Core.chainComplete(7673);
+        if (!Core.checkInventory(40187)) {
+            // Get your Blinding Light of Destiny
+            if (Core.isCompletedBefore(7673)) Core.chainComplete(7673);
             else {
                 bot.drops.add(...this.bLoDItems);
 
@@ -108,8 +106,7 @@ export class CoreBLOD {
     }
 
     unlockMineCrafting(): void {
-        if (Core.isCompletedBefore(2084))
-            return;
+        if (Core.isCompletedBefore(2084)) return;
 
         Story.preLoad(this.unlockMineCrafting);
 
@@ -135,7 +132,7 @@ export class CoreBLOD {
 
         // 2084 - A Loyal Follower
         if (!Story.questProgression(2084)) {
-            Core.logger("Doing Quest: [2084] \"A Loyal Follower\"");
+            Core.logger('Doing Quest: [2084] "A Loyal Follower"');
             Core.ensureAccept(2084);
             this.spiritOrb(100);
             Core.huntMonster("timevoid", "Ephemerite", "Celestial Compass");
@@ -144,8 +141,7 @@ export class CoreBLOD {
     }
 
     spiritOrb(quant = 65000): void {
-        if (Core.checkInventory("Spirit Orb", quant))
-            return;
+        if (Core.checkInventory("Spirit Orb", quant)) return;
 
         this.farmFindingFrag(WeaponOfDestiny.Blade, "Spirit Orb", quant >= 65000 ? 65000 : quant);
         this.farmFindingFrag(WeaponOfDestiny.Broadsword, "Spirit Orb", quant >= 65000 ? 65000 : quant);
@@ -155,15 +151,13 @@ export class CoreBLOD {
     }
 
     loyalSpiritOrb(quant: number): void {
-        if (Core.checkInventory("Loyal Spirit Orb", quant))
-            return;
+        if (Core.checkInventory("Loyal Spirit Orb", quant)) return;
 
         this.farmFindingFrag(WeaponOfDestiny.Blade, "Loyal Spirit Orb", quant);
         this.farmFindingFrag(WeaponOfDestiny.Daggers, "Loyal Spirit Orb", quant);
         this.farmFindingFrag(WeaponOfDestiny.Scythe, "Loyal Spirit Orb", quant);
 
-        if (bot.quests.isUnlocked(2163))
-            this.farmUltimateWK("Loyal Spirit Orb", quant);
+        if (bot.quests.isUnlocked(2163)) this.farmUltimateWK("Loyal Spirit Orb", quant);
 
         // Default
         while (!bot.shouldExit && !Core.checkInventory("Loyal Spirit Orb", quant)) {
@@ -174,14 +168,12 @@ export class CoreBLOD {
     }
 
     brightAura(quant: number): void {
-        if (Core.checkInventory("Bright Aura", quant))
-            return;
+        if (Core.checkInventory("Bright Aura", quant)) return;
 
         this.farmFindingFrag(WeaponOfDestiny.Bow, "Bright Aura", quant);
         this.farmFindingFrag(WeaponOfDestiny.Broadsword, "Bright Aura", quant);
         this.farmFindingFrag(WeaponOfDestiny.Scythe, "Bright Aura", quant);
-        if (bot.quests.isUnlocked(2163))
-            this.farmUltimateWK("Bright Aura", quant);
+        if (bot.quests.isUnlocked(2163)) this.farmUltimateWK("Bright Aura", quant);
 
         // Default
         while (!bot.shouldExit && !Core.checkInventory("Bright Aura", quant)) {
@@ -193,8 +185,7 @@ export class CoreBLOD {
     }
 
     brilliantAura(quant: number): void {
-        if (Core.checkInventory("Brilliant Aura", quant))
-            return;
+        if (Core.checkInventory("Brilliant Aura", quant)) return;
 
         this.farmFindingFrag(WeaponOfDestiny.Mace, "Brilliant Aura", quant);
 
@@ -207,8 +198,7 @@ export class CoreBLOD {
     }
 
     blindingAura(quant: number): void {
-        if (Core.checkInventory("Blinding Aura", quant))
-            return;
+        if (Core.checkInventory("Blinding Aura", quant)) return;
 
         this.farmFindingFrag(WeaponOfDestiny.Scythe, "Blinding Aura", quant);
 
@@ -221,33 +211,32 @@ export class CoreBLOD {
     }
 
     soulSearching(item = "Spirit Orb", quant = 1, farmSpiritOrbs = true): void {
-        if (Core.checkInventory(item, quant))
-            return;
+        if (Core.checkInventory(item, quant)) return;
 
-        if (!bot.quests.isUnlocked(939))
-            battleUnder.battleUnderC();
+        if (!bot.quests.isUnlocked(939)) battleUnder.battleUnderC();
 
         Core.equipClass(ClassType.Solo);
 
         Core.addDrop(
-            ...farmSpiritOrbs
-                ? [
-                    "Bone Dust",
-                    "Undead Energy",
-                    "Cavern Celestite",
-                    "Undead Essence",
-                    "Spirit Orb",
-                ]
-                : [ "Cavern Celestite", "Undead Essence", item ]);
+            ...(farmSpiritOrbs
+                ? ["Bone Dust", "Undead Energy", "Cavern Celestite", "Undead Essence", "Spirit Orb"]
+                : ["Cavern Celestite", "Undead Essence", item]),
+        );
 
-        Core.registerQuests(...farmSpiritOrbs ? [ 2082, 2083, 939 ] : [ 939 ]);
+        Core.registerQuests(...(farmSpiritOrbs ? [2082, 2083, 939] : [939]));
 
         Core.farmingLogger(item, quant);
 
         while (!bot.shouldExit && !Core.checkInventory(item, quant)) {
-            Core.killMonster("battleunderc", "r5", "Left", "Crystalized Jellyfish", "Jellyfish Soul", undefined, { log: false });
-            Core.killMonster("battleundera", "r7", "Left", "Bone Terror", "Bone Terror Soul", undefined, { log: false });
-            Core.killMonster("battleunderb", "r3", "Right", "Undead Champion", "Undead Champion Soul", undefined, { log: false });
+            Core.killMonster("battleunderc", "r5", "Left", "Crystalized Jellyfish", "Jellyfish Soul", undefined, {
+                log: false,
+            });
+            Core.killMonster("battleundera", "r7", "Left", "Bone Terror", "Bone Terror Soul", undefined, {
+                log: false,
+            });
+            Core.killMonster("battleunderb", "r3", "Right", "Undead Champion", "Undead Champion Soul", undefined, {
+                log: false,
+            });
             bot.wait.forPickup(item);
         }
 
@@ -255,21 +244,23 @@ export class CoreBLOD {
     }
 
     findingFragments(weapon: WeaponOfDestiny, item: string, quant = 1): void {
-        if (Core.checkInventory(item, quant))
-            return;
+        if (Core.checkInventory(item, quant)) return;
 
         this.getBlindingWeapon(weapon);
 
-        const quest = {
-            [WeaponOfDestiny.Bow]: 2174,
-            [WeaponOfDestiny.Daggers]: 2175,
-            [WeaponOfDestiny.Mace]: 2176,
-            [WeaponOfDestiny.Scythe]: 2177,
-            [WeaponOfDestiny.Broadsword]: 2178,
-            [WeaponOfDestiny.Blade]: 2179,
-        }[weapon] ?? 0;
+        const quest =
+            {
+                [WeaponOfDestiny.Bow]: 2174,
+                [WeaponOfDestiny.Daggers]: 2175,
+                [WeaponOfDestiny.Mace]: 2176,
+                [WeaponOfDestiny.Scythe]: 2177,
+                [WeaponOfDestiny.Broadsword]: 2178,
+                [WeaponOfDestiny.Blade]: 2179,
+            }[weapon] ?? 0;
 
-        Core.logger("Selling \"Blinding Light Fragments\" before starting this as it can bug out and just stay at 1/1 forever.. ( blame ae).");
+        Core.logger(
+            'Selling "Blinding Light Fragments" before starting this as it can bug out and just stay at 1/1 forever.. ( blame ae).',
+        );
         Core.unbank("Blinding Light Fragments");
         Core.sellItem("Blinding Light Fragments", undefined, { all: true });
 
@@ -291,7 +282,10 @@ export class CoreBLOD {
 
         while (!bot.shouldExit && !Core.checkInventory(item, quant)) {
             Core.ensureAccept(quest);
-            Core.killMonster("battleunderb", "Enter", "Spawn", "*", "Blinding Light Fragments", 10, { isTemp: false, log: false });
+            Core.killMonster("battleunderb", "Enter", "Spawn", "*", "Blinding Light Fragments", 10, {
+                isTemp: false,
+                log: false,
+            });
             Core.ensureComplete(quest);
         }
         Core.cancelRegisteredQuests();
@@ -299,40 +293,40 @@ export class CoreBLOD {
 
     private farmFindingFrag(weapon: WeaponOfDestiny, item: string, quant: number): void {
         if (
-            !Core.checkInventory(item, quant)
-            && Core.isCompletedBefore(2163)
-            && (Core.checkInventory(`Blinding ${WeaponOfDestiny[weapon]} of Destiny`) || Core.checkInventory(40187))
-        ) // Basically means you can buy it from the final shop
+            !Core.checkInventory(item, quant) &&
+            Core.isCompletedBefore(2163) &&
+            (Core.checkInventory(`Blinding ${WeaponOfDestiny[weapon]} of Destiny`) || Core.checkInventory(40187))
+        )
+            // Basically means you can buy it from the final shop
             this.findingFragments(weapon, item, quant);
     }
 
     private farmUltimateWK(item: string, quant: number): void {
         // We'll be able to use this later once we unlock UWK
-        if (!Core.checkInventory(item, quant))
-            this.ultimateWK(item, quant);
+        if (!Core.checkInventory(item, quant)) this.ultimateWK(item, quant);
     }
 
     basicWK(quant = 1): void {
-        if (Core.checkInventory("Basic Weapon Kit", quant))
-            return;
+        if (Core.checkInventory("Basic Weapon Kit", quant)) return;
 
         Core.equipClass(ClassType.Farm);
         Core.farmingLogger("Basic Wepon Kit", quant);
         Core.addDrop("Basic Weapon Kit");
 
         if (!bot.quests.isUnlocked(2136)) {
-            Core.logger("Unlocking \"Basic Weapon Kit\" Quest!");
+            Core.logger('Unlocking "Basic Weapon Kit" Quest!');
 
             // Find first matching item in inventory/bank
-            const itemToUpgrade = bot
-                .inventory.items.concat(bot.bank.items)
-                .find(i => i.name in MineCraftingMetalsEnum); // C#: Enum.TryParse<MineCraftingMetalsEnum>(i.Name, out _)
+            const itemToUpgrade = bot.inventory.items
+                .concat(bot.bank.items)
+                .find((i) => i.name in MineCraftingMetalsEnum); // C#: Enum.TryParse<MineCraftingMetalsEnum>(i.Name, out _)
 
             // Upgrade the metal (fallback to Aluminum if none found)
             this.upgradeMetal(
                 itemToUpgrade != null
                     ? MineCraftingMetalsEnum[itemToUpgrade.name as keyof typeof MineCraftingMetalsEnum]
-                    : MineCraftingMetalsEnum.Aluminum);
+                    : MineCraftingMetalsEnum.Aluminum,
+            );
         }
 
         while (!bot.shouldExit && !Core.checkInventory("Basic Weapon Kit", quant)) {
@@ -340,8 +334,7 @@ export class CoreBLOD {
             Core.killMonster("forest", "Forest3", "Left", "*", "Zardman's StoneHammer", 1, { isTemp: false });
             Core.killMonster("noobshire", "North", "Left", "Horc Noob", "Noob Blade Oil");
             Core.killMonster("farm", "Crop1", "Right", "Scarecrow", "Burlap Cloth", 4);
-            if (!bot.quests.isUnlocked(4614))
-                bot.quests.updateQuest(4614);
+            if (!bot.quests.isUnlocked(4614)) bot.quests.updateQuest(4614);
             Core.huntMonster("pyramid", "Mummy", "Triple Ply Mummy Wrap", 7);
             Core.huntMonster("pyramid", "Golden Scarab", "Golden Lacquer Finish");
             Core.huntMonster("lair", "Bronze Draconian", "Bronze Brush");
@@ -353,11 +346,10 @@ export class CoreBLOD {
     }
 
     advancedWK(quant = 1): void {
-        if (Core.checkInventory("Advanced Weapon Kit", quant))
-            return;
+        if (Core.checkInventory("Advanced Weapon Kit", quant)) return;
 
         if (!bot.quests.isUnlocked(2162)) {
-            Core.logger("Unlocking \"Advanced Weapon Kit\" Quest!");
+            Core.logger('Unlocking "Advanced Weapon Kit" Quest!');
             this.basicWK();
         }
 
@@ -384,37 +376,46 @@ export class CoreBLOD {
     }
 
     ultimateWK(item = "Ultimate Weapon Kit", quant = 1): void {
-        if (Core.checkInventory(item, quant))
-            return;
+        if (Core.checkInventory(item, quant)) return;
 
         if (!bot.quests.isUnlocked(2163)) {
-            Core.logger("Unlocking \"Ultimate Weapon Kit\" Quest!");
+            Core.logger('Unlocking "Ultimate Weapon Kit" Quest!');
             this.advancedWK();
         }
 
         Core.addDrop(
-            "Ultimate Weapon Kit", 
-            "Blinding Light Fragments", 
-            "Bright Aura", 
-            "Spirit Orb", 
-            "Loyal Spirit Orb");
+            "Ultimate Weapon Kit",
+            "Blinding Light Fragments",
+            "Bright Aura",
+            "Spirit Orb",
+            "Loyal Spirit Orb",
+        );
         Core.farmingLogger(item, quant);
         bot.quests.updateQuest(999);
         while (!bot.shouldExit && !Core.checkInventory(item, quant)) {
             Core.ensureAccept(2163);
             Core.equipClass(ClassType.Farm);
-            Core.killMonster("dragonplane", "r2", "Right", "Earth Elemental", "Great Ornate Warhammer", 1, { isTemp: false, log: false });
+            Core.killMonster("dragonplane", "r2", "Right", "Earth Elemental", "Great Ornate Warhammer", 1, {
+                isTemp: false,
+                log: false,
+            });
 
             Core.equipClass(ClassType.Solo);
-            Core.killMonster("greendragon", "Boss", "Left", "Greenguard Dragon", "Greenguard Dragon Hide", 3, { log: false });
+            Core.killMonster("greendragon", "Boss", "Left", "Greenguard Dragon", "Greenguard Dragon Hide", 3, {
+                log: false,
+            });
             Core.killMonster("sandcastle", "r7", "Left", "Chaos Sphinx", "Gold Brush", undefined, { log: false });
-            Core.killMonster("crashsite", "Boss", "Left", "ProtoSartorium", "Non-abrasive Power Powder", undefined, { log: false });
+            Core.killMonster("crashsite", "Boss", "Left", "ProtoSartorium", "Non-abrasive Power Powder", undefined, {
+                log: false,
+            });
 
             //ensure we're not aggroed in crashsite by the robots in boss cell
             Core.jumpWait();
 
             Core.killKitsune("No. 1337 Blade Oil", undefined, { log: false });
-            Core.killMonster("citadel", "m14", "Left", "Grand Inquisitor", "Blinding Lacquer Finish", undefined, { log: false });
+            Core.killMonster("citadel", "m14", "Left", "Grand Inquisitor", "Blinding Lacquer Finish", undefined, {
+                log: false,
+            });
             Core.huntMonster("djinn", "Harpy", "Suede Travel Case", undefined, { log: false });
             Core.killMonster("roc", "Enter", "Spawn", "Rock Roc", "Sharp Stone Sharpener", undefined, { log: false });
             Core.ensureComplete(2163);
@@ -425,12 +426,11 @@ export class CoreBLOD {
 
     getBlindingWeapon(weapon: WeaponOfDestiny): void {
         const weaponName = `Blinding ${WeaponOfDestiny[weapon]} of Destiny`;
-        if (Core.checkInventory(weaponName))
-            return;
+        if (Core.checkInventory(weaponName)) return;
 
         // Bypass any farms if you already farmed BLOD in the past
-        if (Core.checkInventory(40187)) // Get Your Blinding Light of Destiny
-        {
+        if (Core.checkInventory(40187)) {
+            // Get Your Blinding Light of Destiny
             Core.buyItem(bot.map.name, 1415, weaponName);
             Core.toBank(40187);
             return;
@@ -443,39 +443,37 @@ export class CoreBLOD {
 
     getBrightWeapon(weapon: WeaponOfDestiny): void {
         const weaponName = `Bright ${WeaponOfDestiny[weapon]} of Destiny`;
-        if (Core.checkInventory(weaponName))
-            return;
+        if (Core.checkInventory(weaponName)) return;
 
         this.getBaseWeapon(weapon);
 
-        const weaponReqs = (this.lightMergeShopItems ??= Core.getShopItems("necropolis", 422))
-            .find(item => item.name === weaponName)!
-            .requirements;
+        const weaponReqs = (this.lightMergeShopItems ??= Core.getShopItems("necropolis", 422)).find(
+            (item) => item.name === weaponName,
+        )!.requirements;
 
         this.getMergeRequirements(
             weaponReqs,
-            weaponReqs.find(item => item.name === WeaponOfDestiny[weapon] + " of Destiny")!.id);
+            weaponReqs.find((item) => item.name === WeaponOfDestiny[weapon] + " of Destiny")!.id,
+        );
         this.lightMerge(weaponName);
     }
 
     getBaseWeapon(weapon: WeaponOfDestiny): void {
         const weaponName = WeaponOfDestiny[weapon] + " of Destiny";
-        if (Core.checkInventory(weaponName))
-            return;
+        if (Core.checkInventory(weaponName)) return;
 
-        const weaponReqs = (this.lightMergeShopItems ??= Core.getShopItems("necropolis", 422))
-            .find(item => item.name === weaponName)!
-            .requirements;
-        const metal = weaponReqs.find(req => req.name.endsWith("of Destiny"))!;
-        this.upgradeMetal(
-            MineCraftingMetalsEnum[metal.name.split(" ")[1] as keyof typeof MineCraftingMetalsEnum]);
+        const weaponReqs = (this.lightMergeShopItems ??= Core.getShopItems("necropolis", 422)).find(
+            (item) => item.name === weaponName,
+        )!.requirements;
+        const metal = weaponReqs.find((req) => req.name.endsWith("of Destiny"))!;
+        this.upgradeMetal(MineCraftingMetalsEnum[metal.name.split(" ")[1] as keyof typeof MineCraftingMetalsEnum]);
 
         this.getMergeRequirements(weaponReqs, metal.id);
         this.lightMerge(weaponName);
     }
 
     private getMergeRequirements(requirements: ShopRequirement[], ...exceptions: number[]): void {
-        for (const req of requirements.filter(r => !exceptions.includes(r.id))) {
+        for (const req of requirements.filter((r) => !exceptions.includes(r.id))) {
             switch (req.id) {
                 case 12503: // Basic Weapon Kit
                     this.basicWK(req.quantity);
@@ -552,12 +550,9 @@ export class CoreBLOD {
             return;
         }
         // Get the forge key itemid for the quest
-        forgekeyitemID =
-            ForgeQuestdata.requirements.find(x => x != null && x.name === "Forge Key")?.id
-            ?? 0;
+        forgekeyitemID = ForgeQuestdata.requirements.find((x) => x != null && x.name === "Forge Key")?.id ?? 0;
         if (forgekeyitemID === 0) {
-            Core.logger(
-                `Failed to find the item ID for the Forge Key from the quest ID ${forgeKeyQuest}`);
+            Core.logger(`Failed to find the item ID for the Forge Key from the quest ID ${forgeKeyQuest}`);
             return;
         }
         const upgradeMetalName = fullMetalName.split(" ").slice(0, 2).join(" ");
@@ -572,12 +567,14 @@ export class CoreBLOD {
                 Core.farmingLogger(upgradeMetalName, 1);
                 Core.ensureAccept(upgradeMetalQuest);
 
-                if (!Core.checkInventory(metal))
-                    Daily.mineCrafting([MineCraftingMetalsEnum[metal]]);
+                if (!Core.checkInventory(metal)) Daily.mineCrafting([MineCraftingMetalsEnum[metal]]);
                 if (!Core.checkInventory(metal))
                     Core.logger(
-                        `Can't complete ${fullMetalName.split(" ").slice(0, 2).join(" ")} Enchantment (missing ${MineCraftingMetalsEnum[metal]}).\n`
-                            + "This requires a daily, please run the bot again after the daily reset has occurred.", undefined, { messageBox: true, stopBot: true });
+                        `Can't complete ${fullMetalName.split(" ").slice(0, 2).join(" ")} Enchantment (missing ${MineCraftingMetalsEnum[metal]}).\n` +
+                            "This requires a daily, please run the bot again after the daily reset has occurred.",
+                        undefined,
+                        { messageBox: true, stopBot: true },
+                    );
 
                 Farm.battleUnderB("Undead Energy", 25);
                 this.spiritOrb(5);

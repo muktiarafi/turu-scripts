@@ -13,8 +13,7 @@ const Story = new CoreStory();
 
 export class Borgars {
     storyLine(): void {
-        if (Core.isCompletedBefore(7522))
-            return;
+        if (Core.isCompletedBefore(7522)) return;
 
         Story.preLoad(this.storyLine);
 
@@ -78,9 +77,9 @@ export class Borgars {
 }
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new Borgars().storyLine();
+    new Borgars().storyLine();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

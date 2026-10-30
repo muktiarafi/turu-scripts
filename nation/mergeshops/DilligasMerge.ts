@@ -15,29 +15,119 @@ const Nation = new CoreNation();
 
 export class DilligasMerge {
     static readonly select = [
-        option.bool("29580", "Skullborne Sword", "Mode: [select] only\nShould the bot buy \"Skullborne Sword\" ?", false),
-        option.bool("69959", "Crypt Soldier", "Mode: [select] only\nShould the bot buy \"Crypt Soldier\" ?", false),
-        option.bool("69961", "Crypt Soldier Sword and Shield", "Mode: [select] only\nShould the bot buy \"Crypt Soldier Sword and Shield\" ?", false),
-        option.bool("69960", "Crypt Soldier Helmet", "Mode: [select] only\nShould the bot buy \"Crypt Soldier Helmet\" ?", false),
-        option.bool("69955", "Crypt Rogue", "Mode: [select] only\nShould the bot buy \"Crypt Rogue\" ?", false),
-        option.bool("69957", "Crypt Rogue BackBlade", "Mode: [select] only\nShould the bot buy \"Crypt Rogue BackBlade\" ?", false),
-        option.bool("69958", "Crypt Rogue BackBlades", "Mode: [select] only\nShould the bot buy \"Crypt Rogue BackBlades\" ?", false),
-        option.bool("69956", "Crypt Rogue Helmet", "Mode: [select] only\nShould the bot buy \"Crypt Rogue Helmet\" ?", false),
-        option.bool("69951", "Crypt Knight", "Mode: [select] only\nShould the bot buy \"Crypt Knight\" ?", false),
-        option.bool("69953", "Crypt Knight Sword", "Mode: [select] only\nShould the bot buy \"Crypt Knight Sword\" ?", false),
-        option.bool("69954", "Crypt Knight Swords", "Mode: [select] only\nShould the bot buy \"Crypt Knight Swords\" ?", false),
-        option.bool("69952", "Crypt Knight Helm", "Mode: [select] only\nShould the bot buy \"Crypt Knight Helm\" ?", false),
-        option.bool("69947", "Crypt Samurai", "Mode: [select] only\nShould the bot buy \"Crypt Samurai\" ?", false),
-        option.bool("69950", "Crypt Samurai Blades", "Mode: [select] only\nShould the bot buy \"Crypt Samurai Blades\" ?", false),
-        option.bool("69949", "Crypt Samurai Blade", "Mode: [select] only\nShould the bot buy \"Crypt Samurai Blade\" ?", false),
-        option.bool("69948", "Crypt Samurai Helmet", "Mode: [select] only\nShould the bot buy \"Crypt Samurai Helmet\" ?", false),
-        option.bool("69940", "Ancient Shogun Armor", "Mode: [select] only\nShould the bot buy \"Ancient Shogun Armor\" ?", false),
-        option.bool("69946", "Ancient Shogun Katana And Sheath", "Mode: [select] only\nShould the bot buy \"Ancient Shogun Katana And Sheath\" ?", false),
-        option.bool("69944", "Ancient Shogun Katanas", "Mode: [select] only\nShould the bot buy \"Ancient Shogun Katanas\" ?", false),
-        option.bool("69943", "Ancient Shogun Katana", "Mode: [select] only\nShould the bot buy \"Ancient Shogun Katana\" ?", false),
-        option.bool("69945", "Ancient Shogun Sheathed Katana", "Mode: [select] only\nShould the bot buy \"Ancient Shogun Sheathed Katana\" ?", false),
-        option.bool("69941", "Ancient Shogun Helm", "Mode: [select] only\nShould the bot buy \"Ancient Shogun Helm\" ?", false),
-        option.bool("69942", "Ancient Shogun Back Arms", "Mode: [select] only\nShould the bot buy \"Ancient Shogun Back Arms\" ?", false),
+        option.bool("29580", "Skullborne Sword", 'Mode: [select] only\nShould the bot buy "Skullborne Sword" ?', false),
+        option.bool("69959", "Crypt Soldier", 'Mode: [select] only\nShould the bot buy "Crypt Soldier" ?', false),
+        option.bool(
+            "69961",
+            "Crypt Soldier Sword and Shield",
+            'Mode: [select] only\nShould the bot buy "Crypt Soldier Sword and Shield" ?',
+            false,
+        ),
+        option.bool(
+            "69960",
+            "Crypt Soldier Helmet",
+            'Mode: [select] only\nShould the bot buy "Crypt Soldier Helmet" ?',
+            false,
+        ),
+        option.bool("69955", "Crypt Rogue", 'Mode: [select] only\nShould the bot buy "Crypt Rogue" ?', false),
+        option.bool(
+            "69957",
+            "Crypt Rogue BackBlade",
+            'Mode: [select] only\nShould the bot buy "Crypt Rogue BackBlade" ?',
+            false,
+        ),
+        option.bool(
+            "69958",
+            "Crypt Rogue BackBlades",
+            'Mode: [select] only\nShould the bot buy "Crypt Rogue BackBlades" ?',
+            false,
+        ),
+        option.bool(
+            "69956",
+            "Crypt Rogue Helmet",
+            'Mode: [select] only\nShould the bot buy "Crypt Rogue Helmet" ?',
+            false,
+        ),
+        option.bool("69951", "Crypt Knight", 'Mode: [select] only\nShould the bot buy "Crypt Knight" ?', false),
+        option.bool(
+            "69953",
+            "Crypt Knight Sword",
+            'Mode: [select] only\nShould the bot buy "Crypt Knight Sword" ?',
+            false,
+        ),
+        option.bool(
+            "69954",
+            "Crypt Knight Swords",
+            'Mode: [select] only\nShould the bot buy "Crypt Knight Swords" ?',
+            false,
+        ),
+        option.bool(
+            "69952",
+            "Crypt Knight Helm",
+            'Mode: [select] only\nShould the bot buy "Crypt Knight Helm" ?',
+            false,
+        ),
+        option.bool("69947", "Crypt Samurai", 'Mode: [select] only\nShould the bot buy "Crypt Samurai" ?', false),
+        option.bool(
+            "69950",
+            "Crypt Samurai Blades",
+            'Mode: [select] only\nShould the bot buy "Crypt Samurai Blades" ?',
+            false,
+        ),
+        option.bool(
+            "69949",
+            "Crypt Samurai Blade",
+            'Mode: [select] only\nShould the bot buy "Crypt Samurai Blade" ?',
+            false,
+        ),
+        option.bool(
+            "69948",
+            "Crypt Samurai Helmet",
+            'Mode: [select] only\nShould the bot buy "Crypt Samurai Helmet" ?',
+            false,
+        ),
+        option.bool(
+            "69940",
+            "Ancient Shogun Armor",
+            'Mode: [select] only\nShould the bot buy "Ancient Shogun Armor" ?',
+            false,
+        ),
+        option.bool(
+            "69946",
+            "Ancient Shogun Katana And Sheath",
+            'Mode: [select] only\nShould the bot buy "Ancient Shogun Katana And Sheath" ?',
+            false,
+        ),
+        option.bool(
+            "69944",
+            "Ancient Shogun Katanas",
+            'Mode: [select] only\nShould the bot buy "Ancient Shogun Katanas" ?',
+            false,
+        ),
+        option.bool(
+            "69943",
+            "Ancient Shogun Katana",
+            'Mode: [select] only\nShould the bot buy "Ancient Shogun Katana" ?',
+            false,
+        ),
+        option.bool(
+            "69945",
+            "Ancient Shogun Sheathed Katana",
+            'Mode: [select] only\nShould the bot buy "Ancient Shogun Sheathed Katana" ?',
+            false,
+        ),
+        option.bool(
+            "69941",
+            "Ancient Shogun Helm",
+            'Mode: [select] only\nShould the bot buy "Ancient Shogun Helm" ?',
+            false,
+        ),
+        option.bool(
+            "69942",
+            "Ancient Shogun Back Arms",
+            'Mode: [select] only\nShould the bot buy "Ancient Shogun Back Arms" ?',
+            false,
+        ),
     ];
 
     private dontStopMissingIng = false;
@@ -56,10 +146,13 @@ export class DilligasMerge {
                 default:
                     const shouldStop = !Adv.matsOnly || !this.dontStopMissingIng;
                     Core.logger(
-                        `The bot hasn't been taught how to get ${req.name}.`
-                            + (shouldStop ? " Please report the issue." : " Skipping"), "", { messageBox: shouldStop, stopBot: shouldStop });
+                        `The bot hasn't been taught how to get ${req.name}.` +
+                            (shouldStop ? " Please report the issue." : " Skipping"),
+                        "",
+                        { messageBox: shouldStop, stopBot: shouldStop },
+                    );
                     break;
-        //#endregion
+                //#endregion
 
                 case "Diamond of Nulgath":
                     Nation.farmDiamondofNulgath(quant);
@@ -102,18 +195,19 @@ export const scriptOptions = defineScriptOptions(Adv.optionsStorage, [], true, {
 });
 
 export default function main(): void {
-        Core.bankingBlackList.push(...
-            [
-                "Diamond of Nulgath",
-                "Archfiend's Favor",
-                "Tainted Gem",
-                "Dark Crystal Shard",
-                "Totem of Nulgath",
-                "Gem of Nulgath",
-                "Blood Gem of the Archfiend",
-            ]);
-        Core.setOptions();
+    Core.bankingBlackList.push(
+        ...[
+            "Diamond of Nulgath",
+            "Archfiend's Favor",
+            "Tainted Gem",
+            "Dark Crystal Shard",
+            "Totem of Nulgath",
+            "Gem of Nulgath",
+            "Blood Gem of the Archfiend",
+        ],
+    );
+    Core.setOptions();
 
-        new DilligasMerge().buyAllMerge();
-        Core.setOptions(false);
+    new DilligasMerge().buyAllMerge();
+    Core.setOptions(false);
 }

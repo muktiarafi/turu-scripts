@@ -18,8 +18,7 @@ export class DragonslayerGeneral {
     getDSGeneral(rankUpClass = true): void {
         Adv.gearStore(false, { enhAfter: true });
         if (Core.checkInventory(35996)) {
-            if (rankUpClass)
-                Adv.rankUpClass("Dragonslayer General");
+            if (rankUpClass) Adv.rankUpClass("Dragonslayer General");
             return;
         }
 
@@ -27,14 +26,12 @@ export class DragonslayerGeneral {
         this.enchantedScaleandClaw(75, 100);
         Core.buyItem("dragontown", 1286, 35996, 1, 3937);
 
-        if (rankUpClass)
-            Adv.rankUpClass("Dragonslayer General");
+        if (rankUpClass) Adv.rankUpClass("Dragonslayer General");
     }
 
     enchantedScaleandClaw(scaleQuant: number, clawQuant: number): void {
         // C# local functions
         const lairStory = (): void => {
-
             // Dragonslayer Veteran 165
             Story.killQuest(165, "lair", "Wyvern");
 
@@ -50,7 +47,7 @@ export class DragonslayerGeneral {
 
         lairStory();
         Adv.gearStore(false, { enhAfter: true });
-        if (!Core.checkInventory(582) && Core.checkClassRank({ currentClass:false, className: "Dragonslayer" }) < 10) {
+        if (!Core.checkInventory(582) && Core.checkClassRank({ currentClass: false, className: "Dragonslayer" }) < 10) {
             Core.buyItem("lair", 38, "Dragonslayer");
             Adv.rankUpClass("Dragonslayer");
         }
@@ -59,21 +56,24 @@ export class DragonslayerGeneral {
         if (scaleQuant > 0 || clawQuant > 0) {
             Core.addDrop("Enchanted Scale", "Dragon Claw");
             Core.logger(`Farming ${scaleQuant} Scale / ${clawQuant} Claw`);
-            if (scaleQuant > 0)
-                Core.registerQuests(5294);
+            if (scaleQuant > 0) Core.registerQuests(5294);
 
             Core.equipClass(ClassType.Farm);
-            Core.killMonster("dragontown", "r4", "Right", "Tempest Dracolich", "Enchanted Scale", scaleQuant, { isTemp: false });
-            Core.killMonster("dragontown", "r4", "Right", "Tempest Dracolich", "Dragon Claw", clawQuant, { isTemp: false });
+            Core.killMonster("dragontown", "r4", "Right", "Tempest Dracolich", "Enchanted Scale", scaleQuant, {
+                isTemp: false,
+            });
+            Core.killMonster("dragontown", "r4", "Right", "Tempest Dracolich", "Dragon Claw", clawQuant, {
+                isTemp: false,
+            });
             Core.cancelRegisteredQuests();
         }
     }
 }
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new DragonslayerGeneral().getDSGeneral();
+    new DragonslayerGeneral().getDSGeneral();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

@@ -82,7 +82,9 @@ export class Awescended {
             //War: What is it Good For?
             if (!Story.questProgression(8038)) {
                 Core.ensureAccept(8038);
-                Core.killMonster("yokaiwar", "Boss", "Left", "O-dokuro's Head", "O-dokuro's Tooth", 1, { isTemp: false });
+                Core.killMonster("yokaiwar", "Boss", "Left", "O-dokuro's Head", "O-dokuro's Tooth", 1, {
+                    isTemp: false,
+                });
                 Core.killMonster("wardwarf", "r4", "Left", "D'wain Jonsen", "D'wain Jonsen's Stinger");
                 Core.killMonster("mythsongwar", "War2", "Left", "*", "Music Pirate's Instrument of War", 6);
                 bot.quests.updateQuest(1170);
@@ -105,12 +107,16 @@ export class Awescended {
                 Farm.experience(50);
                 Core.equipClass(ClassType.Solo);
                 Core.ensureAccept(8040);
-                Core.killMonster("ledgermayne", "Boss", "Left", "Ledgermayne", "The Supreme Arcane Staff", 1, { isTemp: false }); 
+                Core.killMonster("ledgermayne", "Boss", "Left", "Ledgermayne", "The Supreme Arcane Staff", 1, {
+                    isTemp: false,
+                });
                 Adv.buyItem("doomwood", 276, "Blinding Light of Destiny Handle");
                 sRoD.shadowReaperOfDoom();
                 Farm.bladeofAweREP(10, true);
                 Core.equipClass(ClassType.Farm);
-                Core.killMonster("cornelis", "Side1", "Left", "Gargoyle", "Mirror Shield Fragment", 50, { isTemp: false });
+                Core.killMonster("cornelis", "Side1", "Left", "Gargoyle", "Mirror Shield Fragment", 50, {
+                    isTemp: false,
+                });
                 Core.ensureComplete(8040);
             }
 
@@ -120,7 +126,9 @@ export class Awescended {
                 Core.ensureAccept(8041);
                 if (!Core.checkInventory("Vaden's Helm")) {
                     Core.equipClass(ClassType.Solo);
-                    Core.killMonster("bonecastlec", "r25", "Bottom", "Vaden", "Vaden Helm Token", 333, { isTemp: false });
+                    Core.killMonster("bonecastlec", "r25", "Bottom", "Vaden", "Vaden Helm Token", 333, {
+                        isTemp: false,
+                    });
                     while (!Core.checkInventory("Vaden's Helm")) {
                         Core.buyItem("bonecastlec", 1242, "Vaden's Helm", 1, 3740);
                         Core.sleep(500);
@@ -183,10 +191,7 @@ export class Awescended {
                 Core.ensureAccept(8042);
                 Core.huntMonster("ectocave", "Ektorax", "Bin Jett's Salvaged Armor Part", 50, { isTemp: false });
 
-                Core.unbank(
-                    `GOLD Boost! (60 min)`, 
-                    "Doom GOLD Boost! (60 min)", 
-                    "GOLD Boost! (20 min)");
+                Core.unbank(`GOLD Boost! (60 min)`, "Doom GOLD Boost! (60 min)", "GOLD Boost! (20 min)");
                 bot.boosts.setUses(BoostType.Gold, true);
 
                 Core.ensureComplete(8042);
@@ -194,13 +199,14 @@ export class Awescended {
             }
         }
 
-
-        if (Core.checkInventory([
-                    "Awescended",
-                    "Awescended Omni Armblades",
-                    "Awescended Omni Cowl",
-                    "Awescended Omni Wings",
-                ]))
+        if (
+            Core.checkInventory([
+                "Awescended",
+                "Awescended Omni Armblades",
+                "Awescended Omni Cowl",
+                "Awescended Omni Wings",
+            ])
+        )
             return;
 
         Core.buyItem("museum", 1994, "Awescended");
@@ -211,8 +217,7 @@ export class Awescended {
     }
 
     armorOfZular(): void {
-        if (Core.checkInventory("Armor of Zular"))
-            return;
+        if (Core.checkInventory("Armor of Zular")) return;
 
         Core.addDrop("Armor of Zular", "Djinn's Essence");
         Core.equipClass(ClassType.Farm);
@@ -222,9 +227,9 @@ export class Awescended {
 }
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new Awescended().getAwe();
+    new Awescended().getAwe();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

@@ -15,8 +15,7 @@ const P3 = new CoreDoomwood();
 
 export class PinkBladeOfDestruciton {
     getPBoD(): void {
-        if (Core.checkInventory("Pink Blade of Destruction"))
-            return;
+        if (Core.checkInventory("Pink Blade of Destruction")) return;
 
         P3.doomwoodPart3();
 
@@ -54,9 +53,9 @@ export class PinkBladeOfDestruciton {
 }
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new PinkBladeOfDestruciton().getPBoD();
+    new PinkBladeOfDestruciton().getPBoD();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }

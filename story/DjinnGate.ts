@@ -25,8 +25,7 @@ export class DjinnGateStory {
     ];
 
     djinnGate(): void {
-        if (Core.isCompletedBefore(7312) && Core.isCompletedBefore(6161))
-            return;
+        if (Core.isCompletedBefore(7312) && Core.isCompletedBefore(6161)) return;
 
         Story.preLoad(this.djinnGate);
 
@@ -180,9 +179,9 @@ export class DjinnGateStory {
 }
 
 export default function main(): void {
-        Core.setOptions();
+    Core.setOptions();
 
-        new DjinnGateStory().djinnGate();
+    new DjinnGateStory().djinnGate();
 
-        Core.setOptions(false);
+    Core.setOptions(false);
 }
