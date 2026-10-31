@@ -2913,7 +2913,12 @@ export class FileConverter {
             case "InsertRange":
                 return r(`${base}${q}splice(${a[0]}, 0, ...${wrap(a[1])})`);
             case "Remove":
-                return r(`${this.todo("List.Remove", node)} ${base}${q}splice(${base}.indexOf(${a[0]}), 1)`);
+                // C# removes the first match and does nothing without one (splice(-1) would drop the last).
+                return node.parent?.type === "expression_statement"
+                    ? r(`if (${base}${q}includes(${a[0]})) ${base}${q}splice(${base}.indexOf(${a[0]}), 1)`)
+                    : r(
+                          `${this.todo("List.Remove returns whether it removed", node)} ${base}${q}splice(${base}.indexOf(${a[0]}), 1)`,
+                      );
             case "RemoveAt":
                 return r(`${base}${q}splice(${a[0]}, 1)`);
             case "RemoveAll":

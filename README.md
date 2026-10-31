@@ -321,6 +321,29 @@ can be asked); `CavernCelestite`'s default quantity is the max stack from the qu
 for the same reason. `CoreFarms.handleShopPurchases` and `membershipDues` truncate C#'s integer
 divisions. Turu now accepts `[` and `]` in an options file name (`HardCoreMetals[mem](Daily)`).
 
+## Seasonal
+
+Every script in the C# `Seasonal/` folder is ported but `Frostvale/CheckForDonatedACs`, which uses
+CoreArmyLite and is ported with the Army scripts. The 235 left after the earlier batches were converted with
+cs2ts; they include nothing outside `Seasonal/` that wasn't ported. They type-check and load, but
+none has run in game. These 9 were fixed by hand; the rest are drafts with the cs2ts line:
+`18thBirthdayHeroBadge`, `NoEgretsBadge`, `NusantaraBossesBadge` (C#'s `badge` field and `Badge()`
+method share a name in TS: the field is `badgeName`), `TrobbolierPet[mem]` (`StringBuilder`),
+`TreasuresOfAotearoa`, `HeadlessHorsemanGear`, `TwillyTreasurePile`, `Mockingbird`,
+`VanquishTheBetrayers`. CoreBots gained `playerAFK` (`GoldenTicket` listens to `playerAFK` with it).
+
+cs2ts now writes `List.Remove(x)` as a statement as `if (list.includes(x)) list.splice(...)`
+(`splice(indexOf(x), 1)` removed the last item when `x` wasn't there).
+
+C# bugs fixed on purpose (still in VibeSkua's Scripts, marked `C#` in the code):
+
+- `HeadlessHorsemanGear` jumps to an earlier quest's steps with `goto case`, which runs them with
+  the later quest's ID and then breaks: it accepts and turns in the wrong quest and never does the
+  later one. The earlier quest is done first with its own ID now, then the later one.
+- `Mockingbird` and `VanquishTheBetrayers` `return` from their reward loop at the first reward you
+  own, so the rest were never farmed.
+- `TwillyTreasurePile` declares its kill counter inside the loop, so it never banks every 5 kills.
+
 ## FarmerJoe
 
 `other/farmjoekits/0FarmerJoeDoAll.ts` and everything its `DoAll` reaches are ported: 128 files

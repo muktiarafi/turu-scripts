@@ -5193,6 +5193,16 @@ export class CoreBots {
 
     // C# RetryCellOnAFK: SetOptions extra, dropped.
 
+    /**
+     * Answers the AFK warning: waits 1.5 s and tells the server the player is back. A bound
+     * function, for `bot.events.on("playerAFK", Core.playerAFK)`.
+     */
+    readonly playerAFK = (): void => {
+        bot.log("Anti-AFK engaged");
+        bot.sleep(1500);
+        bot.send.packet("%xt%zm%afk%1%false%");
+    };
+
     // ---------------------------------------------------------------------------------------
     // Maps
     // ---------------------------------------------------------------------------------------
