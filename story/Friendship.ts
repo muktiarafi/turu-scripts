@@ -6,7 +6,7 @@ tags: story, quest, friendship, greyguard, battleodium, NPC
 // Port of Scripts/Story/Friendship.cs.
 // Converted by tools/cs2ts, not yet read through by hand (cs2ts --force regenerates it); remove this line once it is.
 
-import { bot } from "turu";
+import { bot, type EventMap } from "turu";
 import { Core } from "../core/CoreBots";
 import { CoreStory } from "../core/CoreStory";
 
@@ -14,7 +14,7 @@ const Story = new CoreStory();
 
 export class Friendship {
     completeStory(): void {
-        const friendshipPacketReader = (packet: any): void => {
+        const friendshipPacketReader = (packet: EventMap["extensionPacket"]): void => {
             const type = packet["params"].type;
             const data = packet["params"].dataObj;
             if (!(type == null && type === "json")) {

@@ -20,6 +20,21 @@ const Nation = new CoreNation();
 const ACAB = new AssistingCragAndBamboozle();
 
 export class CoreVHL {
+    optionsStorage = "VoidHighLordOptions";
+    dontPreconfigure = true;
+    options = [
+        option.bool(
+            "SparrowMethod",
+            "Use Sparrow's Blood Method",
+            'When possible, it will use "Assisting Crag and Bamboozle" to get an additional Elders\' Blood per day.\n' +
+                "Needs Crag and Bamboozle and is Legend-Only.\n" +
+                "Will not be done if you don't meed the conditions\n" +
+                "Recommended setting: True",
+            true,
+        ),
+        Core.skipOptions,
+    ];
+
     useSparrowMethod = true;
 
     private readonly challengeRewards: string[] = [
@@ -196,19 +211,7 @@ export class CoreVHL {
     }
 }
 
-export const scriptOptions = defineScriptOptions(
-    "VoidHighLordOptions",
-    [
-        option.bool(
-            "SparrowMethod",
-            "Use Sparrow's Blood Method",
-            'When possible, it will use "Assisting Crag and Bamboozle" to get an additional Elders\' Blood per day.\n' +
-                "Needs Crag and Bamboozle and is Legend-Only.\n" +
-                "Will not be done if you don't meed the conditions\n" +
-                "Recommended setting: True",
-            true,
-        ),
-        Core.skipOptions,
-    ],
-    true,
-);
+export const scriptOptions = (() => {
+    const vhl = new CoreVHL();
+    return defineScriptOptions(vhl.optionsStorage, vhl.options, vhl.dontPreconfigure);
+})();

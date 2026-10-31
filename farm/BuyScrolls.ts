@@ -7,7 +7,7 @@ tags: scroll, enrage, mystic, parchment, spellcraft, decay
 // Converted by tools/cs2ts, not yet read through by hand (cs2ts --force regenerates it); remove this line once it is.
 
 import { bot, choices, defineScriptOptions, option } from "turu";
-import { Core } from "../core/CoreBots";
+import { configEnum, Core } from "../core/CoreBots";
 import { CoreFarms } from "../core/CoreFarms";
 
 const Farm = new CoreFarms();
@@ -79,7 +79,7 @@ export class BuyScrolls {
         useMysticParchment = useMysticParchment || bot.config!.get<boolean>("UseMysticParchment");
         const QuestData = Core.initializeWithRetries(() => Core.ensureLoad(scroll));
         if (QuestData == null) {
-            Core.logger(`Quest for ${scroll} not found, please report this to the devs.`);
+            Core.logger(`Quest for ${Scrolls[scroll]} not found, please report this to the devs.`);
             return;
         }
         const scrollName = QuestData.rewards[0].name;
@@ -148,7 +148,7 @@ export default function main(): void {
     const script = new BuyScrolls();
     Core.setOptions();
 
-    script.buyScroll(bot.config!.get<Scrolls>("scrollSelect"), bot.config.get<number>("scrollAmount"));
+    script.buyScroll(configEnum("scrollSelect", Scrolls, Scrolls.Fireball), bot.config.get<number>("scrollAmount"));
 
     Core.setOptions(false);
 }

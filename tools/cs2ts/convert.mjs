@@ -100,7 +100,15 @@ export class FileConverter {
 
     /** Imports `name` from the module that exports it (an include's port first), if any. */
     need(name, asType = false, preferModule = null) {
-        if (this.localEnums.has(name) || this.localClasses.has(name)) return;
+        if (this.localEnums.has(name) || this.localClasses.has(name)) {
+            // Another file's enum of the same name (`InTheFiendsShadow.Rewards` next to our `Rewards`).
+            if (!preferModule || preferModule === this.outRel) return;
+            const local = `${path.posix.basename(preferModule).replace(/\W/g, "").replace(/^\d+/, "")}${name}`;
+            const map = asType ? this.typeImports : this.imports;
+            if (!map.has(preferModule)) map.set(preferModule, new Set());
+            map.get(preferModule).add(`${name} as ${local}`);
+            return local;
+        }
         const prefer = [...(preferModule ? [preferModule] : []), "turu", ...this.includes.map((i) => i.module)];
         const e = this.tsx.exportSymbol(name, prefer);
         let module = e?.module;
@@ -117,7 +125,7 @@ export class FileConverter {
         let local = name;
         const first = this.importedFrom.get(name);
         if (first && first !== module) {
-            local = `${path.posix.basename(module).replace(/\W/g, "")}${name}`;
+            local = `${path.posix.basename(module).replace(/\W/g, "").replace(/^\d+/, "")}${name}`;
             name = `${name} as ${local}`;
         } else this.importedFrom.set(name, module);
         const map = asType ? this.typeImports : this.imports;
@@ -262,6 +270,11 @@ export class FileConverter {
             }
             case "identifier":
             case "qualified_name": {
+                if (
+                    node.type === "qualified_name" &&
+                    this.csx.nestedEnums.has(node.text.split(".").slice(-2).join("."))
+                )
+                    return this.enumName(node.text);
                 const name = node.text.split(".").at(-1);
                 if (NUMBER_TYPES.has(name)) return "number";
                 if (name === "String") return "string";
@@ -448,7 +461,9 @@ export class FileConverter {
         out.push(MARKER);
         for (const l of leading) out.push(l);
         out.push("");
-        out.push(this.importLines());
+        // A name asked for and then not emitted (`Bot.Config` read through `configEnum`) isn't imported.
+        const body = [...leading, ...libLines, ...parts, scriptOptions, main].join("\n");
+        out.push(this.importLines(body));
         out.push("");
         if (libLines.length) out.push(libLines.join("\n") + "\n");
         out.push(parts.join("\n\n"));
@@ -459,7 +474,12 @@ export class FileConverter {
         return { text: out.join("\n") + "\n", todos: this.todos };
     }
 
-    importLines() {
+    importLines(body = null) {
+        // Strings and comments don't count ("...do you want the bot to..."); template literals do.
+        const code = body
+            ?.replace(/"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'/g, '""')
+            .replace(/\/\*[\s\S]*?\*\/|\/\/[^\n]*/g, "");
+        const used = (n) => code == null || new RegExp(`\\b${n.split(" as ").at(-1)}\\b`).test(code);
         const lines = [];
         const modules = new Set([...this.imports.keys(), ...this.typeImports.keys()]);
         const order = [...modules].sort((a, b) => (a === "turu" ? -1 : b === "turu" ? 1 : a.localeCompare(b)));
@@ -469,7 +489,7 @@ export class FileConverter {
             const types = [...(this.typeImports.get(m) ?? [])].filter(
                 (n) => !values.has(n) && !values.has(n.split(" as ")[0]),
             );
-            const names = [...[...values].map((n) => n), ...types.map((n) => `type ${n}`)].sort((a, b) =>
+            const names = [...[...values].filter(used), ...types.filter(used).map((n) => `type ${n}`)].sort((a, b) =>
                 a.replace(/^type /, "").localeCompare(b.replace(/^type /, "")),
             );
             if (names.length === 0) continue;
@@ -590,6 +610,7 @@ export class FileConverter {
         }
         // Methods used as event handlers (`Bot.Events.RunToArea += DarkCarnaxMove;`).
         this.cls.eventHandlers = new Map();
+        this.cls.localEventHandlers = new Map();
         for (const a of body ? body.descendantsOfType("assignment_expression") : []) {
             const left = a.childForFieldName("left");
             const right = a.childForFieldName("right");
@@ -599,6 +620,8 @@ export class FileConverter {
             const ev = left.text.split(".")[2];
             if (this.cls.members.get(handler)?.kind === "method")
                 this.cls.eventHandlers.set(handler, EVENT_NAMES[ev] ?? lcFirst(ev));
+            // A local function (`void Event_RunToArea(string zone)` inside the method).
+            else if (/^\w+$/.test(handler)) this.cls.localEventHandlers.set(handler, EVENT_NAMES[ev] ?? lcFirst(ev));
         }
 
         // Option groups (MultiOptions) and the option fields.
@@ -676,7 +699,16 @@ export class FileConverter {
                     lines.push(this.todo(`member ${m.type}`, m) + "\n// " + m.text.split("\n").join("\n// "));
             }
         }
-        if (Object.keys(optionFields).length || groupNames.length)
+        if (!mainText && !groupNames.length && (optionFields.Options || optionFields.OptionsStorage)) {
+            // A library (Core) file: the scripts that include it pass its `OptionsStorage` and
+            // `Options` to their own `defineScriptOptions`, so they stay fields.
+            if (lines.length && lines.at(-1) !== "") lines.push("");
+            if (optionFields.OptionsStorage)
+                lines.push(`optionsStorage = ${this.expr(initOf(optionFields.OptionsStorage)).s};`);
+            if (optionFields.DontPreconfigure)
+                lines.push(`dontPreconfigure = ${this.expr(initOf(optionFields.DontPreconfigure)).s};`);
+            if (optionFields.Options) lines.push(`options = ${this.optionList(initOf(optionFields.Options))};`);
+        } else if (Object.keys(optionFields).length || groupNames.length)
             optionsText = this.scriptOptionsDecl(name, optionFields, groupNames);
 
         // Members used by main() can't be private.
@@ -952,26 +984,7 @@ export class FileConverter {
         // An event handler (`Bot.Events.X += Method`): a bound arrow property taking the event's data.
         const event = this.cls.eventHandlers?.get(n);
         let ps = this.params(m.childForFieldName("parameters"));
-        if (event) {
-            const csParams = paramsOf(m.childForFieldName("parameters"));
-            const keys = EVENT_ARGS[event];
-            this.need("EventMap", true);
-            if (keys && csParams.length)
-                ps = `{ ${csParams.map((p, i) => (keys[i] === p.name ? p.name : `${keys[i] ?? p.name}: ${p.name}`)).join(", ")} }: EventMap["${event}"]`;
-            else if (csParams.length)
-                ps = `${csParams[0].name}: EventMap["${event}"]${
-                    csParams.length > 1
-                        ? " " +
-                          this.todo(
-                              `extra handler parameters ${csParams
-                                  .slice(1)
-                                  .map((p) => p.name)
-                                  .join(", ")}`,
-                              m,
-                          )
-                        : ""
-                }`;
-        }
+        if (event) ps = this.eventParams(event, m);
         const ret = this.tsTypeText(m.childForFieldName("returns") ?? m.childForFieldName("type"));
         const bodyNode =
             m.childForFieldName("body") ??
@@ -1023,6 +1036,30 @@ export class FileConverter {
     }
 
     // ----- statements --------------------------------------------------------------------------
+
+    /** The parameter list of an event handler: the event's data object, destructured as C#'s parameters. */
+    eventParams(event, m) {
+        let ps = this.params(m.childForFieldName("parameters"));
+        const csParams = paramsOf(m.childForFieldName("parameters"));
+        const keys = EVENT_ARGS[event];
+        this.need("EventMap", true);
+        if (keys && csParams.length)
+            ps = `{ ${csParams.map((p, i) => (keys[i] === p.name ? p.name : `${keys[i] ?? p.name}: ${p.name}`)).join(", ")} }: EventMap["${event}"]`;
+        else if (csParams.length)
+            ps = `${csParams[0].name}: EventMap["${event}"]${
+                csParams.length > 1
+                    ? " " +
+                      this.todo(
+                          `extra handler parameters ${csParams
+                              .slice(1)
+                              .map((p) => p.name)
+                              .join(", ")}`,
+                          m,
+                      )
+                    : ""
+            }`;
+        return ps;
+    }
 
     block(node) {
         this.pushScope();
@@ -1086,7 +1123,8 @@ export class FileConverter {
                 const name = node.childForFieldName("name").text;
                 this.pushScope();
                 const prevAssigned = this.assigned;
-                const ps = this.params(node.childForFieldName("parameters"));
+                const event = this.cls?.localEventHandlers?.get(name);
+                const ps = event ? this.eventParams(event, node) : this.params(node.childForFieldName("parameters"));
                 const retNode = node.childForFieldName("type") ?? node.childForFieldName("returns");
                 const ret = this.tsTypeText(retNode);
                 const prevRet = this.returnType;
@@ -1758,6 +1796,9 @@ export class FileConverter {
             const i = t.tuple.findIndex((e) => e.name === name);
             if (i >= 0) return { s: `${recv.s}[${i}]`, t: t.tuple[i].t };
         }
+        // Nullable<T> of an enum or a primitive: `x.HasValue`, `x.Value`.
+        if ((name === "HasValue" || name === "Value") && (t?.enumT || t?.enumMember || t?.prim))
+            return name === "HasValue" ? { s: `(${recv.s} != null)`, t: T.bool } : { s: `${recv.s}!`, t };
         if (t?.enumT) return { s: `${recv.s}.${name}`, t: { enumMember: t.enumT } };
         // Skua's Monster.Alive (turu.ts's Monster has the raw fields).
         if (name === "Alive" && t?.ts && this.tsx.typeName(t.ts).replace(/ \| null$/, "") === "Monster")
@@ -1765,6 +1806,8 @@ export class FileConverter {
         // Skua's Quest.Active (Status != null).
         if (name === "Active" && t?.ts && /^(Quest|QuestData)( \| null)?$/.test(this.tsx.typeName(t.ts)))
             return { s: `(${recv.s}.status != null)`, t: T.bool };
+        const alias = t?.ts && MEMBER_ALIASES[this.tsx.typeName(t.ts).replace(/ \| null$/, "")]?.[name];
+        if (alias) name = alias;
         const m = this.memberOf(t, name);
         if (m) {
             if (t?.csStatic || t?.cs) {
@@ -1859,6 +1902,8 @@ export class FileConverter {
                 const fmt = kids.find((x) => x.type === "interpolation_format_clause");
                 const align = kids.find((x) => x.type === "interpolation_alignment_clause");
                 let v = e.s;
+                const en = !fmt && this.numericEnumOf(e.t);
+                if (en) v = `${en}[${v}]`;
                 if (fmt)
                     v = formatValue(v, fmt.text.replace(/^:/, "")) ?? `${v} ${this.todo(`format ${fmt.text}`, fmt)}`;
                 if (align) v = `${v} ${this.todo(`alignment ${align.text}`, align)}`;
@@ -2182,6 +2227,9 @@ export class FileConverter {
         if (typeNode.type === "generic_name" && typeName === "Option") {
             return this.optionCreation(named(named(typeNode)[1])[0], argNodes, node);
         }
+        // `new Action(() => ...)`, `new Func<int>(...)`: the delegate is the lambda itself.
+        if ((typeName === "Action" || typeName === "Func") && argNodes.length === 1 && !init)
+            return this.expr(named(argNodes[0]).at(-1), expected);
         if (t?.arr !== undefined || LIST_TYPES.has(typeName)) {
             if (init) return this.arrayLiteral(init, t, t);
             if (argNodes.length === 1) {
@@ -2192,7 +2240,13 @@ export class FileConverter {
             return { s: "[]", t };
         }
         if (t?.map || MAP_TYPES.has(typeName)) {
-            if (init) return this.mapLiteral(init, t);
+            if (init) {
+                const m = this.mapLiteral(init, t);
+                // Tuple values (`(int Order, Action Action)`) would be inferred as arrays of a union.
+                const tt = t?.map?.[1]?.tuple ? this.tsTypeText(typeNode) : "";
+                if (tt.startsWith("Map<")) m.s = m.s.replace(/^new Map\(/, `new ${tt}(`);
+                return m;
+            }
             if (argNodes.length === 1) {
                 const a = this.expr(named(argNodes[0]).at(-1));
                 if (/StringComparer/.test(a.s))
@@ -2283,19 +2337,46 @@ export class FileConverter {
         if (NUMBER_TYPES.has(t)) return { s: `option.int(${args.slice(0, 4).join(", ")})`, t: null };
         if (t === "string") return { s: `option.text(${args.slice(0, 4).join(", ")})`, t: null };
         this.need("choices");
-        this.need(t);
+        const numeric = this.isNumericEnum(t);
+        const tl = this.enumName(t);
         let def = args[3];
-        if (def !== undefined && this.isNumericEnum(t)) def = `${t}[${def}]`;
+        if (def !== undefined && numeric) def = `${tl}[${def}]`;
         const rest = args.length > 4 ? ` ${this.todo(`extra Option arguments ${args.slice(4).join(", ")}`, node)}` : "";
         return {
-            s: `option.choice(${[...args.slice(0, 3), `choices(${t})`, ...(def !== undefined ? [def] : [])].join(", ")})${rest}`,
+            s: `option.choice(${[...args.slice(0, 3), `choices(${tl})`, ...(def !== undefined ? [def] : [])].join(", ")})${rest}`,
             t: null,
         };
     }
 
+    /** The (local) name of the numeric enum a value of type `t` belongs to, else null. */
+    numericEnumOf(t) {
+        const en = t?.enumMember ?? t?.enumT ?? (t?.tsName && this.csx.enums.has(t.tsName) ? t.tsName : null);
+        if (!en || !this.isNumericEnum(en)) return null;
+        return this.localEnums.has(en) ? en : this.enumName(en);
+    }
+
+    /** A C# enum type's name here: `Outer.Enum` (an enum nested in another script's class) imported. */
+    enumName(text) {
+        const [outer, name] = text.split(".").slice(-2);
+        if (name && this.csx.nestedEnums.has(`${outer}.${name}`)) {
+            const owner =
+                this.tsx.exportSymbol(outer)?.module ?? tsPathOf(this.csx.nestedEnums.get(`${outer}.${name}`).file);
+            return this.need(name, false, owner) ?? name;
+        }
+        this.need(text);
+        return text;
+    }
+
     isNumericEnum(name) {
+        if (name.includes(".")) {
+            const nested = this.csx.nestedEnums.get(name.split(".").slice(-2).join("."));
+            if (nested) return nested.members.some((m) => m.value !== null);
+        }
         const local = this.localEnums.get(name);
         if (local) return local.descendantsOfType("enum_member_declaration").some((m) => m.childForFieldName("value"));
+        // A ported enum: as the port declares it (CoreBLOD's `BLODMethod` is numeric, C#'s has no values).
+        const ported = this.tsx.isNumericEnum(name);
+        if (ported !== null) return ported;
         const cs = this.csx.enums.get(name);
         if (cs) return cs.members.some((m) => m.value !== null);
         return false;
@@ -2450,11 +2531,12 @@ export class FileConverter {
         if (recvText === "Enum") {
             const args = a();
             if (name === "GetValues" || name === "GetNames") {
-                const tn = typeArgs[0]?.text ?? /typeof\((\w+)\)/.exec(argNodes[0]?.text ?? "")?.[1];
-                if (tn) {
-                    this.need(tn);
+                const tcs = typeArgs[0]?.text ?? /typeof\(([\w.]+)\)/.exec(argNodes[0]?.text ?? "")?.[1];
+                if (tcs) {
+                    const numeric = this.isNumericEnum(tcs);
+                    const tn = this.enumName(tcs);
                     this.need("choices");
-                    return name === "GetNames" || !this.isNumericEnum(tn)
+                    return name === "GetNames" || !numeric
                         ? { s: `(choices(${tn}) as ${tn}[])`, t: { arr: { enumMember: tn } } }
                         : {
                               s: `choices(${tn}).map((n) => ${tn}[n as keyof typeof ${tn}])`,
@@ -2472,8 +2554,12 @@ export class FileConverter {
             }
             if (name === "Parse" || name === "TryParse")
                 return { s: `${this.todo(`Enum.${name}`, node)} ${args.map((x) => x.s).join(", ")}`, t: null };
-            if (name === "GetName")
+            if (name === "GetName") {
+                const tcs = typeArgs[0]?.text ?? /typeof\(([\w.]+)\)/.exec(argNodes[0]?.text ?? "")?.[1];
+                if (tcs && this.isNumericEnum(tcs)) return { s: `${this.enumName(tcs)}[${args.at(-1).s}]`, t: T.str };
+                if (tcs) return { s: `String(${args.at(-1).s})`, t: T.str };
                 return { s: `${this.todo("Enum.GetName", node)} String(${args.at(-1).s})`, t: T.str };
+            }
         }
         if (recvText === "Array" && name === "Empty") return { s: "[]", t: { arr: null } };
         if (recvText === "Enumerable") {
@@ -2494,6 +2580,16 @@ export class FileConverter {
         if (recvText === "Array" && name === "Exists") {
             const args = a();
             return { s: `${args[0].s}.some(${args[1].s})`, t: T.bool };
+        }
+        if (recvText === "Array" && name === "IndexOf" && argNodes.length === 2) {
+            const args = a();
+            return { s: `${args[0].s}.indexOf(${args[1].s})`, t: T.num };
+        }
+        if (recvText === "Array" && (name === "Find" || name === "FindAll") && argNodes.length === 2) {
+            const args = a();
+            return name === "Find"
+                ? { s: `(${args[0].s}.find(${args[1].s}) ?? null)`, t: args[0].t?.arr ?? null }
+                : { s: `${args[0].s}.filter(${args[1].s})`, t: args[0].t };
         }
         if (
             recvText === "DateTime" ||
@@ -2542,14 +2638,30 @@ export class FileConverter {
         const q = recv.s.endsWith("?") ? "?." : ".";
         const base = recv.s.replace(/\?$/, "");
 
+        // Core.QuestRequirements<int>(...) / <string>(...): C#'s two generic versions.
+        if (name === "QuestRequirements" && typeArgs.length === 1 && recv.t?.ts === this.tsx.declaredType("CoreBots")) {
+            const ids = NUMBER_TYPES.has(typeArgs[0].text);
+            const args = argNodes.map((x) => this.expr(named(x).at(-1)).s).join(", ");
+            return {
+                s: `${base}${q}${ids ? "questRequirementIds" : "questRequirements"}(${args})`,
+                t: { arr: ids ? T.num : T.str },
+            };
+        }
         // Bot.Config.Get<NumericEnum>(name) -> configEnum(name, E, first)
-        if (name === "Get" && /\.config$/.test(base) && typeArgs.length === 1 && this.isNumericEnum(typeArgs[0].text)) {
+        if (
+            name === "Get" &&
+            /\.config!?$/.test(base) &&
+            typeArgs.length === 1 &&
+            this.isNumericEnum(typeArgs[0].text)
+        ) {
             this.need("configEnum");
-            this.need(typeArgs[0].text);
-            const e = typeArgs[0].text;
+            const cs = typeArgs[0].text;
+            const e = this.enumName(cs);
             const first =
-                this.localEnums.get(e)?.descendantsOfType("enum_member_declaration")[0]?.childForFieldName("name")
-                    .text ?? this.csx.enums.get(e)?.members[0]?.name;
+                this.localEnums.get(cs)?.descendantsOfType("enum_member_declaration")[0]?.childForFieldName("name")
+                    .text ??
+                (this.csx.nestedEnums.get(cs.split(".").slice(-2).join(".")) ?? this.csx.enums.get(cs))?.members[0]
+                    ?.name;
             return {
                 s: `configEnum(${argNodes.map((x) => this.expr(x).s).join(", ")}, ${e}, ${e}.${first})`,
                 t: { enumMember: e },
@@ -2763,6 +2875,9 @@ export class FileConverter {
                     `String(${base}) ${this.todo('ItemBase.ToString() is "[ID] (Item) Name xN", not the name', node)}`,
                     T.str,
                 );
+            // A numeric enum's ToString() is the member's name.
+            const en = this.numericEnumOf(t);
+            if (en) return r(`${en}[${base}]`, T.str);
             // x?.ToString() is null when x is: String(undefined) would be "undefined".
             if (q === "?.") return r(`${base}?.toString()`, T.str);
             return r(t?.prim === "string" ? base : `String(${base})`, T.str);
@@ -2784,13 +2899,14 @@ export class FileConverter {
             case "Push":
                 return r(call("push"));
             case "AddRange":
-                if (isArrayExpr(named(argNodes[0]).at(-1)) || /^\[.*\]$/s.test(a[0]))
-                    return r(
-                        `${base}${q}push(${a[0]
-                            .replace(/^\[|\]$/g, "")
-                            .trim()
-                            .replace(/,$/, "")})`,
-                    );
+                if (isArrayExpr(named(argNodes[0]).at(-1)) || /^\[.*\]$/s.test(a[0])) {
+                    const items = a[0]
+                        .replace(/^\[|\]$/g, "")
+                        .trim()
+                        .replace(/,$/, "");
+                    // A trailing `// comment` would swallow the `)`.
+                    return r(`${base}${q}push(${items}${/\/\/[^\n]*$/.test(items) ? "\n" : ""})`);
+                }
                 return r(`${base}${q}push(...${wrap(a[0])})`);
             case "Insert":
                 return r(`${base}${q}splice(${a[0]}, 0, ${a[1]})`);
@@ -2801,8 +2917,9 @@ export class FileConverter {
             case "RemoveAt":
                 return r(`${base}${q}splice(${a[0]}, 1)`);
             case "RemoveAll":
+                // As a statement the count C# returns doesn't matter.
                 return r(
-                    `${this.todo("List.RemoveAll", node)} ${base}${q}splice(0, ${base}.length, ...${base}.filter((x) => !(${pred})(x)))`,
+                    `${node.parent?.type === "expression_statement" ? "" : `${this.todo("List.RemoveAll returns the count", node)} `}${base}${q}splice(0, ${base}.length, ...${base}.filter((x) => !(${pred})(x)))`,
                 );
             case "RemoveRange":
                 return r(`${base}${q}splice(${a[0]}, ${a[1]})`);
@@ -2891,6 +3008,13 @@ export class FileConverter {
                 });
             case "Distinct":
                 return r(`[...new Set(${base})]`, t);
+            case "DistinctBy":
+                return r(
+                    `${base}${q}filter((x, i, all) => all.findIndex((y) => (${pred})(y) === (${pred})(x)) === i)`,
+                    t,
+                );
+            case "UnionWith":
+                return r(`${wrap(a[0])}.forEach((x) => ${base}.add(x))`, null);
             case "Concat":
             case "Union":
                 return r(`[...${base}, ...${wrap(a[0])}]`, t);
@@ -2907,7 +3031,7 @@ export class FileConverter {
             case "ElementAtOrDefault":
                 return r(`(${base}${idx}[${a[0]}] ?? null)`, elemT);
             case "SequenceEqual":
-                return r(`JSON.stringify(${base}) === JSON.stringify(${a[0]})`, T.bool);
+                return r(`(JSON.stringify(${base}) === JSON.stringify(${a[0]}))`, T.bool);
             case "Dequeue":
                 return r(`${base}${q}shift()!`, elemT);
             case "Pop":
@@ -3135,6 +3259,8 @@ export const MARKER =
 /** C# members whose turu.ts names differ, by the turu.ts type. */
 const MEMBER_ALIASES = {
     Flash: { GetGameObject: "get", GetGameObjectStatic: "getStatic", SetGameObject: "set", CallFlashFunction: "call" },
+    // Skua's ItemBase.ItemGroup is the item's `sES`; Wearing is `bWear`, which turu reads as `equipped`.
+    InventoryItem: { ItemGroup: "EquipSlot", Wearing: "Equipped" },
 };
 
 /** The keys of an event's data object, in the order of the C# handler's parameters. */

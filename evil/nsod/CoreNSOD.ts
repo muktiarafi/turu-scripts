@@ -4,7 +4,6 @@ description: null
 tags: null
 */
 // Port of Scripts/Evil/NSoD/CoreNSOD.cs.
-// Not ported (FarmerJoe's DoAll doesn't reach them): GetNSOD, GetNBOD, NSBlade, NSHilt, NSAura, EnergizedBlade, EnergizedHilt, EnergizedAura, FindBlade, FindHilt, FindAura, BariumOfDoom, Barium, TimeLordNecro, CavernCelestite, PrimarchHilt, BladeEssence, CHourglass, ScrollDarkArts, PreFarmSteps.
 
 import { bot, option } from "turu";
 import { ClassType, Core, configOr } from "../../core/CoreBots";
@@ -23,6 +22,9 @@ const BLOD = new CoreBLOD();
 const Necro = new Necromancer();
 
 export class CoreNSOD {
+    optionsStorage = "NecroticSwordOfDoomOptions";
+    dontPreconfigure = true;
+
     maxStack = option.bool(
         "MaxStack",
         "Max Stack",
@@ -56,6 +58,96 @@ export class CoreNSOD {
         "Void Dragon Essence",
         "Creature Creation Essence",
     ];
+
+    getNSOD(): void {
+        if (Core.checkInventory("Necrotic Sword of Doom") && Core.hasWebBadge("Necrotic Sword of Doom")) {
+            return;
+        }
+
+        if (!Core.checkInventory("Necrotic Sword of Doom")) {
+            if (!Core.checkInventory("Necrotic Sword's Blade")) {
+                Core.logger("NSoD: Step #1/16: Barium (MineCrafting Daily)");
+                this.barium();
+            }
+
+            const preFarmEnabled = configOr("PreFarm", false);
+
+            if (
+                preFarmEnabled &&
+                !Core.checkInventory(
+                    ["Necrotic Sword's Blade", "Necrotic Sword's Hilt", "Necrotic Sword's Aura"],
+                    undefined,
+                    { any: true },
+                )
+            ) {
+                Core.logger("NSoD: PreFarm Steps:");
+                this.preFarmSteps();
+            } else {
+                Core.logger("NSoD: PreFarm Steps skipped, continuing with the farm.");
+            }
+
+            Core.logger("NSoD: Step #10/16: NSBlade.");
+            this.nsBlade();
+            Core.logger("NSoD: Step #11/16: NSHilt.");
+            this.nsHilt();
+            Core.logger(
+                "NSoD: Step #12/16: NSAura\n (To the retards; yes this requires an extra `Unenhanced Blade` & `Unenhanced Hilt`).",
+            );
+            this.nsAura();
+            Core.logger('NSoD: Step #13/16: ULTRA Sepulchure for "Doom Heart"');
+            Core.huntMonster("sepulchurebattle", "ULTRA Sepulchure", "Doom Heart", undefined, {
+                isTemp: false,
+                publicRoom: true,
+            });
+            Core.logger("NSoD: Step #14/16: Void Auras x800 to complete the merge");
+            this.voidAuras(800);
+
+            Core.logger("NSoD: Step #15/16: NSoD purchase");
+            Core.buyItem("shadowfall", 793, "Necrotic Sword of Doom");
+            bot.wait.forPickup("Necrotic Sword of Doom");
+            Core.logger("NSoD: Step #16/16: NSoD Enhancement");
+        }
+
+        if (!Core.isCompletedBefore(7652)) {
+            Core.logger("Getting the NSOD character page badge");
+            Core.ensureAccept(7652);
+            Core.huntMonster("graveyard", "Skeletal Warrior", "Arcane Parchment");
+            Core.ensureComplete(7652);
+        }
+
+        if (!Core.checkInventory(14474) && !Core.isMember) {
+            Core.logger("Congratulations on completing the longest farm in the game!!!", undefined, {
+                messageBox: true,
+            });
+        }
+    }
+
+    getNBOD(): void {
+        if (Core.checkInventory("Necrotic Blade of Doom")) {
+            return;
+        }
+
+        Core.logger("NBOD: Step #1: Get NSoD");
+        this.getNSOD();
+
+        Core.logger("NBOD: Step #2: Void Auras x750");
+        this.voidAuras(750);
+
+        if (!Core.checkInventory("Void Essentia")) {
+            Core.logger('NBOD: Step #3: Kill Flibbitiestgibbet for "Void Essentia"');
+            Core.logger("Flibbitiestgibbet is a very tough monster, I hope you brought your army/butler/friends!");
+            Core.killMonster("voidflibbi", "Enter", "Spawn", "Flibbitiestgibbet", "Void Essentia", undefined, {
+                isTemp: false,
+            });
+        }
+
+        Core.logger("NBOD: Step #4: Buy NBoD");
+        Core.buyItem("shadowfall", 793, "Necrotic Blade of Doom");
+
+        Core.logger("NBOD: Step #5: Reminder - Use AE's Buy-Back system to retrieve your NSoD", undefined, {
+            messageBox: true,
+        });
+    }
 
     voidAuras(quant = 7500): void {
         if (Core.checkInventory("Void Aura", quant)) return;
@@ -172,6 +264,73 @@ export class CoreNSOD {
         this.voidAuras(quant * 50);
         Core.buyItem("shadowfall", 793, "Bones from the Void Realm", quant);
         bot.wait.forPickup("Bones from the Void Realm");
+    }
+
+    nsBlade(): void {
+        if (Core.checkInventory("Necrotic Sword's Blade")) {
+            Core.farmingLogger("Necrotic Sword's Blade");
+            return;
+        }
+
+        this.energizedBlade();
+        this.bariumOfDoom(1);
+        this.voidAuras(200);
+        Core.buyItem("shadowfall", 793, "Necrotic Sword's Blade");
+        bot.wait.forPickup("Necrotic Sword's Blade");
+    }
+
+    nsHilt(): void {
+        if (Core.checkInventory("Necrotic Sword's Hilt")) {
+            Core.farmingLogger("Necrotic Sword's Hilt");
+            return;
+        }
+
+        this.energizedHilt();
+        this.bonesVoidRealm(1);
+        this.voidAuras(200);
+        Core.buyItem("shadowfall", 793, "Necrotic Sword's Hilt");
+        bot.wait.forPickup("Necrotic Sword's Hilt");
+    }
+
+    nsAura(): void {
+        if (Core.checkInventory("Necrotic Sword's Aura")) {
+            Core.farmingLogger("Necrotic Sword's Aura");
+            return;
+        }
+
+        Core.addDrop("Necrotic Sword's Aura");
+        this.energizedAura();
+        this.timeLordNecro(1);
+        this.voidAuras(300);
+        Core.buyItem("shadowfall", 793, "Necrotic Sword's Aura");
+        bot.wait.forPickup("Necrotic Sword's Aura");
+    }
+
+    energizedBlade(): void {
+        if (Core.checkInventory("Energized Blade")) {
+            Core.farmingLogger("Energized Blade");
+            return;
+        }
+
+        this.findBlade();
+        this.bariumOfDoom(1);
+        this.voidAuras(100);
+        Core.buyItem("shadowfall", 793, "Energized Blade");
+        bot.wait.forPickup("Energized Blade");
+    }
+
+    energizedHilt(): void {
+        if (Core.checkInventory("Energized Hilt")) {
+            Core.farmingLogger("Energized Hilt");
+            return;
+        }
+
+        Core.addDrop("Energized Hilt");
+        this.findHilt();
+        this.bonesVoidRealm(1);
+        this.voidAuras(100);
+        Core.buyItem("shadowfall", 793, "Energized Hilt");
+        bot.wait.forPickup("Energized Hilt");
     }
 
     energizedAura(): void {
@@ -301,6 +460,34 @@ export class CoreNSOD {
         bot.wait.forPickup("Barium of Doom");
     }
 
+    private barium(): void {
+        Core.unbank("Barium", "Barium of Doom");
+        let i = 0;
+
+        const Blades = ["Unenhanced Doom Blade", "Energized Blade", "Necrotic Sword's Blade"];
+        if (
+            Core.checkInventory(["Unenhanced Aura", "Energized Aura", "Necrotic Sword's Aura"], undefined, {
+                any: true,
+            })
+        ) {
+            i++;
+        }
+
+        for (const Item of Blades) {
+            if (Core.checkInventory(Item)) {
+                i = i + Blades.indexOf(Item) + 1;
+            }
+        }
+
+        i = i + bot.inventory.getQuantity("Barium") + bot.inventory.getQuantity("Barium of Doom");
+        if (i >= 4) {
+            return;
+        }
+
+        BLOD.unlockMineCrafting();
+        Daily.mineCrafting(["Barium"], 4 - i);
+    }
+
     cavernCelestite(quant: number): void {
         BLOD.soulSearching("Cavern Celestite", quant, false);
     }
@@ -326,5 +513,102 @@ export class CoreNSOD {
         Core.equipClass(ClassType.Solo);
         Core.huntMonster("chaoscrypt", "Chaorrupted Armor", "Blade Essence", quant, { isTemp: false });
         bot.wait.forPickup("Blade Essence");
+    }
+
+    private preFarmSteps(): void {
+        if (Core.checkInventory("Necrotic Sword of Doom")) {
+            return;
+        }
+
+        let TotalVAs = 0;
+        // Requirements will add VAs to this amount for a final calculation.
+
+        const MergeRequirement = 800;
+        // Always needed to merge NSoD
+
+        let HiltVA = 2910;
+        // 250 (200 + 50 (bone from the void realm x1)) for >> (NS)
+        // + 150 (100 + 50 (bone from the void realm x1))for >> (E)
+        // + 2510 (bone from the void realm x50 + 10 for quest) (UE)
+
+        let BladeVA = 460;
+        // 250 (NS) + 150 (E) + 10(quest) + 50(Barium of doom) for >> (UE)
+        let AuraVA = 760 + 2500 + 60 + 10;
+        // Misc quest
+
+        Core.logger("NSoD: PreFarm Step #1/9: Hilt, Blade, and Aura VA Calculation");
+
+        // HILT
+        Core.logger("NSoD: PreFarm Step #1.1/9: NSOD Hilt VoidAura Calculation");
+        if (Core.checkInventory("Unenhanced Hilt")) {
+            HiltVA -= 2510;
+        } else if (Core.checkInventory("Energized Hilt")) {
+            HiltVA -= 2760;
+        } else if (Core.checkInventory("Necrotic Sword's Hilt")) {
+            HiltVA = 0;
+        }
+
+        TotalVAs += HiltVA;
+        Core.logger(`Total added to count for Hilt: ${HiltVA}`);
+
+        // AURA
+        Core.logger("NSoD: PreFarm Step #1.2/9: NSOD Aura VoidAura Calculation");
+        if (Core.checkInventory("Unenhanced Aura")) {
+            AuraVA -= 2670 + 250 + 400;
+        } else if (Core.checkInventory("Energized Aura")) {
+            AuraVA -= 400;
+        } else if (Core.checkInventory("Necrotic Sword's Aura")) {
+            AuraVA = 0;
+        }
+
+        TotalVAs += AuraVA;
+        Core.logger(`Total added to count for Aura: ${AuraVA}`);
+
+        // BLADE
+        Core.logger("NSoD: PreFarm Step #1.3/9: NSOD Blade VoidAura Calculation");
+        if (Core.checkInventory("Unenhanced Blade")) {
+            BladeVA -= 460;
+        } else if (Core.checkInventory("Energized Blade")) {
+            BladeVA -= 250;
+        } else if (Core.checkInventory("Necrotic Sword's Blade")) {
+            BladeVA = 0;
+        }
+
+        TotalVAs += BladeVA;
+        Core.logger(`Total added to count for Blade: ${BladeVA}`);
+
+        TotalVAs += MergeRequirement;
+
+        Core.logger(
+            `NSoD: PreFarm Step #1.4/9: Total VoidAuras to farm for Hilt, Blade, Aura, and Merge (subtracting for what is already owned): ${TotalVAs}`,
+        );
+        this.voidAuras(TotalVAs);
+
+        Core.logger("NSoD: PreFarm Step #2/9: CavernCelestite (Quantity: 1600)");
+        this.cavernCelestite(1600);
+
+        Core.logger("NSoD: PreFarm Step #3/9: BattleUnderB - Bone Dust (Quantity: 5100)");
+        Farm.battleUnderB("Bone Dust", 5100);
+
+        Core.logger("NSoD: PreFarm Step #4/9: BattleUnderB - Undead Energy (Quantity: 10000)");
+        Farm.battleUnderB("Undead Energy", 10000);
+
+        Core.logger("NSoD: PreFarm Step #5/9: PrimarchHilt (Quantity: 2)");
+        this.primarchHilt(2);
+
+        Core.logger("NSoD: PreFarm Step #6/9: BladeEssence (Quantity: 2)");
+        this.bladeEssence(2);
+
+        Core.logger("NSoD: PreFarm Step #7/9: CHourglass (Quantity: 31)");
+        this.cHourglass(31);
+
+        Core.logger("NSoD: PreFarm Step #8/9: ScrollDarkArts (Quantity: 4)");
+        this.scrollDarkArts(4);
+
+        Core.logger("NSoD: PreFarm Step #9/9: ULTRA Sepulchure");
+        Core.huntMonster("sepulchurebattle", "ULTRA Sepulchure", "Doom Heart", undefined, {
+            isTemp: false,
+            publicRoom: true,
+        });
     }
 }

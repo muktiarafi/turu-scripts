@@ -18,6 +18,19 @@ const Daily = new CoreDailies();
 const Story = new CoreStory();
 
 export class CoreSDKA {
+    optionsStorage = "SupulchuresDoomKnightArmorOptions";
+    dontPreconfigure = true;
+    options = [
+        Core.skipOptions,
+        option.choice(
+            "SelectedQuest",
+            "Dark Spirit Orbs Quest",
+            "Which quest should the bot use to farm Dark Spirit Orbs with?\nRecommended setting: A Penny for Your Foughts",
+            choices(SDKAQuest),
+            "APennyforYourFoughts",
+        ),
+    ];
+
     sdkaItems: string[] = [
         "Sepulchure's DoomKnight Armor",
         // Arsenics
@@ -944,17 +957,7 @@ export enum SDKAQuest {
     DarkSpiritOrbs = 2065,
 }
 
-export const scriptOptions = defineScriptOptions(
-    "SupulchuresDoomKnightArmorOptions",
-    [
-        Core.skipOptions,
-        option.choice(
-            "SelectedQuest",
-            "Dark Spirit Orbs Quest",
-            "Which quest should the bot use to farm Dark Spirit Orbs with?\nRecommended setting: A Penny for Your Foughts",
-            choices(SDKAQuest),
-            "APennyforYourFoughts",
-        ),
-    ],
-    true,
-);
+export const scriptOptions = (() => {
+    const sdka = new CoreSDKA();
+    return defineScriptOptions(sdka.optionsStorage, sdka.options, sdka.dontPreconfigure);
+})();

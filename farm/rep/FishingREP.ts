@@ -1,0 +1,22 @@
+/*
+name: Fishing REP
+description: This script will farm Fishing reputation to rank 10.
+tags: fish, fishing, rep, rank, reputation
+*/
+// Port of Scripts/Farm/REP/FishingREP.cs.
+// Converted by tools/cs2ts, not yet read through by hand (cs2ts --force regenerates it); remove this line once it is.
+
+import { Core } from "../../core/CoreBots";
+import { CoreFarms } from "../../core/CoreFarms";
+
+const Farm = new CoreFarms();
+
+export class FishingREP {}
+
+export default function main(): void {
+    Core.setOptions();
+
+    Farm.fishingREP();
+
+    Core.setOptions(false);
+}

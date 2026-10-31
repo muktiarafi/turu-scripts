@@ -12,11 +12,11 @@ repository this one is the `scripts/` submodule.
 | Path | What |
 |---|---|
 | `core/CoreBots.ts` | Port of `CoreBots.cs`: `Core` (join, kill/hunt, quests, drops, bank, shops, classes, logging). |
-| `core/CoreFarms.ts` | The parts of `CoreFarms.cs` the ported scripts use (gold, experience, alchemy crafting, the Bludrut and Death Pit brawls, Battle Under B, fishing and its boosts, and the Alchemy, Blacksmithing, Blade of Awe, Chaos, ChronoSpan, Death Pit Brawl, DoomWood, Evil, Fishing, Glacera, Good, Loremaster, Mythsong, SpellCrafting, Swordhaven and Vampire reps). |
+| `core/CoreFarms.ts` | Port of `CoreFarms.cs`: gold, experience, alchemy crafting, the Bludrut and Death Pit brawls, Battle Under B, fishing and its boosts, every reputation (`getAllRanks`), Membership Dues and the Swag Tokens. Not yet: `FireWarxp`, `RemainingFactionRepToMax`. |
 | `core/CoreStory.ts` | Port of `CoreStory.cs`: `killQuest`, `mapItemQuest`, `buyQuest`, `chainQuest`, `questProgression`, `legacyQuestManager`, `preLoad`. Each script makes its own `new CoreStory()`. |
 | `core/CoreDailies.ts` | Port of `CoreDailies.cs`: every daily, weekly and monthly (`checkDailyv2`, `dailyRoutine`, metals, class tokens, boosts, friendships, ...). Each script makes its own `new CoreDailies()`. |
 | `core/CoreAdvanced.ts` | The shop, gear and enhancement parts of `CoreAdvanced.cs`: `buyItem` farms the reputation, level, gold, vouchers and runestones a purchase needs; `startBuyAllMerge` is the merge-shop template (with `mergeOptions` and `mergeOptionsEnum`); `enhanceItem`, `enhanceEquipped`, `smartEnhance` (the class library), `gearStore`, `rankUpClass`, `hasMinimalBoost` and the enums `EnhancementType`, `CapeSpecial`, `HelmSpecial`, `WeaponSpecial`, `GenericGearBoost`, `RacialGearBoost`. Not yet: the Kill region. |
-| `nation/CoreNation.ts` | The parts of `Nation/CoreNation.cs` that farm the Nulgath materials, Swindles Return, The Assistant and the Shadow Blast medals and emblems. |
+| `nation/CoreNation.ts` | Port of `Nation/CoreNation.cs` (the Nulgath materials, Swindles Return and Bulk, The Assistant, the Shadow Blast medals and emblems, the Forge and Carve quests, Fiend Tokens, ...). Not yet: `DiamondEvilWar`, `ForgeDiamondsOfNulgath`, `SwindlesBilk`. |
 | `nation/materials/0MaxBags.ts` | Port of `Nation/Materials/0MaxBags.cs`. |
 | `farm/GoldFarm.ts` | Port of `Farm/GoldFarm.cs`. |
 | `farm/CombatTrophy.ts` | Port of `Farm/CombatTrophy.cs` (`Farm.bludrutBrawlBoss`). |
@@ -250,6 +250,76 @@ Kept as C# has them: a saga's completion check that names a quest the method doe
 `CoreFireisland.embersea` and `fireforge`, `CoreDoomwood.necroU`). The run repeats or skips those
 parts the way VibeSkua does. The `ShadowsofDoom[Oct 13th]` `Story1` to `Story5` placeholders are
 C#'s templates (quest 0, map `mapname`) and do nothing useful.
+
+## Core content areas
+
+Every script in the C# `Nation`, `Legion`, `Hollowborn`, `Darkon`, `Good`, `Evil`, `Chaos`,
+`ShadowsOfWar`, `Farm`, `Dailies` and `Enhancement` folders is ported. The 326 left after the
+earlier batches were converted with cs2ts (Nation 88, Farm 61, Legion 46, Hollowborn 41,
+Dailies 32, Good 16, Darkon 15, Evil 14, ShadowsOfWar 8, Enhancement 4, Chaos 1), with the 7
+scripts outside them that they include and weren't ported (`other/badges/ChaosPuppetMaster`,
+`other/classes/rep-based/Bard`, `other/FireAvatarFavorFarm`, `other/TreasureHuntQuestRewards`,
+`prototypes/Grimgaol`, `seasonal/staffbirthdays/nulgath/BeetleQuests`, `tools/BankAllItems`).
+None of them includes anything from the Ultras folders. They type-check and load, but none has
+run in game. These 23 were fixed by hand; the other 310 are drafts with the cs2ts line:
+`EnhanceEquipped[Selectable]`, `InventoryEnhancer`, `ItemEnhancementManager`, `SmartEnhance`,
+`CavernCelestite`, `CoreHollowbornLichKing`, `PayHomagetoCaladbolgAgain`, `5RolesUnreversed`,
+`EmpoweredBladeMasterQuestRewards`, `LegionOverfiendBlade`, `SuppliesToSpinTheWheelofChance`,
+`BloodGem`, `CarveTheUnidentifiedGemStone[Member]`, `ContractEnforcer`, `EliteVoid`,
+`ImageOfNulgath`, `MawOfTheVoid`, `TarosPrismaticManslayers`, `VoidDestroyer`, `VoidWarlock`,
+`ChaosPuppetMaster`, `Grimgaol`, `BankAllItems`.
+
+Core members added from the C# with `cs2ts --only` (the members ported before are unchanged):
+
+- CoreFarms: 36 reputations and farms (`aegisREP` to `yokaiREP`, `getAllRanks`,
+  `carcossaCourtRep`, `faerieCourtREP`, `skyeREP`, `darkWarLegion`, `sevenCirclesWar`,
+  `theSecret4`, `swagTokenA` with its shop step, `membershipDues` and the `MemberShipsIDS` enum,
+  `remainingFactionXp`).
+- CoreNation: `swindleBulk`, `voucherItemTotemofNulgath` (and `VoucherItemTotem`),
+  `assistingDrudgen`, `feedtheFiend`, `farmFiendToken`, `forgeBloodGems`, `carveUniGemStone`,
+  `leeryExchangeGold`, `hireNulgathLarvae`, `dreadrockGemExchange`, `bloodFromTheVoid`.
+- CoreNSOD (now complete): `getNSOD`, `getNBOD`, `nsBlade`, `nsHilt`, `nsAura`, `energizedBlade`,
+  `energizedHilt`, `barium`, `preFarmSteps`, and the `optionsStorage` its scripts use.
+- CoreDarkon `secondErrand`, `thirdErrand`; CoreLegion `ltCastle`; CoreSoWMats `dragonsTear`;
+  DragonOfTime `dotArmor`; CoreAdvanced `boostKillMonster` (the start of the Kill region, one
+  method for C#'s name and ID overloads); CoreBots `questRewardsInt`.
+- CoreSDKA and CoreVHL keep their `optionsStorage` / `options` as fields, as C# does, since the
+  scripts that include them pass those to their own `defineScriptOptions`.
+
+cs2ts now: keeps a library's (Core file's) `OptionsStorage`, `Options` and `DontPreconfigure` as
+class fields; reads `Bot.Config!.Get<NumericEnum>` as `configEnum` (it missed the `!` before);
+writes a numeric enum's `ToString()` and interpolation as its name (`E[x]`), and a nested enum of
+another script (`InTheFiendsShadow.Rewards`) as an aliased import, also in types, `typeof` and
+option defaults; takes whether a ported enum is numeric from its port; turns `new Action(...)` into
+the lambda, `Array.IndexOf` / `Find` / `FindAll`, `DistinctBy`, `HashSet.UnionWith`,
+`Enum.GetName`, nullable `HasValue` / `Value`, `QuestRequirements<int>` / `<string>`, Skua's
+`ItemGroup` / `Wearing` (`equipSlot` / `equipped`), and a local function used as an event
+handler (it takes the event's data object); types a `Dictionary` of tuples; keeps a `)` after a
+trailing `// comment` in `AddRange`; aliases start with a letter (`2FiendsPurgatory`); drops
+imports it asked for and didn't emit. Re-running it over the earlier drafts changed three:
+`farm/BuyScrolls` reads its scroll with `configEnum` (it passed the option's name as the quest),
+and `story/Friendship` and `other/mergeshops/FishingGearMerge` type their packet handlers.
+
+C# bugs fixed on purpose (still in VibeSkua's Scripts, marked `C#` in the code):
+
+- `CoreFarms.brightoakREP` waits for the puzzle `while (Bot.ShouldExit && ...)`, so it never
+  waited; likewise `EliteVoid`'s three loops never farmed the Elite Void Sword, Broadsword and pet.
+- `CoreNation.carveUniGemStone` with no item loops while `item == null`, so it never stopped; it
+  stops once every quest drop is at the quantity.
+- `CarveTheUnidentifiedGemStone[Member]` passes the enum name (`Dark_Crystal_Shard`) as the item,
+  which no item matches.
+- `CoreHollowbornLichKing.draftless` and `flowStress` test `!= All || != <fragment>` (always true),
+  so with every reward owned they turned the quest in for the reward "All".
+- `EmpoweredBladeMasterQuestRewards`, `PayHomagetoCaladbolgAgain`, `ImageOfNulgath` and
+  `MawOfTheVoid` `return` from their reward loop at the first reward you own, so the rest were
+  never farmed.
+
+Differs from C# where Turu can't do the same: `Grimgaol` keeps its personal best for the session
+(scripts can't write files; C# appends to `GrimGaolRunTimes.txt`), and its IoDA class names are
+getters (C# reads the inventory when the class is made, which here is at load, before the game
+can be asked); `CavernCelestite`'s default quantity is the max stack from the quest data (1600)
+for the same reason. `CoreFarms.handleShopPurchases` and `membershipDues` truncate C#'s integer
+divisions. Turu now accepts `[` and `]` in an options file name (`HardCoreMetals[mem](Daily)`).
 
 ## FarmerJoe
 

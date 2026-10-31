@@ -6,7 +6,7 @@ tags: fishing, gear, merge, greenguardwest, super, pole, crabcake, yaga, hatfish
 // Port of Scripts/Other/MergeShops/FishingGearMerge.cs.
 // Converted by tools/cs2ts, not yet read through by hand (cs2ts --force regenerates it); remove this line once it is.
 
-import { bot, defineScriptOptions, option } from "turu";
+import { bot, defineScriptOptions, type EventMap, option } from "turu";
 import { CoreAdvanced, type mergeOptionsEnum } from "../../core/CoreAdvanced";
 import { ClassType, Core } from "../../core/CoreBots";
 import { CoreFarms } from "../../core/CoreFarms";
@@ -104,7 +104,7 @@ export class FishingGearMerge {
                 }
             }
         };
-        const FishingWaiter = (packet: any): void => {
+        const FishingWaiter = (packet: EventMap["extensionPacket"]): void => {
             const type = packet["params"].type;
             const data = packet["params"].dataObj;
 

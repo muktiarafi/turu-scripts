@@ -4,7 +4,6 @@ description: This bot farms the Dragon of Time class for you.
 tags: class, dot, damage over time, dragon of time, timeinn
 */
 // Port of Scripts/Other/Classes/DragonOfTime.cs.
-// Not ported (FarmerJoe's DoAll doesn't reach them): DotArmor.
 
 import { bot } from "turu";
 import { CoreAdvanced } from "../../core/CoreAdvanced";
@@ -337,6 +336,37 @@ export class DragonOfTime {
             }
             Core.toBank("Dragon of Time Horns", "Dragon of Time Horns + Ponytail", "Dragon of Time Wings + Tail");
         }
+    }
+
+    dotArmor(): void {
+        if (Core.checkInventory("Dragon of Time Armor")) {
+            return;
+        }
+
+        if (!Core.isCompletedBefore(7719)) {
+            this.getDoT(false, false, true);
+        }
+
+        Farm.experience(40);
+        Core.ensureAccept(7719);
+
+        Core.equipClass(ClassType.Solo);
+        Core.huntMonster("cathedral", "Incarnation of Time", "Time Loop Broken", undefined, {
+            isTemp: false,
+            publicRoom: true,
+        });
+
+        Core.equipClass(ClassType.Farm);
+        Core.killMonster("portalwar", "r4", "Right", "*", "Anomaly Silenced", 100, { isTemp: false });
+
+        Core.huntMonster("portalmaze", "ChronoLord", "Chronolord Stopped", 50, { isTemp: false });
+
+        Core.equipClass(ClassType.Solo);
+        Core.huntMonster("ubear", "Cornholio", "Is This a Wormhole?", undefined, { isTemp: false });
+
+        Core.ensureComplete(7719);
+        bot.wait.forDrop("Dragon of Time Armor");
+        bot.wait.forPickup("Dragon of Time Armor");
     }
 }
 

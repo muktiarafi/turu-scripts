@@ -4,7 +4,6 @@ description: null
 tags: null
 */
 // Port of Scripts/ShadowsOfWar/CoreSoWMats.cs.
-// Not ported (FarmerJoe's DoAll doesn't reach them): DragonsTear.
 
 import { bot } from "turu";
 import { CoreAdvanced } from "../core/CoreAdvanced";
@@ -15,6 +14,22 @@ const Adv = new CoreAdvanced();
 const SoW = new CoreSoW();
 
 export class CoreSoWMats {
+    dragonsTear(): void {
+        if (Core.checkInventory("Dragon's Tear")) {
+            return;
+        }
+
+        Core.farmingLogger("Dragon's Tear", 1);
+
+        this.willpower(10);
+        this.garishRemnant(30);
+        this.prismaticSeams(100);
+        this.unboundThread(30);
+        this.acquiescence(25);
+        this.elementalCore(40);
+        Adv.buyItem("manacradle", 2242, "Dragon's Tear");
+    }
+
     acquiescence(Quantity = 1000): void {
         if (Core.checkInventory("Acquiescence", Quantity)) return;
 

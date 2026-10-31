@@ -4,13 +4,14 @@ description: null
 tags: null
 */
 // Port of Scripts/Darkon/CoreDarkon.cs.
-// Not ported (FarmerJoe's DoAll doesn't reach them): SecondErrand, ThirdErrand.
 
 import { bot } from "turu";
+import { CoreAdvanced } from "../core/CoreAdvanced";
 import { ClassType, Core } from "../core/CoreBots";
 import { CoreAstravia } from "../story/elegyofmadness(darkon)/CoreAstravia";
 
 const Astravia = new CoreAstravia();
+const Adv = new CoreAdvanced();
 
 export class CoreDarkon {
     farmReceipt(Quantity = 222, MaxStack = false): void {
@@ -36,6 +37,83 @@ export class CoreDarkon {
             Core.killMonster("arcangrove", "LeftBack", "Left", "*", "Banana", 22, { isTemp: false });
             Core.ensureComplete(7324);
         }
+        Core.cancelRegisteredQuests();
+    }
+
+    secondErrand(Quantity = 222, escapeWhile = false, MaxStack = false): void {
+        const quest = Core.initializeWithRetries(() => Core.ensureLoad(7325));
+        if (MaxStack) {
+            Quantity = (quest?.rewards.find((x) => x.name === "Darkon's Receipt") ?? null)?.maxStack ?? Quantity;
+        }
+        if (Core.checkInventory("Darkon's Receipt", Quantity)) {
+            return;
+        }
+
+        let EnoughPeople = false;
+        Core.addDrop("Darkon's Receipt");
+        Core.farmingLogger("Darkon's Receipt", Quantity);
+        Core.equipClass(ClassType.Solo);
+        bot.quests.updateQuest(2954);
+        Core.join("doomvault", "r5", "Left");
+
+        Core.registerQuests(7325);
+        while (!bot.shouldExit && !Core.checkInventory("Darkon's Receipt", Quantity)) {
+            if (bot.map.name.toLowerCase() === "doomvault") {
+                while (!bot.shouldExit && bot.player.cell !== "r5") {
+                    Core.jump("r5", "Left");
+                    Core.sleep(5000);
+                }
+                if (bot.map.playerCount >= 3) {
+                    EnoughPeople = true;
+                } else {
+                    EnoughPeople = false;
+                }
+            }
+
+            if (!EnoughPeople && !Core.isMember && escapeWhile) {
+                Core.cancelRegisteredQuests();
+                return;
+            }
+
+            if (!EnoughPeople && Core.isMember) {
+                Core.huntMonster("ultravoid", "Ultra Kathool", "Ingredients?", 22, {
+                    isTemp: false,
+                    publicRoom: true,
+                    log: false,
+                });
+            } else {
+                Core.killMonster("doomvault", "r5", "Left", "Binky", "Ingredients?", 22, {
+                    isTemp: false,
+                    publicRoom: true,
+                    log: false,
+                });
+            }
+
+            bot.wait.forPickup("Darkon's Receipt");
+        }
+        Core.cancelRegisteredQuests();
+    }
+
+    thirdErrand(Quantity = 222, MaxStack = false): void {
+        const quest = Core.initializeWithRetries(() => Core.ensureLoad(7326));
+        if (MaxStack) {
+            Quantity = (quest?.rewards.find((x) => x.name === "Darkon's Receipt") ?? null)?.maxStack ?? Quantity;
+        }
+        if (Core.checkInventory("Darkon's Receipt", Quantity)) {
+            return;
+        }
+
+        Core.addDrop("Darkon's Receipt");
+        Core.farmingLogger("Darkon's Receipt", Quantity);
+        Core.equipClass(ClassType.Dodge);
+
+        Core.registerQuests(7326);
+        while (!bot.shouldExit && !Core.checkInventory("Darkon's Receipt", Quantity)) {
+            Adv.gearStore(undefined, { enhAfter: true });
+            Core.huntMonster("tercessuinotlim", "Nulgath", "Nulgath's mask", 1, { isTemp: false, publicRoom: true });
+            bot.wait.forPickup("Darkon's Receipt");
+        }
+        Adv.gearStore(true, { enhAfter: true });
         Core.cancelRegisteredQuests();
     }
 

@@ -17,7 +17,7 @@ tags: core, nation, nulgath
  * `Core.cboValues` (see CoreBots.ts).
  */
 
-import { bot, type Quest } from "turu";
+import { bot, BoostType, type Quest } from "turu";
 import {
     ClassType,
     Core,
@@ -49,6 +49,12 @@ export enum SwindlesReturnReward {
 }
 
 /** Options of {@link CoreNation.supplies}. */
+/** Rewards of Voucher Item: Totem of Nulgath (quest 4778), by item ID. */
+export enum VoucherItemTotem {
+    Totem_of_Nulgath = 5357,
+    Gem_of_Nulgath = 6136,
+}
+
 export interface SuppliesOptions {
     /** Farm Relics of Chaos from Ultra Chaos Alteon instead of Escherion. */
     ultraAlteon?: boolean;
@@ -392,6 +398,47 @@ export class CoreNation {
     // C# SwindleBulk: not reached by the ported scripts, not ported yet.
 
     /**
+     * Farms Tainted Gem with Swindle Bulk quest.
+     *
+     * @param quant Desired quantity, 1000 = max stack
+     */
+    swindleBulk(quant = 1000): void {
+        if (Core.checkInventory("Tainted Gem", quant)) {
+            return;
+        }
+
+        Core.equipClass(ClassType.Farm);
+        Core.farmingLogger("Tainted Gem", quant);
+
+        const questId = quant % 25 === 0 ? 7817 : 569;
+        const cubeKillCount = quant % 25 === 0 ? 500 : 25;
+        const snowGolemKillCount = quant % 25 === 0 ? 6 : 1;
+
+        let attemptCount = 1;
+        Core.addDrop("Cubes", "Tainted Gem");
+        Core.addDrop(...this.bagDrops);
+
+        while (!bot.shouldExit && !Core.checkInventory("Tainted Gem", quant)) {
+            Core.ensureAccept(questId);
+            Core.killMonster("boxes", "Fort2", "Left", "*", "Cubes", cubeKillCount, { isTemp: false, log: false });
+            Core.killMonster("mountfrost", "War", "Left", "Snow Golem", "Ice Cubes", snowGolemKillCount, {
+                log: false,
+            });
+            Core.ensureComplete(questId);
+
+            bot.wait.forPickup("Tainted Gem");
+            Core.logger(`Completed x${attemptCount++}`);
+
+            if (bot.inventory.isMaxStack("Tainted Gem")) {
+                Core.logger("Max Stack Hit.");
+                break;
+            } else {
+                Core.logger(`Tainted Gem: ${bot.inventory.getQuantity("Tainted Gem")}/${quant}`);
+            }
+        }
+    }
+
+    /**
      * Farms items with Contract Exchange (needs "Drudgen the Assistant").
      * @param item The item to farm. If null, it farms every reward.
      * @param quant Desired quantity, 1000 = max stack.
@@ -533,6 +580,47 @@ export class CoreNation {
     }
 
     // C# VoucherItemTotemofNulgath: not reached by the ported scripts, not ported yet.
+
+    /**
+     * Farms Totem of Nulgath/Gem of Nulgath with Voucher Item: Totem of Nulgath quest
+     *
+     * @param reward Which reward to pick (totem or gem)
+     * @param quant
+     */
+    voucherItemTotemofNulgath(reward: VoucherItemTotem = VoucherItemTotem.Totem_of_Nulgath, quant = 0): void {
+        if (!Core.checkInventory("Voucher of Nulgath (non-mem)")) {
+            this.farmVoucher({ member: false, keepVoucher: true });
+        }
+
+        quant = quant === 0 ? (reward === VoucherItemTotem.Totem_of_Nulgath ? 100 : 1000) : quant;
+
+        const quest = Core.ensureLoad(4778);
+        const Reward = quest.rewards.find((x) => x.id === reward) ?? null;
+
+        if (Reward == null) {
+            Core.logger("Reward not found.");
+            return;
+        }
+
+        for (const item of quest.requirements.concat(...quest.rewards)) {
+            Core.addDrop(item.id);
+        }
+
+        Core.farmingLogger(Reward.name, quant);
+        while (!bot.shouldExit && !Core.checkInventory(Reward.id, quant)) {
+            Core.ensureAccept(4778);
+            this.essenceofNulgath();
+            if (!bot.quests.ensureComplete(4778, Reward.id)) {
+                this.essenceofNulgath(
+                    bot.inventory.getQuantity("Essence of Nulgath") < 100
+                        ? bot.inventory.getQuantity("Essence of Nulgath") + 1
+                        : 60,
+                );
+                Core.ensureComplete(4778, Reward.id);
+            }
+            bot.wait.forPickup(Reward.id);
+        }
+    }
 
     /**
      * Farms Essences of Nulgath from Dark Makais in Tercessuinotlim.
@@ -1130,6 +1218,78 @@ export class CoreNation {
     }
 
     /**
+     * Does the "AssistingDrudgen" Quest for Fiend Tokens (and other possible drops).
+     * Requires either "Drudgen the Assistant" or "Twin Blade of Nulgath" to accept.
+     *
+     * @param item Desired item name
+     * @param quant Desired item quantity
+     */
+    assistingDrudgen(item = "Any", quant = 1): void {
+        if (
+            Core.checkInventory(item, quant) ||
+            !Core.checkInventory("Drudgen the Assistant") ||
+            !Core.checkInventory("Twin Blade of Nulgath") ||
+            !bot.player.isMember
+        ) {
+            return;
+        }
+
+        if (!bot.quests.isAvailable(3826)) {
+            Core.logger('Quest "Seal of Light"[Daily] is not available yet today.');
+            return;
+        }
+
+        while (!bot.shouldExit && !Core.checkInventory(item, quant)) {
+            Core.ensureAccept(5816);
+            Core.huntMonster("willowcreek", "Hidden Spy", "The Secret 1", undefined, { isTemp: false });
+            this.essenceofNulgath(20);
+            this.approvalAndFavor(50, 50);
+            Core.killMonster("boxes", "Fort2", "Left", "*", "Cubes", 50, { isTemp: false });
+            Core.killMonster("shadowblast", "r13", "Left", "*", "Fiend Seal", 10, { isTemp: false });
+            bot.quests.updateQuest(3824);
+            if (bot.quests.isAvailable(3826) && !Core.checkInventory(25026)) {
+                Core.ensureAccept(3826);
+                Core.huntMonster("alteonbattle", "Ultra Chaos Alteon", "Seal of Light");
+                Core.ensureComplete(3826);
+            }
+            Core.ensureComplete(5816);
+        }
+    }
+
+    /**
+     * Completes the Feed the Fiend quest to obtain the specified item.
+     *
+     * @param item The item to obtain (default: "Fiend Token").
+     * @param quant The quantity of the item to obtain (default: 30).
+     */
+    feedtheFiend(item = "Fiend Token", quant = 30): void {
+        // Check if the desired item is already in inventory or if the player is not a member
+        if (Core.checkInventory(item, quant) || !Core.isMember) {
+            return;
+        }
+        Core.addDrop(item);
+        // Update and register the necessary quests
+        bot.quests.updateQuest(2215);
+        Core.registerQuests(3053);
+
+        // Equip the appropriate class for the quest
+        Core.equipClass(ClassType.Solo);
+
+        // Continue the quest until the desired item and quantity are obtained
+        while (!bot.shouldExit && !Core.checkInventory(item, quant)) {
+            // Hunt monsters to complete the quest
+            this.farmDiamondofNulgath(1);
+            Core.huntMonster("lair", "Red Dragon", "Dragon Fiend Gem", 13, { isTemp: false });
+            Core.killMonster("battleunderd", "r5", "Left", "Glacial Horror", "Glacial Bones", 3, { isTemp: false });
+            Core.huntMonster("dreammaze", "Screamfeeder", "Screamfeeder Heart", undefined, { isTemp: false });
+        }
+
+        // Wait for the item to be picked up and cancel any registered quests
+        bot.wait.forPickup(item);
+        Core.cancelRegisteredQuests();
+    }
+
+    /**
      * Completes the Void Knight Sword quest (5662 with item 38275, else 5659) for the item.
      * @param item The item to obtain (null: max every reward).
      */
@@ -1395,6 +1555,23 @@ export class CoreNation {
 
         this.voidKnightSwordQuest("Diamond of Nulgath", quant);
         this.supplies("Diamond of Nulgath", quant, { returnItem: "Diamond of Nulgath" });
+    }
+
+    /**
+     * Farms Fiend Tokens using various methods.
+     *
+     * @param quant Desired quantity of Fiend Tokens, 30 = default stack size.
+     */
+    farmFiendToken(quant = 30): void {
+        // Check if Fiend Tokens are already in inventory
+        if (Core.checkInventory("Fiend Token", quant)) {
+            return;
+        }
+
+        // Try different quest methods to obtain Fiend Tokens
+        this.voidKnightSwordQuest("Fiend Token", quant);
+        this.assistingDrudgen("Fiend Token", quant);
+        this.feedtheFiend();
     }
 
     /**
@@ -1909,6 +2086,181 @@ export class CoreNation {
     }
 
     /**
+     * [Member] Forges Blood Gems for Nulgath [Quest] to obtain Blood Gem of the Archfiend with specific quantities.
+     *
+     * @param quant Desired quantity, 100 = max stack.
+     */
+    forgeBloodGems(quant = 100): void {
+        if (!Core.checkInventory("Gemstone of Nulgath") && !Core.isMember) {
+            Core.logger("This quest requires you to have Gemstone of Nulgath and membership to be able to accept it");
+            return;
+        }
+
+        this.gemStoneReceiptOfNulgath(1);
+        this.supplies("Unidentified 5");
+
+        Core.addDrop("Blood Gem of the Archfiend", "Unidentified Gemstone of Nulgath");
+
+        while (!bot.shouldExit && !Core.checkInventory("Blood Gem of the Archfiend", quant)) {
+            // Forge Blood Gems for Nulgath [Member] 4922
+            Core.ensureAccept(4922);
+            this.farmGemofNulgath(7);
+            this.gemStonesOfnulgath(3, 5, 0, 0);
+            Core.ensureComplete(4922);
+        }
+    }
+
+    /**
+     * [Member] Carves a Uni Gemstone [Quest] to obtain specific items.
+     *
+     * @param item Desired item name.
+     * @param quant Desired item quantity.
+     */
+    carveUniGemStone(item: string | null = null, quant = 1000): void {
+        const questDrops = [
+            "Tainted Gem",
+            "Dark Crystal Shard",
+            "Diamond of Nulgath",
+            "Gem of Nulgath",
+            "Blood Gem of the Archfiend",
+        ];
+
+        // Check if the player is a member and has the desired items or item.
+        if (!Core.isMember) {
+            Core.logger("This quest requires you to have Gemstone of Nulgath and membership to be able to accept it");
+            return;
+        }
+
+        if (
+            (item == null && Core.checkInventory(questDrops, quant)) ||
+            (item != null && Core.checkInventory(item, quant))
+        ) {
+            return;
+        }
+
+        // Required items
+        Core.killMonster("tercessuinotlim", "m4", "Right", "Shadow of Nulgath", "Hadean Onyx of Nulgath", undefined, {
+            isTemp: false,
+        });
+        this.gemStoneReceiptOfNulgath(1);
+        this.supplies("Unidentified 5");
+
+        if (item != null) {
+            Core.addDrop(item);
+        } else {
+            Core.addDrop(...questDrops);
+        }
+
+        // C# loops while item == null, so with no item it never stops: stop once every drop is at quant.
+        while (
+            !bot.shouldExit &&
+            (item == null ? !Core.checkInventory(questDrops, quant) : !Core.checkInventory(item, quant))
+        ) {
+            const GetItemIdByName = (itemName: string | null): number => {
+                return itemName === "Dark Crystal Shard"
+                    ? 4770
+                    : itemName === "Diamond of Nulgath"
+                      ? 4771
+                      : itemName === "Gem of Nulgath"
+                        ? 6136
+                        : itemName === "Blood Gem of the Archfiend"
+                          ? 22332
+                          : itemName === "Tainted Gem"
+                            ? 4769
+                            : -1;
+            };
+            // Carve the Unidentified Gemstone [Member] 4923
+            Core.ensureAccept(4923);
+            Core.huntMonster("WillowCreek", "Hidden Spy", "The Secret 1", undefined, { isTemp: false });
+            this.farmGemofNulgath(7);
+            this.gemStonesOfnulgath(1, 3, 1, 1);
+
+            const itemId = GetItemIdByName(item);
+            if (itemId !== -1) {
+                Core.ensureComplete(4923, itemId);
+            } else {
+                Core.ensureCompleteChoose(4923);
+                // Complete the quest without specifying item ID
+            }
+
+            if (item != null) {
+                Core.logger(
+                    bot.inventory.isMaxStack(item)
+                        ? "Max Stack Hit."
+                        : `${item}: ${bot.inventory.getQuantity(item)}/${quant}`,
+                );
+            }
+        }
+    }
+
+    /**
+     * Farms gold through Leery Contract exchange.
+     *
+     * @param quant Desired gold quantity.
+     */
+    leeryExchangeGold(quant = 100000000): void {
+        // Check if the player is a member or already has the desired gold quantity.
+        if (!Core.isMember || bot.player.gold >= quant) {
+            return;
+        }
+
+        // Core.DebugLogger(this);
+        // Add Unidentified 13 to the drops list.
+        Core.addDrop(this.uni(13));
+
+        // Core.DebugLogger(this);
+        // Toggle Gold Boost and register the required quest.
+        CoreNation.farm.toggleBoost(BoostType.Gold);
+        // Core.DebugLogger(this);
+
+        // Core.DebugLogger(this);
+        // Continue farming until the desired gold quantity is reached.
+        while (!bot.shouldExit && bot.player.gold < quant) {
+            // Core.DebugLogger(this);
+            // Farm Unidentified 13 for the exchange.
+            this.farmUni13(13);
+            // Core.DebugLogger(this);
+
+            // Hunt the specified monster to exchange Unidentified 13 for gold.
+            while (!bot.shouldExit && Core.checkInventory(this.uni(13))) {
+                Core.ensureAccept(554);
+                Core.killMonster("underworld", "r2", "up", "Undead Legend", "Undead Legend Rune", undefined, {
+                    log: false,
+                });
+                Core.ensureComplete(554);
+            }
+        }
+
+        // Cancel the registered quest and disable Gold Boost.
+        Core.cancelRegisteredQuests();
+        CoreNation.farm.toggleBoost(BoostType.Gold, false);
+    }
+
+    /** Hires Nulgath Larvae. */
+    hireNulgathLarvae(): void {
+        // Check if Nulgath Larvae is already in inventory or the player is not a member.
+        if (Core.checkInventory("Nulgath Larvae") || !Core.isMember) {
+            return;
+        }
+
+        // Add Nulgath Larvae to the drops list.
+        Core.addDrop("Nulgath Larvae");
+
+        // Accept the required quest.
+        Core.ensureAccept(867);
+
+        // Farm the required vouchers for the quest.
+        this.farmVoucher({ member: true, keepVoucher: true });
+
+        // Hunt the specified monster to complete the quest.
+        Core.huntMonster("underworld", "Undead Legend", "Undead Legend Rune", undefined, { log: false });
+
+        // Ensure the quest is completed and wait for the pet pickup.
+        Core.ensureComplete(867);
+        bot.wait.forPickup("Nulgath Larvae");
+    }
+
+    /**
      * Farms Voucher of Nulgath (member or not) with the best method available.
      * @param options `member`: if true will farm Voucher of Nulgath; false Voucher of Nulgath
      *   (non-mem). `keepVoucher`: don't sell the voucher.
@@ -2085,5 +2437,56 @@ export class CoreNation {
             this.gemStonesOfnulgath(0, 5, 2, 0);
             Core.ensureComplete(4920);
         }
+    }
+
+    /**
+     * Farms Tainted Gems using Dreadrock Gem Exchange quest.
+     *
+     * @param quant The quantity of Tainted Gems to farm.
+     */
+    dreadrockGemExchange(quant = 1000): void {
+        if (Core.checkInventory("Tainted Gem", quant)) {
+            return;
+        }
+
+        this.farmUni13(1);
+
+        Core.addDrop("Tainted Gem");
+
+        Core.equipClass(ClassType.Farm);
+
+        Core.farmingLogger("Tainted Gem", quant);
+
+        Core.registerQuests(4853);
+        while (!bot.shouldExit && !Core.checkInventory("Tainted Gem", quant)) {
+            Core.killMonster("dreadrock", "r3", "Bottom", "*", undefined, undefined, { log: false });
+        }
+        Core.cancelRegisteredQuests();
+    }
+
+    bloodFromTheVoid(quant = 300): void {
+        if (Core.checkInventory("Blood From the Void", quant, { toInv: false })) {
+            return;
+        }
+
+        if (!Core.isCompletedBefore(10581)) {
+            Core.logger(
+                "This farm requires the story in /tercesinvasion to be completed. if your geting this message please run the `Story\\Nation\\TercesInvasion.cs` script for the story, the rerun w/e is farming this item.",
+            );
+            return;
+        }
+
+        Core.addDrop("Blood From the Void");
+        Core.equipClass(ClassType.Solo);
+        Core.registerQuests(bot.player.isMember ? 10583 : 10582);
+        Core.farmingLogger("Blood From the Void", quant);
+        while (!bot.shouldExit && !Core.checkInventory("Blood From the Void", quant)) {
+            Core.huntMonster("tercesinvasion", "Archfiend Rodeleros", "Rodeleros' Blade Shard", undefined, {
+                log: false,
+            });
+            Core.huntMonster("tercesinvasion", "Archfiend Vigneron", "Vigneron's Chalice", undefined, { log: false });
+            Core.huntMonster("tercesinvasion", "Archfiend Casimir", "Casimir's Pinky", undefined, { log: false });
+        }
+        Core.cancelRegisteredQuests();
     }
 }

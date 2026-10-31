@@ -19,7 +19,7 @@ tags: core
 
 import { bot, BoostType, choices, option } from "turu";
 import type { InventoryItem, ScriptOption } from "turu";
-import { Core, type CoreShopItem, rethrowIfStopped, type ShopRequirement } from "./CoreBots";
+import { Core, type CoreShopItem, type KillOptions, rethrowIfStopped, type ShopRequirement } from "./CoreBots";
 import { CoreFarms } from "./CoreFarms";
 
 const Farm = new CoreFarms();
@@ -721,6 +721,43 @@ export class CoreAdvanced {
 
     /** The options file of every merge script (C# `OptionsStorage`). */
     readonly optionsStorage = "MergeOptionStorage";
+
+    //#endregion
+
+    //#region Kill
+
+    /**
+     * Joins a map, jumps to a specified cell and pad, and kills the specified monster (by name or
+     * ID) using the best available race gear (C# leaves the race gear step commented out), then
+     * restores the gear.
+     *
+     * @param map The map to join.
+     * @param cell The cell to jump to.
+     * @param pad The pad to jump to.
+     * @param monster The name or ID of the monster to kill.
+     * @param item The item to kill the monster for. If empty, will just kill the monster once.
+     * @param quant The desired quantity of the item to collect.
+     */
+    boostKillMonster(
+        map: string,
+        cell: string,
+        pad: string,
+        monster: string | number,
+        item = "",
+        quant = 1,
+        { isTemp = true, log = true, publicRoom = false }: KillOptions = {},
+    ): void {
+        if (item !== "" && Core.checkInventory(item, quant)) return;
+
+        Core.join(map, cell, pad, { publicRoom });
+
+        // _RaceGear(monster);
+        if (typeof monster === "number")
+            Core.killMonster(map, cell, pad, monster, item, quant, { isTemp, log, publicRoom });
+        else Core.killMonster(map, cell, pad, monster, item, quant, { isTemp, log, publicRoom });
+
+        this.gearStore(true);
+    }
 
     //#endregion
 

@@ -110,6 +110,17 @@ export class TsIndex {
         return "value";
     }
 
+    /** Whether the exported enum `name` is numeric (true), a string enum (false), or not an enum (null). */
+    isNumericEnum(name) {
+        const e = this.exportSymbol(name);
+        if (!e) return null;
+        const sym = e.symbol.flags & ts.SymbolFlags.Alias ? this.checker.getAliasedSymbol(e.symbol) : e.symbol;
+        if (!(sym.flags & ts.SymbolFlags.Enum)) return null;
+        const decl = sym.declarations?.find((d) => ts.isEnumDeclaration(d));
+        if (!decl) return null;
+        return !decl.members.some((m) => m.initializer && ts.isStringLiteralLike(m.initializer));
+    }
+
     /** A member of `type` matching the C# name, ignoring case: { name, symbol, type, kind }. */
     member(type, csName) {
         if (!type) return null;

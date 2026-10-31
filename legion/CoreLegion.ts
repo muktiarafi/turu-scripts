@@ -344,6 +344,32 @@ export class CoreLegion {
         Core.cancelRegisteredQuests();
     }
 
+    ltCastle(quant = 50000): void {
+        if (!Core.checkInventory("Legion Castle") || Core.checkInventory("Legion Token", quant)) {
+            return;
+        }
+
+        const rewards = Core.questRewards(6822);
+        Core.addDrop(...rewards);
+
+        Core.registerQuests(6822, 6742, 6743);
+        while (!bot.shouldExit && !Core.checkInventory("Legion Token", quant)) {
+            Core.killMonster("legionarena", "r2", "Left", "*", "Challenger Slain", 12, {
+                publicRoom: Core.privateRooms,
+            });
+            Core.killMonster(
+                "legionarena",
+                "Boss",
+                "Left",
+                "Legion Fiend Rider",
+                "Legion Fiend Rider Slain",
+                undefined,
+                { publicRoom: Core.privateRooms },
+            );
+        }
+        Core.cancelRegisteredQuests();
+    }
+
     ltArcaneParagon(quant = 50000): void {
         if (Core.checkInventory("Legion Token", quant) || !Core.checkInventory("Arcane Paragon Pet")) return;
 

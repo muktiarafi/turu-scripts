@@ -2431,6 +2431,1263 @@ export class CoreFarms {
         Core.savedState(false);
     }
 
+    // <summary>
+    // Farms Gold by Kill mobs in "darkwarlegion" for Badges and turning the quest in. (ignore the missign turning reqs.. its to quick)
+    // </summary>
+    // <param name="goldQuant">How much gold to farm</param>
+    darkWarLegion(goldQuant = 100000000): void {
+        if (bot.player.gold >= goldQuant) {
+            return;
+        }
+
+        Core.equipClass(ClassType.Farm);
+        this.toggleBoost(BoostType.Gold);
+        Core.savedState(true, "darkwarlegion");
+        Core.logger(
+            `Farming ${goldQuant.toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}  using DarkWarLegion Method`,
+        );
+
+        Core.registerQuests(8584, 8585);
+        while (!bot.shouldExit && bot.player.gold < goldQuant) {
+            if (Core.checkSaveState()) {
+                Core.executeSaveState();
+            }
+            Core.killMonster("darkwarlegion", "r2", "Left", "*", "Nation Badge", 5, { log: false });
+        }
+        Core.cancelRegisteredQuests();
+        Core.savedState(false);
+        this.toggleBoost(BoostType.Gold, false);
+    }
+
+    /**
+     * Farms in Seven Circles War for level and items
+     *
+     * @param level Desired level
+     * @param gold
+     */
+    sevenCirclesWar(level = 100, gold = 100000000): void {
+        if (bot.player.level >= level && bot.player.gold >= gold) {
+            return;
+        }
+
+        if (!Core.isCompletedBefore(7985)) {
+            Core.logger("Please use Scripts/Story/Legion/SevenCircles(War).cs to use the SevenCircles method");
+            return;
+        }
+
+        if (bot.player.level < level) {
+            this.toggleBoost(BoostType.Experience);
+        }
+        if (bot.player.gold < gold) {
+            this.toggleBoost(BoostType.Gold);
+        }
+
+        Core.addDrop("Essence of Wrath", "Souls of Heresy");
+        Core.equipClass(ClassType.Farm);
+        Core.savedState(true, "sevencircleswar");
+        Core.logger(`Farming ${gold} gold using SCW Method`);
+
+        Core.registerQuests(7980, 7981, 7985);
+
+        while (
+            !bot.shouldExit &&
+            (level === 101 ? bot.player.gold < gold : bot.player.level < level && bot.player.gold < gold)
+        ) {
+            if (Core.checkSaveState()) {
+                Core.executeSaveState();
+            }
+            Core.killMonster("sevencircleswar", "r9", "Left", "*", undefined, undefined, { log: false });
+        }
+        Core.cancelRegisteredQuests();
+        this.toggleBoost(BoostType.Experience, false);
+        this.toggleBoost(BoostType.Gold, false);
+        Core.savedState(false);
+    }
+
+    /** Kills the Restorers from /BludrutBrawl for "The Secret 4" item */
+    theSecret4(): void {
+        if (Core.checkInventory("The Secret 4")) {
+            return;
+        }
+        Core.equipClass(ClassType.Solo);
+        Core.jumpWait();
+        while (!bot.shouldExit && !Core.checkInventory("The Secret 4")) {
+            while (!bot.shouldExit && bot.map.name !== "bludrutbrawl") {
+                Core.sleep(5000);
+                Core.jumpWait();
+                Core.join("bludrutbrawl", "Enter0", "Spawn");
+            }
+
+            Core.pvpMove(5, "Morale0C");
+            Core.pvpMove(4, "Morale0B");
+            Core.pvpMove(7, "Morale0A");
+            Core.pvpMove(9, "Crosslower");
+            Core.pvpMove(14, "Crossupper", 528, 255);
+
+            Core.pvpMove(18, "Resource1A");
+            bot.kill.monster("(B) Defensive Restorer");
+            if (bot.drops.exists("The Secret 4")) {
+                bot.drops.pickup("The Secret 4");
+                bot.wait.forPickup("The Secret 4");
+            }
+
+            Core.pvpMove(20, "Resource1B");
+            bot.kill.monster("(B) Defensive Restorer");
+            if (bot.drops.exists("The Secret 4")) {
+                bot.drops.pickup("The Secret 4");
+                bot.wait.forPickup("The Secret 4");
+            }
+
+            while (!bot.shouldExit && bot.map.name !== "battleon") {
+                Core.sleep(5000);
+                Core.jumpWait();
+                Core.join("battleon");
+            }
+        }
+    }
+
+    //#endregion Misc
+    //#region Reputation
+    getAllRanks(doDeathPit: boolean): void {
+        this.toggleBoost(BoostType.Reputation);
+
+        this.aegisREP();
+        this.alchemyREP();
+        this.arcangroveREP();
+        this.baconCatREP();
+        if (Core.isMember) {
+            this.beastMasterREP();
+        }
+        this.blacksmithingREP();
+        this.bladeofAweREP(undefined, false);
+        if (Core.isSeasonalMapActive("birdswithharms")) {
+            this.brethwrenREP();
+        }
+        this.brightoakREP();
+        this.chaosMilitiaREP();
+        this.chaosREP();
+        this.chronoSpanREP();
+        this.craggleRockREP();
+        this.diabolicalREP();
+        this.doomWoodREP();
+        this.dreadfireREP();
+        this.dreadrockREP();
+        this.druidGroveREP();
+        this.dwarfholdREP();
+        this.elementalMasterREP();
+        this.emberseaREP();
+        this.eternalREP();
+        this.etherStormREP();
+        this.evilREP();
+        if (Core.isSeasonalMapActive("rainbow")) {
+            this.faerieCourtREP();
+        }
+        this.fishingREP();
+        this.glaceraREP();
+        this.goodREP();
+        this.hollowbornREP();
+        this.horcREP();
+        this.infernalArmyREP();
+        this.loremasterREP();
+        this.lycanREP();
+        this.monsterHunterREP();
+        this.mysteriousDungeonREP();
+        this.mythsongREP();
+        this.necroCryptREP();
+        this.northpointeREP();
+        this.petTamerREP();
+        this.ravenlossREP();
+        this.sandseaREP();
+        if (Core.isMember) {
+            this.skyguardREP();
+        }
+        this.somniaREP();
+        this.spellCraftingREP();
+        this.swordhavenREP();
+        this.thunderForgeREP();
+        this.treasureHunterREP();
+        this.trollREP();
+        this.vampireREP();
+        this.yewMountainsREP();
+        this.yokaiREP();
+        this.carcossaCourtRep();
+        this.skyeREP();
+        if (doDeathPit) {
+            this.deathPitBrawlREP();
+            this.deathPitArenaREP();
+        }
+
+        this.toggleBoost(BoostType.Reputation, false);
+    }
+
+    carcossaCourtRep(rank = 10): void {
+        if (this.factionRank("Carcossa Court") >= rank) {
+            return;
+        }
+
+        if (![10810, 10811, 10812].some(bot.quests.isUnlocked)) {
+            Core.logger('*MUST* have completed the story atleast upto the "Light and Lemming" Quest in //Templeofdoom');
+            return;
+        }
+
+        Core.equipClass(ClassType.Farm);
+        Core.savedState(true, "templeofdoom");
+        this.toggleBoost(BoostType.Reputation);
+        Core.logger(`Farming rank ${rank}`);
+
+        let currentQuests: number[] = [];
+        let maxedQuests = false;
+
+        while (!bot.shouldExit && this.factionRank("Carcossa Court") < rank) {
+            if (!maxedQuests) {
+                const availableQuests = bot.quests.isUnlocked(10812)
+                    ? [10810, 10811, 10812]
+                    : bot.quests.isUnlocked(10811)
+                      ? [10810, 10811]
+                      : [10810];
+
+                if (!(JSON.stringify(availableQuests) === JSON.stringify(currentQuests))) {
+                    Core.cancelRegisteredQuests();
+                    Core.registerQuests(...availableQuests);
+                    currentQuests = availableQuests;
+                    Core.logger(`Registered quests: ${currentQuests.join(", ")}`);
+                }
+
+                if (availableQuests.length === 3) {
+                    maxedQuests = true;
+                }
+            }
+
+            Core.killMonster("templeofdoom", "r7", "Bottom", "*");
+        }
+
+        Core.cancelRegisteredQuests();
+        this.toggleBoost(BoostType.Reputation, false);
+        Core.savedState(false);
+    }
+
+    aegisREP(rank = 10): void {
+        if (this.factionRank("Aegis") >= rank) {
+            return;
+        }
+
+        Core.equipClass(ClassType.Farm);
+        Core.savedState(true, "skytower");
+        this.toggleBoost(BoostType.Reputation);
+        Core.logger(`Farming rank ${rank}`);
+
+        Core.registerQuests(4900, 4910, 4914);
+        //Kick Some Can 4900, The Best You Can Buy 4910, Testing My Metal 4914
+        while (!bot.shouldExit && this.factionRank("Aegis") < rank) {
+            Core.huntMonster("skytower", "Seraphic Assassin", "Seraphic Assassin Dueled", 10, { log: false });
+            Core.huntMonster("skytower", "Virtuous Warrior", "Warriors Dueled", 10, { log: false });
+            Core.huntMonster("skytower", "Seraphic Assassin", "Assassins Handed To Them", 6, { log: false });
+            Core.huntMonster("skytower", "Virtuous Warrior", "Warrior Butt Beaten", 6, { log: false });
+        }
+        Core.cancelRegisteredQuests();
+        this.toggleBoost(BoostType.Reputation, false);
+        Core.savedState(false);
+    }
+
+    baconCatREP(rank = 10): void {
+        if (this.factionRank("BaconCat") >= rank) {
+            return;
+        }
+
+        if (!bot.quests.isUnlocked(5120)) {
+            Core.logger(
+                `Quest [5120] "Ziri Is Also Tough", has yet to be completed, please run "Farm/REP/BaconCatREP.cs"`,
+                undefined,
+                { messageBox: true },
+            );
+            return;
+        }
+
+        Core.equipClass(ClassType.Farm);
+        Core.savedState(true, "baconcatlair");
+        this.toggleBoost(BoostType.Reputation);
+        Core.logger(`Farming rank ${rank}`);
+
+        Core.registerQuests(5112, 5120);
+        while (!bot.shouldExit && this.factionRank("BaconCat") < rank) {
+            if (Core.checkSaveState()) {
+                Core.executeSaveState();
+            }
+            Core.huntMonster("baconcatlair", "Ice Cream Shark", undefined, undefined, { log: false });
+        }
+        Core.cancelRegisteredQuests();
+        this.toggleBoost(BoostType.Reputation, false);
+        Core.savedState(false);
+    }
+
+    beastMasterREP(rank = 10): void {
+        if (this.factionRank("BeastMaster") >= rank) {
+            return;
+        }
+
+        if (!Core.isMember) {
+            Core.logger("Beast Master REP is Member-Only", undefined, { messageBox: true });
+            return;
+        }
+
+        Core.equipClass(ClassType.Farm);
+        this.experience(50);
+        this.toggleBoost(BoostType.Reputation);
+        Core.logger(`Farming rank ${rank}`);
+        // Core.RegisterQuests(3757);
+
+        // 3754 | Beat the Beasts
+        while (!bot.shouldExit && this.factionRank("BeastMaster") < 3) {
+            Core.ensureAccept(3754);
+            Core.huntMonster("boxes", "Sneevil", "Beast Crate", 6, { log: false });
+            Core.huntMonster("pirates", "Fishwing", "Fish Scale", 6, { log: false });
+            Core.ensureComplete(3754);
+        }
+
+        // 3755 | Secrets and Scrolls
+        while (!bot.shouldExit && this.factionRank("BeastMaster") < 4) {
+            Core.ensureAccept(3755);
+            Core.huntMonster("bamboo", "Tanuki", "Secret Scroll of Beast Commanding", 7, { log: false });
+            Core.huntMonster("pines", "Pine Troll", "Troll's Treatise on Beasts", undefined, { log: false });
+            Core.ensureComplete(3755);
+        }
+
+        // 3756 | Taming the Elementals
+        while (!bot.shouldExit && this.factionRank("BeastMaster") < 6) {
+            Core.ensureAccept(3756);
+            Core.huntMonster("mafic", "Living Fire", "Living Flame Core", 6, { log: false });
+            Core.huntMonster("elemental", "Mana Imp", "Mana Manipulation Orb", 5, { log: false });
+            Core.ensureComplete(3756);
+        }
+
+        // 3757 | Dark Creature Demands
+        Core.savedState(true, "pyramid");
+        while (!bot.shouldExit && this.factionRank("BeastMaster") < rank) {
+            Core.ensureAccept(3757);
+            Core.huntMonster("pyramid", "Golden Scarab", "Gleaming Gems of Containment", 16, { log: false });
+            Core.huntMonster("dreamnexus", "Solar Phoenix", "Bright Binding of Submission", 16, { log: false });
+            Core.ensureComplete(3757);
+        }
+
+        // Core.CancelRegisteredQuests();
+        this.toggleBoost(BoostType.Reputation, false);
+        Core.savedState(false);
+    }
+
+    brethwrenREP(rank = 10): void {
+        if (this.factionRank("Brethwren") >= rank || !Core.isSeasonalMapActive("birdswithharms")) {
+            return;
+        }
+
+        if (!bot.quests.isAvailable(8989)) {
+            Core.logger("Quest not avaible for farm, run the complete Birds With Harms storyline script.");
+            return;
+        }
+
+        Core.savedState(true, "birdswithharms");
+        this.toggleBoost(BoostType.Reputation);
+        Core.equipClass(ClassType.Farm);
+        Core.logger(`Farming rank ${rank}`);
+
+        Core.registerQuests(8989);
+        while (!bot.shouldExit && this.factionRank("Brethwren") < rank) {
+            if (Core.checkSaveState()) {
+                Core.executeSaveState();
+            }
+            Core.huntMonster("birdswithharms", "Turkonian", undefined, undefined, { log: false });
+        }
+
+        Core.cancelRegisteredQuests();
+        this.toggleBoost(BoostType.Reputation, false);
+        Core.savedState(false);
+    }
+
+    brightoakREP(rank = 10): void {
+        if (this.factionRank("Brightoak") >= rank) {
+            return;
+        }
+
+        if (!bot.quests.isAvailable(4667)) {
+            Core.logger(
+                "Quest not available for farm, do Brightoak saga till Elfhame [Unlocking the Guardian's Mouth]",
+            );
+            return;
+        }
+
+        Core.savedState(true, "elfhame");
+        this.toggleBoost(BoostType.Reputation);
+        Core.logger(`Farming rank ${rank}`);
+
+        while (!bot.shouldExit && this.factionRank("Brightoak") < rank) {
+            if (bot.map.name !== "elfhame") {
+                Core.join("elfhame");
+                bot.wait.forMapLoad("elfhame");
+            }
+            if (!bot.quests.isInProgress(4667)) {
+                bot.quests.accept(4667);
+                bot.wait.forQuestAccept(4667);
+            }
+            bot.map.getMapItem(3984);
+            // C# waits while Bot.ShouldExit (never, while running), so it didn't wait for the puzzle.
+            while (!bot.shouldExit && !bot.tempInv.contains("Puzzle Completed")) {
+                Core.sleep();
+            }
+            if (bot.quests.canComplete(4667)) {
+                bot.quests.complete(4667);
+                bot.wait.forQuestComplete(4667);
+            }
+            Core.sleep();
+        }
+        // Core.Jump("Enter", "Spawn");
+        bot.options.skipCutscenes = true;
+        Core.cancelRegisteredQuests();
+        this.toggleBoost(BoostType.Reputation, false);
+        Core.savedState(false);
+    }
+
+    chaosMilitiaREP(rank = 10): void {
+        if (this.factionRank("Chaos Militia") >= rank) {
+            return;
+        }
+
+        Core.savedState(true, "citadel");
+        this.toggleBoost(BoostType.Reputation);
+        Core.logger(`Farming rank ${rank}`);
+        Core.equipClass(ClassType.Farm);
+        Core.registerQuests(5775);
+        //Expect the Inquisitors 5775
+        while (!bot.shouldExit && this.factionRank("Chaos Militia") < rank) {
+            if (Core.checkSaveState()) {
+                Core.executeSaveState();
+            }
+            Core.huntMonster("citadel", "Inquisitor Guard", undefined, undefined, { log: false });
+        }
+        bot.wait.forQuestComplete(5775);
+        Core.cancelRegisteredQuests();
+        this.toggleBoost(BoostType.Reputation, false);
+        Core.savedState(false);
+    }
+
+    deathPitArenaREP(rank = 10): void {
+        if (this.factionRank("Death Pit Arena") >= rank) {
+            return;
+        }
+
+        if (!bot.quests.isAvailable(5154)) {
+            Core.logger(
+                "Quest not available for farm, do the Death Pit Arena saga and unlock the quest [Pax Defeated]",
+            );
+            return;
+        }
+
+        Core.equipClass(ClassType.Solo);
+        Core.savedState(true, "deathpit");
+        this.toggleBoost(BoostType.Reputation);
+        Core.logger(`Farming rank ${rank}`);
+
+        while (!bot.shouldExit && this.factionRank("Death Pit Arena") < rank) {
+            if (Core.checkSaveState()) {
+                Core.executeSaveState();
+            }
+            Core.ensureAccept(5153);
+            Core.huntMonster("deathpit", "General Hun'Gar", "General Hun'Gar Defeated", undefined, { log: false });
+            Core.ensureComplete(5153);
+        }
+        bot.wait.forQuestComplete(5153);
+        Core.cancelRegisteredQuests();
+        this.toggleBoost(BoostType.Reputation, false);
+        Core.savedState(false);
+    }
+
+    diabolicalREP(rank = 10): void {
+        if (this.factionRank("Diabolical") >= rank) {
+            return;
+        }
+
+        if (!bot.quests.isUnlocked(7877)) {
+            Core.ensureAccept(7875);
+            Core.huntMonster("timevoid", "Unending Avatar", "Everlasting Scale");
+            Core.ensureComplete(7875);
+
+            Core.ensureAccept(7876);
+            Core.huntMonster(`twilightedge`, "ChaosWeaver Warrior", "Chaotic Arachnid's Flesh");
+            Core.ensureComplete(7876);
+        }
+
+        Core.equipClass(ClassType.Solo);
+        Core.savedState(true, "mudluk");
+        this.toggleBoost(BoostType.Reputation);
+        Core.logger(`Farming rank ${rank}`);
+
+        while (!bot.shouldExit && this.factionRank("Diabolical") < rank) {
+            if (Core.checkSaveState()) {
+                Core.executeSaveState();
+            }
+            Core.ensureAccept(7877);
+            Core.huntMonster("mudluk", "Tiger Leech", "Swamped Leech Tooth", undefined, { log: false });
+            Core.ensureComplete(7877);
+        }
+        bot.wait.forQuestComplete(7877);
+        Core.cancelRegisteredQuests();
+        this.toggleBoost(BoostType.Reputation, false);
+        Core.savedState(false);
+    }
+
+    skyeREP(rank = 10): void {
+        if (!Core.isCompletedBefore(9125)) {
+            Core.logger('Quest "Your Hero [9125]" Not complete (Run "09SeaVoice"), cannot continue the rep');
+            return;
+        }
+
+        if (this.factionRank("Skye") >= rank) {
+            return;
+        }
+
+        Core.equipClass(ClassType.Farm);
+        Core.savedState(true, "balemorale");
+        this.toggleBoost(BoostType.Reputation);
+        Core.logger(`Farming rank ${rank}`);
+        Core.registerQuests(9709, 9710, 9711, 9717);
+        while (!bot.shouldExit && this.factionRank("Skye") < rank) {
+            if (Core.checkSaveState()) {
+                Core.executeSaveState();
+            }
+            Core.killMonster("balemorale", "r10", "Bottom", "*", undefined, undefined, { log: false });
+        }
+        Core.cancelRegisteredQuests();
+        this.toggleBoost(BoostType.Reputation, false);
+        Core.savedState(false);
+    }
+
+    dreadfireREP(rank = 10): void {
+        if (this.factionRank("Dreadfire") >= rank) {
+            return;
+        }
+
+        Core.equipClass(ClassType.Farm);
+        Core.savedState(true, "shadowfallwar");
+        this.toggleBoost(BoostType.Reputation);
+        Core.logger(`Farming rank ${rank}`);
+
+        Core.registerQuests(5697);
+        //Gather Crystals 5697
+        while (!bot.shouldExit && this.factionRank("Dreadfire") < rank) {
+            if (Core.checkSaveState()) {
+                Core.executeSaveState();
+            }
+            Core.killMonster("dreadfire", "r13", "Bottom", "Arcane Crystal", undefined, undefined, { log: false });
+        }
+        bot.wait.forQuestComplete(5697);
+        Core.cancelRegisteredQuests();
+        this.toggleBoost(BoostType.Reputation, false);
+        Core.savedState(false);
+    }
+
+    dreadrockREP(rank = 10): void {
+        if (this.factionRank("Dreadrock") >= rank) {
+            return;
+        }
+
+        Core.addDrop("Ghastly Dreadrock Blade");
+        Core.equipClass(ClassType.Farm);
+        Core.savedState(true, "dreadrock");
+        this.toggleBoost(BoostType.Reputation);
+        Core.logger(`Farming rank ${rank}`);
+
+        Core.registerQuests(4863, 4862, 4865, 4868);
+        //Endurance Tesssssst 4863, Supply Run 4862, Ghastly Blades 4865, Glub, Glub, Glub 4868
+        while (!bot.shouldExit && this.factionRank("Dreadrock") < rank) {
+            if (Core.checkSaveState()) {
+                Core.executeSaveState();
+            }
+            Core.killMonster("dreadrock", "r3", "Bottom", "*", undefined, undefined, { log: false });
+        }
+        bot.wait.forQuestComplete(4868);
+        Core.cancelRegisteredQuests();
+        this.toggleBoost(BoostType.Reputation, false);
+        Core.savedState(false);
+    }
+
+    druidGroveREP(rank = 10): void {
+        if (this.factionRank("Druid Grove") >= rank) {
+            return;
+        }
+
+        Core.equipClass(ClassType.Farm);
+        Core.savedState(true, "bloodtusk");
+        this.toggleBoost(BoostType.Reputation);
+        Core.logger(`Farming rank ${rank}`);
+
+        Core.registerQuests(3049);
+        //Help Professor Maedoc 3049
+        while (!bot.shouldExit && this.factionRank("Druid Grove") < rank) {
+            if (Core.checkSaveState()) {
+                Core.executeSaveState();
+            }
+            Core.huntMonster("bloodtusk", "Crystal-Rock", undefined, undefined, { log: false });
+        }
+        bot.wait.forQuestComplete(3049);
+        Core.cancelRegisteredQuests();
+        this.toggleBoost(BoostType.Reputation, false);
+        Core.savedState(false);
+    }
+
+    dwarfholdREP(rank = 10): void {
+        if (this.factionRank("Dwarfhold") >= rank) {
+            return;
+        }
+
+        if (!bot.quests.isUnlocked(320)) {
+            // Seven Sisters
+            Core.ensureAccept(319);
+            Core.getMapItem(56, 7, "tavern");
+            Core.ensureComplete(319);
+        }
+
+        Core.equipClass(ClassType.Farm);
+        Core.savedState(true, "pines");
+        this.toggleBoost(BoostType.Reputation);
+        Core.logger(`Farming rank ${rank}`);
+
+        // Core.RegisterQuests(320, 321); //Warm and Furry 320, Shell Shock 321
+        while (!bot.shouldExit && this.factionRank("Dwarfhold") < rank) {
+            if (Core.checkSaveState()) {
+                Core.executeSaveState();
+            }
+            Core.ensureAcceptmultiple(320, 321);
+            //Warm and Furry 320, Shell Shock 321
+            Core.killMonster("pines", "Enter", "Right", "Pine Grizzly", "Bear Skin", 5, { log: false });
+            Core.killMonster("pines", "Enter", "Right", "Red Shell Turtle", "Red Turtle Shell", 5, { log: false });
+            Core.ensureCompleteQuests(320, 321);
+            //Warm and Furry 320, Shell Shock 321
+        }
+        // Core.CancelRegisteredQuests();
+        this.toggleBoost(BoostType.Reputation, false);
+        Core.savedState(false);
+    }
+
+    emberseaREP(rank = 10): void {
+        if (this.factionRank("Embersea") >= rank) {
+            return;
+        }
+
+        // MembershipDues(MemberShipsIDS.Embersea, rank);
+
+        Core.equipClass(ClassType.Farm);
+        Core.savedState(true, "fireforge");
+        this.toggleBoost(BoostType.Reputation);
+        Core.logger(`Farming rank ${rank}`);
+
+        // Easy method requires a story
+        const DoEasyMethod = Core.isCompletedBefore(4080);
+        Core.registerQuests(DoEasyMethod ? 4080 : 4228);
+        // Spreading Like Wildfire (250rep - 4 map items)
+        if (DoEasyMethod) {
+            while (!bot.shouldExit && this.factionRank("Embersea") < rank) {
+                if (bot.map.name !== "Pyrewatch") {
+                    Core.join("Pyrewatch");
+                }
+
+                if (Core.checkSaveState()) {
+                    Core.executeSaveState();
+                }
+
+                if (!bot.tempInv.contains(28575, 4)) {
+                    bot.map.getMapItem(3162);
+                }
+
+                bot.sleep(500);
+            }
+        } else {
+            //  Slay the Blazebinders (500rep - 5 kills)
+            while (!bot.shouldExit && this.factionRank("Embersea") < rank) {
+                if (Core.checkSaveState()) {
+                    Core.executeSaveState();
+                }
+                Core.huntMonsterMapID("fireforge", 4, undefined, undefined, { log: false });
+            }
+        }
+
+        this.toggleBoost(BoostType.Reputation, false);
+        Core.cancelRegisteredQuests();
+        Core.savedState(false);
+    }
+
+    etherStormREP(rank = 10): void {
+        if (this.factionRank("Etherstorm") >= rank) {
+            return;
+        }
+
+        Core.equipClass(ClassType.Farm);
+        Core.savedState(true, "etherwardes");
+        this.toggleBoost(BoostType.Reputation);
+        Core.logger(`Farming rank ${rank}`);
+
+        // Dapper Hats | 3494
+        Core.registerQuests(3494);
+        while (!bot.shouldExit && this.factionRank("Etherstorm") < rank) {
+            if (Core.checkSaveState()) {
+                Core.executeSaveState();
+            }
+
+            Core.killMonster("waterstorm", "r5", "Left", "*");
+        }
+        // Core.CancelRegisteredQuests();
+        this.toggleBoost(BoostType.Reputation, false);
+        Core.savedState(false);
+    }
+
+    horcREP(rank = 10): void {
+        if (this.factionRank("Horc") >= rank) {
+            return;
+        }
+
+        Core.equipClass(ClassType.Farm);
+        Core.savedState(true, "bloodtuskwar");
+        this.toggleBoost(BoostType.Reputation);
+        Core.logger(`Farming rank ${rank}`);
+
+        // Core.RegisterQuests(1265);
+        while (!bot.shouldExit && this.factionRank("Horc") < rank) {
+            if (Core.checkSaveState()) {
+                Core.executeSaveState();
+            }
+            Core.ensureAccept(1265);
+            Core.huntMonster("bloodtuskwar", "Chaotic Lemurphant", "Chaorrupted Eye", 3, { log: false });
+            Core.huntMonster("bloodtuskwar", "Chaotic Horcboar", "Chaorrupted Tentacle", 5, { log: false });
+            Core.huntMonster("bloodtuskwar", "Chaotic Chinchilizard", "Chaorrupted Tusk", 5, { log: false });
+            Core.ensureComplete(1265);
+        }
+        // Core.CancelRegisteredQuests();
+        this.toggleBoost(BoostType.Reputation, false);
+        Core.savedState(false);
+    }
+
+    lycanREP(rank = 10): void {
+        if (this.factionRank("Lycan") >= rank) {
+            return;
+        }
+
+        if (!Core.isCompletedBefore(537)) {
+            Core.logger("Can't do farming quest [Sanguine] (/lycan)", undefined, { messageBox: true });
+            return;
+        }
+
+        Core.equipClass(ClassType.Solo);
+        Core.savedState(true, "lycan");
+        this.toggleBoost(BoostType.Reputation);
+        Core.logger(`Farming rank ${rank}`);
+
+        Core.registerQuests(537);
+        //Sanguine 537
+        while (!bot.shouldExit && this.factionRank("Lycan") < rank) {
+            if (Core.checkSaveState()) {
+                Core.executeSaveState();
+            }
+            Core.huntMonster("lycan", "Sanguine", "Sanguine Mask", undefined, { log: false });
+        }
+        Core.cancelRegisteredQuests();
+        this.toggleBoost(BoostType.Reputation, false);
+        Core.savedState(false);
+    }
+
+    infernalArmyREP(rank = 10): void {
+        if (this.factionRank("Infernal Army") >= rank) {
+            return;
+        }
+
+        Core.equipClass(ClassType.Farm);
+        Core.savedState(true, "dreadfire");
+        this.toggleBoost(BoostType.Reputation);
+        Core.logger(`Farming rank ${rank}`);
+
+        Core.registerQuests(5707);
+        // Practice Time 5707
+        while (!bot.shouldExit && this.factionRank("Infernal Army") < rank) {
+            if (Core.checkSaveState()) {
+                Core.executeSaveState();
+            }
+            Core.killMonster("dreadfire", "r10", "Left", "Living Brimstone", "Living Brimstone Defeated", undefined, {
+                log: false,
+            });
+        }
+        Core.cancelRegisteredQuests();
+        this.toggleBoost(BoostType.Reputation, false);
+        Core.savedState(false);
+    }
+
+    monsterHunterREP(rank = 10): void {
+        if (this.factionRank("Monster Hunter") >= rank) {
+            return;
+        }
+
+        Core.equipClass(ClassType.Farm);
+        this.toggleBoost(BoostType.Reputation);
+        Core.logger(`Farming rank ${rank}`);
+
+        Core.registerQuests(5849, 5850);
+        //Capture the Misshapen 5849, Defeat the Parasites 5850
+        if (!Core.isCompletedBefore(5850)) {
+            Core.logger("Unlocking farming quest.");
+            Core.killMonster("pilgrimage", "r5", "Left", "SpiderWing", "Spiderwing Captured", 4, { log: false });
+            Core.killMonster("pilgrimage", "r5", "Left", "Urstrix", "Urstrix Captured", 4, { log: false });
+        }
+
+        Core.savedState(true, "pilgrimage");
+        while (!bot.shouldExit && this.factionRank("Monster Hunter") < rank) {
+            if (Core.checkSaveState()) {
+                Core.executeSaveState();
+            }
+            Core.killMonster("pilgrimage", "r5", "Left", "SpiderWing", "Spiderwing Captured", 4, { log: false });
+            Core.killMonster("pilgrimage", "r5", "Left", "Urstrix", "Urstrix Captured", 4, { log: false });
+            Core.killMonster("pilgrimage", "r5", "Left", "Ravenous Parasite", "Ravenous Parasites Slain", 7, {
+                log: false,
+            });
+        }
+        Core.cancelRegisteredQuests();
+        this.toggleBoost(BoostType.Reputation, false);
+        Core.savedState(false);
+    }
+
+    necroCryptREP(rank = 10): void {
+        if (this.factionRank("Necro Crypt") >= rank) {
+            return;
+        }
+
+        Core.equipClass(ClassType.Farm);
+        Core.savedState(true, "castleundead");
+        this.toggleBoost(BoostType.Reputation);
+        Core.logger(`Farming rank ${rank}`);
+
+        Core.registerQuests(3048);
+        //Help Professor Mueran 3048
+        while (!bot.shouldExit && this.factionRank("Necro Crypt") < rank) {
+            if (Core.checkSaveState()) {
+                Core.executeSaveState();
+            }
+            Core.huntMonster("castleundead", "Skeletal Viking", "Old Bone", 25, { log: false });
+        }
+        bot.wait.forQuestComplete(3048);
+        Core.cancelRegisteredQuests();
+        this.toggleBoost(BoostType.Reputation, false);
+        Core.savedState(false);
+    }
+
+    northpointeREP(rank = 10): void {
+        if (this.factionRank("Northpointe") >= rank) {
+            return;
+        }
+
+        Core.equipClass(ClassType.Farm);
+        this.toggleBoost(BoostType.Reputation);
+        Core.savedState(true, "northpointe");
+        Core.logger(`Farming rank ${rank}`);
+
+        Core.registerQuests(4027);
+        //Sage Advice 4027
+        while (!bot.shouldExit && this.factionRank("Northpointe") < rank) {
+            if (Core.checkSaveState()) {
+                Core.executeSaveState();
+            }
+            Core.huntMonster("northpointe", "Grim Stalker", "Bunch of Sage", 10, { log: false });
+        }
+        bot.wait.forQuestComplete(4027);
+        Core.cancelRegisteredQuests();
+        this.toggleBoost(BoostType.Reputation, false);
+        Core.savedState(false);
+    }
+
+    petTamerREP(rank = 10): void {
+        if (this.factionRank("Pet Tamer") >= rank) {
+            return;
+        }
+
+        Core.equipClass(ClassType.Farm);
+        Core.savedState(true, "greenguardwest");
+        this.toggleBoost(BoostType.Reputation);
+        Core.logger(`Farming rank ${rank}`);
+
+        Core.registerQuests(5261);
+        while (!bot.shouldExit && this.factionRank("Pet Tamer") < rank) {
+            if (Core.checkSaveState()) {
+                Core.executeSaveState();
+            }
+            Core.killMonster("greenguardwest", "West7", "Down", "Mogzard", "Mogzard Captured", undefined, {
+                log: false,
+            });
+        }
+        Core.cancelRegisteredQuests();
+        this.toggleBoost(BoostType.Reputation, false);
+        Core.savedState(false);
+    }
+
+    ravenlossREP(rank = 10): void {
+        if (this.factionRank("Ravenloss") >= rank) {
+            return;
+        }
+
+        if (!bot.quests.isAvailable(3445)) {
+            Core.logger('Quest Locked Run: "Story/RavenlossSaga.cs"', undefined, { messageBox: true });
+            return;
+        }
+        Core.equipClass(ClassType.Farm);
+        Core.savedState(true, "twilightedge");
+        this.toggleBoost(BoostType.Reputation);
+        Core.logger(`Farming rank ${rank}`);
+
+        Core.registerQuests(3445);
+        //Slay the Spiderkin 3445
+        while (!bot.shouldExit && this.factionRank("Ravenloss") < rank) {
+            if (Core.checkSaveState()) {
+                Core.executeSaveState();
+            }
+            Core.huntMonster("twilightedge", "ChaosWeaver Mage", "ChaosWeaver Slain", 10, { log: false });
+        }
+        Core.cancelRegisteredQuests();
+        this.toggleBoost(BoostType.Reputation, false);
+        Core.savedState(false);
+    }
+
+    sandseaREP(rank = 10): void {
+        if (this.factionRank("Sandsea") >= rank) {
+            return;
+        }
+
+        Core.equipClass(ClassType.Farm);
+        Core.savedState(true, "sandsea");
+        this.toggleBoost(BoostType.Reputation);
+        Core.logger(`Farming rank ${rank}`);
+
+        Core.registerQuests(916, 917, 919, 921, 922);
+        //Dissertations Bupers Camel 916, Crafty Creepers: A Favorite of Mine 917, Parched Pets 919, Oasis Ornaments 921, The Power of Pomade 922
+        while (!bot.shouldExit && this.factionRank("Sandsea") < rank) {
+            if (Core.checkSaveState()) {
+                Core.executeSaveState();
+            }
+            // Core.EnsureAcceptmultiple(new[] { 916, 917, 919, 921, 922 });
+            Core.killMonster("sandsea", "Enter", "Spawn", "*", undefined, undefined, { log: false });
+            // Core.HuntMonster("sandsea", "Bupers Camel", "Bupers Camel Document", 10, log: false);
+            // Core.HuntMonster("sandsea", "Bupers Camel", "Barrel of Desert Water", 10, log: false);
+            // Core.HuntMonster("sandsea", "Bupers Camel", "Flexible Camel Spit", 7, log: false);
+            // Core.HuntMonster("sandsea", "Bupers Camel", "Oasis Jewelry Piece", 4, log: false);
+            // Core.HuntMonster("sandsea", "Bupers Camel", "Camel Skull", 2, log: false);
+            // Core.HuntMonster("sandsea", "Cactus Creeper", "Sandsea Cotton", 8, log: false);
+            // Core.HuntMonster("sandsea", "Cactus Creeper", "Cactus Creeper Head", 8, log: false);
+            // Core.EnsureComplete(916, 917, 919, 921, 922);
+        }
+        Core.cancelRegisteredQuests();
+        this.toggleBoost(BoostType.Reputation, false);
+        Core.savedState(false);
+        // To ensure combat exit before buying master ranger if doing so
+        Core.jumpWait();
+    }
+
+    skyguardREP(rank = 10): void {
+        if (this.factionRank("Skyguard") >= rank) {
+            return;
+        }
+
+        if (!Core.isMember) {
+            Core.logger("Skyguard REP is Member-Only", undefined, { messageBox: true });
+            return;
+        }
+
+        this.membershipDues(MemberShipsIDS.Skyguard, rank);
+    }
+
+    somniaREP(rank = 10): void {
+        if (this.factionRank("Somnia") >= rank) {
+            return;
+        }
+
+        Core.equipClass(ClassType.Farm);
+        Core.savedState(true, "somnia");
+        this.toggleBoost(BoostType.Reputation);
+        Core.logger(`Farming rank ${rank}`);
+
+        // Core.RegisterQuests(7665, 7666, 7669);
+        while (!bot.shouldExit && this.factionRank("Somnia") < rank) {
+            if (Core.checkSaveState()) {
+                Core.executeSaveState();
+            }
+            Core.ensureAcceptmultiple(7665, 7666, 7669);
+            Core.huntMonster("somnia", "Nightspore", "Dream Truffle", 8, { log: false });
+            Core.huntMonster("somnia", "Orpheum Elemental", "Orphium Ore", 8, { log: false });
+            Core.huntMonster("somnia", "Dream Larva", "Dreamsilk", 5, { log: false });
+            Core.ensureCompleteQuests(7665, 7666, 7669);
+        }
+        // Core.CancelRegisteredQuests();
+        this.toggleBoost(BoostType.Reputation, false);
+        Core.savedState(false);
+    }
+
+    thunderForgeREP(rank = 10): void {
+        if (this.factionRank("ThunderForge") >= rank) {
+            return;
+        }
+
+        if (!bot.quests.isAvailable(2733)) {
+            Core.logger("Quest not avaible for farm, do ThunderForge saga till Deathpits [The Chaos Eye of Vestis]");
+            return;
+        }
+        this.toggleBoost(BoostType.Reputation);
+        Core.logger(`Farming rank ${rank}`);
+        Core.savedState(true, "deathpits");
+        if (!Core.isMember) {
+            Core.equipClass(ClassType.Solo);
+            Core.registerQuests(2733, 2734);
+            while (!bot.shouldExit && this.factionRank("ThunderForge") < rank) {
+                if (Core.checkSaveState()) {
+                    Core.executeSaveState();
+                }
+                Core.huntMonster("deathpits", "Wrathful Vestis", "Vestis's Chaos Eye", undefined, { log: false });
+            }
+        } else {
+            Core.equipClass(ClassType.Farm);
+            Core.registerQuests(2734, 2735, 2736, 2737);
+            while (!bot.shouldExit && this.factionRank("ThunderForge") < rank) {
+                if (Core.checkSaveState()) {
+                    Core.executeSaveState();
+                }
+                Core.huntMonster("deathpits", "Rotting Darkblood", undefined, undefined, { log: false });
+            }
+        }
+        Core.cancelRegisteredQuests();
+        this.toggleBoost(BoostType.Reputation, false);
+        Core.savedState(false);
+    }
+
+    trollREP(rank = 10): void {
+        if (this.factionRank("Troll") >= rank) {
+            return;
+        }
+
+        Core.equipClass(ClassType.Farm);
+        Core.savedState(true, "bloodtuskwar");
+        this.toggleBoost(BoostType.Reputation);
+        Core.logger(`Farming rank ${rank}`);
+
+        // Core.RegisterQuests(1263);
+        while (!bot.shouldExit && this.factionRank("Troll") < rank) {
+            if (Core.checkSaveState()) {
+                Core.executeSaveState();
+            }
+            Core.ensureAccept(1263);
+            Core.huntMonster("bloodtuskwar", "Chaotic Lemurphant", "Chaorrupted Eye", 3, { log: false });
+            Core.huntMonster("bloodtuskwar", "Chaotic Horcboar", "Chaorrupted Tentacle", 5, { log: false });
+            Core.huntMonster("bloodtuskwar", "Chaotic Chinchilizard", "Chaorrupted Tusk", 5, { log: false });
+            Core.ensureComplete(1263);
+        }
+        // Core.CancelRegisteredQuests();
+        this.toggleBoost(BoostType.Reputation, false);
+        Core.savedState(false);
+    }
+
+    yewMountainsREP(rank = 10): void {
+        if (this.factionRank("Yew Mountains") >= rank) {
+            return;
+        }
+
+        Core.equipClass(ClassType.Farm);
+        this.toggleBoost(BoostType.Reputation);
+        Core.logger(`Farming rank ${rank} for Yew Mountains`);
+
+        Core.registerQuests(...(Core.isMember ? [10345] : [10341, 10346]));
+        Core.addDrop(
+            ...[
+                ...Core.ensureLoad(10342).rewards.map((r) => r.name),
+                ...Core.ensureLoad(10346).rewards.map((r) => r.name),
+            ],
+        );
+
+        // Thelima Training | 10342
+        Core.logger('Checking Daily Completion of "Thelima Training | 10342"');
+        if (!bot.quests.isDailyComplete(10342)) {
+            Core.ensureAccept(10342);
+            Core.killMonster("thelimacity", "r6", "Left", "*", "Thelima Soldiers Trained", 100, { isTemp: false });
+            Core.ensureComplete(10342);
+        }
+
+        while (!bot.shouldExit && this.factionRank("Yew Mountains") < rank) {
+            Core.killMonster(
+                !Core.isMember ? "thelimacity" : "dwarfhold",
+                !Core.isMember ? "r6" : "New1",
+                !Core.isMember ? "Left" : "Right",
+                !Core.isMember ? "*" : "Gemrald",
+                undefined,
+                undefined,
+                { log: false },
+            );
+        }
+        Core.cancelRegisteredQuests();
+        this.toggleBoost(BoostType.Reputation, false);
+        Core.savedState(false);
+    }
+
+    yokaiREP(rank = 10): void {
+        if (this.factionRank("Yokai") >= rank) {
+            return;
+        }
+
+        Core.equipClass(ClassType.Farm);
+        this.toggleBoost(BoostType.Reputation);
+        Core.savedState(true, "dragonkoiz");
+        Core.logger(`Farming rank ${rank}`);
+
+        Core.registerQuests(383);
+        while (!bot.shouldExit && this.factionRank("Yokai") < rank) {
+            if (Core.checkSaveState()) {
+                Core.executeSaveState();
+            }
+            Core.huntMonster("dragonkoiz", "Pockey Chew", "Piece of Pockey", 3, { log: false });
+            bot.wait.forActionCooldown("tryQuestComplete");
+        }
+        Core.cancelRegisteredQuests();
+        this.toggleBoost(BoostType.Reputation, false);
+        Core.savedState(false);
+    }
+
+    swagTokenA(quant = 100): void {
+        // Check if we already have the required amount of Token A or not
+        if (Core.checkInventory("Super-Fan Swag Token A", quant)) {
+            return;
+        }
+
+        Core.savedState(true, Core.isMember ? "collectorlab" : "terrarium");
+        Core.farmingLogger("Swag Token A", quant);
+        Core.addDrop("Super-Fan Swag Token A", "Super-Fan Swag Token B", "Super-Fan Swag Token C");
+        if (!Core.isMember) {
+            Core.addDrop("Super-Fan Swag Token D");
+        }
+        Core.equipClass(ClassType.Farm);
+        Core.registerQuests(...(!Core.isMember ? [1304, 1307] : [1310, 1312, 1313, 1314]));
+
+        //#region Token farm and check for Token A only
+        while (!bot.shouldExit && !Core.checkInventory("Super-Fan Swag Token A", quant)) {
+            // Refresh token quantities
+
+            if (Core.isMember) {
+                if (Core.checkSaveState()) {
+                    Core.executeSaveState();
+                }
+                Core.killMonster("collectorlab", "r2", "Left", "*", "Super-Fan Swag Token C", 200, { isTemp: false });
+                bot.wait.forPickup("Super-Fan Swag Token C");
+            } else {
+                if (Core.checkSaveState()) {
+                    Core.executeSaveState();
+                }
+                // Farm Token D from Terrarium
+                Core.killMonster("terrarium", "Enter", "Spawn", "*", "Super-Fan Swag Token D", 500, { isTemp: false });
+                bot.wait.forPickup("Super-Fan Swag Token D");
+            }
+
+            this.handleShopPurchases(
+                bot.inventory.getQuantity("Super-Fan Swag Token D"),
+                bot.inventory.getQuantity("Super-Fan Swag Token C"),
+                bot.inventory.getQuantity("Super-Fan Swag Token B"),
+                bot.inventory.getQuantity("Super-Fan Swag Token A"),
+            );
+        }
+        //#endregion Token farm and check
+        Core.cancelRegisteredQuests();
+    }
+
+    faerieCourtREP(rank = 10): void {
+        if (this.factionRank("Faerie Court") >= rank) {
+            return;
+        }
+
+        Core.jumpWait();
+        bot.map.join("rainbow");
+        if (bot.map.name !== "rainbow") {
+            Core.logger("Can't level FaerieCourt, as it's seasonal");
+            return;
+        }
+
+        Core.logger(`Farming rank ${rank}`);
+        this.toggleBoost(BoostType.Reputation);
+        Core.savedState(true, this.factionRank("Faerie Court") < 8 ? "rainbow" : "faegrove");
+
+        Core.registerQuests(6775, 6779);
+        while (!bot.shouldExit && this.factionRank("Faerie Court") < rank) {
+            if (Core.checkSaveState()) {
+                Core.executeSaveState();
+            }
+            if (this.factionRank("Faerie Court") < 8) {
+                Core.equipClass(ClassType.Solo);
+                Core.huntMonster("rainbow", "Lucky Harms", "Four Leaf Clover", 3, { log: false });
+            }
+            if (this.factionRank("Faerie Court") >= 8) {
+                Core.equipClass(ClassType.Farm);
+                Core.huntMonster("faegrove", "Dark Sylphdrake", "Silver Sylph Feather", undefined, { log: false });
+            }
+        }
+        Core.cancelRegisteredQuests();
+        this.toggleBoost(BoostType.Reputation, false);
+        Core.savedState(false);
+    }
+
+    // Shop handler for SwagTokens
+    private handleShopPurchases(dQuantity: number, cQuantity: number, bQuantity: number, aQuantity: number): void {
+        // Join "Collection" map and wait for it to load
+        Core.join("Collection");
+        bot.wait.forMapLoad("Collection");
+        bot.wait.forCellChange("Begin");
+        Core.sleep();
+
+        // Token D > Token C (purchase if needed)
+        if (Math.trunc(dQuantity / 10) > 1 && cQuantity < 500 && Math.trunc(dQuantity / 10) + cQuantity < 500) {
+            const buyC = Math.trunc(dQuantity / 10);
+            Core.buyItem("collection", 325, "Super-Fan Swag Token C", buyC);
+            bot.wait.forActionCooldown("buyItem");
+            bot.wait.forItemBuy();
+        }
+
+        Core.sleep();
+
+        // Token C > Token B (buy from shop if needed)
+        if (Math.trunc(cQuantity / 10) > 1 && bQuantity < 200 && Math.trunc(cQuantity / 10) + bQuantity < 200) {
+            const buyB = Math.trunc(cQuantity / 10);
+            Core.buyItem("collection", 325, "Super-Fan Swag Token B", buyB);
+            bot.wait.forActionCooldown("buyItem");
+            bot.wait.forItemBuy();
+        }
+
+        Core.sleep();
+
+        // Token B > Token A (buy from shop if needed)
+        if (Math.trunc(bQuantity / 20) > 1 && aQuantity < 100 && Math.trunc(bQuantity / 20) + aQuantity < 100) {
+            const buyA = Math.trunc(bQuantity / 20);
+            Core.buyItem("collection", 325, "Super-Fan Swag Token A", buyA);
+            bot.wait.forActionCooldown("buyItem");
+            bot.wait.forItemBuy();
+        }
+        Core.sleep();
+    }
+
+    membershipDues(faction: MemberShipsIDS, rank = 10): void {
+        if (this.factionRank(MemberShipsIDS[faction]) >= rank) {
+            return;
+        }
+
+        bot.options.skipCutscenes = false;
+        Core.logger(`Membership Dues - Rep: ${faction} - Rank: ${rank}`);
+        this.toggleBoost(BoostType.Reputation);
+        Core.bankingBlackList.push(
+            "Super-Fan Swag Token A",
+            "Super-Fan Swag Token B",
+            "Super-Fan Swag Token C",
+            "Super-Fan Swag Token D",
+        );
+        while (this.factionRank(MemberShipsIDS[faction]) < rank) {
+            this.swagTokenA(Math.trunc(this.remainingFactionXp(MemberShipsIDS[faction]) / 5000) + 1);
+            Core.ensureCompleteMulti(faction);
+        }
+        this.toggleBoost(BoostType.Reputation, false);
+        Core.savedState(false);
+        bot.options.skipCutscenes = true;
+    }
+
     static readonly maxFactionRep = 302500;
 
     /** Rank of a faction (0 if you have no reputation in it). */
@@ -2442,6 +3699,12 @@ export class CoreFarms {
     /** Your reputation in the faction for its current rank (0 without it). */
     factionRep(faction: string): number {
         return bot.reputation.factionList.find((f) => equalsIgnoreCase(f.name, faction))?.rep ?? 0;
+    }
+
+    /** Reputation left to rank 10 in the faction (302500 without it). */
+    remainingFactionXp(faction: string): number {
+        if (!faction || faction.trim().length === 0) return 302500;
+        return bot.reputation.factionList.find((f) => equalsIgnoreCase(f.name, faction))?.remainingRep ?? 302500;
     }
 
     /** Your total reputation in the faction: its rank's threshold plus the rep in that rank. */
@@ -2514,4 +3777,29 @@ export class CoreFarms {
 
         if (!doOnce) Core.trashCan("Fishing Bait", "Fishing Dynamite");
     }
+}
+
+/** C# `MemberShipsIDS`: the Membership Dues quest of each faction. */
+export enum MemberShipsIDS {
+    Dwarfhold = 1317,
+    Good = 1318,
+    Evil = 1319,
+    Yokai = 1320,
+    Vampire = 1321,
+    Lycan = 1322,
+    Mythsong = 1323,
+    Arcangrove = 1324,
+    Sandsea = 1325,
+    Skyguard = 1326,
+    DoomWood = 1327,
+    Troll = 1328,
+    Horc = 1329,
+    Etherstorm = 4340,
+    ChronoSpan = 4341,
+    Thunderforge = 4342,
+    Swordhaven = 4343,
+    Chaos = 4344,
+    Northpointe = 4345,
+    Embersea = 4346,
+    Ravenloss = 4347,
 }

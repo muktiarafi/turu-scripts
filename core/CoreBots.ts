@@ -3007,6 +3007,18 @@ export class CoreBots {
 
     // C# QuestRewards' <= 15-quests branch reads the same rewards from Bot.Quests.Tree.
 
+    /** The reward IDs of the quests. */
+    questRewardsInt(...questIds: number[]): number[] {
+        if (questIds.length === 0) return [];
+
+        const toReturn: number[] = [];
+        for (const q of this.ensureLoadMany(...questIds) ?? []) {
+            if (q?.rewards == null || q.rewards.length === 0) continue;
+            toReturn.push(...q.rewards.filter((r) => r != null).map((r) => r.id));
+        }
+        return toReturn;
+    }
+
     /** Accepts and then completes the quest, used inside a loop. */
     chainComplete(questId: number, itemId = -1): void {
         if (itemId > 0) bot.drops.add(itemId);
