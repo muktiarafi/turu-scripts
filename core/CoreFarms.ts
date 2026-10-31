@@ -122,6 +122,292 @@ export class CoreFarms {
     private alchemyCraftCompleted = false;
     private alchemyCraftFailed = false;
 
+    arcangroveREP(rank = 10): void {
+        if (this.factionRank("Arcangrove") >= rank) {
+            return;
+        }
+
+        Core.equipClass(ClassType.Farm);
+        Core.savedState(true, "arcangrove");
+        this.toggleBoost(BoostType.Reputation);
+        // A Necessary Sacrifice 794, Gorillaphant Poaching 795, Mustard and Pretzel Root 796
+        // Thyme and a Half 797, Thistle Do Nicely 798, Pleased to Meat You 799, ArcanRobe 800
+        // Ebony and Ivory Tusks 801
+        Core.registerQuests(794, 795, 796, 797, 798, 799, 800, 801);
+        while (!bot.shouldExit && this.factionRank("Arcangrove") < rank) {
+            for (let i = 0; i < 10; i++) {
+                Core.killMonster("arcangrove", "LeftBack", "Left", "*", undefined, undefined, { log: false });
+            }
+            // Gorillaphant
+            for (let i = 0; i < 10; i++) {
+                Core.killMonster("arcangrove", "RightBack", "Left", "*", undefined, undefined, { log: false });
+            }
+            // Seed Spitter
+            if (Core.checkSaveState()) {
+                Core.executeSaveState();
+            }
+        }
+        Core.cancelRegisteredQuests();
+        this.toggleBoost(BoostType.Reputation, false);
+        Core.savedState(false);
+    }
+
+    craggleRockREP(rank = 10): void {
+        if (this.factionRank("CraggleRock") >= rank) {
+            return;
+        }
+
+        Core.equipClass(ClassType.Solo);
+        Core.savedState(true, "wanders");
+        this.toggleBoost(BoostType.Reputation);
+        Core.logger(`Farming rank ${rank}`);
+        Core.addDrop("Empowered Voidstone");
+        Core.registerQuests(7277);
+        //Star of the Sandsea 7277
+        Core.join("wanders");
+        while (!bot.shouldExit && this.factionRank("CraggleRock") < rank) {
+            for (const mob of bot.monsters.mapMonsters.filter((x) => x.id === 560)) {
+                while (bot.player.cell !== mob.cell) {
+                    Core.jump(mob.cell, "Left");
+                    Core.sleep();
+                }
+
+                if (Core.checkSaveState()) {
+                    Core.executeSaveState();
+                }
+                bot.kill.monster(mob.mapId);
+                Core.sleep();
+
+                if (this.factionRank("CraggleRock") >= rank) {
+                    break;
+                }
+            }
+        }
+        this.toggleBoost(BoostType.Reputation, false);
+        Core.savedState(false);
+        Core.cancelRegisteredQuests();
+    }
+
+    elementalMasterREP(rank = 10): void {
+        if (this.factionRank("Elemental Master") >= rank) {
+            return;
+        }
+
+        Core.equipClass(ClassType.Farm);
+        this.toggleBoost(BoostType.Reputation);
+        Core.logger(`Farming rank ${rank}`);
+
+        if (!Core.isCompletedBefore(3052)) {
+            Core.ensureAccept(3052);
+            Core.getMapItem(1921, 1, "dragonrune");
+            Core.getMapItem(1922, 1, "dragonrune");
+            Core.getMapItem(1923, 1, "dragonrune");
+            Core.getMapItem(1924, 1, "dragonrune");
+            Core.ensureComplete(3052);
+        }
+
+        // Define a dictionary to store the secondary items for each elemental
+
+        if (!bot.quests.isDailyComplete(3299) && Core.isMember) {
+            Core.logger("Doing daily first.");
+
+            Core.ensureAccept(3299);
+
+            Core.equipClass(ClassType.Farm);
+
+            Core.huntMonster("gilead", "Water Elemental", "Water Drop", 6);
+            Core.huntMonster("gilead", "Fire Elemental", "Flame", 6);
+            Core.huntMonster("gilead", "Wind Elemental", "Breeze", 6);
+            Core.huntMonster("gilead", "Earth Elemental", "Stone", 6);
+
+            Core.ensureComplete(3299);
+        }
+
+        Core.logger(!Core.isMember ? "Daily is mem only, Onto the Farm" : "Daily complete, onto the farm.");
+
+        Core.savedState(true, "gilead");
+        while (!bot.shouldExit && this.factionRank("Elemental Master") < rank) {
+            if (Core.checkSaveState()) {
+                Core.executeSaveState();
+            }
+
+            Core.ensureAcceptmultiple(3050, 3298);
+
+            Core.equipClass(ClassType.Farm);
+            Core.huntMonsterMulti(
+                "gilead",
+                "Water Elemental",
+                [
+                    ["Water Core", 1, true],
+                    ["Water Drop", 5, true],
+                ],
+                { log: false },
+            );
+            Core.huntMonsterMulti(
+                "gilead",
+                "Fire Elemental",
+                [
+                    ["Fire Core", 1, true],
+                    ["Flame", 5, true],
+                ],
+                { log: false },
+            );
+            Core.huntMonsterMulti(
+                "gilead",
+                "Wind Elemental",
+                [
+                    ["Air Core", 1, true],
+                    ["Breeze", 5, true],
+                ],
+                { log: false },
+            );
+            Core.huntMonsterMulti(
+                "gilead",
+                "Earth Elemental",
+                [
+                    ["Earth Core", 1, true],
+                    ["Stone", 5, true],
+                ],
+                { log: false },
+            );
+
+            Core.equipClass(ClassType.Solo);
+            Core.huntMonster("gilead", "Mana Elemental", "Mana Core", undefined, { log: false });
+
+            Core.ensureCompleteQuests(3050, 3298);
+        }
+
+        Core.cancelRegisteredQuests();
+        this.toggleBoost(BoostType.Reputation, false);
+        Core.savedState(false);
+    }
+
+    eternalREP(rank = 10): void {
+        if (this.factionRank("Eternal") >= rank) {
+            return;
+        }
+
+        if (!bot.quests.isAvailable(5198)) {
+            Core.logger("Can't do farming quest [Sphynxes are Riddled with Gems] (/fourdpyramid)", undefined, {
+                messageBox: true,
+            });
+            return;
+        }
+
+        Core.equipClass(ClassType.Farm);
+        Core.savedState(true, "fourdpyramid");
+        this.toggleBoost(BoostType.Reputation);
+        Core.logger(`Farming rank ${rank}`);
+
+        // Core.RegisterQuests(5198);
+        while (!bot.shouldExit && this.factionRank("Eternal") < rank) {
+            if (Core.checkSaveState()) {
+                Core.executeSaveState();
+            }
+            Core.ensureAccept(5198);
+            Core.huntMonsterMapID("fourdpyramid", 19, "White Gem", 2, { log: false });
+            Core.huntMonsterMapID("fourdpyramid", 20, "Black Gem", 2, { log: false });
+            Core.ensureComplete(5198);
+        }
+        // Core.CancelRegisteredQuests();
+        this.toggleBoost(BoostType.Reputation, false);
+        Core.savedState(false);
+    }
+
+    hollowbornREP(rank = 10): void {
+        if (this.factionRank("Hollowborn") >= rank) {
+            return;
+        }
+
+        Core.addDrop("Hollow Soul");
+        Core.savedState(true, "shadowrealm");
+        this.toggleBoost(BoostType.Reputation);
+        Core.logger(`Farming rank ${rank}`);
+        const StoryProgress = bot.quests.isUnlocked(9865);
+        if (StoryProgress) {
+            // Mutual Friends | 9865 && Mutual Friends (Legend) | 10298
+            Core.registerQuests(Core.isMember ? 10298 : 9865);
+            Core.equipClass(ClassType.Solo);
+            while (!bot.shouldExit && this.factionRank("Hollowborn") < rank) {
+                if (Core.checkSaveState()) {
+                    Core.executeSaveState();
+                }
+
+                Core.killMonster("neotower", "r6", "Left", "Vindicator Assassin", "Vindicated Blades");
+                Core.killMonster("neotower", "r7", "Right", "Vindicator BeastTamer", "Vindicated Chain");
+                Core.killMonster("neotower", "r10", "Right", "Vindicator Priest", "Vindicated Scripture");
+                bot.wait.forQuestComplete(Core.isMember ? 10298 : 9865);
+            }
+        } else {
+            // Get the Seeds 7553 && Flex it! 7555
+            Core.registerQuests(7553, 7555);
+            Core.equipClass(ClassType.Farm);
+            while (!bot.shouldExit && this.factionRank("Hollowborn") < rank) {
+                if (Core.checkSaveState()) {
+                    Core.executeSaveState();
+                }
+                Core.killMonster("shadowrealm", "r2", "Left", "Gargrowl", "Darkseed", 8, { log: false });
+                Core.killMonster("shadowrealm", "r2", "Left", "Shadow Guardian", "Shadow Medallion", 5, { log: false });
+            }
+        }
+        this.toggleBoost(BoostType.Reputation, false);
+        Core.cancelRegisteredQuests();
+        Core.savedState(false);
+    }
+
+    mysteriousDungeonREP(rank = 10): void {
+        if (this.factionRank("Mysterious Dungeon") >= rank) {
+            return;
+        }
+
+        Core.equipClass(ClassType.Farm);
+
+        this.toggleBoost(BoostType.Reputation);
+        Core.logger(`Farming rank ${rank}`);
+
+        if (!Core.isCompletedBefore(5429)) {
+            Core.ensureAccept(5428);
+            Core.getMapItem(4803, 1, "cursedshop");
+            Core.ensureComplete(5428);
+        }
+
+        Core.savedState(true, "cursedshop");
+        Core.registerQuests(5429);
+        //Lamps, Paintings and Chairs, oh my! 5429
+        while (!bot.shouldExit && this.factionRank("Mysterious Dungeon") < rank) {
+            if (Core.checkSaveState()) {
+                Core.executeSaveState();
+            }
+            Core.huntMonster("cursedshop", "Antique Chair", "Antique Chair Defeated", undefined, { log: false });
+        }
+        Core.cancelRegisteredQuests();
+        this.toggleBoost(BoostType.Reputation, false);
+        Core.savedState(false);
+    }
+
+    treasureHunterREP(rank = 10): void {
+        if (this.factionRank("TreasureHunter") >= rank) {
+            return;
+        }
+
+        Core.equipClass(ClassType.Farm);
+        Core.savedState(true, "stalagbite");
+        this.toggleBoost(BoostType.Reputation);
+        Core.logger(`Farming rank ${rank}`);
+
+        Core.registerQuests(6593);
+        while (!bot.shouldExit && this.factionRank("TreasureHunter") < rank) {
+            if (Core.checkSaveState()) {
+                Core.executeSaveState();
+            }
+            Core.huntMonster("stalagbite", "Balboa", "Super Specific Rock", undefined, { log: false });
+            bot.wait.forQuestComplete(6593);
+        }
+        Core.cancelRegisteredQuests();
+        this.toggleBoost(BoostType.Reputation, false);
+        Core.savedState(false);
+    }
+
     /**
      * Enables or disables a boost. Enabling needs the matching CoreBots Options switch (Other >
      * Boosters: `doGoldBoost`, `doClassBoost`, `doRepBoost`, `doExpBoost`); it finds the boost item

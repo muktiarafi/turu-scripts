@@ -10,15 +10,18 @@ tags: potions, alchemy, reputation, tonic, elixir
 // Scripts > Edit Script Options. `bot.config.get` reads them.
 
 import { bot, defineScriptOptions, option } from "turu";
-import { ClassType, Core } from "../../core/CoreBots";
+import { ClassType, Core, configOr } from "../../core/CoreBots";
 import { CoreAdvanced } from "../../core/CoreAdvanced";
 import { AlchemyRunes, AlchemyTraits, CoreFarms } from "../../core/CoreFarms";
 
 const Farm = new CoreFarms();
 const Adv = new CoreAdvanced();
 
-/** A boolean option, read when it's asked for (C# `Func<bool>` in the selection table). */
-const flag = (name: string) => (): boolean => bot.config.get<boolean>(name);
+/**
+ * A boolean option, read when it's asked for (C# `Func<bool>` in the selection table). Another
+ * script's run (a merge calling {@link needYourStrongestPotions}) doesn't declare it: false.
+ */
+const flag = (name: string) => (): boolean => configOr(name, false);
 
 /**
  * The script's options (C# `Options`), shown in Scripts > Edit Script Options. As in the C#
@@ -130,14 +133,14 @@ export function needYourStrongestPotions(args: NeedYourStrongestPotionsArgs = {}
     const { potions = allPotions, separate = false } = args;
     let potionQuant = args.quant ?? 300;
 
-    const buyReagents = bot.config.get<boolean>("BuyReagents") || (args.buyReagents ?? false);
+    const buyReagents = configOr("BuyReagents", false) || (args.buyReagents ?? false);
 
     Farm.alchemyREP();
     Farm.goodREP();
 
     Core.logger(buyReagents ? "Method Choose: Buy Reagents" : "Farm Reagents");
 
-    const maxAll = bot.config.get<boolean>("MaxAll");
+    const maxAll = configOr("MaxAll", false);
 
     // Which potions the options select. The unstable ones only with MaxAll.
     const selection = new Map<string, () => boolean>([

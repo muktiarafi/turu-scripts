@@ -518,4 +518,538 @@ export class CoreToD {
         // Shut Up And Listen, Groglurk!
         Story.killQuest(5451, "MysteriousDungeon", "Scarletta", { autoCompleteQuest: false });
     }
+
+    boneTowerAll(): void {
+        if (!Core.isMember || Core.isCompletedBefore(5022)) {
+            return;
+        }
+
+        if (this.doAll) {
+            Core.logger("Vaden - The DeathKnight: Bone Tower (Silver)");
+        }
+        Story.preLoad(this.boneTowerAll);
+        this.castleofBones();
+
+        // Eye Sp-eye
+        Story.killQuest(4996, "towersilver", "Flying Spyball");
+
+        // Stone Cold
+        Story.killQuest(4997, "towersilver", "Fallen Emperor Statue");
+
+        // Slay 'Em All
+        Story.killQuest(4999, "towersilver", ["Undead Knight", "Undead Guard"]);
+
+        // Slay 'Em All Again
+        Story.killQuest(4998, "towersilver", ["Fallen DeathKnight", "Undead Warrior"]);
+
+        // Farming For Loot
+        Story.killQuest(5000, "towersilver", [
+            "Flying Spyball",
+            "Fallen DeathKnight",
+            "Undead Warrior",
+            "Undead Knight",
+            "Undead Guard",
+        ]);
+
+        // Or... Not.
+        Story.mapItemQuest(5001, "towersilver", [4368, 4369, 4370, 4371, 4372]);
+
+        // Mirror, Mirror
+        Story.mapItemQuest(5002, "towersilver", 4373, 3);
+
+        // Bloody Scary
+        Story.killQuest(5003, "towersilver", "Bloody Scary");
+
+        // Just Nasty
+        Story.killQuest(5004, "towersilver", "Bone Creeper");
+
+        // Scavenger Hunt
+        Story.killQuest(5005, "towersilver", "Ghoul");
+
+        // Ghoul Booty
+        Story.mapItemQuest(5006, "towersilver", 4374, 5);
+
+        // Flester's Guards
+        Story.killQuest(5007, "towersilver", "Undead Golden Knight");
+
+        // Flester the Silver
+        Story.killQuest(5008, "towersilver", "Flester The Silver");
+
+        // Get my Stuff
+        Story.killQuest(5009, "towersilver", [
+            "Fallen DeathKnight",
+            "Undead Knight",
+            "Undead Warrior",
+            "Ghoul",
+            "Undead Guard",
+        ]);
+
+        // In the Mix
+        Story.killQuest(5010, "towersilver", "Bloody Scary");
+
+        // They Know We're Coming
+        Story.killQuest(5011, "towergold", "Grim Souldier");
+
+        // Elitist Jerks
+        Story.killQuest(5012, "towergold", "Undead Golden Knight");
+
+        // Loot, Hero!
+        Story.mapItemQuest(5013, "towergold", 4375, 5);
+        Story.killQuest(5013, "towergold", "Skullspider");
+
+        // Those Aren't Big Birds, Sweetheart
+        Story.killQuest(5014, "towergold", "Vampire Bat");
+
+        // The Nope Room
+        Story.killQuest(5015, "towergold", "Webbed Ghoul");
+
+        // Arach-NO-phobia
+        Story.killQuest(5016, "towergold", "Bone Widow");
+
+        // Library Infestation
+        Story.killQuest(5017, "towergold", "Book Maggot");
+
+        // Creepy!
+        Story.mapItemQuest(5018, "towergold", 4376, 6);
+        Story.killQuest(5018, "towergold", "Bone Creeper");
+
+        // It's Not Like They Need Them Anymore
+        Story.mapItemQuest(5019, "towergold", 4377, 3);
+
+        // Advanced Self Defense
+        Story.killQuest(5020, "towergold", ["Undead Knight", "Undead Guard"]);
+
+        // Take A Mallet To 'Em
+        Story.killQuest(5021, "towergold", "Fallen Emperor Statue");
+
+        // Yurrod the Gold
+        Story.killQuest(5022, "towergold", "Yurrod the Gold");
+    }
+
+    deepSpace(): void {
+        if (!Core.isMember || Core.isCompletedBefore(5083)) {
+            return;
+        }
+
+        if (this.doAll) {
+            Core.logger("Xeven - The Time Assassin: Paradox Portal");
+        }
+        Story.preLoad(this.deepSpace);
+
+        this.paradoxPortal();
+
+        // The Western Portal
+        Story.mapItemQuest(5068, "tachyon", 4446);
+        Story.killQuest(5068, "tachyon", ["Time Wraith", "Timestream Rider"]);
+
+        // This Thing Needs A Bigger Battery
+        Story.killQuest(5069, "tachyon", "Spacetime Anomaly");
+
+        // Deserted
+        Story.mapItemQuest(5072, "tachyon", 4447, 4);
+        Story.killQuest(5072, "tachyon", ["Sandshark", "Bupers Camel"]);
+
+        // Getting Sand In Your Boots
+        Story.mapItemQuest(5073, "tachyon", 4448);
+
+        // The Eastern Portal
+        Story.mapItemQuest(5074, "tachyon", 4449);
+        Story.killQuest(5074, "tachyon", ["Time Wraith", "Timestream Rider"]);
+
+        // Time for a Tune-Up
+        Story.killQuest(5075, "tachyon", "Medusoid");
+
+        // Time Void Archaeology
+        Story.mapItemQuest(5076, "tachyon", 4450, 3);
+        Story.mapItemQuest(5076, "tachyon", 4451, 3);
+        Story.killQuest(5076, "tachyon", ["Jungle Tog", "Jungle Fury"]);
+
+        // Going With the Flow
+        Story.mapItemQuest(5077, "tachyon", 4452);
+
+        // The Central Portal
+        Story.mapItemQuest(5078, "tachyon", 4453);
+        Story.killQuest(5078, "tachyon", ["Time Wraith", "Timestream Rider"]);
+
+        // Is There Tech Support For This Thing?
+        Story.killQuest(5079, "tachyon", "Void Serpent");
+
+        // Shovelling Snow
+        Story.mapItemQuest(5080, "tachyon", 4454, 5);
+        Story.killQuest(5080, "tachyon", ["Ice Wolf", "Polar Elemental"]);
+
+        // Winter Winds
+        Story.mapItemQuest(5081, "tachyon", 4455);
+
+        // Opening the Megaportal
+        Story.mapItemQuest(5082, "tachyon", 4456);
+
+        // Svelgr the Devourer
+        Story.killQuest(5083, "tachyon", "Svelgr the Devourer");
+    }
+
+    fourthDimensionalPyramid(): void {
+        if (Core.isCompletedBefore(5212)) {
+            return;
+        }
+
+        if (this.doAll) {
+            Core.logger("Sekt - The Eternal: Fourth Dimensional Pyramid");
+        }
+        Story.preLoad(this.fourthDimensionalPyramid);
+
+        // Eye for an Eye of the Old Gods
+        Core.equipClass(ClassType.Solo);
+        Story.killQuest(5189, "fourdpyramid", "Sekt");
+
+        // Hounded by History
+        Core.equipClass(ClassType.Farm);
+        Story.killQuest(5190, "fourdpyramid", "Negastri Hound");
+
+        // Stand and De-Lever
+        Story.mapItemQuest(5191, "fourdpyramid", 4556, 1);
+
+        // Yo Mummy
+        Core.equipClass(ClassType.Solo);
+        if (!Story.questProgression(5192)) {
+            Core.ensureAccept(5192);
+            Core.getMapItem(4557, 1, "fourdpyramid");
+            Core.huntMonster("fourdpyramid", "Sekt's Mummy", "Mummy Grease", 1);
+            Core.ensureComplete(5192);
+        }
+
+        // Find the Secret Brick
+        Story.mapItemQuest(5193, "fourdpyramid", 4558, 1);
+
+        // Gauze in 60 Seconds
+        Core.equipClass(ClassType.Farm);
+        Story.killQuest(5194, "fourdpyramid", "Nega Mummy");
+
+        // De-Lever-ence
+        Story.mapItemQuest(5195, "fourdpyramid", 4559, 1);
+
+        // A Jarring Solution
+        if (!Story.questProgression(5196)) {
+            Core.ensureAccept(5196);
+            Core.getMapItem(4560, 1, "fourdpyramid");
+            Core.huntMonster("fourdpyramid", "Nega Mummy", "Canopic Jar", 1);
+            Core.huntMonster("fourdpyramid", "Guardian of Anubyx", "Tesseract Energy", 5);
+            Core.ensureComplete(5196);
+        }
+
+        // Ra of Light
+        Story.mapItemQuest(5197, "fourdpyramid", 4561, 1);
+
+        // Sphynxes are Riddled With Gems
+        if (!Story.questProgression(5198)) {
+            Core.ensureAccept(5198);
+            Core.huntMonsterMapID("fourdpyramid", 19, "White Gem", 2);
+            Core.huntMonsterMapID("fourdpyramid", 20, "Black Gem", 2);
+            Core.ensureComplete(5198);
+        }
+
+        // 4th Dimensional Teleport
+        Story.mapItemQuest(5199, "fourdpyramid", 4562, 4);
+        Story.mapItemQuest(5199, "fourdpyramid", 4564, 1);
+
+        // Mummies vs Daddies
+        Story.killQuest(5200, "fourdpyramid", "Nega Mummy");
+
+        // The Tesseract
+        Story.killQuest(5201, "fourdpyramid", "Guardian of Anubyx");
+
+        // Another Mystery To Solve
+        Story.mapItemQuest(5202, "fourdpyramid", 4565, 1);
+
+        // Whose Skeleton Is This?
+        Story.mapItemQuest(5203, "fourdpyramid", 4566, 1);
+
+        // Fourth Scrap of the Propechy
+        Story.mapItemQuest(5204, "fourdpyramid", 4567, 1);
+
+        // Fighting in 4D
+        if (!Story.questProgression(5205)) {
+            Core.ensureAccept(5205);
+            Core.getMapItem(4568, 1, "fourdpyramid");
+            Core.huntMonster("fourdpyramid", "Tesseract Sprite", "Tesseract Sprites", 8);
+            Core.ensureComplete(5205);
+        }
+
+        // Lever-age
+        Story.mapItemQuest(5206, "fourdpyramid", 4569, 1);
+
+        // 4D Goblins?
+        if (!Story.questProgression(5207)) {
+            Core.ensureAccept(5207);
+            Core.getMapItem(4570, 1, "fourdpyramid");
+            Core.huntMonster("fourdpyramid", "Tesseract Goblin", "Goblin Tools", 4);
+            Core.ensureComplete(5207);
+        }
+
+        // Stone Sphynx Gems
+        if (!Story.questProgression(5208)) {
+            Core.ensureAccept(5208);
+            Core.huntMonsterMapID("fourdpyramid", 19, "White Gem", 1);
+            Core.huntMonsterMapID("fourdpyramid", 20, "Black Gem", 3);
+            Core.ensureComplete(5208);
+        }
+
+        // Beam Me Up Scotty;
+        Story.mapItemQuest(5209, "fourdpyramid", 4571, 4);
+        Story.mapItemQuest(5209, "fourdpyramid", 4572, 1);
+
+        // Sekt... Again
+        Story.mapItemQuest(5210, "fourdpyramid", 4573, 1);
+
+        // The Black Plague
+        Core.equipClass(ClassType.Solo);
+        Story.killQuest(5211, "fourdpyramid", "Black Plague");
+
+        // The Hero's Doom
+        Story.mapItemQuest(5212, "fourdpyramid", 4574, 1);
+    }
+
+    //#region Vaden - The DeathKnight
+    castleofBones(): void {
+        if (Core.isCompletedBefore(4992)) {
+            return;
+        }
+
+        if (this.doAll) {
+            Core.logger("Vaden - The DeathKnight: Castle of Bones");
+        }
+        Story.preLoad(this.castleofBones);
+
+        // Enter the Castle of Bone
+        Story.killQuest(4968, "bonecastle", "Undead Guard");
+
+        // Slay Vaden's Undead Guards
+        Story.killQuest(4969, "bonecastle", "Undead Guard");
+
+        // Destroyer in the Foyer
+        Story.killQuest(4970, "bonecastle", "Undead Knight");
+
+        // Help! I'm a Fallen Lord and I Can't Get Up!
+        if (bot.player.cell !== "r4") {
+            Core.jump("r4", "Left");
+        }
+        //cutscene issues...?
+        Story.killQuest(4971, "bonecastle", "Fallen Deathknight");
+
+        // Gem-nastics
+        if (!Story.questProgression(4972)) {
+            Core.ensureAccept(4972);
+            Core.getMapItem(4342, 3, "bonecastle");
+            Core.huntMonster("bonecastle", "Fallen Deathknight", "Necrogem", 3);
+            Core.ensureComplete(4972);
+        }
+
+        // Bone Appetit
+        Story.killQuest(4973, "bonecastle", "Undead Waiter");
+
+        // The Walking Bread
+        if (!Story.questProgression(4974)) {
+            Core.ensureAccept(4974);
+            Core.getMapItem(4343, 2, "bonecastle");
+            Core.getMapItem(4344, 2, "bonecastle");
+            Core.getMapItem(4345, 3, "bonecastle");
+            Core.huntMonster("bonecastle", "Undead Knight", "Knight's Fork", 1);
+            Core.ensureComplete(4974);
+        }
+
+        // Ghoul-ash
+        Story.killQuest(4975, "bonecastle", "Ghoul");
+
+        // The Butcher
+        Story.killQuest(4976, "bonecastle", "The Butcher");
+
+        // Lean Mean Undead Slaying Machine
+        Story.killQuest(4977, "bonecastle", "Skeletal Warrior");
+
+        // Moar Loot
+        if (!Story.questProgression(4978)) {
+            Core.ensureAccept(4978);
+            Core.getMapItems(
+                [
+                    [4346, 1],
+                    [4347, 1],
+                    [4348, 1],
+                ],
+                "bonecastle",
+            );
+            Core.huntMonster("bonecastle", "Skeletal Warrior", "Warrior's Screwdriver", 1);
+            Core.ensureComplete(4978);
+        }
+
+        // Putting Your Hands All over Everything
+        if (!Story.questProgression(4979)) {
+            Core.ensureAccept(4979);
+            Core.getMapItems(
+                [
+                    [4349, 1],
+                    [4350, 1],
+                    [4351, 1],
+                ],
+                "bonecastle",
+            );
+            Core.huntMonster("bonecastle", "Skeletal Warrior", "Warrior's Dusting Rag", 1);
+            Core.ensureComplete(4979);
+        }
+
+        // Paladin Rock
+        if (!Story.questProgression(4980)) {
+            Core.ensureAccept(4980);
+            Core.getMapItems(
+                [
+                    [4354, 1],
+                    [4355, 1],
+                ],
+                "bonecastle",
+            );
+            Core.huntMonster("bonecastle", "Grateful Undead", "Song Request Ticket", 5);
+            Core.huntMonster("bonecastle", "That 70's Zombie", "Sweet Dancing Shoes", 2);
+            Core.ensureComplete(4980);
+        }
+
+        // Do You Find This Humerus?
+        if (!Story.questProgression(4981)) {
+            Core.ensureAccept(4981);
+            Core.killMonster("bonecastle", "r8", "Left", "Skeletal Warrior", "Undead Humerus Bones", 5);
+            Core.ensureComplete(4981);
+        }
+
+        // Vaden Says
+        if (!Story.questProgression(4982)) {
+            Core.ensureAccept(4982);
+            Core.killMonster("bonecastle", "Enter", "Spawn", "Undead Guard", "Yellow, Green");
+            Core.killMonster("bonecastle", "r3", "Bottom", "Undead Knight", "Red, Red");
+            Core.killMonster("bonecastle", "r8", "Left", "Skeletal Warrior", "Blue, Green, Red");
+            Core.ensureComplete(4982);
+        }
+
+        // The Dead King's Bedroom
+        Story.mapItemQuest(4983, "bonecastle", 4352);
+
+        // Game of Porcelain Thrones
+        Story.mapItemQuest(4984, "bonecastle", 4353, 4);
+
+        // Teenage Mutant Sewer Turtles
+        Story.killQuest(4985, "bonecastle", "Turtle");
+
+        // Adolescent Inhuman Samurai Reptiles
+        if (!Story.questProgression(4986)) {
+            Core.ensureAccept(4986);
+            Core.huntMonster("bonecastle", "Turtle", "Dali's Bo", 1);
+            Core.huntMonster("bonecastle", "Turtle", "Basquiat's Sai", 2);
+            Core.huntMonster("bonecastle", "Turtle", "Warhol's Nunchaku", 1);
+            Core.huntMonster("bonecastle", "Turtle", "Picasso's Katanas", 2);
+            Core.ensureComplete(4986);
+        }
+
+        // Snuggles!
+        Story.killQuest(4987, "bonecastle", "Snuggles, Torturer");
+
+        // Game of Bones
+        if (!Story.questProgression(4988)) {
+            Core.ensureAccept(4988);
+            Core.huntMonster("bonecastle", "Jon Bones", "Jon Bones' Cape", 1);
+            Core.huntMonster("bonecastle", "Oberon Marrowtell", "Oberon Marrowtell's Armor", 1);
+            Core.huntMonster("bonecastle", "Baskerville", "Baskerville's Helmet", 1);
+            Core.huntMonster("bonecastle", "Knight of Lichens", "Knight of Lichens' Lance", 1);
+            Core.ensureComplete(4988);
+        }
+
+        // Rot Tin Tin!
+        Story.killQuest(4989, "bonecastle", "Rot Tin Tin");
+
+        // Gold Digger
+        if (!Story.questProgression(4990)) {
+            Core.ensureAccept(4990);
+            Core.huntMonster("bonecastle", "Undead Golden Knight", "Vaden's Gold", 50);
+            Core.huntMonster("bonecastle", "Undead Golden Knight", "Gold Skull", 10);
+            Core.huntMonster("bonecastle", "Undead Golden Knight", "Crystal Skull", 1);
+            Core.ensureComplete(4990);
+        }
+
+        // Gotta Hand It To Ya
+        if (!Story.questProgression(4991)) {
+            Core.ensureAccept(4991);
+            Core.huntMonster("bonecastle", "Undead Knight", "Knight Defeated", 5);
+            Core.huntMonster("bonecastle", "Skeletal Warrior", "Warrior Defeated", 5);
+            Core.ensureComplete(4991);
+        }
+
+        // Vaden's Defeat
+        Story.killQuest(4992, "bonecastle", "Vaden");
+    }
+
+    //#endregion
+    //#region Xeven  - The Time Assassin
+    paradoxPortal(): void {
+        if (Core.isCompletedBefore(5050)) {
+            return;
+        }
+
+        if (this.doAll) {
+            Core.logger("Xeven - The Time Assassin: Paradox Portal");
+        }
+        Story.preLoad(this.paradoxPortal);
+
+        // Through the Portal!
+        Story.killQuest(5034, "portalmaze", "Time Wraith");
+
+        // Red Alert
+        Story.killQuest(5035, "portalmaze", "Heavy Lab Guard");
+
+        // Bugs... They Give Me Hives
+        Story.killQuest(5036, "portalmaze", "Hatchling");
+
+        // Through the Delta V Portal!
+        Story.killQuest(5037, "portalmaze", "Time Wraith");
+
+        // Hwoounga? Unf!
+        Story.killQuest(5038, "portalmaze", "Jurassic Monkey");
+
+        // They're Firin' Their LAZORS
+        Story.killQuest(5039, "portalmaze", "Lazor Dino");
+
+        // Through the Jurassic Portal!
+        Story.killQuest(5040, "portalmaze", "Time Wraith");
+
+        // Where's Twilly?!?
+        Story.mapItemQuest(5041, "portalmaze", [4408, 4409, 4410]);
+
+        // Through the Yulgar Portal!
+        Story.killQuest(5042, "portalmaze", "Time Wraith");
+
+        // Ode to the Walkers
+        Story.killQuest(5043, "portalmaze", "Bucket Zombie");
+
+        // Sonnet of the Undead
+        if (!Story.questProgression(5044)) {
+            Core.ensureAccept(5044);
+            Core.huntMonster("portalmaze", "Bucket Zombie", "Rain Bucket", 1);
+            Core.huntMonster("portalmaze", "Dancing Zombie", "Coral's Sunglasses", 1);
+            Core.huntMonster("portalmaze", "Tunneling Zombie", "Grick's Pickaxe", 1);
+            Core.ensureComplete(5044);
+        }
+
+        // Through the Zombie Portal!
+        Story.killQuest(5045, "portalmaze", "Time Wraith");
+
+        // Your Lips Are Sealed
+        Story.killQuest(5046, "portalmaze", "Pactagonal Knight");
+
+        // Through the Swordhaven Portal!
+        Story.killQuest(5047, "portalmaze", "Time Wraith");
+
+        // Escape from the ChronoLords
+        Story.killQuest(5048, "portalmaze", "ChronoLord");
+
+        // Vorefax
+        Story.killQuest(5049, "portalmaze", "Vorefax ");
+
+        // The Death of Time
+        Story.killQuest(5050, "portalmaze", "Mors Temporis");
+    }
 }

@@ -1,0 +1,13 @@
+{
+  "name": "cs2ts",
+  "private": true,
+  "description": "Converts VibeSkua's C# scripts to Turu TypeScript (a first draft to fix by hand).",
+  "type": "module",
+  "bin": "cs2ts.mjs",
+  "dependencies": {
+    "prettier": "3.6.2",
+    "tree-sitter-c-sharp": "0.23.1",
+    "typescript": "5.9.3",
+    "web-tree-sitter": "0.25.10"
+  }
+}

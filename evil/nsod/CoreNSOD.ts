@@ -8,11 +8,19 @@ tags: null
 
 import { bot, option } from "turu";
 import { ClassType, Core, configOr } from "../../core/CoreBots";
+import { CoreAdvanced } from "../../core/CoreAdvanced";
+import { CoreDailies } from "../../core/CoreDailies";
 import { CoreFarms } from "../../core/CoreFarms";
+import { CoreBLOD } from "../../good/blod/CoreBLOD";
+import { Necromancer } from "../../other/classes/Necromancer";
 import { CoreSDKA } from "../sdka/CoreSDKA";
 
 const Farm = new CoreFarms();
 const SDKA = new CoreSDKA();
+const Adv = new CoreAdvanced();
+const Daily = new CoreDailies();
+const BLOD = new CoreBLOD();
+const Necro = new Necromancer();
 
 export class CoreNSOD {
     maxStack = option.bool(
@@ -164,5 +172,159 @@ export class CoreNSOD {
         this.voidAuras(quant * 50);
         Core.buyItem("shadowfall", 793, "Bones from the Void Realm", quant);
         bot.wait.forPickup("Bones from the Void Realm");
+    }
+
+    energizedAura(): void {
+        if (Core.checkInventory("Energized Aura")) {
+            Core.farmingLogger("Energized Aura");
+            return;
+        }
+
+        Core.addDrop("Energized Aura");
+        this.findAura();
+        this.timeLordNecro(1);
+        this.voidAuras(150);
+        Core.buyItem("shadowfall", 793, "Energized Aura");
+        bot.wait.forPickup("Energized Aura");
+    }
+
+    findAura(): void {
+        if (Core.checkInventory("Unenhanced Aura")) {
+            Core.farmingLogger("Unenhanced Aura");
+            return;
+        }
+
+        Core.addDrop("Unenhanced Aura");
+        Adv.gearStore(undefined, { enhAfter: true });
+        Necro.getNecromancer(true);
+        Adv.gearStore(true, { enhAfter: true });
+
+        Core.addDrop("Unenhanced Aura");
+        Core.ensureAccept(Core.checkInventory(8012) ? 4435 : 4436);
+        this.findBlade();
+        this.findHilt();
+        this.timeLordNecro(1);
+        this.cHourglass(2);
+        this.scrollDarkArts(1);
+        this.voidAuras(10);
+        Core.ensureComplete(Core.checkInventory(8012) ? 4435 : 4436);
+        bot.wait.forPickup("Unenhanced Aura");
+    }
+
+    timeLordNecro(quant: number): void {
+        if (Core.checkInventory("Time Lord's Necronomicon", quant)) {
+            return;
+        }
+
+        (bot.inventory.items.concat(...bot.bank.items).find((x) => x.name === "Chaorrupted Hourglass") ?? null)
+            ?.quantity ?? 0;
+        Core.farmingLogger("Time Lord's Necronomicon", quant);
+        this.cHourglass(quant * 10);
+        this.scrollDarkArts(quant);
+        this.voidAuras(quant * 100);
+        Core.buyItem("shadowfall", 793, "Time Lord's Necronomicon", quant);
+        bot.wait.forPickup("Time Lord's Necronomicon");
+    }
+
+    findBlade(): void {
+        if (Core.checkInventory("Unenhanced Doom Blade")) {
+            Core.farmingLogger("Unenhanced Doom Blade");
+            return;
+        }
+
+        Core.addDrop("Unenhanced Doom Blade");
+        Core.ensureAccept(4433);
+        this.bladeEssence(1);
+        this.bariumOfDoom(1);
+        this.voidAuras(10);
+        Core.ensureComplete(4433);
+        bot.wait.forPickup("Unenhanced Doom Blade");
+    }
+
+    findHilt(): void {
+        if (Core.checkInventory("Unenhanced Hilt")) {
+            Core.farmingLogger("Unenhanced Hilt");
+            return;
+        }
+
+        Core.addDrop("Unenhanced Hilt", "Bone Dust");
+        Core.ensureAccept(4434);
+        this.cavernCelestite(800);
+        Farm.battleUnderB("Undead Energy", 5000);
+        this.primarchHilt(1);
+        this.bonesVoidRealm(50);
+        this.voidAuras(10);
+        Core.ensureComplete(4434);
+        bot.wait.forPickup("Unenhanced Hilt");
+    }
+
+    cHourglass(quant: number): void {
+        if (Core.checkInventory("Chaorrupted Hourglass", quant)) {
+            return;
+        }
+
+        Core.equipClass(ClassType.Solo);
+        Core.huntMonster("mqlesson", "Dragonoid", "Dragonoid of Hours", undefined, { isTemp: false, publicRoom: true });
+        Core.huntMonster("timespace", "Chaos Lord Iadoa", "Chaorrupted Hourglass", quant, {
+            isTemp: false,
+            publicRoom: true,
+        });
+        bot.wait.forPickup("Chaorrupted Hourglass");
+    }
+
+    scrollDarkArts(quant: number): void {
+        if (Core.checkInventory("(Necro) Scroll of Dark Arts", quant)) {
+            return;
+        }
+
+        Core.equipClass(ClassType.Solo);
+        Core.huntMonster("epicvordred", "Ultra Vordred", "(Necro) Scroll of Dark Arts", quant, {
+            isTemp: false,
+            publicRoom: true,
+        });
+        bot.wait.forPickup("(Necro) Scroll of Dark Arts");
+    }
+
+    //#endregion
+    //#region Crafting Materials
+    bariumOfDoom(quant: number): void {
+        if (Core.checkInventory("Barium of Doom", quant)) {
+            return;
+        }
+
+        Core.checkInventory("Barium", quant);
+        this.voidAuras(quant * 50);
+        if (!Core.checkInventory("Barium")) {
+            Daily.mineCrafting(["Barium"], 1);
+        }
+        Core.buyItem("shadowfall", 793, "Barium of Doom");
+        bot.wait.forPickup("Barium of Doom");
+    }
+
+    cavernCelestite(quant: number): void {
+        BLOD.soulSearching("Cavern Celestite", quant, false);
+    }
+
+    primarchHilt(quant: number): void {
+        if (Core.checkInventory("Primarch's Hilt", quant)) {
+            return;
+        }
+
+        Core.equipClass(ClassType.Dodge);
+        Core.huntMonster("bosschallenge", "Colossal Primarch", "Primarch's Hilt", quant, {
+            isTemp: false,
+            publicRoom: true,
+        });
+        bot.wait.forPickup("Primarch's Hilt");
+    }
+
+    bladeEssence(quant: number): void {
+        if (Core.checkInventory("Blade Essence", quant)) {
+            return;
+        }
+
+        Core.equipClass(ClassType.Solo);
+        Core.huntMonster("chaoscrypt", "Chaorrupted Armor", "Blade Essence", quant, { isTemp: false });
+        bot.wait.forPickup("Blade Essence");
     }
 }

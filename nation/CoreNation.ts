@@ -17,8 +17,15 @@ tags: core, nation, nulgath
  * `Core.cboValues` (see CoreBots.ts).
  */
 
-import { bot } from "turu";
-import { ClassType, Core, type QuestData, type RewardItem, type CoreShopItem } from "../core/CoreBots";
+import { bot, type Quest } from "turu";
+import {
+    ClassType,
+    Core,
+    formatForCompare,
+    type QuestData,
+    type RewardItem,
+    type CoreShopItem,
+} from "../core/CoreBots";
 import { CoreFarms } from "../core/CoreFarms";
 
 /** Rewards of Contract Exchange (quest 870), by item ID. */
@@ -1920,5 +1927,163 @@ export class CoreNation {
         this.newWorldsNewOpportunities(voucher);
         this.voidKnightSwordQuest(voucher);
         this.supplies(voucher, 1, { keepVoucher });
+    }
+
+    /**
+     * Farms the specified item or all items from the Nulgath Larvae quest.
+     *
+     * @param item The item to farm. If null, all items are farmed.
+     * @param quant The quantity of the item to farm.
+     */
+    nulgathLarvae(item: string | null = null, quant = 1): void {
+        const FarmItem = (larvaeQuest: Quest | null, voucherQuest: Quest | null, item: string, quant: number): void => {
+            voucherQuest = Core.initializeWithRetries(() => bot.quests.ensureLoad(2566));
+            if (voucherQuest == null) {
+                Core.logger("Failed to load larvae quest (ID: 2566) after multiple attempts.");
+                return;
+            }
+
+            // Ensure rewardItem is properly loaded
+            const rewardItem = Core.initializeWithRetries(
+                () => voucherQuest.rewards.find((x) => x != null && x.name === item) ?? null,
+            );
+            if (rewardItem == null) {
+                Core.logger(`Reward item '${item}' not found in larvae quest rewards.`);
+                return;
+            }
+
+            const shouldFarm4778 =
+                item != null && voucherQuest != null && voucherQuest.rewards.some((x) => x != null && x.name === item);
+
+            bot.drops.add("Mana Energy for Nulgath", item!);
+
+            Core.farmingLogger(item, quant);
+            while (!bot.shouldExit && !Core.checkInventory(item, quant)) {
+                Core.ensureAccept(2566);
+                Core.equipClass(ClassType.Solo);
+                Core.huntMonster("elemental", "Mana Golem", "Mana Energy for Nulgath", 10, {
+                    isTemp: false,
+                    log: false,
+                });
+                Core.equipClass(ClassType.Farm);
+
+                while (
+                    !bot.shouldExit &&
+                    !Core.checkInventory(item, quant) &&
+                    Core.checkInventory("Mana Energy for Nulgath")
+                ) {
+                    Core.ensureAccept(2566);
+                    Core.huntMonster("elemental", "Mana Falcon", "Charged Mana Energy for Nulgath", 5, { log: false });
+                    Core.ensureComplete(2566);
+                    bot.wait.forPickup(item ?? "");
+                    if (
+                        shouldFarm4778 &&
+                        Core.checkInventory("Voucher of Nulgath (non-mem)") &&
+                        Core.checkInventory("Essence of Nulgath", 60)
+                    ) {
+                        Core.ensureAccept(4778);
+                        Core.ensureCompleteMulti(4778, undefined, rewardItem?.id ?? -1);
+                        bot.wait.forPickup(rewardItem?.id ?? -1);
+                    }
+                }
+            }
+        };
+        const larvaeQuest = Core.initializeWithRetries(() => bot.quests.ensureLoad(2566));
+        if (larvaeQuest == null) {
+            Core.logger("Nulgath Larvae quest not found.");
+            return;
+        }
+        if (item != null && Core.checkInventory(item, quant)) {
+            return;
+        }
+
+        let voucherQuest = Core.initializeWithRetries(() => bot.quests.ensureLoad(4778));
+        if (voucherQuest == null) {
+            Core.logger("Voucher quest not found.");
+        }
+
+        if (item != null) {
+            // Check if the item is a valid drop from quest 2566
+            const isValidItem = larvaeQuest.rewards.some(
+                (reward) => reward != null && formatForCompare(reward.name) === formatForCompare(item),
+            );
+            if (!isValidItem) {
+                Core.logger(`${item} is not a valid drop from Nulgath Larvae quest.`);
+                return;
+            }
+
+            // Farming for a specific item
+            FarmItem(larvaeQuest, voucherQuest, item, quant);
+        } else {
+            // Farming for all drops
+            for (const reward of larvaeQuest.rewards.filter(
+                (x) => x != null && !Core.checkInventory(x.id, x.maxStack, { toInv: false }),
+            )) {
+                FarmItem(larvaeQuest, voucherQuest, reward.name, reward.maxStack);
+            }
+        }
+    }
+
+    /**
+     * Automates Nulgath’s Roulette of Misfortune quest to farm a specified item and quantity.
+     * Repeatedly gathers Mana Energy, converts it into Charged Mana Energy, and completes the quest
+     * until the desired item is obtained or the script is stopped.
+     *
+     * @param item Target item name to acquire.
+     * @param quant Required quantity of the target item.
+     */
+    nulgathsRouletteofMisfortune(item: string | null, quant: number): void {
+        if (item == null) {
+            return;
+        }
+
+        if (Core.checkInventory(item, quant)) {
+            return;
+        }
+
+        Core.farmingLogger(item, quant);
+        Core.addDrop(item);
+
+        while (!bot.shouldExit && !Core.checkInventory(item, quant)) {
+            Core.ensureAccept(2566);
+            Core.equipClass(ClassType.Solo);
+            Core.huntMonster("elemental", "Mana Golem", "Mana Energy for Nulgath", 10, { isTemp: false, log: false });
+            Core.equipClass(ClassType.Farm);
+
+            while (
+                !bot.shouldExit &&
+                !Core.checkInventory(item, quant) &&
+                Core.checkInventory("Mana Energy for Nulgath")
+            ) {
+                Core.ensureAccept(2566);
+                Core.huntMonster("elemental", "Mana Falcon", "Charged Mana Energy for Nulgath", 5, { log: false });
+                Core.ensureComplete(2566);
+            }
+        }
+    }
+
+    /**
+     * [Member] Forges Dark Crystal Shards for Nulgath [Quest] to obtain Dark Crystal Shards with specific quantities.
+     *
+     * @param quant Desired quantity, 100 = max stack
+     */
+    forgeDarkCrystalShards(quant = 1000): void {
+        if (!Core.checkInventory("Gemstone of Nulgath") && !Core.isMember) {
+            Core.logger("This quest requires you to have Gemstone of Nulgath and membership to be able to accept it");
+            return;
+        }
+
+        this.gemStoneReceiptOfNulgath(1);
+        this.supplies("Unidentified 5");
+
+        Core.addDrop("Dark Crystal Shards", "Unidentified Gemstone of Nulgath");
+
+        while (!bot.shouldExit && !Core.checkInventory("Dark Crystal Shards", quant)) {
+            // Forge Dark Crystal Shards for Nulgath [Member] 4920
+            Core.ensureAccept(4920);
+            this.farmGemofNulgath(1);
+            this.gemStonesOfnulgath(0, 5, 2, 0);
+            Core.ensureComplete(4920);
+        }
     }
 }

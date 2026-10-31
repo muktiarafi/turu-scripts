@@ -61,6 +61,8 @@ export interface RewardItem {
     quantity: number;
     maxStack: number;
     temp: boolean;
+    /** A member-only item (C# `ItemBase.Upgrade`). */
+    upgrade: boolean;
 }
 
 /** An entry of the quest's `reward` list (C# `SimpleReward`). `type == 2` = pick-one reward. */
@@ -85,6 +87,8 @@ export interface ShopRequirement {
     quantity: number;
     /** A temporary (quest) item. */
     temp: boolean;
+    /** A member-only item (C# `ItemBase.Upgrade`). */
+    upgrade: boolean;
 }
 
 /** A shop item with the fields CoreBots needs (read from `world.shopinfo.items`). */
@@ -356,6 +360,7 @@ function toRewardItem(raw: GameItem): RewardItem {
         quantity: num(raw.iQty),
         maxStack: num(raw.iStk),
         temp: flag(raw.bTemp),
+        upgrade: flag(raw.bUpg),
     };
 }
 
@@ -379,6 +384,7 @@ function toShopItem(raw: GameItem): CoreShopItem {
             name: text(r.sName),
             quantity: num(r.iQty),
             temp: flag(r.bTemp),
+            upgrade: flag(r.bUpg),
         })),
     };
 }
@@ -2682,6 +2688,35 @@ export class CoreBots {
     }
 
     /** Whether an ordinary bag entry can fit. Use {@link hasSpaceFor} for a specific item. */
+    /**
+     * Counts the `items` already in the inventory onto `counter` and, when the rest wouldn't fit,
+     * banks misc AC items and logs (C# `CheckSpaces(ref int counter, params string[] items)`;
+     * returns the new counter).
+     */
+    checkSpaces(counter: number, ...items: string[]): number {
+        for (const item of items) if (this.checkInventory(item, 1, { toInv: false })) counter++;
+
+        // Names alone do not identify the destination pool in Game4000.
+        // Unbank and BuyItem perform checks once the actual item data is known.
+        // TEMPORARY Game4000 inventory change. Remove after the client inventory fix.
+        if (this.usesCategoryInventory()) return counter;
+
+        const requiredSlots = items.length - counter;
+
+        // Attempt to bank misc AC items to free up space if needed
+        if (requiredSlots > 1 && this.inventoryBagFreeSlots < requiredSlots) this.bankACMisc(requiredSlots);
+
+        // Re-check free slots and alert if still insufficient
+        if (this.inventoryBagFreeSlots < requiredSlots) {
+            const plural = requiredSlots !== 1 ? "s" : "";
+            this.logger(`Not enough free slot${plural}, please clear ${requiredSlots} slot${plural}`, "", {
+                messageBox: true,
+                stopBot: true,
+            });
+        }
+        return counter;
+    }
+
     get hasSpace(): boolean {
         return this.inventoryBagFreeSlots > 0;
     }
@@ -2850,7 +2885,7 @@ export class CoreBots {
             : [];
 
         // Fall back to turu's lists when the raw data isn't there.
-        const fromApi = (items: QuestItem[]): RewardItem[] => items.map((x) => ({ ...x, maxStack: 0 }));
+        const fromApi = (items: QuestItem[]): RewardItem[] => items.map((x) => ({ ...x }));
         return {
             ...quest,
             rewards: rewards.length > 0 ? rewards : fromApi(quest.rewards),
@@ -3695,6 +3730,148 @@ export class CoreBots {
         }
 
         if (bot.quests.canCompleteFullCheck(questId)) this.ensureCompleteMulti(questId);
+    }
+
+    /**
+     * C# `HuntMonsterQuestChoose`: hunts the quest's requirements (as {@link huntMonsterQuest}) and
+     * turns it in choosing a reward, by name (`reward`, a string) or by ID (a number). Either with
+     * one `[map, monster, ClassType]` pair per requirement, or with a map and monster for all of
+     * them (`huntMonsterQuestChoose(questId, reward, mapName, monsterName, log)`).
+     */
+    huntMonsterQuestChoose(questId: number, reward?: string | number | null, ...mapMonsterClassPairs: HuntPair[]): void;
+    huntMonsterQuestChoose(
+        questId: number,
+        reward: string | number | null,
+        mapName: string | null,
+        monsterName?: string | null,
+        log?: boolean,
+    ): void;
+    huntMonsterQuestChoose(
+        questId: number,
+        reward: string | number | null = null,
+        ...args: (string | null | undefined | boolean | HuntPair)[]
+    ): void {
+        const quest = this.initializeWithRetries(() => this.ensureLoad(questId));
+        if (quest == null) {
+            this.logger(`⚠️💀 Failed to load quest with ID [${questId}] after multiple attempts.`, "", {
+                stopBot: true,
+            });
+            return;
+        }
+        if (quest.requirements.length === 0) {
+            this.logger(`⚠️👻 Quest with ID [${questId}] has no requirements.`, "", { stopBot: true });
+            return;
+        }
+        if (quest.rewards.length === 0) {
+            this.logger(`⚠️🎁 Quest with ID [${questId}] has no rewards.`, "", { stopBot: true });
+            return;
+        }
+
+        const rewardItem =
+            typeof reward === "number"
+                ? reward > 0
+                    ? (quest.rewards.find((x) => x.id === reward) ?? null)
+                    : null
+                : reward
+                  ? (quest.rewards.find((x) => x.name.toLowerCase() === reward.toLowerCase()) ?? null)
+                  : null;
+        const allRequirements = [...quest.acceptRequirements, ...quest.requirements];
+        const rewardItems = rewardItem ? [rewardItem] : [];
+        this.unbank(...unique([...allRequirements, ...rewardItems].map((x) => x.id)));
+        bot.drops.add(...unique([...allRequirements.filter((x) => !x.temp), ...rewardItems].map((x) => x.name)));
+
+        if (args.length > 0 && Array.isArray(args[0])) {
+            const pairs = args as HuntPair[];
+            if (pairs.length > quest.requirements.length)
+                this.logger(
+                    "⚠️🛑 More map-monster-class pairs provided than quest requirements. Extra pairs will be ignored.",
+                );
+            for (let i = 0; i < pairs.length && i < quest.requirements.length; i++) {
+                const requirement = quest.requirements[i];
+                const [mapName, monsterName, classType] = pairs[i];
+                if (this.checkInventory(requirement.id, requirement.quantity)) continue;
+                if (!bot.quests.isInProgress(questId)) this.ensureAccept(questId);
+                this.equipClass(classType);
+                this.huntMonster(
+                    mapName ?? "default_map",
+                    monsterName ?? "*",
+                    requirement.name ?? "",
+                    requirement.quantity,
+                    {
+                        isTemp: requirement.temp,
+                    },
+                );
+            }
+        } else {
+            const mapName = (args[0] as string | null | undefined) ?? "default_map";
+            const monsterName = (args[1] as string | null | undefined) ?? "*";
+            const log = (args[2] as boolean | undefined) ?? false;
+            for (const requirement of quest.requirements) {
+                if (this.checkInventory(requirement.id, requirement.quantity)) continue;
+                if (!bot.quests.isInProgress(questId)) this.ensureAccept(questId);
+                this.equipClass(ClassType.Solo);
+                this.huntMonster(mapName, monsterName, requirement.name ?? "", requirement.quantity, {
+                    isTemp: requirement.temp,
+                    log,
+                });
+            }
+        }
+
+        const rewardId = rewardItem?.id ?? -1;
+        if (!bot.quests.ensureComplete(questId, rewardId)) {
+            this.logger(`🛡️✅ Retrying completion of quest ${questId} with reward ${rewardItem?.name ?? "none"}`);
+            this.ensureCompleteMulti(questId, -1, rewardId);
+        }
+    }
+
+    /**
+     * Kills a boss (`primaryMapID`) that a second monster (`secondaryMapID`) protects: the second
+     * one is attacked while it's alive. Without an item it stops after one kill.
+     */
+    killBossWithSecondary(
+        map: string,
+        cell: string,
+        pad: string,
+        primaryMapID: number,
+        secondaryMapID: number,
+        item: string | null = null,
+        quant = 1,
+        isTemp = false,
+        log = true,
+    ): void {
+        if (item != null && (isTemp ? bot.tempInv.contains(item, quant) : this.checkInventory(item, quant))) return;
+        if (item != null && log) this.farmingLogger(`⚔️ ${item}`, quant);
+        if (item != null && !isTemp) this.addDrop(item);
+
+        const alive = (m: Monster | null): boolean => m != null && m.hp > 0 && m.state > 0;
+        bot.options.aggroMonsters = true;
+        let done = false;
+        while (!bot.shouldExit && !done) {
+            if (!bot.player.alive) bot.wait.forTrue(() => bot.player.alive, 20);
+            if (bot.map.name !== map) this.join(map, cell, pad);
+            if (bot.player.cell !== cell) {
+                bot.map.jump(cell, pad, this.inPublicRoom());
+                bot.wait.forCellChange(cell);
+            }
+
+            const primary = bot.monsters.mapMonsters.find((m) => m.mapId === primaryMapID) ?? null;
+            const secondary = bot.monsters.mapMonsters.find((m) => m.mapId === secondaryMapID) ?? null;
+            if (alive(secondary)) bot.combat.attack(secondaryMapID);
+            else if (alive(primary)) bot.combat.attack(primaryMapID);
+
+            this.sleep();
+
+            if (item == null && !alive(primary)) {
+                if (log) this.logger("💀 Boss killed once");
+                done = true;
+            } else if (
+                item != null &&
+                (isTemp ? bot.tempInv.contains(item, quant) : this.checkInventory(item, quant))
+            ) {
+                done = true;
+            }
+        }
+        if (!isTemp && item != null) bot.wait.forPickup(item);
     }
 
     private mobFindRetry = 0;
@@ -4676,6 +4853,111 @@ export class CoreBots {
     /** Your character page's badges (`bot.player.webBadges`; each read is a web request). */
     get badges(): Badge[] {
         return bot.player.webBadges;
+    }
+
+    /** Checks whether the player is an Upholder (has an "Upholder" badge). */
+    isUpholder(): boolean {
+        return this.badges.some((badge) => badge.name.includes("Upholder"));
+    }
+
+    /**
+     * The requirement names of the quests (C# `QuestRequirements<string>`); see
+     * {@link questRequirementIds} for their IDs (`QuestRequirements<int>`).
+     */
+    questRequirements(...questIDs: number[]): string[] {
+        return this.ensureLoadMany(...questIDs).flatMap((q) => q.requirements.map((r) => r.name));
+    }
+
+    /** The requirement IDs of the quests (C# `QuestRequirements<int>`). */
+    questRequirementIds(...questIDs: number[]): number[] {
+        return this.ensureLoadMany(...questIDs).flatMap((q) => q.requirements.map((r) => r.id));
+    }
+
+    /**
+     * Gets you out of a cutscene cell (`initRoom` or `cutN`) that the given map can drop you in,
+     * back to `cell` (Doom Vault and friends).
+     */
+    cutSceneFixer(map: string, cell: string | null, cutsceneCell: string, pad = "Left"): void {
+        if (!map?.trim()) {
+            this.logger("Invalid map parameter. Map is required.");
+            return;
+        }
+        if (cell != null && !cell.trim()) {
+            this.logger("Invalid cell parameter. If provided, cell must not be empty or whitespace.");
+            return;
+        }
+
+        this.logger(`CutSceneFixer Started. Cell:"[${cell}]"`);
+
+        // Ensure the bot is in the correct map (either "doomvault" or "doomvaultb")
+        while (
+            !bot.shouldExit &&
+            ((map === "doomvault" && bot.map.name !== "doomvault") ||
+                (map === "doomvaultb" && bot.map.name !== "doomvaultb"))
+        ) {
+            if (bot.player.inCombat || bot.player.hasTarget) {
+                bot.combat.exit();
+                bot.combat.cancelTarget();
+                this.jumpWait();
+            }
+            // Join the correct map based on the provided map parameter
+            this.join(map);
+        }
+
+        // Handle different cases for cutsceneCell
+        const cut = cutsceneCell.toLowerCase();
+        if (cut === "initroom") bot.wait.forCellChange("initRoom");
+        else if (/^cut\d+$/.test(cut)) bot.wait.forCellChange(cutsceneCell);
+        else {
+            this.logger(`Unhandled case for cutsceneCell: "${cutsceneCell}". Yell at Tato.. nicely!`);
+            return;
+        }
+
+        if (bot.player.cell === cutsceneCell) {
+            this.logger(`Player not in Cell: "${cell}", \nAttempting to fix`);
+
+            // Fix the map if needed
+            if (bot.map.name !== map) {
+                if (cell) {
+                    this.join(map, cell, pad);
+                    bot.wait.forCellChange(cell);
+                } else this.logger("Invalid cell parameter. Cell is required.");
+            }
+
+            // Ensure the player is in the correct cell
+            while (!bot.shouldExit && (bot.player.cell !== cell || bot.player.cell === cutsceneCell)) {
+                if (cell && bot.player.cell !== cell) {
+                    bot.map.jump(cell, pad, this.inPublicRoom());
+                    bot.wait.forCellChange(cell);
+                }
+                this.sleep();
+            }
+
+            this.logger(`${bot.player.cell} Fixed.`);
+        } else {
+            this.logger(`Fix for Cell: "${cell}" Not Required.`);
+        }
+    }
+
+    /** A monster's HP by its map ID, from the game's `availableMonsters` (0 when not found). */
+    getMonsterHP(monMapID: string): number {
+        try {
+            const jsonData = bot.flash.call("availableMonsters");
+            if (!jsonData?.trim()) return 0;
+            for (const mon of JSON.parse(jsonData) as { MonMapID?: unknown; intHP?: unknown }[]) {
+                if (String(mon?.MonMapID) === monMapID) return num(mon.intHP);
+            }
+        } catch (error) {
+            rethrowIfStopped(error);
+        }
+        return 0;
+    }
+
+    /** Equips `additionalClass`, or the CBO dodge class (C# `UseDodgeClass`). */
+    useDodgeClass(additionalClass: string | null = null): void {
+        if (bot.player.inCombat || bot.player.hasTarget) this.jumpWait();
+        if (additionalClass) this.equip(additionalClass);
+        else this.equipClass(ClassType.Dodge);
     }
 
     // C# WebClient / GetRequest: HTTP for SetOptions extras, dropped (badges go through the engine).

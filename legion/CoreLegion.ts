@@ -716,4 +716,139 @@ export class CoreLegion {
         // Ensure we exit the map before going esle where
         if (bot.map.name === "dagepvp") Core.join("Battleon-99999");
     }
+
+    emblemofDage(quant = 500): void {
+        if (Core.checkInventory("Emblem of Dage", quant)) {
+            return;
+        }
+
+        if (!Core.checkInventory("Legion Round 4 Medal")) {
+            this.legionRound4Medal();
+        }
+
+        Core.equipClass(ClassType.Farm);
+
+        Core.farmingLogger("Emblem of Dage", quant);
+        Core.addDrop("Legion Seal", "Gem of Mastery", "Emblem of Dage");
+        Core.registerQuests(4742);
+        while (!bot.shouldExit && !Core.checkInventory("Emblem of Dage", quant)) {
+            Core.huntMonster("shadowblast", "Carnage", "Gem of Mastery", 1, { isTemp: false, log: false });
+            Core.killMonster("shadowblast", "r10", "Left", "*", "Legion Seal", 25, { isTemp: false });
+            bot.wait.forPickup("Emblem of Dage");
+        }
+        Core.cancelRegisteredQuests();
+    }
+
+    darkToken(quant = 10000): void {
+        if (Core.checkInventory(43266, quant)) {
+            return;
+        }
+
+        Core.equipClass(ClassType.Farm);
+        Core.addDrop(43266);
+        Core.addDrop("Dark Token");
+        Core.farmingLogger("Dark Token", quant);
+        Core.registerQuests(6248, 6249, 6251);
+
+        Core.killMonster("seraphicwardage", "r3", "Left", "*", "Dark Token", quant, { isTemp: false });
+        Core.cancelRegisteredQuests();
+    }
+
+    diamondTokenofDage(quant = 300): void {
+        if (Core.checkInventory("Diamond Token of Dage", quant)) {
+            return;
+        }
+
+        if (!Core.checkInventory("Legion Round 4 Medal")) {
+            this.legionRound4Medal();
+        }
+        if (!Core.checkInventory("Legion Token", 50)) {
+            this.farmLegionToken(50);
+        }
+
+        Core.farmingLogger("Diamond Token of Dage", quant);
+        Core.addDrop("Diamond Token of Dage", "Legion Token");
+        Core.registerQuests(4743);
+        while (!bot.shouldExit && !Core.checkInventory("Diamond Token of Dage", quant)) {
+            Core.equipClass(ClassType.Farm);
+            Core.killMonster("tercessuinotlim", "m2", "Left", "*", "Defeated Makai", 25, { isTemp: false });
+
+            Core.equipClass(ClassType.Solo);
+            Core.killMonster("aqlesson", "Frame9", "Right", "Carnax", "Carnax Eye", undefined, { publicRoom: true });
+            Core.huntMonster("deepchaos", "Kathool", "Kathool Tentacle", undefined, { publicRoom: true });
+            Core.huntMonster("lair", "Red Dragon", "Red Dragon's Fang");
+            Core.huntMonster("bloodtitan", "Blood Titan", "Blood Titan's Blade", undefined, { publicRoom: true });
+            Core.killMonster("dflesson", "r12", "Right", 29, 33257, undefined, { isTemp: true, publicRoom: true });
+
+            for (const drop of ["Legion Token", "Diamond Token of Dage"]) {
+                bot.wait.forPickup(drop);
+            }
+        }
+        Core.cancelRegisteredQuests();
+    }
+
+    approvalAndFavor(quantApproval = 5000, quantFavor = 5000): void {
+        if (Core.checkInventory("Dage's Approval", quantApproval) && Core.checkInventory("Dage's Favor", quantFavor)) {
+            return;
+        }
+
+        Core.addDrop("Dage's Approval", "Dage's Favor");
+
+        Core.equipClass(ClassType.Farm);
+
+        // Use Dictionary to hold item names and their quantities
+        const items = new Map([
+            ["Dage's Approval", quantApproval],
+            ["Dage's Favor", quantFavor],
+        ]);
+
+        for (const item of items) {
+            Core.killMonster("underworld", "r16", "Left", "*", item[0], item[1], { isTemp: false });
+        }
+    }
+
+    /** Farms Legion Round 4 Medal in Shadow Blast Arena */
+    legionRound4Medal(): void {
+        if (Core.checkInventory("Legion Round 4 Medal")) {
+            return;
+        }
+
+        Core.addDrop(...this.legionMedals);
+        Core.logger('Aquiring "Legion Round 4 Medal"');
+
+        if (!Core.checkInventory("Legion Round 1 Medal")) {
+            Core.ensureAccept(4738);
+            Core.huntMonster("shadowblast", "Caesaristhedark", "Nation Rookie Defeated", 5, { isTemp: true });
+            Core.huntMonster("shadowblast", "Shadowrise Guard", "Shadowscythe Rookie Defeated", 5, { isTemp: true });
+            Core.ensureComplete(4738);
+            bot.wait.forDrop("Legion Round 1 Medal");
+            Core.logger("Medal 1 acquired");
+        }
+
+        if (Core.checkInventory("Legion Round 2 Medal")) {
+            Core.ensureAccept(4739);
+            Core.huntMonster("shadowblast", "Carnage", "Nation Veteran Defeated", 7, { isTemp: true });
+            Core.huntMonster("shadowblast", "Doombringer", "Shadowscythe Veteran Defeated", 7, { isTemp: true });
+            Core.ensureComplete(4739);
+            bot.wait.forDrop("Legion Round 2 Medal");
+            Core.logger("Medal 2 acquired");
+        }
+
+        if (Core.checkInventory("Legion Round 3 Medal")) {
+            Core.ensureAccept(4740);
+            Core.huntMonster("shadowblast", "Minotaurofwar", "Nation Elite Defeated", 10, { isTemp: true });
+            Core.huntMonster("shadowblast", "Draconic Doomknight", "Shadowscythe Elite Defeated", 10, { isTemp: true });
+            Core.ensureComplete(4740);
+            bot.wait.forDrop("Legion Round 3 Medal");
+            Core.logger("Medal 3 acquired");
+        }
+
+        if (Core.checkInventory("Legion Round 4 Medal")) {
+            Core.ensureAccept(4741);
+            Core.huntMonster("shadowblast", "Thanatos", "Thanatos Vanquished", 1, { isTemp: true });
+            Core.ensureComplete(4741);
+            bot.wait.forDrop("Legion Round 4 Medal");
+            Core.logger("Medal 4 acquired");
+        }
+    }
 }

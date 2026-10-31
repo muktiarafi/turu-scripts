@@ -669,7 +669,7 @@ export class CoreAdvanced {
     /** Shop categories the template never buys (C# `ItemCategory` Note, Item, QuestItem, ServerUse). */
     miscCatagories: string[] = ["Note", "Item", "Quest Item", "ServerUse"];
     /** The item `findIngredients` should get. */
-    externalItem: ShopRequirement = { id: 0, name: "", quantity: 0, temp: false };
+    externalItem: ShopRequirement = { id: 0, name: "", quantity: 0, temp: false, upgrade: false };
     /** How many of {@link externalItem} `findIngredients` should get. */
     externalQuant = 0;
     /** The mode is `mergeMats`: farm the materials, don't buy the items. */

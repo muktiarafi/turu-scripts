@@ -27,6 +27,7 @@ repository this one is the `scripts/` submodule.
 | `types/turu.ts` | A copy of Turu's `bot/js/turu.ts`, for type-checking outside Turu. Copy it again when the API changes (Turu's tests check that it's the same). |
 | `.prettierrc.json` | Formatting: Prettier 3.6.2, 4 spaces, 120 columns. CI fails on unformatted code. |
 | `tools/build-index.mjs` | Builds `index.json`, the list Search Scripts reads (see [The index](#the-index)). |
+| `tools/cs2ts/` | The C# to TypeScript converter (see [Converting with cs2ts](#converting-with-cs2ts)). |
 
 Folders follow the C# repo (`Nation/Materials/0MaxBags.cs` -> `nation/materials/0MaxBags.ts`).
 Core files only contain what ported scripts reach; port more members from the C# files as
@@ -40,6 +41,37 @@ npx -y prettier@3.6.2 --write "**/*.{ts,mjs}"    # format (CI runs --check)
 ```
 
 The engine doesn't type-check at runtime, so run this after every change.
+
+## Converting with cs2ts
+
+`tools/cs2ts` turns a C# script into a first draft of its port, following the conventions below.
+It parses the C# with tree-sitter and asks the TypeScript checker about the ported side (every
+`.ts` here and `turu.ts`), so names, types and signatures come from what's already ported:
+
+```bash
+cd tools/cs2ts && npm ci && cd ../..                       # once
+node tools/cs2ts/cs2ts.mjs Other/MergeShops/BeleensMerge.cs   # paths in ../Scripts (--scripts <dir>)
+node tools/cs2ts/cs2ts.mjs Seasonal/Mogloween                 # a whole folder
+node tools/cs2ts/cs2ts.mjs --only HollowbornREP,EternalREP CoreFarms.cs   # just these members, to
+                                                              # paste into a partial port
+npx -y -p typescript@5.9.3 tsc --noEmit -p .                  # what is left to fix by hand
+```
+
+What it does: the header block, `//cs_include`s as imports, `Core`/`Farm`/`Adv`-style properties as
+module-level instances, `Options`/`MultiOptions` as `scriptOptions`, `ScriptMain` as `main()`, PascalCase
+to the ported camelCase (`ID` -> `id`), named and extra positional arguments into the ported options
+objects (C# parameter names map to the keys), `params` arrays, LINQ, lists, dictionaries (`Map`),
+strings, `DateTime`/`TimeSpan` (milliseconds), `Bot.Random`, string interpolation and its formats,
+`///` docs as JSDoc, C# local functions hoisted, event handlers (`Bot.Events.X += Handler`) as bound
+arrow properties taking the event's data, `goto` to a loop label as `continue label`, Skua's
+`Monster.Alive` and `Quest.Active`, `rethrowIfStopped` first in every `catch`. What it can't
+convert is marked `/* cs2ts: ... */` (async code, `out` parameters, patterns, `goto` elsewhere).
+
+A draft starts with the line `// Converted by tools/cs2ts, not yet read through by hand ...`.
+An existing file is never overwritten; `--force` replaces only a file that still has that line,
+so fixing a draft by hand means removing it. A draft that type-checks may still be wrong where
+C# and TS differ in ways the types don't show (integer division, `ItemBase.ToString()`); the
+converter flags the ones it knows.
 
 ## The index
 
@@ -144,6 +176,46 @@ A C# merge script (`Adv.StartBuyAllMerge` + `MultiOptions = { "Generic", "Select
   `defineScriptOptions(Adv.optionsStorage, [], true, { Generic: Adv.mergeOptions, Select: ... })`.
   VibeSkua's `MergeOptionStorage.cfg` reads as is.
 - `Adv.MergeItemisinShopExceptions.AddRange(...)` becomes `Adv.mergeItemisinShopExceptions.push(...)`.
+
+Every merge script outside the Ultras folders is ported (436 converted with cs2ts, besides the 19
+earlier hand ports), with the 150 scripts they include that weren't ported yet (story, seasonal and
+material scripts, `prototypes/MoreSkullsBoss.ts`). They type-check and load (Turu's
+`every_repo_script_declares_its_options_without_error` imports each one), but none has run in game.
+Most are drafts with the cs2ts line; these 19 were fixed by hand where the conversion fell short:
+`ArcanaInvokerResourceMerge`, `CoreHollowbornPaladin`, `CoreLR`, `NationLoyaltyRewarded`,
+`LothianTreasuryMerge`, `MagnumOpusMerge`, `NovaOmiyageMerge`, `SeaVoiceMerge`, `MoreSkullsBoss`,
+`EbilMegaMallStory`, `LuckyDayShamrockFairMerge`, `WalpurgaWitchWares`, `CoreDageBirthday`,
+`AluteaNursery`, `DoomPirateHaulMerge`, `DarkCarnax`, `VictorMatsuri`, `CoreIsleOfFotia`,
+`InfernalArena`. C#'s `Task.Run` movement in `DarkCarnax` and `MoreSkullsBoss` is a
+`bot.handlers.once` timer here (scripts are single-threaded).
+
+The Core members they need were added from the C# with `cs2ts --only` and checked by hand:
+CoreBots (`checkSpaces`, which returns the counter C# passes by `ref`; `huntMonsterQuestChoose`, one
+overload-dispatching method for C#'s four; `killBossWithSecondary`, `questRequirements` /
+`questRequirementIds` for C#'s `<string>` / `<int>`, `cutSceneFixer`, `getMonsterHP`, `isUpholder`,
+`useDodgeClass`), CoreFarms (Arcangrove, CraggleRock, Elemental Master, Eternal, Hollowborn,
+Mysterious Dungeon and TreasureHunter reps), and members of CoreLegion, CoreHollowborn, CoreNation,
+CoreNSOD, CoreQoM, CoreToD, CoreSummer and CoreSepulchure. `ShopRequirement`, `RewardItem` and
+turu's `QuestItem` gained `upgrade` (and `QuestItem` `maxStack`), and turu `bot.map.cellPlayers`.
+
+Not ported: `LothianTreasuryMerge`'s Queen Iona ingredients (C# fights her with the Ultra engine;
+the merge logs and skips them).
+
+C# bugs fixed on purpose (still in VibeSkua's Scripts, marked `C#` in the code):
+
+- `AluteaNursery.AluteaNurseryRewards` builds its reward list from an empty list, so the check of
+  nothing passes and the rewards are never farmed.
+- `VictorMatsuri` passes the requirement's `ItemBase.ToString()` ("[ID]\t(Item) Name x1") as the item
+  to `KillMasakado`, which no item matches, so the kill loop never ends.
+- `NationLoyaltyRewarded` blacklists the `ToString()` of the quest's items instead of their names,
+  so they were banked anyway.
+- `InfernalArena`'s class check falls back to `"Void Highlord" ?? ""`, never empty: without either
+  Void Highlord it equipped Void Highlord instead of the solo class.
+- `BeleensMerge` lists item 59359 twice in its options (Turu refuses duplicate option names).
+
+Fixed in the earlier port: `Potions.needYourStrongestPotions` read `BuyReagents` and `MaxAll` with
+`bot.config.get`, which throws when another script (a merge) calls it; it reads them with
+`configOr` now, like C#'s `Config.Get` returning the default.
 
 ## FarmerJoe
 
