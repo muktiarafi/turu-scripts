@@ -236,8 +236,11 @@ export class FileConverter {
                 if (node.text === "object") return "unknown";
                 if (NUMBER_TYPES.has(node.text)) return "number";
                 return "unknown";
-            case "nullable_type":
-                return `${this.tsTypeText(node.childForFieldName("type") ?? named(node)[0])} | null`;
+            case "nullable_type": {
+                const inner = this.tsTypeText(node.childForFieldName("type") ?? named(node)[0]);
+                // `Func<string>?` is `(() => string) | null`, not `() => string | null`.
+                return `${inner.includes("=>") ? `(${inner})` : inner} | null`;
+            }
             case "array_type": {
                 const inner = this.tsTypeText(node.childForFieldName("type"));
                 return /[|&]/.test(inner) ? `(${inner})[]` : `${inner}[]`;
@@ -608,6 +611,12 @@ export class FileConverter {
                 }
             }
         }
+        // C# tells `badge` from `Badge()` by case; in TS the field takes a suffix (`badgeName`).
+        const methodNames = new Set(
+            [...this.cls.members.values()].filter((m) => m.kind === "method").map((m) => m.name),
+        );
+        for (const mem of this.cls.members.values())
+            if (mem.kind !== "method" && methodNames.has(mem.name)) mem.name += this.isStr(mem.t) ? "Name" : "Value";
         // Methods used as event handlers (`Bot.Events.RunToArea += DarkCarnaxMove;`).
         this.cls.eventHandlers = new Map();
         this.cls.localEventHandlers = new Map();
@@ -1045,19 +1054,16 @@ export class FileConverter {
         this.need("EventMap", true);
         if (keys && csParams.length)
             ps = `{ ${csParams.map((p, i) => (keys[i] === p.name ? p.name : `${keys[i] ?? p.name}: ${p.name}`)).join(", ")} }: EventMap["${event}"]`;
-        else if (csParams.length)
+        else if (csParams.length) {
+            // Turu's event passes only the first; the rest matter only if the handler reads them.
+            const body = m.childForFieldName("body")?.text ?? "";
+            const extra = csParams.slice(1).filter((p) => new RegExp(`\\b${p.name}\\b`).test(body));
             ps = `${csParams[0].name}: EventMap["${event}"]${
-                csParams.length > 1
-                    ? " " +
-                      this.todo(
-                          `extra handler parameters ${csParams
-                              .slice(1)
-                              .map((p) => p.name)
-                              .join(", ")}`,
-                          m,
-                      )
+                extra.length
+                    ? " " + this.todo(`extra handler parameters ${extra.map((p) => p.name).join(", ")}`, m)
                     : ""
             }`;
+        }
         return ps;
     }
 
@@ -1542,7 +1548,8 @@ export class FileConverter {
             case "prefix_unary_expression": {
                 const op = node.child(0).text;
                 const e = this.expr(named(node)[0]);
-                return { s: `${op}${e.s}`, t: op === "!" ? T.bool : e.t };
+                // `!string.Equals(a, b)` is `!(a === b)`: wrap what became an operator expression.
+                return { s: `${op}${op === "!" ? wrap(e.s) : e.s}`, t: op === "!" ? T.bool : e.t };
             }
             case "postfix_unary_expression": {
                 const op = node.child(node.childCount - 1).text;
@@ -1867,6 +1874,18 @@ export class FileConverter {
             if (name === "MinValue") return { s: et === "long" ? "Number.MIN_SAFE_INTEGER" : "-2147483648", t: T.num };
         }
         if (et === "Environment" && name === "NewLine") return { s: '"\\n"', t: T.str };
+        // Skua's ItemCategory is the game's category text (`item.category`).
+        if (et === "ItemCategory" || et === "Skua.Core.Models.Items.ItemCategory") {
+            const text = {
+                QuestItem: "Quest Item",
+                ServerUse: "Server Use",
+                WallItem: "Wall Item",
+                FloorItem: "Floor Item",
+            };
+            return { s: JSON.stringify(text[name] ?? name), t: T.str };
+        }
+        // Milliseconds since some start: only differences are used.
+        if (et === "Environment" && /^TickCount(64)?$/.test(name)) return { s: "Date.now()", t: T.num };
         // DateTime and TimeSpan are milliseconds (Date.now()).
         if (et === "DateTime") {
             if (name === "Now") return { s: "Date.now()", t: { date: true, prim: "number" } };
@@ -1980,8 +1999,15 @@ export class FileConverter {
             const a = named(args[0]).at(-1);
             if (a.type === "range_expression") {
                 const [from, to] = [a.child(0), a.child(a.childCount - 1)];
-                const f = from && from.type !== ".." ? this.expr(from).s : "0";
-                const tt = to && to.type !== ".." && to !== from ? this.expr(to).s : null;
+                // `^n` counts from the end: slice's negative index (`^0`, the end, is no bound).
+                const bound = (n) =>
+                    n.type === "prefix_unary_expression" && n.child(0).text === "^"
+                        ? named(n)[0].text === "0"
+                            ? null
+                            : `-${this.expr(named(n)[0]).s}`
+                        : this.expr(n).s;
+                const f = (from && from.type !== ".." ? bound(from) : null) ?? "0";
+                const tt = to && to.type !== ".." && to !== from ? bound(to) : null;
                 return { s: `${recv.s}.slice(${f}${tt ? `, ${tt}` : ""})`, t: recv.t };
             }
             if (a.type === "prefix_unary_expression" && a.child(0).text === "^")
@@ -2019,10 +2045,11 @@ export class FileConverter {
                     return `${subject} != null`;
                 return `!(${this.pattern(inner, subject, subjectT)})`;
             }
+            // Wrapped: `x is A or B && y` is `(x === A || x === B) && y` (prettier drops extra parens).
             case "or_pattern":
-                return `${this.pattern(p.childForFieldName("left"), subject, subjectT)} || ${this.pattern(p.childForFieldName("right"), subject, subjectT)}`;
+                return `(${this.pattern(p.childForFieldName("left"), subject, subjectT)} || ${this.pattern(p.childForFieldName("right"), subject, subjectT)})`;
             case "and_pattern":
-                return `${this.pattern(p.childForFieldName("left"), subject, subjectT)} && ${this.pattern(p.childForFieldName("right"), subject, subjectT)}`;
+                return `(${this.pattern(p.childForFieldName("left"), subject, subjectT)} && ${this.pattern(p.childForFieldName("right"), subject, subjectT)})`;
             case "relational_pattern": {
                 const op = p.child(0).text;
                 return `${subject} ${op} ${this.expr(named(p)[0]).s}`;
@@ -2269,7 +2296,10 @@ export class FileConverter {
         }
         if (typeName === "Random") return { s: "null", t: { random: true } };
         if (typeName === "DateTime") {
-            const a = argNodes.map((x) => this.expr(named(x).at(-1)).s);
+            // A DateTimeKind argument: TS dates are local, as C#'s Unspecified and Local compare.
+            const a = argNodes
+                .filter((x) => !/^DateTimeKind\./.test(named(x).at(-1).text))
+                .map((x) => this.expr(named(x).at(-1)).s);
             if (a.length >= 3)
                 return {
                     s: `new Date(${a[0]}, ${a[1]} - 1, ${a.slice(2).join(", ")}).getTime()`,
@@ -2484,6 +2514,8 @@ export class FileConverter {
                         t: T.str,
                     };
                 case "Equals":
+                    if (/IgnoreCase$/.test(argNodes[2]?.text ?? ""))
+                        return { s: `${args[0].s}?.toLowerCase() === ${args[1].s}?.toLowerCase()`, t: T.bool };
                     return { s: `${args[0].s} === ${args[1].s}`, t: T.bool };
                 case "Compare":
                     return { s: `${args[0].s}.localeCompare(${args[1].s})`, t: T.num };
@@ -2526,6 +2558,9 @@ export class FileConverter {
         }
         if (recvText === "Thread" && name === "Sleep")
             return { s: `bot.sleep(${a()[0].s})`, t: null, need: this.need("bot") };
+        // char.ToUpper(c) / ToLower(c): a char is a one-letter string here.
+        if ((recvText === "char" || recvText === "Char") && (name === "ToUpper" || name === "ToLower"))
+            return { s: `${wrap(a()[0].s)}.to${name.slice(2)}Case()`, t: T.str };
         if (recvText === "Task" && name === "Delay")
             return { s: `bot.sleep(${a()[0].s})`, t: null, need: this.need("bot") };
         if (recvText === "Enum") {
@@ -2627,7 +2662,7 @@ export class FileConverter {
             return { s: `${recv.s} - ${wrap(v.s)}`, t: v.t?.date ? { span: true, prim: "number" } : t };
         }
         // Bot.Random.Next(a, b) and new Random().Next: randomInt(min, max) is [min, max) too.
-        if (name === "Next" && (/^bot\.random$/i.test(recv.s) || t?.random)) {
+        if (name === "Next" && (/^(bot\.random|Random\.Shared)$/i.test(recv.s) || t?.random)) {
             const a = argNodes.map((x) => this.expr(named(x).at(-1)).s);
             this.need("randomInt");
             if (a.length === 2) return { s: `randomInt(${a[0]}, ${a[1]})`, t: T.num };
@@ -2669,9 +2704,22 @@ export class FileConverter {
         }
 
         // Skills.StartAdvanced(string skills, int timeout, SkillUseMode) is startSkills in Turu.
-        if (name === "StartAdvanced" && /\.skills$/.test(base) && argNodes.length >= 2) {
-            const second = named(argNodes[1]).at(-1);
-            if (second.type === "integer_literal" || /SkillUseMode/.test(argNodes.at(-1).text)) name = "StartSkills";
+        // With one argument it is that overload too (the class-name one has no default for autoEquip);
+        // C#'s defaults are -1 and UseIfAvailable, Turu's 250 and WaitForCooldown, so they are written.
+        if (name === "StartAdvanced" && /\.skills$/.test(base)) {
+            const second = argNodes[1] && named(argNodes[1]).at(-1);
+            if (
+                argNodes.length === 1 ||
+                second?.type === "integer_literal" ||
+                /SkillUseMode/.test(argNodes.at(-1).text)
+            ) {
+                const a = argNodes.map((x) => this.expr(named(x).at(-1)).s);
+                this.need("SkillUseMode");
+                return {
+                    s: `${base}${q}startSkills(${a[0]}, ${a[1] ?? "-1"}, ${a[2] ?? "SkillUseMode.UseIfAvailable"})`,
+                    t: null,
+                };
+            }
         }
         // C# array overloads that the port names apart: EnsureComplete(params int[]) etc.
         const ARRAY_OVERLOADS = {
@@ -2771,6 +2819,10 @@ export class FileConverter {
                 case "GetValueOrDefault":
                     return r(`(${base}.get(${args()[0]}) ?? ${args()[1] ?? "null"})`, t.map?.[1] ?? null);
             }
+            // LINQ over a dictionary: its key/value pairs, as `[key, value]` entries.
+            const linq = ["All", "Any", "Where", "Select", "First", "FirstOrDefault", "Last", "Sum", "Count"];
+            if (linq.includes(name) && (argNodes.length || (name !== "Count" && name !== "Any")))
+                return this.libraryCall(`[...${base}]`, ".", name, typeArgs, argNodes, { arr: elemT }, node);
         }
         if (isSet) {
             switch (name) {

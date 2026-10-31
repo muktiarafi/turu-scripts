@@ -5,7 +5,7 @@ tags: class, dot, damage over time, dragon of time, timeinn
 */
 // Port of Scripts/Other/Classes/DragonOfTime.cs.
 
-import { bot } from "turu";
+import { bot, SkillUseMode } from "turu";
 import { CoreAdvanced } from "../../core/CoreAdvanced";
 import { ClassType, Core } from "../../core/CoreBots";
 import { CoreFarms } from "../../core/CoreFarms";
@@ -228,7 +228,8 @@ export class DragonOfTime {
                 if (usethis != null) {
                     Core.equip(usethis.id);
                     Core.equip(...Core.farmGear);
-                    if (usethis.name === "Yami no Ronin") bot.skills.startAdvanced("1 | 4");
+                    if (usethis.name === "Yami no Ronin")
+                        bot.skills.startSkills("1 | 4", -1, SkillUseMode.UseIfAvailable);
                 } else Core.equipClass(ClassType.Dodge);
                 Core.huntMonster("underlair", "ArchFiend Dragonlord", "Dragon's Plasma", 20, { isTemp: false });
             }

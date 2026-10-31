@@ -6,7 +6,7 @@ tags: farm, pet, polly-rogers, celestial-pirate-commander, pirate
 // Port of Scripts/Seasonal/TalkLikeaPirateDay/CelestialPirateCommander[PollyRogers].cs.
 // Converted by tools/cs2ts, not yet read through by hand (cs2ts --force regenerates it); remove this line once it is.
 
-import { bot, choices, defineScriptOptions, option } from "turu";
+import { bot, choices, defineScriptOptions, option, SkillUseMode } from "turu";
 import { ClassType, configEnum, Core } from "../../core/CoreBots";
 import { CoreFarms } from "../../core/CoreFarms";
 
@@ -114,7 +114,7 @@ export class CelestialPirateCommander {
                 Core.equip(usethis.id);
                 Core.equip(...Core.farmGear);
                 if (usethis.name === "Yami no Ronin") {
-                    bot.skills.startAdvanced("1 | 4");
+                    bot.skills.startSkills("1 | 4", -1, SkillUseMode.UseIfAvailable);
                 }
             } else {
                 Core.equipClass(ClassType.Dodge);

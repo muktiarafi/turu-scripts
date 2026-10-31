@@ -344,6 +344,55 @@ C# bugs fixed on purpose (still in VibeSkua's Scripts, marked `C#` in the code):
   own, so the rest were never farmed.
 - `TwillyTreasurePile` declares its kill counter inside the loop, so it never banks every 5 kills.
 
+## Other
+
+Every script in the C# `Other/` folder is ported. The 187 left after the earlier batches were
+converted with cs2ts, with `prototypes/InfernalArenaLW` (VerusDoomKnight includes it). Nothing
+else outside the Ultras folders, `Army/` and `Tools/` was left but `Core/TaskExtensions.cs`, which
+no script includes and only wraps `Task.Run` (scripts are single-threaded). `0AllClasses`, `Lich`,
+`SovereignOfStorms` and `VerusDoomKnight` include Ultras files only for what their included
+scripts reach (`LothianTreasuryMerge`'s Queen Iona, already a logged skip). They type-check and
+load, but none has run in game. These 18 were fixed by hand; the rest are drafts with the cs2ts line:
+`InfernalArenaLW`, `0CurrentDailyGifts`, `WorldBoss[Template]`, `CoreArchMage`, `0ArchMage`,
+`ArcanaInvoker[Non-Insignia]`, `JoePrepsForUltras`, `BetaBerserkerQuest`, `BringTheCheer`,
+`FlamesofLove`, `GenerosityCoin`, `VampireofVokun`, `LoreMasterUniversityHouse`,
+`LegionDoomKnight[Mem]`, `1MemberFarmsKit`, `CelestialStarMageSet`, `GrimDarkSet`,
+`SecurityPlushiesQuestReward`.
+
+- `InfernalArenaLW`: C#'s `out` results are return values (`equipClass` returns the class name or
+  null), the rotation switch (C# `LoadAdvanced` into the running timer) restarts the rotation with
+  `startSkills`, and the private `AutoEnhance` C# calls by reflection is called by name.
+- `CoreArchMage` and `WorldBoss[Template]`: C#'s `Task.Run` walks are a `bot.handlers.once`
+  timer and a walk inside the packet listener. `0ArchMage` exports CoreArchMage's options.
+- `0CurrentDailyGifts`: C#'s two `GetGift` overloads (monster by name or map ID) are one method.
+
+Core members added: CoreBots `ghostItem` (the client-side item C#'s `GhostItem` adds;
+`category` is the `ItemCategory` name), and `QuestData.requiredFactionRep` (`iReqRep`, read
+when asked).
+
+cs2ts now: writes a field whose camelCase name is a method's with a suffix (`badge` ->
+`badgeName`, C#'s `badge` field and `Badge()` in the badge scripts); C# ranges from the end
+(`s[1..^1]` -> `slice(1, -1)`); `new DateTime(..., DateTimeKind.X)`; `Random.Shared.Next`;
+LINQ over a dictionary (`[...map].every(...)`); `!string.Equals(a, b)` as `!(a === b)` (it wrote
+`!a === b`) and `string.Equals(a, b, OrdinalIgnoreCase)` ignoring case; `x is A or B && y` as
+`(x === A || x === B) && y`; `Func<T>?` as `(() => T) | null`; `Environment.TickCount64`;
+`ItemCategory.X` as the game's category text; `char.ToUpper`; a handler's extra C# parameters
+only when it reads them. And C#'s one-argument `Bot.Skills.StartAdvanced("1 | 4")` (the
+skills overload; the class-name one has no default for `autoEquip`) is `startSkills("1 | 4", -1,
+SkillUseMode.UseIfAvailable)`, with C#'s defaults written out: it was `startAdvanced`, which looks
+up a class named "1 | 4". Re-running it changed 3 earlier drafts (`ArchfiendDragonEgg[Mem]`,
+`CyseroItemUpgradeQuests`, `CelestialPirateCommander[PollyRogers]`); the same call was fixed by
+hand in `DragonOfTime`, `UnlockForgeEnhancements`, `FireChampionsArmor` and `EliteVoid`.
+
+C# bugs fixed on purpose (still in VibeSkua's Scripts, marked `C#` in the code):
+
+- `CelestialStarMageSet`, `GrimDarkSet` and `SecurityPlushiesQuestReward` `return` from their
+  reward loop at the first reward you own, so the rest were never farmed.
+- `FlamesofLove` assigns the quest's reward items to a `string[]` (it doesn't compile); it uses
+  their names.
+
+Turu now accepts `%` in an options file name (the `1%Capes`-style storages of `OnePercentDrops`).
+
 ## FarmerJoe
 
 `other/farmjoekits/0FarmerJoeDoAll.ts` and everything its `DoAll` reaches are ported: 128 files

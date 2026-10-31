@@ -5,7 +5,7 @@ tags: fire champions armor, fire champions armor, polished dragon slayer, flame 
 */
 // Port of Scripts/Other/Armor/FireChampionsArmor.cs.
 
-import { bot } from "turu";
+import { bot, SkillUseMode } from "turu";
 import { CoreAdvanced } from "../../core/CoreAdvanced";
 import { ClassType, Core } from "../../core/CoreBots";
 import { Lair } from "../../story/Lair";
@@ -82,7 +82,7 @@ export class FireChampionsArmor {
         if (usethis != null) {
             Core.equip(usethis.id);
             Core.equip(...Core.dodgeGear);
-            if (usethis.name === "Yami no Ronin") bot.skills.startAdvanced("1 | 4");
+            if (usethis.name === "Yami no Ronin") bot.skills.startSkills("1 | 4", -1, SkillUseMode.UseIfAvailable);
         } else if (!!Core.dodgeClass) Core.equipClass(ClassType.Dodge);
 
         Core.huntMonster("underlair", "Archfiend Dragonlord", "Void Scale", VoidScaleQuant, { isTemp: false });

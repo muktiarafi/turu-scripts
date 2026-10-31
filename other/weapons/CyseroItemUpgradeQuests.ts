@@ -6,7 +6,7 @@ tags: null
 // Port of Scripts/Other/Weapons/CyseroItemUpgradeQuests.cs.
 // Converted by tools/cs2ts, not yet read through by hand (cs2ts --force regenerates it); remove this line once it is.
 
-import { bot, defineScriptOptions, option } from "turu";
+import { bot, defineScriptOptions, option, SkillUseMode } from "turu";
 import { CoreAdvanced } from "../../core/CoreAdvanced";
 import { ClassType, Core } from "../../core/CoreBots";
 import { CoreFarms } from "../../core/CoreFarms";
@@ -146,7 +146,7 @@ export class CyseroItemUpgrade {
                 Core.equip(usethis.id);
                 Core.equip(...Core.farmGear);
                 if (usethis.name === "Yami no Ronin") {
-                    bot.skills.startAdvanced("1 | 4");
+                    bot.skills.startSkills("1 | 4", -1, SkillUseMode.UseIfAvailable);
                 }
             } else {
                 Core.equipClass(ClassType.Dodge);

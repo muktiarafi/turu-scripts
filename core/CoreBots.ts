@@ -78,6 +78,8 @@ export interface SimpleReward extends RewardItem {
 export interface QuestData extends Omit<Quest, "rewards" | "simpleRewards"> {
     rewards: RewardItem[];
     simpleRewards: SimpleReward[];
+    /** The reputation needed with the quest's faction (C# `RequiredFactionRep`, `iReqRep`), read when asked. */
+    readonly requiredFactionRep: number;
 }
 
 /** A requirement of a merge-shop item (C# `ShopItem.Requirements`). */
@@ -2144,7 +2146,83 @@ export class CoreBots {
         return matches[0];
     }
 
-    // C# GhostItem: only used by Join's ghost-item map bypasses, which this port leaves out.
+    /**
+     * Adds a client-side item to your inventory (C# `GhostItem`): the server doesn't know it, but
+     * the game shows it and quests or maps that only check the client accept it.
+     * @param id The item ID it mimics.
+     * @param category Skua's `ItemCategory` name ("Pet", "Class", ...); "Unknown" is an "Item".
+     * @param extraInfo More fields for the item object (`[key, value]`), as C#'s `params`.
+     */
+    ghostItem(
+        id: number,
+        name = "Ghost Item",
+        quantity = 1,
+        temp = false,
+        category = "Unknown",
+        description: string | null = null,
+        level = 1,
+        ...extraInfo: [key: string, value: unknown][]
+    ): void {
+        if (
+            temp
+                ? bot.tempInv.contains(id) && bot.tempInv.contains(name)
+                : bot.inventory.contains(id) && bot.inventory.contains(name)
+        )
+            return;
+
+        const item: Record<string, unknown> = {
+            ItemID: id,
+            sName: name,
+            sDesc: description ?? "A Ghost Item that mimics Item ID: " + id,
+            iLvl: level,
+        };
+        // This allows for ghost items without taking up slots, but it'll not work for bypasses
+        if (quantity !== 0) {
+            item.iQty = quantity;
+            item.iStk = quantity > 0 ? quantity : 1;
+        }
+
+        item.sType = category === "Unknown" ? "Item" : category;
+
+        const icons: Record<string, string> = {
+            Sword: "iwsword",
+            Axe: "iwaxe",
+            Dagger: "iwdagger",
+            Gun: "iwgun",
+            HandGun: "iwgun",
+            Rifle: "iwgun",
+            Whip: "iwgun",
+            Bow: "iwbow",
+            Mace: "iwmace",
+            Gauntlet: "iwclaws",
+            Polearm: "iwpolearm",
+            Staff: "iwstaff",
+            Wand: "iwwand",
+            Class: "iiclass",
+            Armor: "iwarmor",
+            Helm: "iihelm",
+            Cape: "iicape",
+            Pet: "iipet",
+            Amulet: "iin1",
+            Necklace: "iin1",
+            // Ground Rune
+            Misc: "imr2",
+            House: "ihhouse",
+            "Wall Item": "ihwall",
+            "Floor Item": "ihfloor",
+            Enhancement: "none",
+        };
+        //Default (Unknown, Note, Resource, Item, ServerUse)
+        item.sIcon = icons[category] ?? "iibag";
+
+        item.bEquip = 0;
+        item.bStaff = 0;
+
+        // Adding / modifying based on extra info
+        for (const [key, value] of extraInfo) item[key] = value;
+
+        bot.flash.callGameFunction("world.myAvatar.addItem", item);
+    }
 
     /**
      * The boost of `boostType` an item gives, read from its `meta` ("dmgAll:1.25,gold:1.1"), or 0
@@ -2893,6 +2971,9 @@ export class CoreBots {
                 simpleRewards.length > 0
                     ? simpleRewards
                     : fromApi(quest.simpleRewards).map((x) => ({ ...x, rate: 0, type: 0 })),
+            get requiredFactionRep(): number {
+                return num(bot.flash.get(`${path}.iReqRep`));
+            },
         };
     }
 
@@ -2913,6 +2994,7 @@ export class CoreBots {
             value: 0,
             field: "",
             index: 0,
+            requiredFactionRep: 0,
         };
     }
 

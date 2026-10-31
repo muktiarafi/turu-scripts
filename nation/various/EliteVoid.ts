@@ -5,7 +5,7 @@ tags: null
 */
 // Port of Scripts/Nation/Various/EliteVoid.cs.
 
-import { bot } from "turu";
+import { bot, SkillUseMode } from "turu";
 import { ClassType, Core } from "../../core/CoreBots";
 import { CitadelRuins } from "../../story/nation/CitadelRuins";
 
@@ -90,7 +90,7 @@ export class EliteVoid {
                     Core.equip(usethis.id);
                     Core.equip(...Core.farmGear);
                     if (usethis.name === "Yami no Ronin") {
-                        bot.skills.startAdvanced("1 | 4");
+                        bot.skills.startSkills("1 | 4", -1, SkillUseMode.UseIfAvailable);
                     }
                 } else {
                     Core.equipClass(ClassType.Dodge);

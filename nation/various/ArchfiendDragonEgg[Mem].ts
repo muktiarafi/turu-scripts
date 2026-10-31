@@ -6,7 +6,7 @@ tags: null
 // Port of Scripts/Nation/Various/ArchfiendDragonEgg[Mem].cs.
 // Converted by tools/cs2ts, not yet read through by hand (cs2ts --force regenerates it); remove this line once it is.
 
-import { bot } from "turu";
+import { bot, SkillUseMode } from "turu";
 import { ClassType, Core } from "../../core/CoreBots";
 import { CoreHollowborn } from "../../hollowborn/CoreHollowborn";
 
@@ -39,7 +39,7 @@ export class ArchfiendDragonEgg {
             Core.equip(usethis.id);
             Core.equip(...Core.farmGear);
             if (usethis.name === "Yami no Ronin") {
-                bot.skills.startAdvanced("1 | 4");
+                bot.skills.startSkills("1 | 4", -1, SkillUseMode.UseIfAvailable);
             }
         } else {
             Core.equipClass(ClassType.Dodge);

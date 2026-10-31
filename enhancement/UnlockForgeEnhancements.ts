@@ -5,7 +5,7 @@ tags: lacerate, smite, herosvaliance, arcanasconcerto, elysium, acheron, absolut
 */
 // Port of Scripts/Enhancement/UnlockForgeEnhancements.cs.
 
-import { bot, choices, defineScriptOptions, option } from "turu";
+import { bot, choices, defineScriptOptions, option, SkillUseMode } from "turu";
 import { EternalDrakath } from "../chaos/EternalDrakathSet";
 import { CoreAdvanced } from "../core/CoreAdvanced";
 import { ClassType, Core, configOr } from "../core/CoreBots";
@@ -838,7 +838,7 @@ export class UnlockForgeEnhancements {
         if (usethis != null) {
             Core.equip(usethis.id);
             Core.equip(...Core.farmGear);
-            if (usethis.name === "Yami no Ronin") bot.skills.startAdvanced("1 | 4");
+            if (usethis.name === "Yami no Ronin") bot.skills.startSkills("1 | 4", -1, SkillUseMode.UseIfAvailable);
         } else Core.equipClass(ClassType.Dodge);
         Core.huntMonster("underlair", "ArchFiend DragonLord", "Void Scale", 13, { isTemp: false });
 
