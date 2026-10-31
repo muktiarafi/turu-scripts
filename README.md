@@ -419,8 +419,8 @@ the engine's `bot.army` (`bot/src/api/army.rs`) stands in:
   an option the script doesn't declare (most declare fewer), C#'s returns null.
 
 The Army scripts sync through the Ultras' CoreUltra (`WaitForArmy`, `CheckArmyProgressBool`,
-`ClearSyncFile`, ...) and join through its CoreEngine. The Ultras aren't ported, so those members
-are in `army/CoreArmySync.ts` (`CoreArmySync`, `CoreArmyEngine`): the sync files are `bot.army`
+`ClearSyncFile`, ...) and join through its CoreEngine. Those members are in `army/CoreArmySync.ts`
+(the Ultras' `CoreUltrav3` extends it, see "Ultras") (`CoreArmySync`, `CoreArmyEngine`): the sync files are `bot.army`
 logs (C# guards updates with a machine-wide mutex; each member rewrites its line on every
 check, so a lost update comes back), and `CoreEngine.Join` joins a room that every client of
 the machine picks (`bot.army.machineRoomNumber()`, C#'s `GenerateRoomID` hashes the machine
@@ -531,5 +531,58 @@ has run in game yet; it type-checks, and `bot/tests/runtime.rs` loads DoAll agai
   `assistingCandB` tried several turn-ins per farm round (now one). Changed: the "You will not
   resist!" watch in `CoreAOR.fightVoiceInTheSea` reads the parsed packet instead of the raw
   `pext` flash call.
+
+## Ultras
+
+The Ultras are ported from the latest set, `Ultrasv3` (the `Ultras/` and `Ultrasv2/` folders are
+older versions of the same fights and stay unported). Started with
+`Ultrasv3/ChallengeBosses/NightmareCarnaxv3` (`ultrasv3/challengebosses/NightmareCarnaxv3.ts`)
+and the members of `DependenciesUltras` it reaches, ported in C# order:
+
+- `CoreEnginev3`: Boot, the boss checks, Potions & Scrolls, Auras, Player, Map, Utils and the
+  whole skill engine (`SkillsAsync` and every class rotation). Not yet: Quest, Items, Best
+  Enhancement, Combat, Factions, Best Gear, Shop, Drops.
+- `CoreUltrav3`: extends `army/CoreArmySync.ts` for the sync members (only the file locking
+  differs from the Entwined Eclipse copy), plus `EquipClassSync`, `JoinHouse` and the best
+  tonic/elixir picks.
+- `UltraGeneral`: the preset classes and the whole-army dead/alive checks.
+- `UltraPotions`, `UltraEnhancements` and `GetPotions` (`PotionBuyerv2`): whole.
+
+**Background work (C#'s `Task.Run`, `new Thread`, `async`/`await Task.Delay`)** is
+`core/CoreTasks.ts`: a task is a generator function that a `bot.handlers` timer steps between
+the script's bot calls and during `bot.sleep`. VibeSkua sends every Flash call to the UI thread
+one at a time, so a C# task never reached the game in parallel; what it bought was not waiting,
+and a `yield` gives that:
+
+```ts
+_ = Task.Run(async () => { ... }, cts.Token)   ->  tasks.start("name", function* () { ... })
+await Task.Delay(ms) / Bot.Sleep(ms) in a task ->  yield ms
+Bot.Wait.ForTrue(() => c, n) in a task         ->  const ok = yield until(() => c, n)
+cts.Cancel()                                   ->  tasks.cancel("name")   // runs `finally` blocks
+task is { IsCompleted: false }                 ->  tasks.running("name")
+async Task FooAsync() / void Loop() on a Thread->  *fooAsync(): Generator<TaskStep, void, boolean>
+```
+
+Inside a task, wait with `yield`: a `bot.sleep` or `bot.wait.*` there blocks the whole script
+(handlers never run inside a handler). A one-off call from a packet listener (`_ = Task.Run(() =>
+Bot.Player.WalkTo(x, y))`) needs no task: listeners already run on the script thread, so call it
+directly. Earlier ports turned one-shot walks into `bot.handlers.once` (DarkCarnax,
+MoreSkullsBoss, CoreArchMage, WorldBoss[Template], AutoZoneandAttack); they stay as they are.
+
+What differs from C#:
+- `CoreEnginev3`'s skill loop is the `UltraSkills` task, stepped every 100 ms like C#'s
+  `skillsDelay`. A rotation that waits (Chrono ShadowSlayer's `Wait.ForTrue`, the 100 ms sleeps)
+  pauses the whole script for that long, where C# paused only its skill thread. While the script
+  is inside one long engine wait (`bot.wait.forMapLoad`, ...) the skills wait too
+  (`docs/turu/STATUS.md`, "Handlers wait during one engine wait").
+- The scripts' `Core` (CoreEnginev3) is `Engine`, as `Core` is CoreBots (C#'s `C`).
+- NightmareCarnax doesn't write `fbs_mute.sync` (it mutes VibeSkua's FBS plugin; Turu has none).
+- `EquipClassSync` clears a sync log with no line newer than 15 minutes (C# checks the file's
+  write time). `GetPotions` reads its options with `configOr`, as UltraPotions calls it from
+  scripts that don't declare them.
+- New API for them: `bot.player.stats` (VibeSkua `Player.Stats`) and `bot.lite.hidePlayers`.
+
+None of it has run in game. `bot/tests/core_tasks.rs` tests the tasks against a fake game and
+checks that NightmareCarnax's module tree loads.
 
 A fuller guide is in `docs/turu/SCRIPTING.md`.
