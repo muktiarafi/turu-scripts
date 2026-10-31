@@ -217,6 +217,40 @@ Fixed in the earlier port: `Potions.needYourStrongestPotions` read `BuyReagents`
 `bot.config.get`, which throws when another script (a merge) calls it; it reads them with
 `configOr` now, like C#'s `Config.Get` returning the default.
 
+## Story scripts
+
+Every script under the C# `Story/` folder is ported: the 282 left after the merge batch were
+converted with cs2ts (they include nothing outside `Story/` that wasn't ported, and nothing from
+the Ultras folders). All but `CoreMemet` are drafts with the cs2ts line. They type-check and load,
+but none has run in game. A comparison with the C# found the same calls (`KillQuest`,
+`MapItemQuest`, `HuntMonster`, `EnsureAccept`/`Complete`, ...) and the same string and number
+arguments in every file, and every quest ID they use is in the C# repo's `QuestData.json`.
+
+The four Core files that were partial ports are complete now, with the members cs2ts drafted
+from the C# added in C# order (the members ported before are unchanged): `CoreToD` (`completeToD`,
+`baconCatFortress`, `laserSharkInvasion`, `deathPit`, `deathPitPVP`, `yasaris`), `CoreDoomwood`
+(`completeDoomwood`, `doomwoodPart1`, `doomwoodPart2`, `doomwoodForest`, `choppingMaul`,
+`necroTower`, `necroU`, `templeOfTheLight`, `madScientistsLab`, `necropolisDungeon`,
+`necropolisCavern`), `Core7DD` (`complete7DD`, `gluttony`, `pride`, `greed`, `lust`, `envy`,
+`wrath`) and `CoreSummer` (`doAll`, `livingDungeon`, `lunaCove`, `cyserosSecret`).
+
+cs2ts now writes C#'s `000` as `0` (a leading zero is an octal literal in TS; the
+`ShadowsofDoom[Oct 13th]` placeholder scripts have them), and `EnsureLoad` with an array or several
+IDs as `Core.ensureLoadMany(...)`.
+
+C# bugs fixed on purpose (still in VibeSkua's Scripts, marked `C#` in the code):
+
+- `CoreMemet.zorbasPalace` passes quests 7476 and 7481 (done earlier in the chain) for the last
+  three quests, 7482 to 7484, so `QuestProgression` skips them: Memet, the Lem-or and Zorba are
+  never done, and the 7484 check at the top never lets the saga count as done.
+
+Kept as C# has them: a saga's completion check that names a quest the method doesn't do
+(`SkyGuardSaga.chaosGuard` checks 2488, "Defeat Ultra Exos"), or one before a members-only tail
+(`CoreToD.laserSharkInvasion` checks 5120 and then does 5121 to 5131 for members, likewise
+`CoreFireisland.embersea` and `fireforge`, `CoreDoomwood.necroU`). The run repeats or skips those
+parts the way VibeSkua does. The `ShadowsofDoom[Oct 13th]` `Story1` to `Story5` placeholders are
+C#'s templates (quest 0, map `mapname`) and do nothing useful.
+
 ## FarmerJoe
 
 `other/farmjoekits/0FarmerJoeDoAll.ts` and everything its `DoAll` reaches are ported: 128 files

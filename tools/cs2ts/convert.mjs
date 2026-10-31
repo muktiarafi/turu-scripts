@@ -1446,7 +1446,14 @@ export class FileConverter {
             case "base_expression":
                 return { s: "super", t: null };
             case "integer_literal":
-                return { s: node.text.replace(/[uUlL]+$/, "").replaceAll("_", ""), t: T.num };
+                // C# `000` is decimal; a leading zero would be an octal literal in TS.
+                return {
+                    s: node.text
+                        .replace(/[uUlL]+$/, "")
+                        .replaceAll("_", "")
+                        .replace(/^0+(?=\d)/, ""),
+                    t: T.num,
+                };
             case "real_literal":
                 return { s: node.text.replace(/[fFdDmM]$/, "").replaceAll("_", ""), t: T.num };
             case "boolean_literal":
@@ -2558,6 +2565,7 @@ export class FileConverter {
         const ARRAY_OVERLOADS = {
             EnsureComplete: "EnsureCompleteQuests",
             EnsureAccept: "EnsureAcceptmultiple",
+            EnsureLoad: "EnsureLoadMany",
             EnsureCompleteChoose: null,
         };
         // More arguments than the single-quest form takes: C#'s params overload.
@@ -2565,6 +2573,7 @@ export class FileConverter {
             name = "EnsureCompleteQuests";
         else if (name === "EnsureAccept" && argNodes.length > 1 && !argNodes.some((a) => a.childForFieldName("name")))
             name = "EnsureAcceptmultiple";
+        else if (name === "EnsureLoad" && argNodes.length > 1) name = "EnsureLoadMany";
         else if (ARRAY_OVERLOADS[name] && argNodes.length === 1 && !argNodes[0].childForFieldName("name")) {
             const only = named(argNodes[0]).at(-1);
             if (isArrayExpr(only) || only.type === "element_binding_expression" || this.isSpreadable(this.expr(only).t))

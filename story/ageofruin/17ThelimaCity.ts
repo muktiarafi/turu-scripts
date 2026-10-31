@@ -1,0 +1,22 @@
+/*
+name: Thelima City
+description: This script completes the storyline in /ThelimaCity.
+tags: age, of, ruin, saga, story, quest, thelimacity,warlic
+*/
+// Port of Scripts/Story/AgeOfRuin/17ThelimaCity.cs.
+// Converted by tools/cs2ts, not yet read through by hand (cs2ts --force regenerates it); remove this line once it is.
+
+import { Core } from "../../core/CoreBots";
+import { CoreAOR } from "./CoreAOR";
+
+const AOR = new CoreAOR();
+
+export class ThelimaCity {}
+
+export default function main(): void {
+    Core.setOptions();
+
+    AOR.thelimaCity();
+
+    Core.setOptions(false);
+}

@@ -4,7 +4,6 @@ description: null
 tags: null
 */
 // Port of Scripts/Story/Summer2015AdventureMap/CoreSummer.cs.
-// Not ported (FarmerJoe's DoAll doesn't reach them): DoAll, DreadSpace, Deadmoor, Beleen, LivingDungeon, LunaCove, CyserosSecret.
 
 import { bot } from "turu";
 import { CoreAdvanced } from "../../core/CoreAdvanced";
@@ -15,84 +14,14 @@ const Story = new CoreStory();
 const Adv = new CoreAdvanced();
 
 export class CoreSummer {
-    collector(): void {
-        if (Core.isCompletedBefore(1348)) return;
-
-        Story.preLoad(this.collector);
-
-        // This Town in a Desktop Globe
-        Story.mapItemQuest(1293, "Terrarium", 586);
-
-        // Dust Bunnies Can't Hide
-        Story.killQuest(1294, "Terrarium", "Dustbunny of Doom");
-
-        // Au Contr-air holes
-        Story.mapItemQuest(1295, "Terrarium", 587, 10);
-
-        // Hero Eats Everything. Even Pellets
-        Story.mapItemQuest(1296, "Terrarium", 588, 12);
-
-        // The Moth Defeats the Man?
-        Story.killQuest(1297, "Terrarium", "Death on Wings");
-
-        // Can you find them?
-        Story.mapItemQuest(1298, "Terrarium", [589, 590, 591, 592, 593]);
-
-        // You've Been Looking Everywhere!
-        Story.mapItemQuest(1299, "Terrarium", [593, 594, 595, 596, 604]);
-
-        // Go for Grease!
-        Story.killQuest(1300, "Terrarium", "Death on Wings");
-
-        // Doppelganger Wants to Hit You
-        if (!Story.questProgression(1308)) {
-            Core.ensureAccept(1308);
-            Core.huntMonster("terrarium", "Doppleganger Of Fred", "Doppelganger Demolished!", 1);
-            Core.huntMonster("terrarium", "Doppleganger of Will", "Doppelganger Destroyed!", 1);
-            Core.ensureComplete(1308);
-        }
-
-        // Catapult Climb
-        Story.mapItemQuest(1309, "Terrarium", 604);
-
-        // The Treasure that You Seek - 976
-        Story.killQuest(1339, "prehistoric", "Gigantosaurus");
-
-        // These Trees - 1340
-        Story.mapItemQuest(1340, "prehistoric", 630, 11);
-
-        // Ewwww... Totally Gross - 1341
-        Story.killQuest(1341, "prehistoric", "Gigantosaurus");
-
-        // The Eggs, Exciting and New - 1342
-        Story.mapItemQuest(1342, "prehistoric", 631, 4);
-
-        // Someday (Today) Their Mother Will Die - 1343
-        Story.killQuest(1343, "prehistoric", "Mother TerrorDOOMKill");
-
-        // More Aliens Than You Can Handle?
-        Story.killQuest(1344, "Future", "Alien Dino");
-
-        // Spy Eyes
-        Story.mapItemQuest(1345, "Future", 632, 2);
-
-        // Smashed to Pieces
-        Story.mapItemQuest(1346, "Future", 633, 7);
-
-        // Tired of My Vigilette Dreams
-        if (!Story.questProgression(1347)) {
-            Core.ensureAccept(1347);
-            Core.huntMonster("Future", "Red-Eyed Alien", "Small Fragment Acquired", 5);
-            Core.huntMonster("Future", "Red-Eyed Alien", "Medium Piece Acquired", 5);
-            Core.ensureComplete(1347);
-        }
-
-        // You're Not the Boss of Me Now
-        if (!Story.questProgression(1348)) {
-            Core.ensureAccept(1348);
-            Core.huntMonster("Future", "The Collector", "Collector Vanquished");
-            Core.ensureComplete(1348);
-        }
+    doAll(): void {
+        this.dreadSpace();
+        this.deadmoor();
+        this.beleen();
+        this.collector();
+        this.livingDungeon();
+        this.lunaCove();
+        this.cyserosSecret();
     }
 
     dreadSpace(ReplicatorMerge = false): void {
@@ -377,5 +306,406 @@ export class CoreSummer {
 
         //Boss Fight Beleen! - 4330
         Story.killQuest(4330, "Pastelia", "Chaos Queen Beleen");
+    }
+    collector(): void {
+        if (Core.isCompletedBefore(1348)) return;
+
+        Story.preLoad(this.collector);
+
+        // This Town in a Desktop Globe
+        Story.mapItemQuest(1293, "Terrarium", 586);
+
+        // Dust Bunnies Can't Hide
+        Story.killQuest(1294, "Terrarium", "Dustbunny of Doom");
+
+        // Au Contr-air holes
+        Story.mapItemQuest(1295, "Terrarium", 587, 10);
+
+        // Hero Eats Everything. Even Pellets
+        Story.mapItemQuest(1296, "Terrarium", 588, 12);
+
+        // The Moth Defeats the Man?
+        Story.killQuest(1297, "Terrarium", "Death on Wings");
+
+        // Can you find them?
+        Story.mapItemQuest(1298, "Terrarium", [589, 590, 591, 592, 593]);
+
+        // You've Been Looking Everywhere!
+        Story.mapItemQuest(1299, "Terrarium", [593, 594, 595, 596, 604]);
+
+        // Go for Grease!
+        Story.killQuest(1300, "Terrarium", "Death on Wings");
+
+        // Doppelganger Wants to Hit You
+        if (!Story.questProgression(1308)) {
+            Core.ensureAccept(1308);
+            Core.huntMonster("terrarium", "Doppleganger Of Fred", "Doppelganger Demolished!", 1);
+            Core.huntMonster("terrarium", "Doppleganger of Will", "Doppelganger Destroyed!", 1);
+            Core.ensureComplete(1308);
+        }
+
+        // Catapult Climb
+        Story.mapItemQuest(1309, "Terrarium", 604);
+
+        // The Treasure that You Seek - 976
+        Story.killQuest(1339, "prehistoric", "Gigantosaurus");
+
+        // These Trees - 1340
+        Story.mapItemQuest(1340, "prehistoric", 630, 11);
+
+        // Ewwww... Totally Gross - 1341
+        Story.killQuest(1341, "prehistoric", "Gigantosaurus");
+
+        // The Eggs, Exciting and New - 1342
+        Story.mapItemQuest(1342, "prehistoric", 631, 4);
+
+        // Someday (Today) Their Mother Will Die - 1343
+        Story.killQuest(1343, "prehistoric", "Mother TerrorDOOMKill");
+
+        // More Aliens Than You Can Handle?
+        Story.killQuest(1344, "Future", "Alien Dino");
+
+        // Spy Eyes
+        Story.mapItemQuest(1345, "Future", 632, 2);
+
+        // Smashed to Pieces
+        Story.mapItemQuest(1346, "Future", 633, 7);
+
+        // Tired of My Vigilette Dreams
+        if (!Story.questProgression(1347)) {
+            Core.ensureAccept(1347);
+            Core.huntMonster("Future", "Red-Eyed Alien", "Small Fragment Acquired", 5);
+            Core.huntMonster("Future", "Red-Eyed Alien", "Medium Piece Acquired", 5);
+            Core.ensureComplete(1347);
+        }
+
+        // You're Not the Boss of Me Now
+        if (!Story.questProgression(1348)) {
+            Core.ensureAccept(1348);
+            Core.huntMonster("Future", "The Collector", "Collector Vanquished");
+            Core.ensureComplete(1348);
+        }
+    }
+
+    livingDungeon(): void {
+        if (Core.isCompletedBefore(4384)) {
+            return;
+        }
+
+        Story.preLoad(this.livingDungeon);
+
+        // Titan Hollow
+        Story.chainQuest(4348);
+
+        // Roots of all Evil
+        Story.killQuest(4349, "livingdungeon", "Root of Evil");
+
+        // Venus Hero Trap
+        Story.killQuest(4350, "livingdungeon", "Seed Spitter");
+
+        // Bark is worse than its bite
+        if (!Story.questProgression(4351)) {
+            Core.ensureAccept(4351);
+            Core.huntMonster("livingdungeon", "Evil Plant Horror", "It's a CLUE!", 10);
+            Core.ensureComplete(4351);
+        }
+
+        // Knot what you expected
+        Story.killQuest(4352, "livingdungeon", "Weeping Widowmaker");
+
+        // Cha Cha Cha Chia!
+        Story.killQuest(4353, "livingdungeon", "Chia Warrior");
+
+        // Leaf me alone!
+        if (!Story.questProgression(4354)) {
+            Core.ensureAccept(4354);
+            Core.huntMonster("livingdungeon", "Titan Decay", "Titan Decay defeated", 5);
+            Core.huntMonster("livingdungeon", "Seed Spitter", "Seed Spitter de-seeded", 5);
+            Core.huntMonster("livingdungeon", "Evil Plant Horror", "Evil Plant Horror defeated", 5);
+            Core.ensureComplete(4354);
+        }
+
+        // Evil Faerie Ambush!
+        Story.killQuest(4355, "livingdungeon", "Evil Tree Faerie");
+
+        // Check the Trunk
+        Story.killQuest(4356, "livingdungeon", "Vulchurion");
+
+        // Committing Tree-son
+        if (!Story.questProgression(4357)) {
+            Core.ensureAccept(4357);
+            Core.huntMonster("livingdungeon", "Evil Plant Horror", "Magic Tree Bark", 10);
+            Core.ensureComplete(4357);
+        }
+
+        // Heartwood
+        if (!Story.questProgression(4358)) {
+            Core.ensureAccept(4358);
+            Core.huntMonster("livingdungeon", "Evil Plant Horror", "Titan's Heart", 1);
+            Core.ensureComplete(4358);
+        }
+
+        // Drayko BOSS FIGHT!
+        Story.killQuest(4359, "livingdungeon", "Drayko");
+
+        // Foilaged again!
+        if (!Story.questProgression(4360)) {
+            Core.ensureAccept(4360);
+            Core.huntMonster("livingdungeon", "Evil Plant Horror", "Monsters defeated", 15);
+            Core.ensureComplete(4360);
+        }
+
+        // Mind Games
+        if (!Story.questProgression(4361)) {
+            Core.ensureAccept(4361);
+            Core.huntMonster("livingdungeon", "Evil Plant Horror", "Tree Titan Brain Chunk", 10);
+            Core.ensureComplete(4361);
+        }
+
+        // DRAGON vs TITAN
+        Story.killQuest(4362, "treetitanbattle", "Dakka the Dire Dragon");
+
+        // Smells like trouble!
+        Story.killQuest(4363, "livingdungeon", "Lil' Poot");
+
+        // EPIC DROP!
+        Story.killQuest(4364, "livingdungeon", "Epic Drop");
+
+        Core.addDrop(
+            "Wooden Ring",
+            "Salad!",
+            "Weeping Widowmaker Bone",
+            "Chia in a pot!",
+            "Fairy Phone",
+            "Vulchurion Quill",
+            "Drayko's Medallion",
+            "Giant Dakka Fang",
+        );
+        // ------------------------------------------
+        // Drayko Battle!
+        if (!Core.checkInventory("Drayko's Medallion")) {
+            Core.logger("Drayko's Medallion not found, finding it for you");
+            Core.ensureAccept(4383);
+
+            // Vulchurions
+            if (!Core.checkInventory("Vulchurion Quill")) {
+                Core.logger("Vulchurion Quill not found, finding it for you");
+                Core.ensureAccept(4382);
+
+                // Evil Tree Faeries
+                if (!Core.checkInventory("Fairy Phone")) {
+                    Core.logger("Fairy Phone not found, finding it for you");
+                    Core.ensureAccept(4381);
+
+                    // Chia Warriors
+                    if (!Core.checkInventory("Chia in a pot!")) {
+                        Core.logger("Chia in a pot! not found, finding it for you");
+                        Core.ensureAccept(4380);
+
+                        if (!Core.checkInventory("Weeping Widowmaker Bone")) {
+                            Core.logger("Weeping Widowmaker Bone not found, finding it for you");
+                            Core.ensureAccept(4379);
+
+                            if (!Core.checkInventory("Salad!")) {
+                                Core.logger("Salad! not found, finding it for you");
+                                Core.ensureAccept(4378);
+
+                                if (!Core.checkInventory("Wooden Ring")) {
+                                    Core.logger("Wooden Ring not found, finding it for you");
+                                    Core.ensureAccept(4377);
+                                    Core.huntMonster("livingdungeon", "Root of Evil", "Wooden Ring Piece", 5);
+                                    Core.ensureComplete(4377);
+                                    bot.wait.forPickup("Wooden Ring");
+                                    Core.sleep(1000);
+                                }
+                                Core.huntMonster("livingdungeon", "Evil Plant Horror", "Evil Plant Horror Leaf", 6);
+                                Core.ensureComplete(4378);
+                                bot.wait.forPickup("Salad!");
+                                Core.sleep(1000);
+                            }
+                            Core.huntMonster("livingdungeon", "Weeping Widowmaker", "Widowmaker deboned", 5);
+                            Core.ensureComplete(4379);
+                            bot.wait.forPickup("Weeping Widowmaker Bone");
+                            Core.sleep(1000);
+                        }
+                        Core.huntMonster("livingdungeon", "Chia Warrior", "Chia Warrior defeated", 3);
+                        Core.ensureComplete(4380);
+                        bot.wait.forPickup("Chia in a pot!");
+                        Core.sleep(1000);
+                    }
+                    Core.huntMonster("livingdungeon", "Evil Tree Faerie", "Fairy Purse", 5);
+                    Core.ensureComplete(4381);
+                    bot.wait.forPickup("Fairy Phone");
+                    Core.sleep(1000);
+                }
+                Core.huntMonster("livingdungeon", "Vulchurion", "Vulchurion Feather", 3);
+                Core.ensureComplete(4382);
+                bot.wait.forPickup("Vulchurion Quill");
+                Core.sleep(1000);
+            }
+            Core.huntMonster("livingdungeon", "Drayko", "Drayko Defeated... again");
+            Core.ensureComplete(4383);
+            bot.wait.forPickup("Drarko's Medalion");
+            Core.sleep(1000);
+        }
+        // DRAGON vs TITAN Rematch! - 4384
+        if (!Story.questProgression(4384)) {
+            Core.logger("Giant Dakka Fang not found, finding it for you");
+            Core.ensureAccept(4384);
+            Core.huntMonster("treetitanbattle", "Dakka the Dire Dragon", "Dakka Defeated... again");
+            Core.ensureComplete(4384);
+            // Bot.Wait.ForPickup("Giant Dakka Fang");
+        }
+    }
+
+    lunaCove(): void {
+        if (Core.checkInventory("Your Moonstone")) {
+            return;
+        }
+
+        Core.addDrop(
+            "Ritual Items",
+            "Stale Chips",
+            "Air Pump",
+            "Shiny Stone",
+            "Were Hair",
+            "For the Horde!",
+            "Werewolf Discovery",
+            "Stolen Lycanstone",
+            "Gravefang's Elixir",
+            "Dis-Lycan this",
+            "Your Moonstone",
+        );
+
+        //4399|Time to Rock this Finale!
+        if (!Core.checkInventory("Your Moonstone")) {
+            //4398|Dis-lycan What Happened
+            if (!Core.checkInventory("Dis-Lycan this")) {
+                //4397|Fur the Right Thing
+                if (!Core.checkInventory("Gravefang's Elixir")) {
+                    //4396|Find the Lycanstone
+                    if (!Core.checkInventory("Stolen Lycanstone")) {
+                        //4394|"Were" Did We Go Wrong?
+                        if (!Core.checkInventory("Werewolf Discovery")) {
+                            //4395|Lycan this Next Task
+                            if (!Core.checkInventory("For the Horde!")) {
+                                //4393|Total Eclipse of the Heart
+                                if (!Core.checkInventory("Were Hair")) {
+                                    //4392|Hex on the Beach(balls)
+                                    if (!Core.checkInventory("Shiny Stone")) {
+                                        //4391|Fish’n’Chips on my Shoulder
+                                        if (!Core.checkInventory("Air Pump")) {
+                                            //4390|A Ritual by any Other Name
+                                            if (!Core.checkInventory("Stale Chips")) {
+                                                //4389|Let's Get Started
+                                                if (!Core.checkInventory("Ritual Items")) {
+                                                    Core.ensureAccept(4389);
+                                                    Core.huntMonster(
+                                                        "lunacove",
+                                                        "Cove Warrior",
+                                                        "Ritual Materials",
+                                                        15,
+                                                    );
+                                                    Core.huntMonster("lunacove", "Plessie", "Plessie Fang Tooth");
+                                                    Core.huntMonster("lunacove", "Island Girl", "Candle", 5);
+                                                    Core.ensureComplete(4389);
+                                                    bot.wait.forPickup("Ritual Items");
+                                                }
+                                                Core.ensureAccept(4390);
+                                                Core.getMapItem(3533, 10, "lunacove");
+                                                Core.huntMonster("lunacove", "Cove Fisher", "Bag of Chips");
+                                                Core.ensureComplete(4390);
+                                                bot.wait.forPickup("Stale Chips");
+                                            }
+                                            Core.ensureAccept(4391);
+                                            Core.huntMonster("lunacove", "Lunar Villager", "Chips", 3);
+                                            Core.ensureComplete(4391);
+                                            bot.wait.forPickup("Air Pump");
+                                        }
+                                        Core.ensureAccept(4392);
+                                        Core.huntMonster("lunacove", "Lunar Villager", "Villager Chastised", 10);
+                                        Core.huntMonster("lunacove", "Beach Ball", "Deflated Beach Balls", 5);
+                                        Core.ensureComplete(4392);
+                                        bot.wait.forPickup("Shiny Stone");
+                                    }
+                                    Core.ensureAccept(4393);
+                                    Core.huntMonster("lunacove", "Coral Merdraconian", "Coral Branch", 3);
+                                    Core.huntMonster("lunacove", "Plessie", "Plessie Scale", 2);
+                                    Core.ensureComplete(4393);
+                                    bot.wait.forPickup("Were Hair");
+                                }
+                                Core.ensureAccept(4395);
+                                Core.getMapItem(3534, 7, "lunacove");
+                                Core.ensureComplete(4395);
+                                bot.wait.forPickup("For the Horde!");
+                            }
+                            Core.ensureAccept(4394);
+                            Core.huntMonster("lunacove", "Horde Knight", "Horde Knight Defeated", 7);
+                            Core.huntMonster("lunacove", "Horde Lycan", "Horde Lycan Defeated", 8);
+                            Core.ensureComplete(4394);
+                            bot.wait.forPickup("Werewolf Discovery");
+                        }
+                        Core.ensureAccept(4396);
+                        Core.huntMonster("lunacove", "Horde Knight", "Lycanstone");
+                        Core.ensureComplete(4396);
+                        bot.wait.forPickup("Stolen Lycanstone");
+                    }
+                    Core.ensureAccept(4397);
+                    Core.huntMonster("lunacove", "Gravefang", "Gravefang Defeated");
+                    Core.ensureComplete(4397);
+                    bot.wait.forPickup("Gravefang's Elixir");
+                }
+                Core.ensureAccept(4398);
+                Core.huntMonster("lunacove", "Beach Werewolf", "Beach Werewolf Defeated", 6);
+                Core.huntMonster("lunacove", "Lunar Lycan", "Lunar Lycan Subdued", 6);
+                Core.ensureComplete(4398);
+                bot.wait.forPickup("Dis-Lycan this");
+            }
+            Core.ensureAccept(4399);
+            Core.huntMonster("lunacove", "Moonrock", "Moon Rock Smashed");
+            Core.ensureComplete(4399);
+            bot.wait.forPickup("Your Moonstone");
+        }
+    }
+
+    cyserosSecret(): void {
+        if (Core.isCompletedBefore(4375)) {
+            return;
+        }
+
+        Story.preLoad(this.cyserosSecret);
+
+        //Find The Leak (4365)
+        Story.killQuest(4365, "goose", "Queen's Sage");
+
+        //Locking The Door (4366)
+        Story.killQuest(4366, "goose", "Chris P. Bacon");
+
+        //Thin Their Ranks (4367)
+        Story.killQuest(4367, "goose", "Queen's Sage");
+
+        //1st Goose Bone (4368)
+        Story.killQuest(4368, "goose", "Sock Gorilla");
+
+        //2nd Goose Bone (4369)
+        Story.killQuest(4369, "goose", "Can of Paint");
+
+        //Last Goose Bone (4370)
+        Story.killQuest(4370, "goose", "Queen's ArchSage");
+
+        //Ancient Goose? (4371)
+        Story.mapItemQuest(4371, "goose", 3562);
+
+        //Raccoon Schematics (4372)
+        Story.mapItemQuest(4372, "goose", 3561, 8);
+
+        //No Fur For You (4373)
+        Story.killQuest(4373, "goose", "Queen's Sage");
+
+        //Raccoon Heart (4374)
+        Story.killQuest(4374, "goose", "Can of Paint");
+
+        //Shut It Down (4375)
+        Story.killQuest(4375, "goose", "Ancient Goose");
     }
 }
