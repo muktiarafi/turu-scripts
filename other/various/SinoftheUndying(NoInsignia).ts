@@ -80,9 +80,9 @@ export class SinoftheSinoftheUndyingNoInsignia {
 
         // 20 of each Essence
         const requiredItems = new Map([
-            ["Essence of Wrath", HotLB.essenceWrath],
-            ["Essence of Violence", HotLB.essenceViolence],
-            ["Essence of Treachery", HotLB.essenceTreachery],
+            ["Essence of Wrath", HotLB.essenceWrath.bind(HotLB)],
+            ["Essence of Violence", HotLB.essenceViolence.bind(HotLB)],
+            ["Essence of Treachery", HotLB.essenceTreachery.bind(HotLB)],
         ]);
 
         for (const [item, farmAction] of requiredItems) {

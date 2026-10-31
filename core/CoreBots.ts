@@ -4440,6 +4440,11 @@ export class CoreBots {
     // Utilities
     // ---------------------------------------------------------------------------------------
 
+    /** Whether you have the gold cap, 100M (C# `GoldMaxed`). */
+    get goldMaxed(): boolean {
+        return bot.player.gold >= 100000000;
+    }
+
     /** The account's username (`sfc.myUserName`, else `bot.player.username`). */
     username(): string {
         try {

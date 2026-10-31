@@ -936,6 +936,22 @@ export class FileConverter {
                 continue;
             }
             const typeText = this.tsTypeText(typeNode);
+            // `Option<string> player1 = new("player1", ...)`: the option of the declared type.
+            if (
+                init?.type === "implicit_object_creation_expression" &&
+                typeNode.type === "generic_name" &&
+                named(typeNode)[0].text === "Option"
+            ) {
+                const args = named(init).find((k) => k.type === "argument_list");
+                const typeArg = named(named(typeNode)[1])[0];
+                const e = this.optionCreation(
+                    typeArg,
+                    args ? named(args).filter((k) => k.type === "argument") : [],
+                    init,
+                );
+                out.push(`${prefix}${mem.name} = ${e.s};`);
+                continue;
+            }
             if (init) {
                 const e = this.expr(init, t);
                 const annotate = typeNode.type !== "implicit_type" && !isLiteral(init) ? `: ${typeText}` : "";
@@ -1081,7 +1097,12 @@ export class FileConverter {
             if (k.type === "local_function_statement") continue;
             if (prevRow !== null && k.startPosition.row > prevRow + 1) out.push("");
             prevRow = k.endPosition.row;
-            out.push(this.stmt(k));
+            // Declarations an expression of the statement needs first (`out` variables).
+            const outer = this.hoisted;
+            this.hoisted = [];
+            const st = this.stmt(k);
+            out.push(...this.hoisted, st);
+            this.hoisted = outer;
         }
         this.popScope();
         return `{\n${out
@@ -1646,7 +1667,11 @@ export class FileConverter {
     }
 
     identifier(node) {
-        return this.identifierName(node.text);
+        const res = this.identifierName(node.text);
+        // A method of this class used as a value (C# method group): bound, as C# binds it.
+        if (res.member?.kind === "method" && !isInvoked(node) && /^this\.\w+$/.test(res.s))
+            return { ...res, s: `${res.s}.bind(this)` };
+        return res;
     }
 
     identifierName(name) {
@@ -1732,11 +1757,22 @@ export class FileConverter {
             return { s: CORE_SINGLETONS[et], t: { ts: this.tsx.declaredType(et) } };
         }
         const recv = this.expr(exprNode);
-        return this.memberOn(recv, name, node);
+        const res = this.memberOn(recv, name, node);
+        // `obj.Method` as a value (C# method group, e.g. in a Dictionary of actions): bound, as
+        // C# binds it; an unbound TS method loses `this`.
+        if (!isInvoked(node) && /^[A-Za-z_$][\w$]*$/.test(recv.s) && recv.s !== "bot") {
+            const mem = this.memberOf(recv.t, name);
+            if (mem?.kind === "method" && res.s === `${recv.s}.${mem.name}`)
+                return { ...res, s: `${res.s}.bind(${recv.s})` };
+        }
+        return res;
     }
 
     memberOn(recv, name, node) {
         const t = recv.t;
+        // Skua's CurrentClass is an item; Turu's `currentClass` is its name already.
+        if (name === "Name" && /^bot\.player!?\.currentClass[?!]?$/.test(recv.s))
+            return { s: "bot.player.currentClass", t: T.str };
         if (t?.date) {
             const d = `new Date(${recv.s})`;
             const utc = t.utc ? "UTC" : "";
@@ -2041,6 +2077,17 @@ export class FileConverter {
             }
             case "negated_pattern": {
                 const inner = named(p)[0];
+                // `not null and "json"`: C#'s `not` binds tighter than `and`/`or`, tree-sitter's
+                // doesn't; negate the left operand only.
+                if (inner.type === "and_pattern" || inner.type === "or_pattern") {
+                    const left = inner.childForFieldName("left");
+                    const right = inner.childForFieldName("right");
+                    const negLeft =
+                        left.type === "constant_pattern" && named(left)[0].type === "null_literal"
+                            ? `${subject} != null`
+                            : `!(${this.pattern(left, subject, subjectT)})`;
+                    return `(${negLeft} ${inner.type === "and_pattern" ? "&&" : "||"} ${this.pattern(right, subject, subjectT)})`;
+                }
                 if (inner.type === "constant_pattern" && named(inner)[0].type === "null_literal")
                     return `${subject} != null`;
                 return `!(${this.pattern(inner, subject, subjectT)})`;
@@ -2144,8 +2191,20 @@ export class FileConverter {
 
     anonymousObject(node) {
         const props = [];
-        for (const k of named(node)) {
-            if (k.type === "comment") continue;
+        const kids = named(node).filter((k) => k.type !== "comment");
+        for (let i = 0; i < kids.length; i++) {
+            const k = kids[i];
+            // `new { Map = "a" }` parses as the name, then the value: an `=` lies between them.
+            const next = kids[i + 1];
+            if (
+                k.type === "identifier" &&
+                next &&
+                node.tree.rootNode.text.slice(k.endIndex, next.startIndex).includes("=")
+            ) {
+                props.push(`${lcFirst(k.text)}: ${this.expr(next).s}`);
+                i++;
+                continue;
+            }
             if (k.type === "assignment_expression" || k.type === "name_equals")
                 props.push(
                     `${lcFirst(k.childForFieldName("left")?.text ?? named(k)[0].text)}: ${this.expr(k.childForFieldName("right") ?? named(k).at(-1)).s}`,
@@ -2523,6 +2582,8 @@ export class FileConverter {
         }
         if (recvText === "Math") {
             const args = a();
+            const renamed = { Ceiling: "ceil", Truncate: "trunc" }[name];
+            if (renamed) return { s: `Math.${renamed}(${args.map((x) => x.s).join(", ")})`, t: T.num };
             return { s: `Math.${lcFirst(name)}(${args.map((x) => x.s).join(", ")})`, t: T.num };
         }
         if (/^(int|long|Int32|double|float|decimal)$/.test(recvText)) {
@@ -2541,7 +2602,15 @@ export class FileConverter {
             if (name === "ToDouble" || name === "ToSingle" || name === "ToDecimal")
                 return { s: `Number(${args[0].s})`, t: T.num };
             if (name === "ToBoolean") return { s: `Boolean(${args[0].s})`, t: T.bool };
-            if (name === "ToString") return { s: `String(${args[0].s})`, t: T.str };
+            if (name === "ToString") {
+                // A `dynamic` packet's ToString is its JSON; String() would be "[object Object]".
+                if (!args[0].t && /^[\w.]+$/.test(args[0].s))
+                    return {
+                        s: `(typeof ${args[0].s} === "object" ? JSON.stringify(${args[0].s}) : String(${args[0].s}))`,
+                        t: T.str,
+                    };
+                return { s: `String(${args[0].s})`, t: T.str };
+            }
         }
         if (recvText === "TimeSpan" && /^From/.test(name)) {
             const k = {
@@ -2721,6 +2790,38 @@ export class FileConverter {
                 };
             }
         }
+        // Bot.Map.TryGetPlayer(name, out p): `(p = bot.map.getPlayer(name)) != null`. An
+        // `out PlayerInfo? p` declaration is declared before the statement (`hoisted`).
+        if (name === "TryGetPlayer" && /\.map$/.test(base) && argNodes.length === 2) {
+            const outArg = named(argNodes[1]).at(-1);
+            let target = outArg.text;
+            if (outArg.type === "declaration_expression") {
+                target = outArg.childForFieldName("name").text;
+                if (!this.lookup(target)) {
+                    this.declare(target, null);
+                    (this.hoisted ??= []).push(`let ${target}: PlayerInfo | null = null;`);
+                    this.need("PlayerInfo", true);
+                }
+            }
+            return {
+                s: `(${target} = ${base}${q}getPlayer(${this.expr(named(argNodes[0]).at(-1)).s})) != null`,
+                t: T.bool,
+            };
+        }
+        // Core.CBOBool(key, out bool x): whether the key is set; `x` its value, read before the
+        // statement (reading the CBO has no side effect).
+        if (name === "CBOBool" && argNodes.length === 2 && recv.t?.ts === this.tsx.declaredType("CoreBots")) {
+            const outArg = named(argNodes[1]).at(-1);
+            const key = this.expr(named(argNodes[0]).at(-1)).s;
+            if (outArg.type === "declaration_expression") {
+                const target = outArg.childForFieldName("name").text;
+                this.declare(target, T.bool);
+                (this.hoisted ??= []).push(`const ${target} = ${base}${q}cboBool(${key}) === true;`);
+            } else {
+                (this.hoisted ??= []).push(`${outArg.text} = ${base}${q}cboBool(${key}) === true;`);
+            }
+            return { s: `${base}${q}cboBool(${key}) !== null`, t: T.bool };
+        }
         // C# array overloads that the port names apart: EnsureComplete(params int[]) etc.
         const ARRAY_OVERLOADS = {
             EnsureComplete: "EnsureCompleteQuests",
@@ -2885,9 +2986,28 @@ export class FileConverter {
                 case "Replace":
                     return r(call("replaceAll"), T.str);
                 case "Split": {
-                    const sep = a.filter((x) => !/StringSplitOptions/.test(x));
-                    const s = call("split", sep.length > 1 ? [sep[0]] : sep);
-                    return r(a.some((x) => /RemoveEmptyEntries/.test(x)) ? `${s}.filter((x) => x)` : s, { arr: T.str });
+                    const sep = a.filter((x) => !/StringSplitOptions/i.test(x) && !/^\d+$/.test(x));
+                    // `new[] { '\n', ',' }`: one separator is itself, several a character class.
+                    const list = sep.length === 1 && /^\[(.*)\]$/s.exec(sep[0]);
+                    let arg = sep.length > 1 ? [sep[0]] : sep;
+                    if (list) {
+                        // String literals only (a `","` separator has a comma in it).
+                        const items = list[1].replace(/"(\\.|[^"\\])*"/g, "").replace(/[\s,]/g, "")
+                            ? [sep[0]]
+                            : (list[1].match(/"(\\.|[^"\\])*"/g) ?? []);
+                        arg =
+                            items.length === 1
+                                ? [items[0]]
+                                : items.every((x) => /^"(\\.|[^"\\])"$/.test(x))
+                                  ? [`/[${items.map((x) => x.slice(1, -1).replace(/[\]\\^-]/g, "\\$&")).join("")}]/`]
+                                  : [sep[0]];
+                    }
+                    const s = call("split", arg);
+                    const trim = a.some((x) => /TrimEntries/i.test(x));
+                    const t = trim ? `${s}.map((x) => x.trim())` : s;
+                    return r(a.some((x) => /RemoveEmptyEntries/i.test(x)) ? `${t}.filter((x) => x)` : t, {
+                        arr: T.str,
+                    });
                 }
                 case "Substring":
                     return r(
@@ -3374,6 +3494,14 @@ const STRING_ONLY = new Set([
     "ToCharArray",
     "Replace",
 ]);
+
+/** Whether `node` is the function an invocation calls (not a value passed around). */
+function isInvoked(node) {
+    const p = node.parent;
+    if (p?.type === "invocation_expression" && p.childForFieldName("function")?.id === node.id) return true;
+    // `Bot.Events.X += Handler` / `-=`: the same reference both times (bind would make a new one).
+    return p?.type === "assignment_expression" && /^[+-]=$/.test(p.child(1)?.text ?? "");
+}
 
 function lcFirstPath(text) {
     return text.split(".").map(lcFirst).join(".");

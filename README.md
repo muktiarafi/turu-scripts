@@ -323,8 +323,8 @@ divisions. Turu now accepts `[` and `]` in an options file name (`HardCoreMetals
 
 ## Seasonal
 
-Every script in the C# `Seasonal/` folder is ported but `Frostvale/CheckForDonatedACs`, which uses
-CoreArmyLite and is ported with the Army scripts. The 235 left after the earlier batches were converted with
+Every script in the C# `Seasonal/` folder is ported (`Frostvale/CheckForDonatedACs`, which uses
+CoreArmyLite, came with the Army scripts). The 235 left after the earlier batches were converted with
 cs2ts; they include nothing outside `Seasonal/` that wasn't ported. They type-check and load, but
 none has run in game. These 9 were fixed by hand; the rest are drafts with the cs2ts line:
 `18thBirthdayHeroBadge`, `NoEgretsBadge`, `NusantaraBossesBadge` (C#'s `badge` field and `Badge()`
@@ -392,6 +392,103 @@ C# bugs fixed on purpose (still in VibeSkua's Scripts, marked `C#` in the code):
   their names.
 
 Turu now accepts `%` in an options file name (the `1%Capes`-style storages of `OnePercentDrops`).
+
+## Army
+
+`army/CoreArmyLite.ts` is VibeSkua's `Army/CoreArmyLite.cs`, hand-ported onto Turu's several
+accounts (Army > Accounts, tabs and processes; `docs/turu/STATUS.md`). Where C# reads files,
+the engine's `bot.army` (`bot/src/api/army.rs`) stands in:
+
+- C#'s army log (`ArmyLogging`, a file in Skua's options folder that every client appends to)
+  is a shared log in the data folder: `bot.army.readLog` / `appendLog` / `writeLog` /
+  `clearLog`. Tabs and the processes Army > Accounts launches share the data folder.
+- `doForAll` (the one-client scripts that log in each account in turn) goes through the accounts
+  of Army > Accounts (`bot.army.accounts()`) and logs in with `bot.army.login(username)`, which
+  reads the password from the system keychain; scripts never see it (C# reads the passwords
+  from Skua Manager's settings). An account without a saved password is skipped.
+- `getRoomNr` is `bot.army.roomNumber()`: C#'s hash of the machine name, user name and hour,
+  with the data folder in place of the machine name.
+- `Bot.Map.TryGetPlayer` / `PlayerExists` are `bot.map.getPlayer(name)` / `playerExists(name)`
+  (new: another player's `world.uoTree` entry, VibeSkua `PlayerInfo`).
+- The aggro packet loops (C# `Task.Run`) are `bot.handlers` timers; `tryGoto`'s `out
+  playerObject` is `gotoPlayer` after the call.
+- Not ported: the Butler's communication files (C# writes `<me>~!<leader>.txt` so the leader's
+  CoreBots writes its locked map, `ButlerOnMe`); `lockedMaps` searches the locked maps as C#
+  does when that file is missing.
+- `Players()` reads `player1` to `player20` with `configOr`: Turu's `bot.config.get` throws for
+  an option the script doesn't declare (most declare fewer), C#'s returns null.
+
+The Army scripts sync through the Ultras' CoreUltra (`WaitForArmy`, `CheckArmyProgressBool`,
+`ClearSyncFile`, ...) and join through its CoreEngine. The Ultras aren't ported, so those members
+are in `army/CoreArmySync.ts` (`CoreArmySync`, `CoreArmyEngine`): the sync files are `bot.army`
+logs (C# guards updates with a machine-wide mutex; each member rewrites its line on every
+check, so a lost update comes back), and `CoreEngine.Join` joins a room that every client of
+the machine picks (`bot.army.machineRoomNumber()`, C#'s `GenerateRoomID` hashes the machine
+GUID). `CoreEngine.Boot` starts the class's saved rotation instead of the engine's own skill loop.
+
+Ported (cs2ts, then by hand): `CoreArmyLite`, `ArmySpiritOrbs`, `ArmyLR`, `TouchMass`,
+`ArmyLeveling`, `ArmyLichWarGoldXp[Mem]`, `ArmyPrismatas`, `ArmySevenCirclesWar`, `ArmyWarMap`,
+the one-client scripts (`AccsForAll`, `AllBankAllItems`, `AllDailies`, `AllRankAllClasses`,
+`EldersBlood`, `WheelOfDoom`, `TagAllAccounts`; C# disables them all in `ScriptMain`, and so do
+the ports) and `seasonal/frostvale/CheckForDonatedACs` (its two log files are `bot.army` logs).
+`TagAllAccounts` logs a skip for C#'s `AutoAddTags` (scripts can't edit Army > Accounts).
+
+Logged skips (they run on the Ultras' engine): `ArmyFarmVoidAuras` (Ultrasv3's CoreEnginev3,
+UltraGeneral, UltraEnhancements and ArmyGeneral), `Dailies/TheEncroachingShadows` and
+`Dailies/WrongTurnatVoidbuquerque` (CoreEngine's boss fights, CoreUltra's potions and charge
+listener). Not ported: `Template` and `OneClient/OneClientTemplate` (templates),
+`OneClient/GenerateQueuedOneClientScript` (writes a script with file dialogs).
+
+C# bugs fixed on purpose (still in VibeSkua's Scripts, marked `C#` in the code):
+
+- `CoreArmyLite.AggroMonStart` sends the aggro packet only while the player is in `_cell`, which
+  is null when no cell is given (`SmartAggroMonStart`), so it never sent it; it compares with the
+  cell it jumped to (`_cell ?? "Enter"`).
+- `CoreArmyLite.PartyManagement` stops when a member leaves only `if (stopping)`, which is never
+  true; it checks `!stopping`.
+
+## Tools
+
+Ported: `BankAllClasses`, `BankAllItems` (earlier), `RankUpAllClasses`, `RankUpEquippedClass`,
+`BuyOut`, `CheckArmyRoles`, `EvaluateAccount`, `ChooseBestGear(Generic)`,
+`ChooseBestGear(Racial)`, `AutoZoneandAttack`, `YandereStalker`, `InsertNameHeresUltraPrep`,
+`NooneAskeforThese/BuyAllGoldVouchers`, `TreasureChestSpam`, `WheelOfDoomSpam`. All but
+`YandereStalker` and `BuyAllGoldVouchers` were fixed by hand. Differences from C#:
+`TreasureChestSpam` and `WheelOfDoomSpam` ask for the amount in an `Amount` option and open the
+Script Options window there (C# uses Skua's text-input dialog, which Turu doesn't have);
+`AutoZoneandAttack`'s `Task.Run` moves are `bot.handlers` timers. The `ChooseBestGear` tools
+never equip the boost they're given, as in C# (they check the CBO and enhance the class).
+
+Skipped, and why:
+
+| Tool | Why |
+|---|---|
+| `Butlerv3`, `Butlerv4/Butlerv4` | Old Butler versions; Turu has Butler built in (Plugins > Butler). v4 also talks to a leader plugin over TCP. |
+| `Butlerv4/DownloadDLL` | Downloads a plugin DLL into Skua's folder (HTTP, files). |
+| `ForDevelopers/*` (`CaseStorage`, `GenerateQuestFilesv4`, `GeneratorHelpers/*`, `MergeTemplateHelperV2`, `ScriptMainCleaner`, `ShopAcheivmentandIOGrabber`, `SummarizeStatistics`, `UpdateTags`, `WeeklyReleaseGeneratorV2`, `WeeklyReleaseGeneratorV3`) | Developer and generator tools: they write scripts and data files or read the scripts folder. |
+| `GenerateQueuedScript` | A generator: writes a script file, with file dialogs. |
+| `BestGearAttemptX` | A developer test of CoreBots' `EquipBestItemsForMeta`. |
+| `FindBestPing` | Pings the servers with System.Net, which scripts don't have. |
+| `KPHandItemCounter` | Writes its counts to log files and opens them (file I/O, `Process.Start`). |
+| `MemoryLeakAudit/MemoryLeakAudit` | A developer diagnostic reading Skua's files. |
+| `NooneAskeforThese/PickAScript4Me`, `PickFiveMergeShopsforme` | Pick from the files of Skua's scripts folder. |
+
+C# bugs fixed on purpose (marked `C#` in the code):
+
+- `EvaluateAccount` maps May to month 4 and April to 5, so the account age was a month off for
+  accounts made in either.
+- `WheelOfDoomSpam` logs the Treasure Potions it earned as `before - after` (negative).
+
+cs2ts now also: writes `Bot.Map.TryGetPlayer(name, out p)` as `(p = bot.map.getPlayer(name)) !=
+null` and `Core.CBOBool(key, out bool x)` as `Core.cboBool(key) !== null`, declaring the `out`
+variable before the statement; binds a method used as a value (`["Lacerate",
+Forge.Lacerate]`, C#'s method groups: an unbound TS method loses `this`; event `+=`/`-=` keep the
+same reference); fixes `x is not null and "json"` (it wrote `!(x == null && x === "json")`,
+always true; `story/Friendship` had it); builds `Option<T>` fields declared with `new(...)`;
+`new { Map = "a" }`; `Split(new[] { ',' }, RemoveEmptyEntries)`; `Convert.ToString` of a packet
+(its JSON); `Math.Ceiling`; Skua's `CurrentClass.Name` (Turu's `currentClass` is the name).
+Re-running it changed 3 earlier drafts (`0AllClasses`, `SinoftheUndying(NoInsignia)`,
+`story/Friendship`).
 
 ## FarmerJoe
 

@@ -248,7 +248,7 @@ export class AllClasses {
 
         Adv.gearStore(undefined, { enhAfter: true });
         this.checkAndExecute("Blaze Binder", () => BB.getClass(rankUpClass));
-        this.checkAndExecute("The Collector", Daily.collectorClass);
+        this.checkAndExecute("The Collector", Daily.collectorClass.bind(Daily));
         this.checkAndExecute("Cryomancer", () => Cryo.doCryomancer(rankUpClass));
         this.checkAndExecute("Lord of Order", () => LOO.getLoO(rankUpClass));
         Adv.gearStore(true, { enhAfter: true });
@@ -478,7 +478,7 @@ export class AllClasses {
         // Non Insignia
         this.checkAndExecute("King's Echo", () => KE.getKE(rankUpClass));
         // CheckAndExecute("Lich", () => lich.Example(rankUpClass));
-        this.checkAndExecute("ShadowScythe General", Daily.shadowScytheClass);
+        this.checkAndExecute("ShadowScythe General", Daily.shadowScytheClass.bind(Daily));
         // CheckAndExecute("Sovereign of Storms", () => SOS.GetSOS(rankUpClass));
         Adv.gearStore(true, { enhAfter: true });
         Core.toBank(
