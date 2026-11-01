@@ -13,15 +13,16 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import { posix } from "node:path";
 
 const INDEX_VERSION = 1;
-// Not scripts: the API types, this tool, CI.
-const SKIP = new Set(["types", "tools", "node_modules"]);
+// Not scripts: the API types and the C# converter. (`tools/` itself holds scripts; this tool
+// and the converter are `.mjs`, which isn't listed.)
+const SKIP = new Set(["types", "tools/cs2ts"]);
 
 /** The `.ts`/`.js` files under `dir`, as `/`-separated paths. */
 function listScripts(dir = "") {
     const out = [];
     for (const name of readdirSync(dir || ".")) {
-        if (name.startsWith(".") || (dir === "" && SKIP.has(name))) continue;
         const path = dir ? `${dir}/${name}` : name;
+        if (name.startsWith(".") || name === "node_modules" || SKIP.has(path)) continue;
         if (statSync(path).isDirectory()) out.push(...listScripts(path));
         else if (/\.(ts|js)$/.test(name)) out.push(path);
     }
@@ -78,10 +79,11 @@ export function isLibrary(source) {
 function imports(source) {
     const out = [];
     const patterns = [
-        /\b(?:import|export)\s[^'"`;]*?\bfrom\s*["'](\.{1,2}\/[^"']+)["']/g,
-        /\bimport\s*["'](\.{1,2}\/[^"']+)["']/g,
+        // The closing quote matches the opening one: file names may hold the other quote.
+        /\b(?:import|export)\s[^'"`;]*?\bfrom\s*(["'])(\.{1,2}\/(?:(?!\1).)+)\1/g,
+        /\bimport\s*(["'])(\.{1,2}\/(?:(?!\1).)+)\1/g,
     ];
-    for (const pattern of patterns) for (const m of source.matchAll(pattern)) out.push(m[1]);
+    for (const pattern of patterns) for (const m of source.matchAll(pattern)) out.push(m[2]);
     return out;
 }
 
