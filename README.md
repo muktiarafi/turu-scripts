@@ -198,8 +198,8 @@ Mysterious Dungeon and TreasureHunter reps), and members of CoreLegion, CoreHoll
 CoreNSOD, CoreQoM, CoreToD, CoreSummer and CoreSepulchure. `ShopRequirement`, `RewardItem` and
 turu's `QuestItem` gained `upgrade` (and `QuestItem` `maxStack`), and turu `bot.map.cellPlayers`.
 
-Not ported: `LothianTreasuryMerge`'s Queen Iona ingredients (C# fights her with the Ultra engine;
-the merge logs and skips them).
+`LothianTreasuryMerge` fights Queen Iona for its four ingredients with
+`ultrasv3/dependenciesmerge/QueenIona` (the Entwined Eclipse engine; "Ultras").
 
 C# bugs fixed on purpose (still in VibeSkua's Scripts, marked `C#` in the code):
 
@@ -351,7 +351,7 @@ converted with cs2ts, with `prototypes/InfernalArenaLW` (VerusDoomKnight include
 else outside the Ultras folders, `Army/` and `Tools/` was left but `Core/TaskExtensions.cs`, which
 no script includes and only wraps `Task.Run` (scripts are single-threaded). `0AllClasses`, `Lich`,
 `SovereignOfStorms` and `VerusDoomKnight` include Ultras files only for what their included
-scripts reach (`LothianTreasuryMerge`'s Queen Iona, already a logged skip). They type-check and
+scripts reach (`LothianTreasuryMerge`'s Queen Iona, see "Ultras"). They type-check and
 load, but none has run in game. These 18 were fixed by hand; the rest are drafts with the cs2ts line:
 `InfernalArenaLW`, `0CurrentDailyGifts`, `WorldBoss[Template]`, `CoreArchMage`, `0ArchMage`,
 `ArcanaInvoker[Non-Insignia]`, `JoePrepsForUltras`, `BetaBerserkerQuest`, `BringTheCheer`,
@@ -433,10 +433,10 @@ the one-client scripts (`AccsForAll`, `AllBankAllItems`, `AllDailies`, `AllRankA
 the ports) and `seasonal/frostvale/CheckForDonatedACs` (its two log files are `bot.army` logs).
 `TagAllAccounts` logs a skip for C#'s `AutoAddTags` (scripts can't edit Army > Accounts).
 
-Logged skips (they run on the Ultras' engine): `ArmyFarmVoidAuras` (Ultrasv3's CoreEnginev3,
-UltraGeneral, UltraEnhancements and ArmyGeneral), `Dailies/TheEncroachingShadows` and
-`Dailies/WrongTurnatVoidbuquerque` (CoreEngine's boss fights, CoreUltra's potions and charge
-listener). Not ported: `Template` and `OneClient/OneClientTemplate` (templates),
+On the Ultras' engines (cs2ts drafts, fixed until they type-check): `ArmyFarmVoidAuras`
+(Ultrasv3's CoreEnginev3, UltraGeneral, UltraEnhancements and ArmyGeneral),
+`Dailies/TheEncroachingShadows` and `Dailies/WrongTurnatVoidbuquerque` (the Entwined Eclipse
+CoreEngine and CoreUltra). Not ported: `Template` and `OneClient/OneClientTemplate` (templates),
 `OneClient/GenerateQueuedOneClientScript` (writes a script with file dialogs).
 
 C# bugs fixed on purpose (still in VibeSkua's Scripts, marked `C#` in the code):
@@ -535,18 +535,36 @@ has run in game yet; it type-checks, and `bot/tests/runtime.rs` loads DoAll agai
 ## Ultras
 
 The Ultras are ported from the latest set, `Ultrasv3` (the `Ultras/` and `Ultrasv2/` folders are
-older versions of the same fights and stay unported). Started with
-`Ultrasv3/ChallengeBosses/NightmareCarnaxv3` (`ultrasv3/challengebosses/NightmareCarnaxv3.ts`)
-and the members of `DependenciesUltras` it reaches, ported in C# order:
+older versions of the same fights and stay unported). Ported: all of `DependenciesUltras`
+(`CoreEnginev3`, `CoreUltrav3`, `UltraGeneral`, `UltraPotions`, `UltraEnhancements`, `GetPotions`
+by hand; `UltraAsync`, `UltraDeath`, `UltraQueue`, `UltraWaitForArmy`, `UltraCustomClassSync`,
+`UltraCounterAttack`, `UltraPulse`, `GetScrolls`, `PrerequisitesChecker` from cs2ts drafts read
+through by hand), `ArmyDependencies/ArmyGeneral`, and, drafted by cs2ts and fixed until they
+type-check (their first line says so): the 11 `IndividualUltras`, the `ChallengeBosses` (with
+`DeveloperTools`), `DependenciesDailies`, `DoAllUltras`, `DoAllUltrasStorys`,
+`DoUltrasDoDailiesDoChallengeBosses`, `FarmGold/ArmyPrismatasv3`, `Weapons/EmpoweredNationItem`
+and `TestUltrasOrBossesScripts/Masakadov3`. `NightmareCarnaxv3` was read through by hand.
 
-- `CoreEnginev3`: Boot, the boss checks, Potions & Scrolls, Auras, Player, Map, Utils and the
-  whole skill engine (`SkillsAsync` and every class rotation). Not yet: Quest, Items, Best
-  Enhancement, Combat, Factions, Best Gear, Shop, Drops.
-- `CoreUltrav3`: extends `army/CoreArmySync.ts` for the sync members (only the file locking
-  differs from the Entwined Eclipse copy), plus `EquipClassSync`, `JoinHouse` and the best
-  tonic/elixir picks.
-- `UltraGeneral`: the preset classes and the whole-army dead/alive checks.
-- `UltraPotions`, `UltraEnhancements` and `GetPotions` (`PotionBuyerv2`): whole.
+`Entwined Eclipse` runs on its own, older copies of the engine:
+- `CoreEngine.ts` is built from the CoreEnginev3 port with what differs in C#: no singleton,
+  Boot starts the drop loop, the stopping handler cancels the skill task, the potion and
+  consumable helpers pause the skill task (`UsePotion` presses skill 5 itself), `Cast` only takes
+  skills 1-4, `DisableSkills` only cancels the task, `ChooseBestCell` returns nothing, the
+  weapon-trait table is renumbered (7 Ravenous ... 99 Forge), the skill task runs every 50 ms, and
+  the rotations (taken from the cs2ts draft) are the older ones. `auraRemainingTime` is Skua's
+  `Aura.RemainingTime`.
+- `CoreUltra.ts` extends the CoreUltrav3 port (whose engine is now an overridable `engine`) with its
+  own CoreEngine and its older scroll and taunt helpers; one C# bug fixed on purpose
+  (`GetScrollOfDecay` looped while you *had* 10 scrolls).
+- The boss scripts (`Masakado`, `MidnightSun`, `SolsticeMoon`, `AscensionoftheEclipse`,
+  `0GreatbladeOfTheEntwinedEclipse`, `VictorMatsuriStory`) and `DependenciesMerge/QueenIona` are cs2ts
+  drafts fixed until they type-check. Their sync files are `bot.army` logs, their
+  `Bot.Flash.FlashCall` listeners listen to `extensionPacket`, and each script's `ScriptMain` is a
+  `scriptMain()` method so the Greatblade can run it. C#'s `TauntCurrentTarget(enrageMessage,
+  maxAttempts)` overload is `tauntCurrentTargetForMessage`; `ref` parameters return their value.
+  Masakado's quest item uses its name (C# passes `ItemBase.ToString()`).
+
+`TestZone` runs on the old `Ultras/CoreEngine` and stays unported.
 
 **Background work (C#'s `Task.Run`, `new Thread`, `async`/`await Task.Delay`)** is
 `core/CoreTasks.ts`: a task is a generator function that a `bot.handlers` timer steps between
@@ -561,28 +579,52 @@ Bot.Wait.ForTrue(() => c, n) in a task         ->  const ok = yield until(() => 
 cts.Cancel()                                   ->  tasks.cancel("name")   // runs `finally` blocks
 task is { IsCompleted: false }                 ->  tasks.running("name")
 async Task FooAsync() / void Loop() on a Thread->  *fooAsync(): Generator<TaskStep, void, boolean>
+new CancellationTokenSource() / ManualResetEvent -> the same names in core/CoreTasks.ts
 ```
 
 Inside a task, wait with `yield`: a `bot.sleep` or `bot.wait.*` there blocks the whole script
 (handlers never run inside a handler). A one-off call from a packet listener (`_ = Task.Run(() =>
 Bot.Player.WalkTo(x, y))`) needs no task: listeners already run on the script thread, so call it
-directly. Earlier ports turned one-shot walks into `bot.handlers.once` (DarkCarnax,
-MoreSkullsBoss, CoreArchMage, WorldBoss[Template], AutoZoneandAttack); they stay as they are.
+directly. A fire-and-forget `async Task` whose start guards matter (Ultra Speaker's taunts) keeps
+the guard in a plain method that then starts the task. Earlier ports turned one-shot walks into
+`bot.handlers.once` (DarkCarnax, MoreSkullsBoss, CoreArchMage, WorldBoss[Template],
+AutoZoneandAttack); they stay as they are.
 
 What differs from C#:
 - `CoreEnginev3`'s skill loop is the `UltraSkills` task, stepped every 100 ms like C#'s
   `skillsDelay`. A rotation that waits (Chrono ShadowSlayer's `Wait.ForTrue`, the 100 ms sleeps)
   pauses the whole script for that long, where C# paused only its skill thread. While the script
   is inside one long engine wait (`bot.wait.forMapLoad`, ...) the skills wait too
-  (`docs/turu/STATUS.md`, "Handlers wait during one engine wait").
-- The scripts' `Core` (CoreEnginev3) is `Engine`, as `Core` is CoreBots (C#'s `C`).
-- NightmareCarnax doesn't write `fbs_mute.sync` (it mutes VibeSkua's FBS plugin; Turu has none).
-- `EquipClassSync` clears a sync log with no line newer than 15 minutes (C# checks the file's
-  write time). `GetPotions` reads its options with `configOr`, as UltraPotions calls it from
-  scripts that don't declare them.
+  (`docs/turu/STATUS.md`, "Handlers wait during one engine wait"). The taunt loops
+  (`UltraAsync.startTauntLoop`) press every 50 ms with `yield 50`, so during the fight loop's
+  `bot.sleep` they press at the handler rate instead of C#'s spin-waited 50 ms.
+- `UltraDeath`'s wipe monitor runs `onWipe` (the retreat) inside its task step, holding the
+  script meanwhile; C#'s main loop is waiting on `retreatComplete` then anyway.
+- The scripts' `Core` (CoreEnginev3) is `Engine`, as `Core` is CoreBots (C#'s `C`); cs2ts now
+  does this itself. cs2ts also learned `DateTimeOffset`, LINQ `Append`/`Prepend`, and two fixes
+  that apply to every draft: `x is not null && y` (tree-sitter reads it as `x is not (null && y)`;
+  one earlier port, FishingGearMerge, had it wrong) and `a.Equals(b ?? "", IgnoreCase)`.
+- The FBS plugin mute file (`fbs_mute.sync`, VibeSkua only) isn't written; cs2ts leaves out the
+  statements that only touch it.
+- `Bot.Flash.FlashCall`'s "pext"/"packetFromServer" listeners (Kathool, Ultra Speaker, Entwined Eclipse) listen to
+  `extensionPacket` and read `params.dataObj` (C#'s `b.o`).
+- C# overloads are merged: `Engine.killQuest(id, map, monster, cell?, pad?)` or with a
+  `KillQuestOptions` object; `owned(key, isTemp)` counts and `ownedAtLeast(key, n)` checks (C#'s
+  `bool Owned`); `buyItem(key, shop, map, quantity, { calculateRemaining, ... })`;
+  `killWithPriority(...keys)` plus `killWithPriorityNames`/`Ids`/`AtMapId`; `useTaunt(target?)`.
+  The wipe helpers' `ref` arguments are the fields of a state object.
+- A sync file is `bot.army`'s shared log, so a file's write time is its newest line's time
+  (`syncFileAgeMinutes`), and `UltraAsync`'s fight start is stored as Unix milliseconds.
+- Quest class and faction requirements (`IsAvailable`) are read from `world.questTree`
+  (`iClass`, `iReqCP`, `FactionID`, `iReqRep`); `turu.ts`'s `Quest` doesn't carry them.
+- NightmareCarnax doesn't write `fbs_mute.sync`. `EquipClassSync` clears a sync log with no line
+  newer than 15 minutes. `GetPotions` reads its options with `configOr`, as UltraPotions calls it
+  from scripts that don't declare them.
 - New API for them: `bot.player.stats` (VibeSkua `Player.Stats`) and `bot.lite.hidePlayers`.
+- C# bug fixed: `CoreEnginev3.ChooseBestCell`'s monster-name filter (an earlier draft's
+  precedence slip matched every monster). `KillWithPriority` skips a null key (C# would throw).
 
-None of it has run in game. `bot/tests/core_tasks.rs` tests the tasks against a fake game and
-checks that NightmareCarnax's module tree loads.
+None of it has run in game. `bot/tests/core_tasks.rs` tests the tasks, the cancellation token and
+reset event against a fake game, and checks that every ported Ultrasv3 script's module tree loads.
 
 A fuller guide is in `docs/turu/SCRIPTING.md`.

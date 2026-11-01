@@ -108,7 +108,7 @@ export class FishingGearMerge {
             const type = packet["params"].type;
             const data = packet["params"].dataObj;
 
-            if (!(type === null && type === "json")) {
+            if (type != null && type === "json") {
                 const cmd = String(data.cmd);
 
                 switch (cmd) {

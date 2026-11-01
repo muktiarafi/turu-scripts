@@ -13,7 +13,9 @@ import { FelixsGildedGearMerge } from "./FelixsGildedGearMerge";
 import { LiaTaraHillLootMerge } from "./LiaTaraHillLootMerge";
 import { LoughshineLootMerge } from "./LoughshineLootMerge";
 import { CoreAOR } from "../../story/ageofruin/CoreAOR";
+import { QueenIona } from "../../ultrasv3/dependenciesmerge/QueenIona";
 
+const QI = new QueenIona();
 const Adv = new CoreAdvanced();
 const AOR = new CoreAOR();
 const FGGM = new FelixsGildedGearMerge();
@@ -54,11 +56,8 @@ export class LothianTreasuryMerge {
                 case "Dark Lightning Gloria":
 
                 case "Skye Nobility Sash":
-                    // C# fights Queen Iona with Ultrasv3/DependenciesMerge/QueenIona.cs, on the Ultra
-                    // engine, which Turu doesn't port.
-                    Core.logger(
-                        `${req.name} drops from the Queen Iona ultra fight, which Turu doesn't port. Skipping.`,
-                    );
+                    Core.farmingLogger(req.name, quant);
+                    QI.fight(req.name, req.quantity, true);
                     break;
                 case "Skye's Lightning":
 

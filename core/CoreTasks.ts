@@ -172,3 +172,63 @@ export class CoreTasks {
 
 /** The script's tasks. */
 export const tasks = new CoreTasks();
+
+/** C#'s `CancellationToken`: a task reads it at each step and ends when it's set. */
+export interface CancellationToken {
+    readonly isCancellationRequested: boolean;
+}
+
+/**
+ * C#'s `CancellationTokenSource`: `cancel()` sets its `token`, which the tasks given it check at
+ * their next step (a task can also be ended at once with `tasks.cancel(name)`).
+ */
+export class CancellationTokenSource {
+    private cancelled = false;
+    readonly token: CancellationToken;
+
+    constructor() {
+        const source = this;
+        this.token = {
+            get isCancellationRequested(): boolean {
+                return source.cancelled;
+            },
+        };
+    }
+
+    get isCancellationRequested(): boolean {
+        return this.cancelled;
+    }
+
+    cancel(): void {
+        this.cancelled = true;
+    }
+}
+
+/** C#'s `CancellationToken.None` (`default`): never cancelled. */
+export const noCancellation: CancellationToken = { isCancellationRequested: false };
+
+/**
+ * C#'s `ManualResetEvent`: a flag a task sets (`set()`) and the script waits for (`waitOne`).
+ * Waiting runs the tasks (it sleeps with `bot.sleep`); don't wait for it inside a task, `yield
+ * until(() => event.isSet)` there.
+ */
+export class ManualResetEvent {
+    constructor(private signaled = false) {}
+
+    get isSet(): boolean {
+        return this.signaled;
+    }
+
+    set(): void {
+        this.signaled = true;
+    }
+
+    reset(): void {
+        this.signaled = false;
+    }
+
+    /** Waits until it's set, at most `timeoutMs` (-1: forever); false on a timeout. */
+    waitOne(timeoutMs = -1): boolean {
+        return bot.wait.forTrue(() => this.signaled, timeoutMs < 0 ? 0 : Math.max(1, Math.ceil(timeoutMs / 100)));
+    }
+}

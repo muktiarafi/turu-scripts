@@ -65,6 +65,45 @@ const MAP_TYPES = new Set([
 const SET_TYPES = new Set(["HashSet", "ISet", "SortedSet"]);
 // Library properties of a script class that become module-level instances or imports.
 const CORE_SINGLETONS = { CoreBots: "Core" };
+// Classes ported to TypeScript that a script keeps one of per object, not as a module-level library
+// instance (`private CancellationTokenSource _cts = new();`).
+const NOT_LIBRARIES = new Set(["CancellationTokenSource", "ManualResetEvent", "RetryCounter", "MonsterKey"]);
+// VibeSkua's FBS plugin mute file, which the Ultras write while they fight; Turu has no such plugin,
+// so statements and fields that touch it are left out.
+const FBS_MUTE = /\b_fbsMuteFile\b|fbs_mute\.sync/;
+
+/** A statement that only reads or writes the FBS mute file (or a comment about it). */
+function fbsOnly(node) {
+    if (node.type === "comment") return /\bFBS\b|mute file/i.test(node.text);
+    if (!FBS_MUTE.test(node.text)) return false;
+    switch (node.type) {
+        case "expression_statement":
+        case "local_declaration_statement":
+            return true;
+        case "block":
+            return named(node).every((k) => fbsOnly(k));
+        case "if_statement":
+            return FBS_MUTE.test(node.childForFieldName("condition")?.text ?? "");
+        case "try_statement": {
+            const body = node.childForFieldName("body");
+            return !!body && fbsOnly(body) && !named(node).some((k) => k.type === "finally_clause");
+        }
+        default:
+            return false;
+    }
+}
+// Libraries whose port has C#'s `static Instance` as `static get instance()`.
+const INSTANCE_SINGLETONS = new Set(["CoreEnginev3", "UltraWaitForArmy"]);
+
+/**
+ * The module-level name of a script's library property `n` of type `type`. `Core` is CoreBots in
+ * every port, so the Ultras' `CoreEnginev3 Core` becomes `Engine`; a name equal to its type would
+ * shadow the imported class (`GooseMerge GooseMerge` -> `gooseMerge`).
+ */
+function libraryLocal(n, type) {
+    if (n === "Core" && type !== "CoreBots") return type === "CoreEnginev3" ? "Engine" : lcFirst(type);
+    return n === type ? lcFirst(n) : n;
+}
 
 const T = {
     str: { prim: "string" },
@@ -202,7 +241,7 @@ export class FileConverter {
                 if (NUMBER_TYPES.has(name)) return T.num;
                 if (name === "String") return T.str;
                 if (name === "Boolean") return T.bool;
-                if (name === "DateTime") return { date: true, prim: "number" };
+                if (name === "DateTime" || name === "DateTimeOffset") return { date: true, prim: "number" };
                 if (name === "TimeSpan") return { span: true, prim: "number" };
                 return this.namedType(name);
             }
@@ -679,6 +718,7 @@ export class FileConverter {
                     lines.push(this.propertyDecl(m));
                     break;
                 case "field_declaration":
+                    if (FBS_MUTE.test(m.text)) break;
                     lines.push(this.fieldDecl(m, kids, groupNames));
                     break;
                 case "method_declaration":
@@ -758,13 +798,15 @@ export class FileConverter {
         )
             return null;
         const isLibrary =
-            this.csx.classByName(type) || (this.tsx.kindOf(type) === "class" && this.tsx.modulesOf(type)[0] !== "turu");
+            !NOT_LIBRARIES.has(type) &&
+            (this.csx.classByName(type) ||
+                (this.tsx.kindOf(type) === "class" && this.tsx.modulesOf(type)[0] !== "turu"));
         if (!isLibrary) return null;
         let lib = null;
         for (const [, other] of this.libs)
             if (other.type === type && !lib) lib = { ...other, decl: null, ref: other.ref ?? other };
         if (!lib) {
-            const local = n === type ? lcFirst(n) : n;
+            const local = libraryLocal(n, type);
             lib = { name: local, type, t: this.namedType(type), decl: `const ${local} = new ${type}();` };
         }
         this.libs.set(n, lib);
@@ -798,9 +840,12 @@ export class FileConverter {
                 if (other.type === type && !lib) lib = { ...other, decl: null, ref: other.ref ?? other };
             if (!lib) {
                 const t = this.namedType(type);
-                // `GooseMerge GooseMerge` would shadow the imported class: `const gooseMerge`.
-                const local = n === type ? lcFirst(n) : n;
-                lib = { name: local, type, t, decl: `const ${local} = new ${type}();` };
+                const local = libraryLocal(n, type);
+                const init =
+                    INSTANCE_SINGLETONS.has(type) && /=>\s*\w+\.Instance\s*;/.test(text)
+                        ? `${type}.instance`
+                        : `new ${type}()`;
+                lib = { name: local, type, t, decl: `const ${local} = ${init};` };
             }
         }
         if (lib) this.libs.set(n, lib);
@@ -1095,6 +1140,7 @@ export class FileConverter {
         let prevRow = null;
         for (const k of kids) {
             if (k.type === "local_function_statement") continue;
+            if (fbsOnly(k)) continue;
             if (prevRow !== null && k.startPosition.row > prevRow + 1) out.push("");
             prevRow = k.endPosition.row;
             // Declarations an expression of the statement needs first (`out` variables).
@@ -1602,7 +1648,32 @@ export class FileConverter {
             }
             case "is_pattern_expression": {
                 const e = this.expr(node.childForFieldName("expression"));
-                return { s: `(${this.pattern(node.childForFieldName("pattern"), e.s, e.t)})`, t: T.bool };
+                const pat = node.childForFieldName("pattern");
+                // tree-sitter parses `x is not null && y` as `x is not (null && y)`: the constant is
+                // the leftmost operand of the `&&`/`||` chain, and the rest goes around the test.
+                const constant = pat.type === "negated_pattern" ? named(pat)[0] : pat;
+                const chain = constant?.type === "constant_pattern" ? named(constant)[0] : null;
+                const logical = (n) =>
+                    n?.type === "binary_expression" && /^(&&|\|\|)$/.test(n.childForFieldName("operator")?.text ?? "");
+                if (logical(chain)) {
+                    let leaf = chain;
+                    while (logical(leaf)) leaf = leaf.childForFieldName("left");
+                    const leafPattern =
+                        leaf.type === "null_literal"
+                            ? pat.type === "negated_pattern"
+                                ? `${e.s} != null`
+                                : `${e.s} == null`
+                            : `${pat.type === "negated_pattern" ? "!==" : "==="}`.replace(
+                                  /.*/,
+                                  (op) => `${e.s} ${op} ${this.expr(leaf, e.t).s}`,
+                              );
+                    const render = (n) =>
+                        n.id === leaf.id
+                            ? leafPattern
+                            : `${render(n.childForFieldName("left"))} ${n.childForFieldName("operator").text} ${this.expr(n.childForFieldName("right"), T.bool).s}`;
+                    return { s: `(${render(chain)})`, t: T.bool };
+                }
+                return { s: `(${this.pattern(pat, e.s, e.t)})`, t: T.bool };
             }
             case "conditional_access_expression": {
                 const cond = this.expr(node.childForFieldName("condition"));
@@ -1923,7 +1994,7 @@ export class FileConverter {
         // Milliseconds since some start: only differences are used.
         if (et === "Environment" && /^TickCount(64)?$/.test(name)) return { s: "Date.now()", t: T.num };
         // DateTime and TimeSpan are milliseconds (Date.now()).
-        if (et === "DateTime") {
+        if (et === "DateTime" || et === "DateTimeOffset") {
             if (name === "Now") return { s: "Date.now()", t: { date: true, prim: "number" } };
             if (name === "UtcNow") return { s: "Date.now()", t: { date: true, utc: true, prim: "number" } };
             if (name === "MinValue") return { s: "0", t: { date: true, prim: "number" } };
@@ -2574,7 +2645,10 @@ export class FileConverter {
                     };
                 case "Equals":
                     if (/IgnoreCase$/.test(argNodes[2]?.text ?? ""))
-                        return { s: `${args[0].s}?.toLowerCase() === ${args[1].s}?.toLowerCase()`, t: T.bool };
+                        return {
+                            s: `${wrap(args[0].s)}?.toLowerCase() === ${wrap(args[1].s)}?.toLowerCase()`,
+                            t: T.bool,
+                        };
                     return { s: `${args[0].s} === ${args[1].s}`, t: T.bool };
                 case "Compare":
                     return { s: `${args[0].s}.localeCompare(${args[1].s})`, t: T.num };
@@ -2726,6 +2800,9 @@ export class FileConverter {
                 return { s: `${recv.s} + ${k === 1 ? v : `${wrap(v)} * ${k}`}`, t };
             }
         }
+        // DateTimeOffset.UtcNow.ToUnixTimeSeconds() and ToUnixTimeMilliseconds().
+        if (t?.date && name === "ToUnixTimeSeconds") return { s: `Math.floor(${recv.s} / 1000)`, t: T.num };
+        if (t?.date && name === "ToUnixTimeMilliseconds") return { s: recv.s, t: T.num };
         if (t?.date && name === "Subtract") {
             const v = this.expr(named(argNodes[0]).at(-1));
             return { s: `${recv.s} - ${wrap(v.s)}`, t: v.t?.date ? { span: true, prim: "number" } : t };
@@ -2958,28 +3035,28 @@ export class FileConverter {
                 case "StartsWith":
                     return r(
                         caseInsensitive(a)
-                            ? `${base}${q}toLowerCase().startsWith(${a[0]}.toLowerCase())`
+                            ? `${base}${q}toLowerCase().startsWith(${wrap(a[0])}.toLowerCase())`
                             : call("startsWith", [a[0]]),
                         T.bool,
                     );
                 case "EndsWith":
                     return r(
                         caseInsensitive(a)
-                            ? `${base}${q}toLowerCase().endsWith(${a[0]}.toLowerCase())`
+                            ? `${base}${q}toLowerCase().endsWith(${wrap(a[0])}.toLowerCase())`
                             : call("endsWith", [a[0]]),
                         T.bool,
                     );
                 case "Contains":
                     return r(
                         caseInsensitive(a)
-                            ? `${base}${q}toLowerCase().includes(${a[0]}.toLowerCase())`
+                            ? `${base}${q}toLowerCase().includes(${wrap(a[0])}.toLowerCase())`
                             : call("includes", [a[0]]),
                         T.bool,
                     );
                 case "Equals":
                     return r(
                         caseInsensitive(a)
-                            ? `${base}${q}toLowerCase() === ${a[0]}.toLowerCase()`
+                            ? `${base}${q}toLowerCase() === ${wrap(a[0])}.toLowerCase()`
                             : `${base} === ${a[0]}`,
                         T.bool,
                     );
@@ -3195,6 +3272,10 @@ export class FileConverter {
             case "Concat":
             case "Union":
                 return r(`[...${base}, ...${wrap(a[0])}]`, t);
+            case "Append":
+                return r(`[...${base}, ${a[0]}]`, t);
+            case "Prepend":
+                return r(`[${a[0]}, ...${base}]`, t);
             case "Except":
                 return r(`${base}${q}filter((x) => !${wrap(a[0])}.includes(x))`, t);
             case "Intersect":
