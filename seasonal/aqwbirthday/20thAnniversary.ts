@@ -252,7 +252,7 @@ export class AnniversaryofDoom {
             Core.ensureComplete(8921);
         }
 
-        //DragonFables &amp; Lore 8922
+        //DragonFables & Lore 8922
         if (!Story.questProgression(8922)) {
             Core.ensureAccept(8922);
             Core.huntMonster("deathofgames", "Titan Fluffy", "Titan Fluffy Defeated", 1);

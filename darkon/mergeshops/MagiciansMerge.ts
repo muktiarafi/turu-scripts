@@ -110,8 +110,8 @@ export class MagiciansMerge {
         ),
         option.bool(
             "85526",
-            "Creature 10 Wings &amp; Tail",
-            'Mode: [select] only\nShould the bot buy "Creature 10 Wings &amp; Tail" ?',
+            "Creature 10 Wings & Tail",
+            'Mode: [select] only\nShould the bot buy "Creature 10 Wings & Tail" ?',
             false,
         ),
         option.bool(

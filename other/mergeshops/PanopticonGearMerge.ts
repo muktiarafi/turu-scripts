@@ -65,14 +65,14 @@ export class PanopticonGearMerge {
     static readonly select = [
         option.bool(
             "85273",
-            "Panopticon Teuthi &amp; Rhizo",
-            'Mode: [select] only\nShould the bot buy "Panopticon Teuthi &amp; Rhizo" ?',
+            "Panopticon Teuthi & Rhizo",
+            'Mode: [select] only\nShould the bot buy "Panopticon Teuthi & Rhizo" ?',
             false,
         ),
         option.bool(
             "85274",
-            "Panopticon Rhizo &amp; Teuthi",
-            'Mode: [select] only\nShould the bot buy "Panopticon Rhizo &amp; Teuthi" ?',
+            "Panopticon Rhizo & Teuthi",
+            'Mode: [select] only\nShould the bot buy "Panopticon Rhizo & Teuthi" ?',
             false,
         ),
         option.bool(

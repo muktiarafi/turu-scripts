@@ -163,8 +163,8 @@ export class FishingGearMerge {
         option.bool("10908", "Fishin' Hooks", 'Mode: [select] only\nShould the bot buy "Fishin\' Hooks" ?', false),
         option.bool(
             "10909",
-            "Fishy Sword &amp; Shield",
-            'Mode: [select] only\nShould the bot buy "Fishy Sword &amp; Shield" ?',
+            "Fishy Sword & Shield",
+            'Mode: [select] only\nShould the bot buy "Fishy Sword & Shield" ?',
             false,
         ),
         option.bool("10910", "Old Boot", 'Mode: [select] only\nShould the bot buy "Old Boot" ?', false),

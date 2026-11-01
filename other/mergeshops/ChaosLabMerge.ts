@@ -76,14 +76,14 @@ export class ChaosLabMerge {
         ),
         option.bool(
             "24094",
-            "Chaorrupted Cysero &amp; Alina",
-            'Mode: [select] only\nShould the bot buy "Chaorrupted Cysero &amp; Alina" ?',
+            "Chaorrupted Cysero & Alina",
+            'Mode: [select] only\nShould the bot buy "Chaorrupted Cysero & Alina" ?',
             false,
         ),
         option.bool(
             "24095",
-            "Chaorrupted Artix &amp; Beleen",
-            'Mode: [select] only\nShould the bot buy "Chaorrupted Artix &amp; Beleen" ?',
+            "Chaorrupted Artix & Beleen",
+            'Mode: [select] only\nShould the bot buy "Chaorrupted Artix & Beleen" ?',
             false,
         ),
         option.bool("17849", "Chaos Daimyo", 'Mode: [select] only\nShould the bot buy "Chaos Daimyo" ?', false),

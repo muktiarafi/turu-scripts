@@ -41,7 +41,7 @@ export class Battleon3D {
                 case 4947:
                     // It's All ADDING Up 4947
                     Core.huntMonster("aqw3d", "Horc Warrior", "Armor Plating", 4);
-                    Core.huntMonster("aqw3d", "Slime", "Nuts &amp; Bolts", 6);
+                    Core.huntMonster("aqw3d", "Slime", "Nuts & Bolts", 6);
                     break;
                 case 4948:
                     // Clawg Claws 4948

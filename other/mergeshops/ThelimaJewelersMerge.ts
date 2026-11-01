@@ -275,8 +275,8 @@ export class ThelimaJewelersMerge {
         ),
         option.bool(
             "95108",
-            "Golden Toothbrush &amp; Toothpaste",
-            'Mode: [select] only\nShould the bot buy "Golden Toothbrush &amp; Toothpaste" ?',
+            "Golden Toothbrush & Toothpaste",
+            'Mode: [select] only\nShould the bot buy "Golden Toothbrush & Toothpaste" ?',
             false,
         ),
     ];

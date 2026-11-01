@@ -322,7 +322,7 @@ export class Grimgaol {
                     // Mechabinky & Raxborg
                     case "r11":
                         this.rke(bot.player.cell);
-                        this.recordSplit(`r11 — Mechabinky &amp; Raxborg`);
+                        this.recordSplit(`r11 — Mechabinky & Raxborg`);
                         if ((bot.player.cell as string) !== "r12") {
                             bot.map.jump("r12", "Left", false);
                             bot.wait.forCellChange("r12");

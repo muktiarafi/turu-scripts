@@ -1247,7 +1247,7 @@ export class CoreAOR {
             "Citrinitas Elemental", // UseableMonsters[0],
             "Luma Lifeform", // UseableMonsters[1],
             "Lightguard Elite", // UseableMonsters[2],
-            "Rigaud &amp; Cassie", // UseableMonsters[3],
+            "Rigaud & Cassie", // UseableMonsters[3],
             // use monstermapid for this'n [10]
             "Citrinitas Match", // UseableMonsters[4],
             "Luma Dragon Twins", // UseableMonsters[5],

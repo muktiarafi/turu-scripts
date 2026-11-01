@@ -95,7 +95,7 @@ export class CoreNation {
 
     /** Crag and Bamboozle name in game. */
     get cragName(): string {
-        return "Crag &amp; Bamboozle";
+        return "Crag & Bamboozle";
     }
 
     /** All principal drops from Nulgath. */

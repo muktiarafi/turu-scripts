@@ -309,8 +309,8 @@ export class CarolingMerge {
         ),
         option.bool(
             "98181",
-            "Sweet &amp; Savory Guest Trio",
-            'Mode: [select] only\nShould the bot buy "Sweet &amp; Savory Guest Trio" ?',
+            "Sweet & Savory Guest Trio",
+            'Mode: [select] only\nShould the bot buy "Sweet & Savory Guest Trio" ?',
             false,
         ),
     ];
