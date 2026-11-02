@@ -145,8 +145,12 @@ export interface LoggerOptions {
 interface QuestLoop {
     quests: QuestData[];
     chooseQuests: Set<number>;
-    /** Quest ID -> time (ms) when the turn-in we sent should be checked. */
+    /** Quest ID -> time (ms) when the turn-in we sent should be checked (one at a time, as C#). */
     inFlight: Map<number, number>;
+    /** Index in `quests` where the watcher's pass goes on (C#'s `foreach` resumes after a turn-in). */
+    next: number;
+    /** Index in `quests` where the manager goes on (one quest per run). */
+    managerNext: number;
     stuckCounts: Map<number, number>;
     /** Watchdog threshold (ms). */
     threshold: number;
@@ -2410,41 +2414,43 @@ export class CoreBots {
             quests: allQuests,
             chooseQuests: new Set(chooseQuests.keys()),
             inFlight: new Map(),
+            next: 0,
+            managerNext: 0,
             stuckCounts: new Map(),
             threshold: (60 + randomInt(2, 6)) * 1000,
         };
         this.questLoop = loop;
 
         bot.handlers.register(QUEST_WATCHER, Math.min(this.actionDelay, 500), () => this.questWatcher(loop));
-        bot.handlers.register(
-            QUEST_MANAGER,
-            Math.max(this.actionDelay, 100) + allQuests.length * this.actionDelay * 2,
-            () => this.questManager(loop),
-        );
+        bot.handlers.register(QUEST_MANAGER, this.actionDelay * 2, () => this.questManager(loop));
         bot.handlers.register(QUEST_WATCHDOG, 2000, () => this.questWatchdog(loop));
     }
 
-    /** Fast watcher: turns quests in as soon as they become completable. */
+    /**
+     * Fast watcher: turns quests in as soon as they become completable. C# awaits each turn-in
+     * (the packet, ActionDelay * 2, the stuck check) before it looks at the next quest; sending
+     * them all at once left the last quest of the list (The Dark Deal) without a turn-in.
+     */
     private questWatcher(loop: QuestLoop): void {
         try {
-            for (const quest of loop.quests) {
-                if (!bot.player.alive) continue;
+            for (const [questId, checkAt] of loop.inFlight) {
+                if (Date.now() < checkAt) return;
+                loop.inFlight.delete(questId);
+                const quest = loop.quests.find((q) => q.id === questId);
+                if (quest) this.checkStuckQuest(loop, quest);
+            }
 
-                const checkAt = loop.inFlight.get(quest.id);
-                if (checkAt !== undefined) {
-                    // C# awaits ActionDelay * 2 after the turn-in, then checks whether it's stuck.
-                    if (Date.now() >= checkAt) {
-                        loop.inFlight.delete(quest.id);
-                        this.checkStuckQuest(loop, quest);
-                    }
-                    continue;
-                }
+            while (loop.next < loop.quests.length) {
+                const quest = loop.quests[loop.next++];
+                if (!bot.player.alive) continue;
 
                 if (bot.quests.isInProgress(quest.id) && bot.quests.canComplete(quest.id)) {
                     this.completeRegisteredQuest(loop, quest);
                     loop.inFlight.set(quest.id, Date.now() + this.actionDelay * 2);
+                    return;
                 }
             }
+            loop.next = 0;
         } catch (error) {
             rethrowIfStopped(error);
             this.logger(`[QuestTurnIn] Watcher failed during an iteration; retrying: ${errorMessage(error)}`);
@@ -2481,15 +2487,23 @@ export class CoreBots {
         // Don't re-accept here: the manager accepts the quest once it's no longer active.
     }
 
-    /** Slower manager: accepts quests that aren't currently in progress. */
+    /**
+     * Slower manager: accepts quests that aren't currently in progress, one quest per run
+     * (ActionDelay * 2 apart, as C# awaits after each). Accepts sent back to back made the server
+     * drop the second ("Please slow down"), and the client still showed that quest in progress,
+     * so its turn-ins went unanswered until the stuck check accepted it again.
+     */
     private questManager(loop: QuestLoop): void {
         try {
-            for (const quest of loop.quests) {
-                if (!bot.player.alive) continue;
+            while (loop.managerNext < loop.quests.length) {
+                const quest = loop.quests[loop.managerNext++];
+                if (!bot.player.alive) return;
                 if (loop.inFlight.has(quest.id)) continue;
                 if (!bot.quests.ensureLoad(quest.id)) continue;
                 if (!bot.quests.isInProgress(quest.id)) bot.quests.accept(quest.id);
+                return;
             }
+            loop.managerNext = 0;
         } catch (error) {
             rethrowIfStopped(error);
             this.logger(`[QuestTurnIn] Quest manager failed during an iteration; retrying: ${errorMessage(error)}`);
