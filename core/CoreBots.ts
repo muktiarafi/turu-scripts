@@ -151,6 +151,8 @@ interface QuestLoop {
     next: number;
     /** Index in `quests` where the manager goes on (one quest per run). */
     managerNext: number;
+    /** When (ms) the watcher or the manager last sent a quest packet. */
+    lastQuestPacketAt: number;
     stuckCounts: Map<number, number>;
     /** Watchdog threshold (ms). */
     threshold: number;
@@ -2416,6 +2418,7 @@ export class CoreBots {
             inFlight: new Map(),
             next: 0,
             managerNext: 0,
+            lastQuestPacketAt: 0,
             stuckCounts: new Map(),
             threshold: (60 + randomInt(2, 6)) * 1000,
         };
@@ -2445,6 +2448,10 @@ export class CoreBots {
                 if (!bot.player.alive) continue;
 
                 if (bot.quests.isInProgress(quest.id) && bot.quests.canComplete(quest.id)) {
+                    if (!this.questPacketDue(loop)) {
+                        loop.next--; // this quest again on the next run
+                        return;
+                    }
                     this.completeRegisteredQuest(loop, quest);
                     loop.inFlight.set(quest.id, Date.now() + this.actionDelay * 2);
                     return;
@@ -2466,6 +2473,16 @@ export class CoreBots {
         const turnIns =
             quest.once || quest.field ? 1 : num(bot.flash.callGameFunction("world.maximumQuestTurnIns", quest.id));
         bot.send.packet(`%xt%zm%tryQuestComplete%${bot.map.roomId}%${quest.id}%${rewardId}%false%${turnIns}%wvz%`);
+        loop.lastQuestPacketAt = Date.now();
+    }
+
+    /**
+     * Whether ActionDelay has passed since the watcher or the manager last sent a quest packet
+     * (Turu: they run apart, and a turn-in right after an accept, or the reverse, made the server
+     * drop the second with "Please slow down").
+     */
+    private questPacketDue(loop: QuestLoop): boolean {
+        return Date.now() - loop.lastQuestPacketAt >= this.actionDelay;
     }
 
     private checkStuckQuest(loop: QuestLoop, quest: QuestData): void {
@@ -2482,6 +2499,7 @@ export class CoreBots {
             this.pause(this.actionDelay * 2);
             // Keep this recovery Accept().
             bot.quests.accept(quest.id);
+            loop.lastQuestPacketAt = Date.now();
             loop.stuckCounts.set(quest.id, 0);
         }
         // Don't re-accept here: the manager accepts the quest once it's no longer active.
@@ -2500,7 +2518,14 @@ export class CoreBots {
                 if (!bot.player.alive) return;
                 if (loop.inFlight.has(quest.id)) continue;
                 if (!bot.quests.ensureLoad(quest.id)) continue;
-                if (!bot.quests.isInProgress(quest.id)) bot.quests.accept(quest.id);
+                if (!bot.quests.isInProgress(quest.id)) {
+                    if (!this.questPacketDue(loop)) {
+                        loop.managerNext--; // this quest again on the next run
+                        return;
+                    }
+                    bot.quests.accept(quest.id);
+                    loop.lastQuestPacketAt = Date.now();
+                }
                 return;
             }
             loop.managerNext = 0;
