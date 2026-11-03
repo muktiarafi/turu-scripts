@@ -532,9 +532,10 @@ export class MasakadoKingsEchoArmy {
         const username = Core.username().toLowerCase();
 
         while (!bot.shouldExit) {
-            let lines = this.readSyncLines(path);
-            lines = lines.filter((line) => !line.toLowerCase().startsWith(`${username}:`.toLowerCase()));
-            this.writeSyncLines(path, [...lines, `${username}:ready:${Math.floor(Date.now() / 1000)}`]);
+            this.updateSyncLines(path, (lines) => [
+                ...lines.filter((line) => !line.toLowerCase().startsWith(`${username}:`.toLowerCase())),
+                `${username}:ready:${Math.floor(Date.now() / 1000)}`,
+            ]);
 
             const now = Math.floor(Date.now() / 1000);
             const ready = [
@@ -570,6 +571,20 @@ export class MasakadoKingsEchoArmy {
     writeSyncLines(path: string, lines: string[]): void {
         try {
             bot.army.writeLog(path, lines);
+        } catch (error) {
+            rethrowIfStopped(error);
+
+            bot.sleep(100);
+        }
+    }
+
+    /**
+     * Reads, changes and writes the sync lines under the log's lock (Turu: C# relies on timing),
+     * so another member's line written at the same time isn't lost.
+     */
+    updateSyncLines(path: string, change: (lines: string[]) => string[]): void {
+        try {
+            bot.army.withLock(path, () => this.writeSyncLines(path, change(this.readSyncLines(path))));
         } catch (error) {
             rethrowIfStopped(error);
 

@@ -401,7 +401,9 @@ the engine's `bot.army` (`bot/src/api/army.rs`) stands in:
 
 - C#'s army log (`ArmyLogging`, a file in Skua's options folder that every client appends to)
   is a shared log in the data folder: `bot.army.readLog` / `appendLog` / `writeLog` /
-  `clearLog`. Tabs and the processes Army > Accounts launches share the data folder.
+  `clearLog`. Tabs and the processes Army > Accounts launches share the data folder. Each
+  operation holds the log's lock; `bot.army.withLock(name, fn)` holds it across a read, change
+  and write (C#'s machine-wide mutex).
 - `doForAll` (the one-client scripts that log in each account in turn) goes through the accounts
   of Army > Accounts (`bot.army.accounts()`) and logs in with `bot.army.login(username)`, which
   reads the password from the system keychain; scripts never see it (C# reads the passwords
@@ -421,8 +423,11 @@ the engine's `bot.army` (`bot/src/api/army.rs`) stands in:
 The Army scripts sync through the Ultras' CoreUltra (`WaitForArmy`, `CheckArmyProgressBool`,
 `ClearSyncFile`, ...) and join through its CoreEngine. Those members are in `army/CoreArmySync.ts`
 (the Ultras' `CoreUltrav3` extends it, see "Ultras") (`CoreArmySync`, `CoreArmyEngine`): the sync files are `bot.army`
-logs (C# guards updates with a machine-wide mutex; each member rewrites its line on every
-check, so a lost update comes back), and `CoreEngine.Join` joins a room that every client of
+logs (C#'s machine-wide mutex around `UpdateEntry` is `bot.army.withLock`). `WaitForArmy`, and
+`UltraWaitForArmy`'s `WaitForArmySkills` and `NewWaitForArmy`, are `bot.army.barrier`: C# polls
+ready lines and the first member through clears the file (`NewWaitForArmy` also clears it on
+arrival), which can strand a member that looks late or wipe out the ones already waiting; the
+barrier counts rounds instead. Their `tickMs` and stale-age arguments are ignored. `CoreEngine.Join` joins a room that every client of
 the machine picks (`bot.army.machineRoomNumber()`, C#'s `GenerateRoomID` hashes the machine
 GUID). `CoreEngine.Boot` starts the class's saved rotation instead of the engine's own skill loop.
 
@@ -558,7 +563,8 @@ and `TestUltrasOrBossesScripts/Masakadov3`. `NightmareCarnaxv3` was read through
   (`GetScrollOfDecay` looped while you *had* 10 scrolls).
 - The boss scripts (`Masakado`, `MidnightSun`, `SolsticeMoon`, `AscensionoftheEclipse`,
   `0GreatbladeOfTheEntwinedEclipse`, `VictorMatsuriStory`) and `DependenciesMerge/QueenIona` are cs2ts
-  drafts fixed until they type-check. Their sync files are `bot.army` logs, their
+  drafts fixed until they type-check. Their sync files are `bot.army` logs, each read, change
+  and write under the log's lock (`updateSyncLines`), their
   `Bot.Flash.FlashCall` listeners listen to `extensionPacket`, and each script's `ScriptMain` is a
   `scriptMain()` method so the Greatblade can run it. C#'s `TauntCurrentTarget(enrageMessage,
   maxAttempts)` overload is `tauntCurrentTargetForMessage`; `ref` parameters return their value.

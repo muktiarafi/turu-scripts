@@ -321,11 +321,10 @@ export class SolsticeMoonTest {
         const checkpoint = syncFile.replaceAll(":", "_");
 
         while (!bot.shouldExit) {
-            let lines = this.readSyncLines(path);
-
-            lines = lines.filter((line) => !line.toLowerCase().startsWith(`${checkpoint}:${username}:`.toLowerCase()));
-
-            this.writeSyncLines(path, [...lines, `${checkpoint}:${username}:ready:${Math.floor(Date.now() / 1000)}`]);
+            this.updateSyncLines(path, (lines) => [
+                ...lines.filter((line) => !line.toLowerCase().startsWith(`${checkpoint}:${username}:`.toLowerCase())),
+                `${checkpoint}:${username}:ready:${Math.floor(Date.now() / 1000)}`,
+            ]);
 
             const now = Math.floor(Date.now() / 1000);
 
@@ -373,6 +372,20 @@ export class SolsticeMoonTest {
         }
     }
 
+    /**
+     * Reads, changes and writes the sync lines under the log's lock (Turu: C# relies on timing),
+     * so another member's line written at the same time isn't lost.
+     */
+    updateSyncLines(path: string, change: (lines: string[]) => string[]): void {
+        try {
+            bot.army.withLock(path, () => this.writeSyncLines(path, change(this.readSyncLines(path))));
+        } catch (error) {
+            rethrowIfStopped(error);
+
+            bot.sleep(100);
+        }
+    }
+
     armyHasItem(itemName: string, target: number, syncFile: string): boolean {
         return this.armyProgress(itemName, target, syncFile);
     }
@@ -383,9 +396,10 @@ export class SolsticeMoonTest {
         const username = Core.username().toLowerCase();
         const quantity = bot.inventory.getQuantity(itemName);
 
-        let lines = this.readSyncLines(path);
-        lines = lines.filter((line) => !line.toLowerCase().startsWith(`${username}:`.toLowerCase()));
-        this.writeSyncLines(path, [...lines, `${username}:${quantity}:${target}:${Math.floor(Date.now() / 1000)}`]);
+        this.updateSyncLines(path, (lines) => [
+            ...lines.filter((line) => !line.toLowerCase().startsWith(`${username}:`.toLowerCase())),
+            `${username}:${quantity}:${target}:${Math.floor(Date.now() / 1000)}`,
+        ]);
 
         const now = Math.floor(Date.now() / 1000);
         // C#'s GroupBy(user).Select(Last): each user's latest line.

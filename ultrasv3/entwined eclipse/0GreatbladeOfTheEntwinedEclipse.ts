@@ -140,14 +140,15 @@ export class GreatbladeOfTheEntwinedEclipse {
         const writeNow = Math.floor(Date.now() / 1000);
         const pruneCutoff = writeNow - 120;
 
-        const lines = this.readSyncLines(path)
-            .filter((l) => !l.toLowerCase().startsWith(`${username}:`.toLowerCase()))
-            .filter((l) => {
-                const p = l.split(":");
-                return p.length < 3 || !/^-?\d+$/.test(p[2]) || Number(p[2]) >= pruneCutoff;
-            });
-
-        this.writeSyncLines(path, [...lines, `${username}:${status}:${writeNow}`]);
+        this.updateSyncLines(path, (lines) => [
+            ...lines
+                .filter((l) => !l.toLowerCase().startsWith(`${username}:`.toLowerCase()))
+                .filter((l) => {
+                    const p = l.split(":");
+                    return p.length < 3 || !/^-?\d+$/.test(p[2]) || Number(p[2]) >= pruneCutoff;
+                }),
+            `${username}:${status}:${writeNow}`,
+        ]);
 
         while (!bot.shouldExit) {
             const now = Math.floor(Date.now() / 1000);
@@ -183,6 +184,20 @@ export class GreatbladeOfTheEntwinedEclipse {
     writeSyncLines(path: string, lines: string[]): void {
         try {
             bot.army.writeLog(path, lines);
+        } catch (error) {
+            rethrowIfStopped(error);
+
+            bot.sleep(100);
+        }
+    }
+
+    /**
+     * Reads, changes and writes the sync lines under the log's lock (Turu: C# relies on timing),
+     * so another member's line written at the same time isn't lost.
+     */
+    updateSyncLines(path: string, change: (lines: string[]) => string[]): void {
+        try {
+            bot.army.withLock(path, () => this.writeSyncLines(path, change(this.readSyncLines(path))));
         } catch (error) {
             rethrowIfStopped(error);
 

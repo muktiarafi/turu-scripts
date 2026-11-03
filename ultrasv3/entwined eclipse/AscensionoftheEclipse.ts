@@ -404,10 +404,8 @@ export class AscendEclipseTest {
         const RequestDeathReset = (): void => {
             Core.logger("[r3 Death Reset] I died; requesting r3 reset.");
 
-            this.writeSyncLines(deathResetPath, [
-                ...this.readSyncLines(deathResetPath).filter(
-                    (l) => !l.toLowerCase().startsWith(`${checkpoint}:`.toLowerCase()),
-                ),
+            this.updateSyncLines(deathResetPath, (lines) => [
+                ...lines.filter((l) => !l.toLowerCase().startsWith(`${checkpoint}:`.toLowerCase())),
                 `${checkpoint}:${Core.username().toLowerCase()}:${Math.floor(Date.now() / 1000)}`,
             ]);
         };
@@ -1295,13 +1293,12 @@ export class AscendEclipseTest {
         while (!bot.shouldExit) {
             const now = Math.floor(Date.now() / 1000);
 
-            let lines = this.readSyncLines(path);
-
-            lines = lines
-                .filter((l) => !l.toLowerCase().startsWith(`${checkpoint}:${username}:`.toLowerCase()))
-                .filter((l) => !this.isStaleSyncLine(l, now));
-
-            this.writeSyncLines(path, [...lines, `${checkpoint}:${username}:ready:${now}`]);
+            this.updateSyncLines(path, (lines) => [
+                ...lines
+                    .filter((l) => !l.toLowerCase().startsWith(`${checkpoint}:${username}:`.toLowerCase()))
+                    .filter((l) => !this.isStaleSyncLine(l, now)),
+                `${checkpoint}:${username}:ready:${now}`,
+            ]);
 
             const ready = [
                 ...new Set(
@@ -1340,6 +1337,20 @@ export class AscendEclipseTest {
     writeSyncLines(path: string, lines: string[]): void {
         try {
             bot.army.writeLog(path, lines);
+        } catch (error) {
+            rethrowIfStopped(error);
+
+            bot.sleep(100);
+        }
+    }
+
+    /**
+     * Reads, changes and writes the sync lines under the log's lock (Turu: C# relies on timing),
+     * so another member's line written at the same time isn't lost.
+     */
+    updateSyncLines(path: string, change: (lines: string[]) => string[]): void {
+        try {
+            bot.army.withLock(path, () => this.writeSyncLines(path, change(this.readSyncLines(path))));
         } catch (error) {
             rethrowIfStopped(error);
 

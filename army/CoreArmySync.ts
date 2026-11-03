@@ -9,9 +9,9 @@ tags: army, sync, library
 // Ultras folders aren't ported; the Army scripts only need these.
 //
 // Turu: C#'s sync file in Skua's folder is `bot.army`'s shared log of the same name (every client
-// of this machine reads it). C# guards UpdateEntry with a machine-wide mutex; here the lines are
-// read and written back at once (`bot.army.writeLog`), and as every member rewrites its own line
-// on each check, an update another client overwrote comes back on the next one.
+// of this machine reads it). C#'s machine-wide mutex around UpdateEntry is the log's lock
+// (`bot.army.withLock`). WaitForArmy is `bot.army.barrier`: C# polls ready lines and the first
+// member through clears the file, which strands a member that looks only after that.
 
 import { bot } from "turu";
 import { Core } from "../core/CoreBots";
@@ -32,95 +32,18 @@ export class CoreArmySync {
         quantity: number,
         syncFilePath = "army_sync.sync",
         bufferTimeMs = 3000,
-        tickMs = 500,
+        _tickMs = 500,
         timeoutMs = 0,
     ): void {
-        // --- File I/O Helpers ---
-        const slurp = (path: string): string[] => nonEmpty(bot.army.readLog(path));
-        const yeet = (path: string, lines: string[]): void => bot.army.writeLog(path, lines);
-
-        // Each line: username|class:ready:timestamp
-        const poke = (path: string, key: string, ready: boolean): void => {
-            if (!key.trim()) return;
-
-            const keyParts = key.split("|");
-            if (keyParts.length < 2 || !keyParts[0].trim()) return;
-
-            const username = keyParts[0];
-            const className = keyParts[1];
-
-            // purge broken historical entries (|Peasant etc.)
-            const lines = slurp(path).filter((l) => !l.startsWith("|"));
-
-            const entry = `${username}|${className}:${ready ? 1 : 0}:${nowSeconds()}`;
-
-            const idx = lines.findIndex((l) => {
-                const existingKey = l.split(":")[0].split("|");
-                return existingKey.length >= 1 && existingKey[0] === username;
-            });
-
-            if (idx >= 0) lines[idx] = entry;
-            else lines.push(entry);
-
-            yeet(path, lines);
-        };
-
-        const howMany = (path: string): number => {
-            const lines = slurp(path);
-            const now = nowSeconds();
-            const staleThreshold = 600; // 10 minutes
-            const valid: string[] = [];
-
-            for (const line of lines) {
-                const parts = line.split(":");
-                if (parts.length < 3) continue;
-                if (!/^\d+$/.test(parts[2])) continue;
-                if (now - Number(parts[2]) <= staleThreshold) valid.push(line);
-            }
-
-            // Rewrite file only if we cleaned something out
-            if (valid.length !== lines.length) yeet(path, valid);
-
-            return valid.filter((l) => l.split(":")[1] === "1").length;
-        };
-
-        // --- Initialize sync file ---
+        // --- Wait for army readiness ---
+        // Turu: C# polls `username|class:ready:timestamp` lines every `tickMs`; the barrier keeps
+        // its own file (`<name>.barrier`) and its own pace.
         const syncFile = this.resolveSyncPath(syncFilePath);
-        // C# also empties a file not written for 15 minutes; Turu's log has no write time, and its
-        // stale lines (10 minutes) are dropped by howMany anyway.
-        const existing = slurp(syncFile);
-        if (existing.length === 0 || existing.every((l) => l.endsWith(":1"))) yeet(syncFile, []);
-
-        const me = `${bot.player.username || "Nobody"}|${bot.player.currentClass || "Peasant"}`.replaceAll(":", "-");
         const need = quantity === 0 ? 1 : Math.max(1, quantity) + 1;
 
-        poke(syncFile, me, false);
-
-        const started = Date.now();
-        let lastReady = -1;
-
-        // --- Wait for army readiness ---
-        while (!bot.shouldExit) {
-            const ready = howMany(syncFile);
-            if (ready !== lastReady) {
-                lastReady = ready;
-                bot.log(`[WaitForArmy] Ready: ${ready}/${need}`);
-            }
-
-            if (ready >= need) {
-                bot.log("[WaitForArmy] All members ready!");
-                break;
-            }
-
-            poke(syncFile, me, true);
-
-            if (timeoutMs > 0 && Date.now() - started >= timeoutMs) {
-                bot.log("[WaitForArmy] Timeout reached — continuing anyway.");
-                break;
-            }
-
-            bot.sleep(tickMs);
-        }
+        bot.log(`[WaitForArmy] Waiting for ${need} members...`);
+        if (bot.army.barrier(syncFile, need, timeoutMs)) bot.log("[WaitForArmy] All members ready!");
+        else bot.log("[WaitForArmy] Timeout reached — continuing anyway.");
 
         // --- Warmup spam to keep clients responsive ---
         const spamUntil = Date.now() + 2000;
@@ -135,7 +58,8 @@ export class CoreArmySync {
 
         bot.sleep(bufferTimeMs);
 
-        yeet(syncFile, []);
+        // C# empties the sync file here, which also drops CheckArmyProgress's lines.
+        bot.army.clearLog(syncFile);
     }
 
     /**
@@ -255,18 +179,20 @@ export class CoreArmySync {
     updateEntry(path: string, key: string, payload: string): void {
         if (!key.trim()) return;
 
-        const lines = this.readLines(path).filter((l) => l.trim());
-        const entry = `${key}:${payload}:${nowSeconds()}`;
+        bot.army.withLock(path, () => {
+            const lines = this.readLines(path).filter((l) => l.trim());
+            const entry = `${key}:${payload}:${nowSeconds()}`;
 
-        const idx = lines.findIndex((l) => {
-            const parts = l.split(":");
-            return parts.length > 0 && parts[0].toLowerCase() === key.toLowerCase();
+            const idx = lines.findIndex((l) => {
+                const parts = l.split(":");
+                return parts.length > 0 && parts[0].toLowerCase() === key.toLowerCase();
+            });
+
+            if (idx >= 0) lines[idx] = entry;
+            else lines.push(entry);
+
+            bot.army.writeLog(path, lines);
         });
-
-        if (idx >= 0) lines[idx] = entry;
-        else lines.push(entry);
-
-        bot.army.writeLog(path, lines);
     }
 }
 
