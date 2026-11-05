@@ -277,7 +277,8 @@ export class CoreAdvanced {
 
     /**
      * Farms the reputation of `faction` to `rank` with CoreFarms' `<Faction>REP` (C# `runRep`).
-     * Only the reps CoreFarms ports are here.
+     * The reps that take more than the rank are listed; any other is looked up by name, as C#
+     * does with reflection.
      */
     private runRep(faction: string, rank: number): void {
         const name = faction.replace(/ /g, "");
@@ -334,8 +335,18 @@ export class CoreAdvanced {
                 // C#'s reflection call with only the rank throws (FishingREP has 4 parameters).
                 Farm.fishingREP(rank);
                 break;
-            default:
-                Core.logger(`Failed to find ${name}REP in CoreFarms. It isn't ported to Turu yet.`);
+            default: {
+                // C# `GetMethod(faction + "REP")`; case-insensitive, as C#'s `EtherStormREP` is
+                // `etherStormREP` here. Every REP takes the rank first.
+                const key = `${name}rep`.toLowerCase();
+                const method = Object.getOwnPropertyNames(CoreFarms.prototype).find((m) => m.toLowerCase() === key);
+                const farm = method ? (Farm as unknown as Record<string, unknown>)[method] : undefined;
+                if (typeof farm !== "function") {
+                    Core.logger(`Failed to find ${name}REP in CoreFarms. It isn't ported to Turu yet.`);
+                    return;
+                }
+                (farm as (rank: number) => void).call(Farm, rank);
+            }
         }
     }
 
