@@ -1,5 +1,5 @@
 // Converts one C# script (a tree-sitter tree) to TypeScript text. The output is a first draft:
-// it follows the porting conventions of `scripts/README.md`, resolves names and signatures
+// it follows the porting conventions of `scripts/docs/PORTING.md`, resolves names and signatures
 // against the TypeScript side (TsIndex) and the C# side (CsIndex), and marks what it can't
 // convert with `/* cs2ts: ... */` comments. `tsc` then shows what is left to fix by hand.
 
