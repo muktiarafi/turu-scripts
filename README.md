@@ -75,8 +75,9 @@ converter flags the ones it knows.
 
 ## The index
 
-On every push to `main`, CI (`.github/workflows/index.yml`) type-checks the scripts, runs
-`tools/build-index.mjs` and force-pushes the result as the only file of the `index` branch.
+CI (`.github/workflows/index.yml`) type-checks the scripts, checks their formatting and builds
+the index on every pull request; on every push to `main` it force-pushes the index as the only
+file of the `index` branch. Contributing: [CONTRIBUTING.md](CONTRIBUTING.md).
 Turu reads it from `https://raw.githubusercontent.com/muktiarafi/turu-scripts/index/index.json`
 (another repository with `TURU_SCRIPTS_REPO=owner/name`). Nothing is committed to `main`.
 

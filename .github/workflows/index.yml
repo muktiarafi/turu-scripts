@@ -1,10 +1,11 @@
-# Type-checks the scripts, checks their formatting (Prettier) and publishes index.json
-# (tools/build-index.mjs) on the `index` branch, where Turu's Search Scripts reads it:
+# Checks every pull request (rebased on main, type-check, Prettier, the index builds) and, on a
+# push to main, publishes index.json (tools/build-index.mjs) on the `index` branch, where Turu's
+# Search Scripts reads it:
 # https://raw.githubusercontent.com/<owner>/<repo>/index/index.json
 #
 # The `index` branch holds that one file in one commit, replaced on every push to main, so
 # main's history only has script changes (VibeSkua's scripts.json is committed to its working
-# branch on every push).
+# branch on every push). Branch protection on main requires the jobs below (CONTRIBUTING.md).
 
 name: Index
 
@@ -15,15 +16,70 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
-  group: index-${{ github.ref }}
+  group: index-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
-  index:
+  rebased:
+    name: Rebased on main
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
+    steps:
+      # The pull request's own commits, not the merge commit GitHub makes for it.
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Check the branch is rebased on main, without merge commits
+        env:
+          BASE: ${{ github.event.pull_request.base.ref }}
+        run: |
+          git fetch --no-tags origin "$BASE"
+          if ! git merge-base --is-ancestor "origin/$BASE" HEAD; then
+            echo "::error::The branch is behind $BASE. Rebase it: git fetch origin && git rebase origin/$BASE && git push --force-with-lease"
+            exit 1
+          fi
+          merges=$(git rev-list --merges "origin/$BASE..HEAD")
+          if [[ -n "$merges" ]]; then
+            echo "::error::The branch has merge commits ($(echo $merges | tr '\n' ' ')). Rebase instead of merging: git rebase origin/$BASE"
+            exit 1
+          fi
+          echo "Rebased on $BASE: $(git rev-list --count "origin/$BASE..HEAD") commit(s) on top"
+
+  typecheck:
+    name: Type-check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - run: npx -y -p typescript@5.9.3 tsc --noEmit -p .
+
+  format:
+    name: Format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - run: npx -y prettier@3.6.2 --check "**/*.{ts,mjs}"
+
+  index:
+    name: Index
+    needs: [typecheck, format]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -33,12 +89,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-
-      - name: Type-check
-        run: npx -y -p typescript@5.9.3 tsc --noEmit -p .
-
-      - name: Check formatting
-        run: npx -y prettier@3.6.2 --check "**/*.{ts,mjs}"
 
       - name: Build index.json
         run: node tools/build-index.mjs > "$RUNNER_TEMP/index.json"
