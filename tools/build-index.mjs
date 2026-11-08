@@ -75,6 +75,25 @@ export function isLibrary(source) {
     return !/^\s*export\s+default\b/m.test(source);
 }
 
+/** Maps scripts only pass through or park in: they would list half the scripts. */
+const PASSING = new Set(["whitemap", "battleon", "yulgar", "house"]);
+
+/**
+ * The maps `source` names in a call that takes one (`huntMonster("nulgath", ...)`,
+ * `killMonster(...)`, `map.join(...)`), lowercase and sorted, a room number dropped: Turu lists
+ * the script on those maps. Same rule as turu_bot::map_scripts::maps_in.
+ */
+export function mapsIn(source) {
+    const pattern =
+        /\b(?:huntMonster|killMonster|HuntMonster|KillMonster|huntMonsterMapID|killMonsterMapID|join|Join|joinMap|JoinMap|joinSWF|goTo|ensureMap)\(\s*["'`]([A-Za-z][A-Za-z0-9_]*)(?:-[0-9]+)?["'`]/g;
+    const maps = new Set();
+    for (const m of source.matchAll(pattern)) {
+        const map = m[1].toLowerCase();
+        if (!PASSING.has(map)) maps.add(map);
+    }
+    return [...maps].sort();
+}
+
 /** The relative imports of `source` (`import ... from "./x"`, `export ... from`, `import "./x"`). */
 function imports(source) {
     const out = [];
@@ -161,6 +180,7 @@ const index = {
             updated: dates.get(path)?.updated ?? "",
             deps: closure(path),
             library: isLibrary(bytes.toString("utf8")),
+            maps: mapsIn(bytes.toString("utf8")),
         };
     }),
 };
