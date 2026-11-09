@@ -5603,9 +5603,8 @@ export class CoreBots {
      * Joins a map (in a private room when {@link privateRooms} is on) and does the extra steps
      * some maps need (quest-progress bypasses, prerequisites).
      *
-     * Only the per-map cases the ported scripts reach are kept (stalagbite, djinn, towerofdoom*,
-     * darkoviaforest/lycan/safiria, tercessuinotlim, oaklore, icestormarena and the "always
-     * private" maps evilmarsh/nulgath); every other map goes through the generic join.
+     * The per-map cases follow C# `CoreBots.Join` one for one; every other map goes through the
+     * generic join.
      * @param mapArg Map name ("map" or "map-1234").
      * @param cell The cell to jump to.
      * @param pad The pad to jump to.
@@ -5767,15 +5766,187 @@ export class CoreBots {
             }
         };
 
+        /** {@link simpleQuestBypass} in room 999999 (C# `PrivateSimpleQuestBypass`). */
+        const privateSimpleQuestBypass = (...slotValues: [slot: number, value: number][]): void => {
+            try {
+                map = strippedMap + "-999999";
+                simpleQuestBypass(...slotValues);
+            } catch (error) {
+                rethrowIfStopped(error);
+                this.logger(`An error occurred: ${errorMessage(error)}`);
+            }
+        };
+
+        /**
+         * Ghosts the item the map checks for if it is missing, then joins (C# `GhostItemBypass`).
+         * C# takes more item fields (category, ...) but only passes the ID and name to `GhostItem`.
+         */
+        const ghostItemBypass = (id: number, name = "Ghost Item"): void => {
+            try {
+                if (!this.checkInventory(id)) this.ghostItem(id, name);
+                this.sleep();
+                tryJoin();
+            } catch (error) {
+                rethrowIfStopped(error);
+                this.logger(`An error occurred: ${errorMessage(error)}`);
+            }
+        };
+
+        const privateMap = (name: string): string => (this.privateRooms ? `${name}-${this.privateRoomNumber}` : name);
+
         switch (strippedMap) {
-            // Simple Quest Bypasses (C# has many more maps; only those the ported scripts visit are kept)
+            // #region Simple Quest Bypasses
+
+            case "marsh2":
+                simpleQuestBypass([58, 8]);
+                break;
+
+            case "nightmare":
+                simpleQuestBypass([192, 9]);
+                break;
+
+            case "ascendeclipse":
+                if (!this.checkInventory("Rite of Ascension"))
+                    this.logger("Item Required is a server-side check, cannot ghost it.");
+                else {
+                    this.sendPackets(`%xt%zm%dungeonQueue%${bot.map.roomId}%${map}-${this.privateRoomNumber}%`);
+                    bot.wait.forMapLoad(map);
+                }
+                break;
+
+            case "solsticemoon":
+            case "midnightsun":
+                this.sendPackets(`%xt%zm%dungeonQueue%${bot.map.roomId}%${map}-${this.privateRoomNumber}%`);
+                bot.wait.forMapLoad(map);
+                break;
+
+            case "temple":
+                simpleQuestBypass([49, 25]);
+                break;
+
+            case "wanders":
+                // 2 spawn cells makes joining fucky
+                if (cell === "Enter") {
+                    cell = "Enter2";
+                    pad = "Down";
+                }
+                simpleQuestBypass([176, 6]);
+                break;
+
+            case "kitsune":
+                simpleQuestBypass([25, 22]);
+                break;
+
+            case "elemental":
+                simpleQuestBypass([32, 35]);
+                break;
+
+            case "twilightedge":
+                simpleQuestBypass([156, 23]);
+                break;
+
+            case "dragonkoiz":
+                simpleQuestBypass([25, 22]);
+                break;
+
+            case "desoloth":
+                simpleQuestBypass([56, 35]);
+                break;
+
+            case "xancave":
+                simpleQuestBypass([53, 35]);
+                break;
+
+            case "shadowgrove":
+                simpleQuestBypass([315, 7]);
+                break;
+
             case "stalagbite":
                 simpleQuestBypass([22, 35]);
+                break;
+
+            case "maloth":
+                simpleQuestBypass([246, 23]);
+                break;
+
+            case "originul":
+            case "fiendshard":
+                simpleQuestBypass([387, 16]);
+                break;
+
+            case "mummies":
+                simpleQuestBypass([97, 15]);
+                break;
+
+            case "doomvault":
+                simpleQuestBypass([126, 18]);
                 break;
 
             case "pyramid":
             case "djinn":
                 simpleQuestBypass([36, 28]);
+                break;
+
+            case "ultradrakath":
+                simpleQuestBypass([182, 5]);
+                break;
+
+            case "backroom":
+                simpleQuestBypass([402, 12]);
+                break;
+
+            // case "venomvaults":
+            //     simpleQuestBypass([117, 7]);
+            //     break;
+
+            // case "stormtemple":
+            //     simpleQuestBypass([117, 17]);
+            //     break;
+
+            case "chaoscave":
+            case "lycanwar":
+                simpleQuestBypass([26, 22]);
+                break;
+
+            case "timespace":
+                simpleQuestBypass([100, 14]);
+                break;
+
+            case "transformation":
+                simpleQuestBypass([405, 12]);
+                break;
+
+            case "ebilcorphq":
+                simpleQuestBypass([431, 9]);
+                break;
+
+            case "necrodungeon":
+                simpleQuestBypass([77, 18]);
+                break;
+
+            case "oddities":
+                simpleQuestBypass([456, 13]);
+                break;
+
+            case "championdrakath":
+                simpleQuestBypass([182, 7]);
+                break;
+
+            case "glacera":
+                simpleQuestBypass([225, 21]);
+                break;
+
+            case "ultratyndarius":
+                simpleQuestBypass([412, 22]);
+                break;
+
+            // Never matches (strippedMap is lower case), as in C#.
+            case "Creepy":
+                tryJoin();
+                bot.wait.forCellChange("Cut1");
+                this.jumpWait();
+                bot.wait.forCellChange("Skip");
+                this.jumpWait();
                 break;
 
             case "towerofdoom":
@@ -5791,13 +5962,78 @@ export class CoreBots {
                 simpleQuestBypass([159, 10]);
                 break;
 
+            case "onslaughttower":
+                if (!this.isCompletedBefore(2627)) {
+                    // if quest prog. isnt upto [2621], it wont get the temp item for the temp armor
+                    bot.quests.updateQuest(2621);
+                    tryJoin();
+                    this.logger("Equiping armor for the toxic area");
+                    this.sleep();
+                    bot.map.getMapItem(68);
+                    this.sleep();
+                    this.sendPackets(`%xt%zm%equipItem%${bot.map.roomId}%2096%`);
+                    bot.wait.forItemEquip(2096);
+                    this.sleep();
+                } else tryJoin();
+                break;
+
+            case "wolfwing":
+                simpleQuestBypass([26, 23]);
+                break;
+
+            case "manacradle":
+                simpleQuestBypass([488, 20]);
+                break;
+
+            case "shadowattack":
+                simpleQuestBypass([175, 18]);
+                break;
+
+            case "dreadhaven":
+                simpleQuestBypass([175, 20]);
+                break;
+
             case "darkoviaforest":
             case "lycan":
             case "safiria":
                 simpleQuestBypass([26, 23]);
                 break;
 
-            // Special Cases
+            // #endregion Simple Quest Bypasses
+
+            // #region Private Simple Quest Bypasses
+
+            case "celestialarenab":
+            case "celestialarenac":
+            case "celestialarenad":
+                privateSimpleQuestBypass([249, 20]);
+                break;
+
+            case "confrontation":
+                privateSimpleQuestBypass([175, 20]);
+                break;
+
+            // #endregion Private Simple Quest Bypasses
+
+            // #region Ghost Item Bypasses
+
+            case "deaddragon":
+                ghostItemBypass(37377, "deaddragon Map Bypass");
+                break;
+
+            case "nostalgiaquest":
+                ghostItemBypass(37378, "NostalgiaQuest Map Bypass");
+                break;
+
+            case "revenant":
+                // C# also passes category: ItemCategory.Class, which GhostItemBypass doesn't use.
+                ghostItemBypass(47465, "Revenant Map Bypass");
+                break;
+
+            // #endregion Ghost Item Bypasses
+
+            // #region Special Cases
+
             case "tercessuinotlim": {
                 const prereqQuest1 = bot.quests.hasBeenCompleted(9540);
                 const prereqQuest2 = bot.quests.hasBeenCompleted(9541);
@@ -5808,16 +6044,7 @@ export class CoreBots {
                         'This map now requires a one-time completion of "Beyond the Portal"\nNot sure why it loads tercessuinotlim first, but get over it :|',
                         false,
                     );
-                    for (const [slot, value] of [
-                        [15, 8],
-                        [542, 2],
-                    ] as const)
-                        bot.send.clientPacket(
-                            `{"t":"xt","b":{"r":-1,"o":{"cmd":"updateQuest","iValue":${value},"iIndex":${slot}}}}`,
-                            "json",
-                        );
-                    this.sleep();
-                    tryJoin();
+                    simpleQuestBypass([15, 8], [542, 2]);
                     this.join("citadel");
                     this.jump("m22", "Left");
                     this.equipClass(ClassType.Solo);
@@ -5833,22 +6060,102 @@ export class CoreBots {
                 break;
             }
 
-            // Quest Prog swaps spawn cell
+            case "druids":
+                tryJoin();
+                bot.wait.forItemEquip(18524);
+                break;
+
+            // #region Quest Prog swaps spawn cell
+
             case "oaklore":
                 if (!cell || cell === "Enter") cell = "r1";
                 tryJoin();
                 break;
 
+            case "bloodmoon":
+                if (this.isCompletedBefore(6058) && cell === "Enter") {
+                    cell = "r17";
+                    pad = "Left";
+                }
+                tryJoin();
+                break;
+
+            // #endregion Quest Prog swaps spawn cell
+
+            case "collection":
+                this.jumpWait();
+                if (bot.map.name && bot.map.name !== map)
+                    bot.map.join(privateMap(map), "Begin", "Spawn", false, this.inPublicRoom());
+                bot.wait.forMapLoad(map);
+                break;
+
+            case "doomvaultb":
+                this.setAchievement(18);
+                simpleQuestBypass([127, 26], [126, 18]); // 3004 + 3008
+                break;
+
+            case "prison":
+                this.joinedPrison = true;
+                this.jumpWait();
+                tryJoin();
+                this.joinedPrison = false;
+                break;
+
+            case "hyperium":
+                this.jumpWait();
+                // Complete J6 Quiz quest for Co-ords
+                if (!bot.quests.hasBeenCompleted(674)) {
+                    this.join("saloon", "R7", "Left");
+                    this.ensureAccept(674);
+                    this.getMapItem(109, 1, "saloon");
+                    this.ensureComplete(674);
+                }
+                bot.send.packet(`%xt%zm%serverUseItem%${bot.map.roomId}%+%5041%525,275%${privateMap(map)}%`);
+                bot.wait.forMapLoad("hyperium");
+                break;
+
+            case "moonyard":
+                this.join("hyperium");
+                this.jump("R10", "Left");
+                bot.map.join(privateMap("moonyard"), "Enter", "Spawn", false, this.inPublicRoom());
+                bot.wait.forMapLoad("moonyard");
+                break;
+
+            case "moonyardb":
+                this.join("moonyard");
+                if (!bot.tempInv.contains(8733)) {
+                    this.getMapItem(499, 1, "moonyard");
+                    bot.wait.forTrue(() => bot.tempInv.contains(8733), 20);
+                    /* Ensure we equip J5 temp armor */
+                    this.sendPackets(`%xt%zm%equipItem%${bot.map.roomId}%8733%`);
+                }
+                // Jump to Transition cell to goto yardb
+                this.jump("MoonCut", "Left");
+                bot.wait.forCellChange("MoonCut");
+                simpleQuestBypass([28, 35]);
+                bot.map.join(privateMap(map), "Enter", "Spawn", false, this.inPublicRoom());
+                bot.wait.forMapLoad("moonyardb");
+                break;
+
+            case "zephyrus":
+                this.join("hyperium");
+                bot.wait.forCellChange("R10");
+                this.jump("R10", "Left");
+                if (!bot.quests.hasBeenCompleted(693)) this.chainComplete(693);
+                bot.map.join(
+                    this.privateRooms ? `zephyrus-${this.privateRoomNumber}` : map,
+                    "R2",
+                    "Up",
+                    false,
+                    this.inPublicRoom(),
+                );
+                bot.wait.forMapLoad("zephyrus");
+                break;
+
             case "icestormarena":
                 this.jumpWait();
                 if (bot.map.name && bot.map.name !== map)
-                    bot.map.join(
-                        this.privateRooms ? `${map}-${this.privateRoomNumber}` : map,
-                        "Enter",
-                        "Spawn",
-                        false,
-                        this.inPublicRoom(),
-                    );
+                    bot.map.join(privateMap(map), "Enter", "Spawn", false, this.inPublicRoom());
                 bot.wait.forMapLoad("icestormarena");
                 bot.send.clientPacket(
                     '{"t":"xt","b":{"r":-1,"o":{"cmd":"levelUp","intExpToLevel":"0","intLevel":100}}}',
@@ -5859,14 +6166,103 @@ export class CoreBots {
                 bot.wait.forCellChange(cell ?? "Enter");
                 break;
 
-            // Always Private (room limit 2; C# lists more maps)
+            case "doomhaven":
+                if (this.isCompletedBefore(2097) && cell === "Enter") {
+                    cell = "r19";
+                    pad = "Left";
+                }
+                tryJoin();
+                break;
+
+            // #endregion Special Cases
+
+            // #region Always Private
+
+            // PvP
+            case "doompirate":
+            case "bludrutbrawl":
+            case "dagepvp":
+            case "legionpvp":
+            case "deathpitbrawl":
+            // Room Limit: 2
             case "evilmarsh":
             case "nulgath":
+            // Room Limit: 1
+            case "queeniona":
+            case "baconcatb":
+            case "caroling":
+            case "chaosbattle":
+            case "chaoslord":
+            case "chaosrealm":
+            case "darkthronehub":
+            case "drakathfight":
+            case "dragonfire":
+            case "dragonkoi":
+            case "falcontower":
+            case "finalbattle":
+            case "finalshowdown":
+            case "herotournament":
+            case "infernalarena":
+            case "malgor":
+            case "nothing":
+            case "ravenscar":
+            case "superslayin":
+            case "titandrakath":
+            case "treetitanbattle":
+            case "tlapd":
+            case "trickortreat":
+            case "vordredboss":
+                // if map needs a updatequest
+                switch (map) {
+                    case "titandrakath":
+                        bot.quests.updateQuest(8776);
+                        break;
+                    case "treetitanbattle":
+                        bot.quests.updateQuest(4361);
+                        break;
+                }
                 this.jumpWait();
                 map = strippedMap + "-" + "100000";
                 tryJoin();
                 break;
 
+            // #endregion Always Private
+
+            // #region BuyHouse (for a merge)
+
+            case "buyhouse":
+                this.logger(
+                    `"${map}" is a public map.. and non-privateable, so blame ae for that.. tho its required for some things so this will be forced public`,
+                );
+                this.jumpWait();
+                if (bot.map.name && bot.map.name !== map) {
+                    bot.map.join("buyhouse", "Enter", "Spawn", false, this.inPublicRoom());
+                    bot.wait.forMapLoad(map);
+                }
+                break;
+
+            // #endregion BuyHouse (for a merge)
+
+            // #region baconcat.. is annoying
+
+            case "baconcat":
+                // bot.quests.updateQuest(5108);
+                this.jumpWait();
+                map = strippedMap + "-999999";
+                tryJoin();
+                bot.wait.forCellChange(cell ?? "Enter");
+                break;
+
+            // #endregion baconcat.. is annoying
+
+            // #region Bypass breaks shit...
+
+            // This doesn't mean that you cant do a bypass inside the boat itself, it just can't be in Join because it fucks up CanBuy
+            // Write the ID that can be used for the bypass in a comment after it, so people can easily
+            // fetch it if they are gonna used a banned map
+            case "downbelow": // 8107
+            // #endregion Bypass Banned
+            // falls through (C# `goto default`)
             default:
                 if (bot.map.name === "pyrewatch") this.jumpWait();
                 tryJoin();
