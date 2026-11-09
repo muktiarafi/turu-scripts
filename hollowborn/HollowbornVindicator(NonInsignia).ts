@@ -45,7 +45,9 @@ export class HBVNonInsig {
 
         Core.addDrop("Condensed Grace");
 
-        const preFarmNextWeeks = FarmNextWeeks || bot.config!.get<boolean>("Farm4Weeks");
+        // Turu: the C# also reads the Farm4Weeks option here, which only this file's script
+        // declares (0AllClasses and GramielsMerge failed); its main passes it instead.
+        const preFarmNextWeeks = FarmNextWeeks;
         const currentQty = bot.inventory.getQuantity("Condensed Grace");
         const missingQty = 4 - currentQty;
 
@@ -115,6 +117,6 @@ export const scriptOptions = defineScriptOptions(
 export default function main(): void {
     const script = new HBVNonInsig();
     Core.setOptions();
-    script.getClass();
+    script.getClass(true, false, 4, bot.config.get<boolean>("Farm4Weeks"));
     Core.setOptions(false);
 }

@@ -32,8 +32,10 @@ export class DoAllUltras {
     private static readonly bossParticipantSyncFile = "ultrasv3_participants.sync";
     private static readonly bossSyncFile = "ultrasv3_bosses.sync";
 
-    runAll(): void {
-        if (bot.config!.get<boolean>("UsePrerequisitesChecker")) {
+    // Turu: the C# reads the UsePrerequisitesChecker option here, which only this file's script
+    // declares (DoUltrasDoDailiesDoChallengeBosses failed); its main passes it instead.
+    runAll(usePrerequisitesChecker = false): void {
+        if (usePrerequisitesChecker) {
             if (!new PrerequisitesChecker().prerequisiteSyncGate(4)) {
                 return;
             }
@@ -254,7 +256,7 @@ export default function main(): void {
     Core.setOptions(true);
     Engine.boot();
 
-    script.runAll();
+    script.runAll(bot.config.get<boolean>("UsePrerequisitesChecker"));
 
     Engine.disableSkills();
     Core.setOptions(false);

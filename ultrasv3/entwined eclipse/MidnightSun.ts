@@ -53,6 +53,11 @@ export class MidnightSunTest {
      * script is invoked from a parent orchestrator that runs its own SetOptions.
      */
     skipSetOptions: boolean = false;
+    /**
+     * The private room when run by another script (`skipSetOptions`), which doesn't have this
+     * script's options: 0 picks one from the army. Run on its own, the privateRoomNumber option.
+     */
+    privateRoomNumber: number = 0;
 
     // Route:
     // Enter: Dying Light -> Shining Star
@@ -1466,7 +1471,11 @@ export class MidnightSunTest {
         }
 
         Core.privateRooms = true;
-        const configuredRoom = bot.config!.get<number>("privateRoomNumber");
+        // Turu: another script running this one (skipSetOptions) doesn't declare this script's
+        // options, so they are read only when it runs on its own; the caller sets the fields.
+        const configuredRoom = script.skipSetOptions
+            ? script.privateRoomNumber
+            : bot.config.get<number>("privateRoomNumber");
         if (configuredRoom >= 1000 && configuredRoom <= 99999) {
             Core.privateRoomNumber = configuredRoom;
         } else {
@@ -1478,7 +1487,9 @@ export class MidnightSunTest {
 
         script.autoEnhance = bot.config!.get<boolean>("autoEnhance");
         script.autoGetEnrage = true;
-        script.usePotions = bot.config.get<boolean>("usePotions");
+        if (!script.skipSetOptions) {
+            script.usePotions = bot.config.get<boolean>("usePotions");
+        }
 
         script.equipArmyClasses();
 

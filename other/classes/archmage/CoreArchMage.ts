@@ -27,11 +27,32 @@ const SOWM = new CoreSoWMats();
 const NSOD = new CoreNSOD();
 const DCS = new DarkCarnaxStory();
 
+/** What {@link CoreArchMage.getAM} does besides getting ArchMage. */
+export interface ArchMageChoices {
+    /** Also get the cosmetic rewards of the books. */
+    cosmetics?: boolean;
+    /** Also do Lumina Elementi, for the 51% weapon "Providence". */
+    lumina?: boolean;
+    /** Farm the boss items with an army. */
+    army?: boolean;
+}
+
+/** The choices of a script that declares {@link scriptOptions} (CoreArchMage's and 0ArchMage's). */
+export function archMageChoices(): ArchMageChoices {
+    return {
+        cosmetics: bot.config.get<boolean>("cosmetics"),
+        lumina: bot.config.get<boolean>("lumina_elementi"),
+        army: bot.config.get<boolean>("army"),
+    };
+}
+
 export class CoreArchMage {
-    getAM(rankUpClass = true): void {
-        const cosmetics = bot.config!.get<boolean>("cosmetics");
-        const lumina = bot.config!.get<boolean>("lumina_elementi");
-        this.army = bot.config!.get<boolean>("army");
+    // Turu: the C# reads its options from Bot.Config here, which only the scripts declaring them
+    // have; the callers pass them instead.
+    getAM(rankUpClass = true, choices: ArchMageChoices = {}): void {
+        const cosmetics = choices.cosmetics ?? false;
+        const lumina = choices.lumina ?? false;
+        this.army = choices.army ?? false;
 
         if (Core.checkInventory("ArchMage", undefined, { toInv: false })) {
             if (!lumina) {
@@ -115,12 +136,12 @@ export class CoreArchMage {
         }
 
         if (lumina) {
-            this.luminaElementi();
+            this.luminaElementi(false, cosmetics);
         }
     }
 
     luminaElementi(standalone = false, Extras = false): void {
-        const GetCosmetics = bot.config!.get<boolean>("cosmetics") || Extras === true;
+        const GetCosmetics = Extras;
         if (
             standalone || GetCosmetics
                 ? Core.checkInventory(
@@ -134,7 +155,7 @@ export class CoreArchMage {
         }
 
         if (!bot.quests.isUnlocked(8919)) {
-            this.getAM(false);
+            this.getAM(false, { cosmetics: Extras });
         }
 
         Core.addDrop("Providence");
@@ -142,7 +163,7 @@ export class CoreArchMage {
         Core.logger('Doing the extra quest for the 51% weapon "Providence"');
 
         this.unboundTome(Core.checkInventory("Book of Arcana") ? 30 : 31);
-        this.bookOfArcana();
+        this.bookOfArcana(Extras);
 
         this.bossItemCheck(2500, "Elemental Binding");
 
@@ -195,7 +216,7 @@ export class CoreArchMage {
 
     bookOfFire(Extras = false): void {
         //Book of Fire: Immolation
-        const GetCosmetics = bot.config!.get<boolean>("cosmetics") || Extras === true;
+        const GetCosmetics = Extras;
         if (
             GetCosmetics
                 ? Core.checkInventory(
@@ -229,7 +250,7 @@ export class CoreArchMage {
     }
 
     bookOfIce(Extras = false): void {
-        const GetCosmetics = bot.config!.get<boolean>("cosmetics") || Extras === true;
+        const GetCosmetics = Extras;
         if (
             GetCosmetics
                 ? Core.checkInventory(
@@ -269,7 +290,7 @@ export class CoreArchMage {
     }
 
     bookOfAether(Extras = false): void {
-        const GetCosmetics = bot.config!.get<boolean>("cosmetics") || Extras === true;
+        const GetCosmetics = Extras;
         if (
             GetCosmetics
                 ? Core.checkInventory(
@@ -300,7 +321,7 @@ export class CoreArchMage {
     }
 
     bookOfArcana(Extras = false): void {
-        const GetCosmetics = bot.config!.get<boolean>("cosmetics") || Extras === true;
+        const GetCosmetics = Extras;
         if (
             GetCosmetics
                 ? Core.checkInventory(
@@ -748,7 +769,7 @@ export default function main(): void {
     Core.bankingBlackList.push(...script.requiredItems, ...script.bossDrops);
     Core.setOptions();
 
-    script.getAM();
+    script.getAM(true, archMageChoices());
 
     Core.setOptions(false);
 }

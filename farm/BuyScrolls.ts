@@ -75,8 +75,9 @@ export enum Scrolls {
 }
 
 export class BuyScrolls {
+    // Turu: the C# also reads the UseMysticParchment option here, which only this file's script
+    // declares (other scripts importing it failed); its main passes it instead.
     buyScroll(scroll: Scrolls, quant: number = -1, useMysticParchment = false): void {
-        useMysticParchment = useMysticParchment || bot.config!.get<boolean>("UseMysticParchment");
         const QuestData = Core.initializeWithRetries(() => Core.ensureLoad(scroll));
         if (QuestData == null) {
             Core.logger(`Quest for ${Scrolls[scroll]} not found, please report this to the devs.`);
@@ -148,7 +149,11 @@ export default function main(): void {
     const script = new BuyScrolls();
     Core.setOptions();
 
-    script.buyScroll(configEnum("scrollSelect", Scrolls, Scrolls.Fireball), bot.config.get<number>("scrollAmount"));
+    script.buyScroll(
+        configEnum("scrollSelect", Scrolls, Scrolls.Fireball),
+        bot.config.get<number>("scrollAmount"),
+        bot.config.get<boolean>("UseMysticParchment"),
+    );
 
     Core.setOptions(false);
 }

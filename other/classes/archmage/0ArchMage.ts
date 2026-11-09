@@ -6,7 +6,7 @@ tags: null
 // Port of Scripts/Other/Classes/ArchMage/0ArchMage.cs.
 
 import { Core } from "../../../core/CoreBots";
-import { CoreArchMage, scriptOptions as archMageOptions } from "./CoreArchMage";
+import { archMageChoices, CoreArchMage, scriptOptions as archMageOptions } from "./CoreArchMage";
 
 const AM = new CoreArchMage();
 
@@ -18,7 +18,7 @@ export const scriptOptions = archMageOptions;
 export default function main(): void {
     Core.setOptions();
 
-    AM.getAM();
+    AM.getAM(true, archMageChoices());
 
     Core.setOptions(false);
 }
