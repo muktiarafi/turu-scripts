@@ -45,11 +45,13 @@ pass before merging:
 | Rebased on main | the branch contains `main`, no merge commits |
 | Type-check | `tsc --noEmit` with `tsconfig.json` |
 | Format | Prettier 3.6.2 (`.prettierrc.json`: 4 spaces, 120 columns) |
+| Library options | `tools/check-library-options.mjs`: code a script imports reads only options that script declares |
 | Index | `tools/build-index.mjs` builds (header blocks, relative imports) |
 
 ```bash
 npx -y -p typescript@5.9.3 tsc --noEmit -p .
 npx -y prettier@3.6.2 --write "**/*.{ts,mjs}"
+node tools/check-library-options.mjs   # needs typescript: npm install --no-save typescript@5.9.3
 node tools/build-index.mjs > /dev/null
 ```
 

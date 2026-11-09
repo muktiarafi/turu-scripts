@@ -23,36 +23,38 @@ const Seppy = new SepulchuresOriginalHelm();
 const tarosManslayer = new TarosManslayer();
 
 export class CyseroItemUpgrade {
-    scriptOtions(): void {
-        if (bot.config!.get<boolean>("PolishedBlod")) {
+    // Turu: the C# reads its options here, which only this file's script declares
+    // (NovaShrineGiftsMerge imports this file); its main passes how to read them instead.
+    scriptOtions(picked: (option: string) => boolean = () => false): void {
+        if (picked("PolishedBlod")) {
             this.getPolishedBLoD();
         }
 
-        if (bot.config!.get<boolean>("ToxicPlagueSpear")) {
+        if (picked("ToxicPlagueSpear")) {
             this.getToxicPlagueSpear();
         }
 
-        if (bot.config!.get<boolean>("BurningPhoenixBlade")) {
+        if (picked("BurningPhoenixBlade")) {
             this.getBurningPhoenixBlade();
         }
 
-        if (bot.config!.get<boolean>("OdokuroBlight")) {
+        if (picked("OdokuroBlight")) {
             this.getOdokuroBlight();
         }
 
-        if (bot.config!.get<boolean>("PolishedManslayer")) {
+        if (picked("PolishedManslayer")) {
             this.getPolishedManslayer();
         }
 
-        if (bot.config!.get<boolean>("CursedDoomBlade")) {
+        if (picked("CursedDoomBlade")) {
             this.getCursedDoomBlade();
         }
 
-        if (bot.config!.get<boolean>("RebornSepulchureHelm")) {
+        if (picked("RebornSepulchureHelm")) {
             this.getRebornSepulchureHelm();
         }
 
-        if (bot.config!.get<boolean>("GetAll")) {
+        if (picked("GetAll")) {
             this.getAll();
         }
     }
@@ -325,7 +327,7 @@ export default function main(): void {
     const script = new CyseroItemUpgrade();
     Core.setOptions();
 
-    script.scriptOtions();
+    script.scriptOtions((option) => bot.config.get<boolean>(option));
 
     Core.setOptions(false);
 }

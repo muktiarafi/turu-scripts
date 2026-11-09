@@ -2190,7 +2190,7 @@ export class AscendEclipseTest {
         // options, so they are read only when it runs on its own; the caller sets the fields.
         const configuredRoom = script.skipSetOptions
             ? script.privateRoomNumber
-            : bot.config.get<number>("privateRoomNumber");
+            : bot.config.get<number>("privateRoomNumber"); // options-check: ok (not with skipSetOptions)
         if (configuredRoom >= 1000 && configuredRoom <= 99999) {
             Core.privateRoomNumber = configuredRoom;
         } else {
@@ -2203,8 +2203,8 @@ export class AscendEclipseTest {
         script.autoEnhance = bot.config!.get<boolean>("autoEnhance");
         script.autoGetEnrage = true;
         if (!script.skipSetOptions) {
-            script.oracleClassTauntReset = bot.config.get<boolean>("oracleClassTauntReset");
-            script.usePotions = bot.config.get<boolean>("usePotions");
+            script.oracleClassTauntReset = bot.config.get<boolean>("oracleClassTauntReset"); // options-check: ok
+            script.usePotions = bot.config.get<boolean>("usePotions"); // options-check: ok
         }
 
         script.setupPartyFromPlayer1();

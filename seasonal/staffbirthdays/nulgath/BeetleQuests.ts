@@ -22,8 +22,8 @@ export class BeetleQuests {
         return new CoreAdvanced();
     }
 
-    everything(): void {
-        this.generalRewards();
+    everything(bankExtras = false): void {
+        this.generalRewards(bankExtras);
         this.warlordRewards();
     }
 
@@ -110,7 +110,9 @@ export class BeetleQuests {
         }
     }
 
-    generalRewards(): void {
+    // Turu: the C# reads the BankExtras option here, which only this file's script declares
+    // (the RGOW scripts import this file); its main passes it instead.
+    generalRewards(bankExtras = false): void {
         TSM.buyAllMerge("Beetle General Pet");
 
         const RewardOptions = Core.ensureLoad(9076).rewards;
@@ -132,7 +134,7 @@ export class BeetleQuests {
                 Core.jumpWait();
                 Core.toBank(item.id);
             }
-            if (bot.config!.get<boolean>("BankExtras")) {
+            if (bankExtras) {
                 Core.toBank(item.id);
             }
         }
@@ -164,7 +166,7 @@ export default function main(): void {
     Core.setOptions();
 
     if (bot.config!.get<boolean>("GetCosmetics")) {
-        script.everything();
+        script.everything(bot.config.get<boolean>("BankExtras"));
     } else {
         script.petAndArmor();
     }

@@ -1,4 +1,4 @@
-# Checks every pull request (rebased on main, type-check, Prettier, the index builds) and, on a
+# Checks every pull request (rebased on main, type-check, Prettier, library options, the index builds) and, on a
 # push to main, publishes index.json (tools/build-index.mjs) on the `index` branch, where Turu's
 # Search Scripts reads it:
 # https://raw.githubusercontent.com/<owner>/<repo>/index/index.json
@@ -74,9 +74,24 @@ jobs:
 
       - run: npx -y prettier@3.6.2 --check "**/*.{ts,mjs}"
 
+  library-options:
+    # Code a script imports may read only options that script declares (tools/check-library-options.mjs).
+    name: Library options
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - run: npm install --no-save --no-package-lock typescript@5.9.3
+
+      - run: node tools/check-library-options.mjs
+
   index:
     name: Index
-    needs: [typecheck, format]
+    needs: [typecheck, format, library-options]
     runs-on: ubuntu-latest
     permissions:
       contents: write

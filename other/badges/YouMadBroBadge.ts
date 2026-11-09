@@ -13,11 +13,9 @@ import { AlchemyRunes, AlchemyTraits, CoreFarms } from "../../core/CoreFarms";
 const Farm = new CoreFarms();
 
 export class YouMadBroBadge {
+    // Turu: the C# reads the "Use Gold" option here unless FromAllBadge, but only this file's
+    // script declares it; its main passes it instead (FromAllBadge is kept for callers).
     badge(useGold = true, FromAllBadge = false): void {
-        if (!FromAllBadge) {
-            useGold = bot.config!.get<boolean>("Use Gold");
-        }
-
         if (Core.hasWebBadge(this.badgeName)) {
             Core.logger(`Already have the ${this.badgeName} badge`);
             return;
@@ -86,7 +84,7 @@ export default function main(): void {
     Core.setOptions();
 
     // Pass the "Use Gold" option to Badge method
-    script.badge();
+    script.badge(bot.config.get<boolean>("Use Gold"));
 
     Core.setOptions(false);
 }

@@ -6,7 +6,7 @@ tags: hollowborn, a dark knight returns, hollowborn doomknight, hollowborn sword
 // Port of Scripts/Hollowborn/HollowbornDoomKnight/ADarkKnightReturns.cs.
 // Converted by tools/cs2ts, not yet read through by hand (cs2ts --force regenerates it); remove this line once it is.
 
-import { defineScriptOptions } from "turu";
+import { bot, defineScriptOptions } from "turu";
 import { Core } from "../../core/CoreBots";
 import { CoreHollowbornDoomKnight } from "./CoreHollowbornDoomKnight";
 
@@ -19,7 +19,7 @@ export const scriptOptions = defineScriptOptions(HDK.optionsStorage, HDK.options
 export default function main(): void {
     Core.setOptions();
 
-    HDK.getAll();
+    HDK.getAll(bot.config.get<boolean>("PreFarm"));
 
     Core.setOptions(false);
 }

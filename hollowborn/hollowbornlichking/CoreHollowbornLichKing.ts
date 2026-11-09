@@ -75,10 +75,10 @@ export class CoreHollowbornLichKing {
     heatTreatmentTurnin = 1;
     counterblowTurnin = 1;
 
-    getAll(): void {
+    // Turu: the C# reads the getAll and BankAfter options here, which scripts importing this file
+    // for one quest don't declare; 0DoAll passes them instead.
+    getAll(getAllDrops = false, BankAfter = false): void {
         Core.logger("Startup may take a moment. Please be patient!");
-        const getAllDrops = bot.config!.get<boolean>("getAll");
-        const BankAfter = bot.config!.get<boolean>("BankAfter");
         let optionsLogged = false;
 
         const questDictionary = new Map<string, [Order: number, Action: () => void]>([

@@ -43,7 +43,9 @@ export class CoreHollowbornDoomKnight {
         "Hollowborn Sword of Doom",
     ];
 
-    getAll(): void {
+    // Turu: the C# reads the PreFarm option here, which scripts importing this file for one
+    // story part don't declare; the scripts calling getAll pass it instead.
+    getAll(preFarm = false): void {
         if (
             Core.checkInventory(this.adkItems, undefined, { toInv: false }) &&
             Core.checkInventory("Classic Hollowborn DoomKnight", undefined, { toInv: false }) &&
@@ -53,7 +55,7 @@ export class CoreHollowbornDoomKnight {
             return;
         }
 
-        if (bot.config!.get<boolean>("PreFarm")) {
+        if (preFarm) {
             this.adk(130);
             this.adkRises();
         }

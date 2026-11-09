@@ -27,6 +27,11 @@ needed, in the same order and with the same names in camelCase.
 - Every call is synchronous: no `async`/`await`. Pressing Stop makes the next bot call throw
   `ScriptStopped`; never swallow it (`rethrowIfStopped(error)` first in a `catch`).
 - Use `bot.*` (see `bot/js/turu.ts`) for raw actions and `Core.*` for the C# CoreBots helpers.
+- `bot.config.get` reads the options of the script you start, and throws for one it doesn't
+  declare; C#'s `Config.Get` gave `false`/`0`. So code other scripts import doesn't read its own
+  file's options: its `main` reads them and passes them in as parameters (or it uses
+  `configOr(name, fallback)`). `tools/check-library-options.mjs` (CI) finds the reads that break
+  this; `// options-check: ok` on a line marks one every caller declares.
 - Relative imports without extension (`"../core/CoreBots"`).
 - C# named arguments for flags become option objects: `KillMonster(..., isTemp: false, log: false)`
   -> `Core.killMonster(..., null, 1, { isTemp: false, log: false })`. So do boolean parameters

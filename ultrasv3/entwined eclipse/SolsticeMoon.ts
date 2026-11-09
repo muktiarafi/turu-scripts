@@ -1576,7 +1576,7 @@ export class SolsticeMoonTest {
         // options, so they are read only when it runs on its own; the caller sets the fields.
         const configuredRoom = script.skipSetOptions
             ? script.privateRoomNumber
-            : bot.config.get<number>("privateRoomNumber");
+            : bot.config.get<number>("privateRoomNumber"); // options-check: ok (not with skipSetOptions)
         if (configuredRoom >= 1000 && configuredRoom <= 99999) {
             Core.privateRoomNumber = configuredRoom;
         } else {
@@ -1590,7 +1590,7 @@ export class SolsticeMoonTest {
         script.autoGetEnrage = true;
         script.checkUsableSlotBeforeBossRooms = true;
         if (!script.skipSetOptions) {
-            script.usePotions = bot.config.get<boolean>("usePotions");
+            script.usePotions = bot.config.get<boolean>("usePotions"); // options-check: ok
         }
 
         script.equipArmyClasses();

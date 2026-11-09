@@ -39,10 +39,11 @@ export interface ArchMageChoices {
 
 /** The choices of a script that declares {@link scriptOptions} (CoreArchMage's and 0ArchMage's). */
 export function archMageChoices(): ArchMageChoices {
+    // Only mains that declare these options call this.
     return {
-        cosmetics: bot.config.get<boolean>("cosmetics"),
-        lumina: bot.config.get<boolean>("lumina_elementi"),
-        army: bot.config.get<boolean>("army"),
+        cosmetics: bot.config.get<boolean>("cosmetics"), // options-check: ok
+        lumina: bot.config.get<boolean>("lumina_elementi"), // options-check: ok
+        army: bot.config.get<boolean>("army"), // options-check: ok
     };
 }
 
