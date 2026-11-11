@@ -79,11 +79,12 @@ export class CoreLynaria {
 
         // 10238 | Wandering Light
         if (!Story.questProgression(10238)) {
-            Core.huntMonsterQuest(
-                10238,
-                ["bocklingrove", UseableMonsters[5], ClassType.Farm],
-                ["bocklingrove", UseableMonsters[4], ClassType.Farm],
-            );
+            // As C#: the requirements aren't listed in the order of these monsters.
+            Core.ensureAccept(10238);
+            Core.equipClass(ClassType.Farm);
+            Core.huntMonster("bocklingrove", "Garde Wraith", "Wraith's Loyalty", 9);
+            Core.huntMonster("bocklingrove", "Undead Garde", "Undead Vaughn", 6);
+            Core.ensureComplete(10238);
         }
 
         // 10239 | Death Plays the Fiddle
@@ -129,11 +130,12 @@ export class CoreLynaria {
 
         // 10246 | Ruins Near Kehl
         if (!Story.questProgression(10246)) {
-            Core.huntMonsterQuest(
-                10246,
-                ["bocklincastle", UseableMonsters[0], ClassType.Farm],
-                ["bocklincastle", UseableMonsters[1], ClassType.Farm],
-            );
+            // As C#: the requirements aren't listed in the order of these monsters.
+            Core.ensureAccept(10246);
+            Core.equipClass(ClassType.Farm);
+            Core.huntMonster("bocklincastle", "Undead Garde", "Undead Marrow", 6);
+            Core.huntMonster("bocklincastle", "Garde Wraith", "Wraith Cleared", 9);
+            Core.ensureComplete(10246);
         }
 
         // 10247 | Whistling Blackbird
@@ -162,11 +164,12 @@ export class CoreLynaria {
 
         // 10251 | Bacchanalia
         if (!Story.questProgression(10251)) {
-            Core.huntMonsterQuest(
-                10251,
-                ["bocklincastle", UseableMonsters[2], ClassType.Farm],
-                ["bocklincastle", UseableMonsters[4], ClassType.Farm],
-            );
+            // As C#: the requirements aren't listed in the order of these monsters.
+            Core.ensureAccept(10251);
+            Core.equipClass(ClassType.Farm);
+            Core.huntMonster("bocklincastle", "Warped Revenant", "Warped Condensation", 9);
+            Core.huntMonster("bocklincastle", "Faceless Ritualist", "Duke's Crest", 6);
+            Core.ensureComplete(10251);
         }
 
         // 10252 | Euterpe and Deer
@@ -209,11 +212,12 @@ export class CoreLynaria {
 
         // 10259 | Gilded Peace
         if (!Story.questProgression(10259)) {
-            Core.huntMonsterQuest(
-                10259,
-                ["bocklinsanctum", UseableMonsters[1], ClassType.Farm],
-                ["bocklinsanctum", UseableMonsters[0], ClassType.Farm],
-            );
+            // As C#: the requirements aren't listed in the order of these monsters.
+            Core.ensureAccept(10259);
+            Core.equipClass(ClassType.Farm);
+            Core.huntMonster("bocklinsanctum", "Faceless Ritualist", "Ritualist's Gold Rose", 6);
+            Core.huntMonster("bocklinsanctum", "Warped Revenant", "Revenant Appeased", 9);
+            Core.ensureComplete(10259);
         }
 
         // 10260 | Towards Reunion
@@ -250,11 +254,12 @@ export class CoreLynaria {
 
         // 10264 | Cure-All
         if (!Story.questProgression(10264)) {
-            Core.huntMonsterQuest(
-                10264,
-                ["bocklinsanctum", UseableMonsters[3], ClassType.Solo],
-                ["bocklinsanctum", UseableMonsters[4], ClassType.Solo],
-            );
+            // As C#: the requirements aren't listed in the order of these monsters.
+            Core.ensureAccept(10264);
+            Core.equipClass(ClassType.Solo);
+            Core.huntMonster("bocklinsanctum", "Ghostly Servant", "Servant's Herb", 12);
+            Core.huntMonster("bocklinsanctum", "Headless Rider", "Rider's Fleur", 6);
+            Core.ensureComplete(10264);
         }
 
         // 10265 | The Thronekeeper
