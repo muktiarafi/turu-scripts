@@ -7,7 +7,7 @@ tags: grimgoal, dungeon, why, did, we, make, this, Testing, WIP, beta
 // Differs from C#: scripts can't write files, so the personal best (C# keeps it in
 // Prototypes/GrimGaolRunTimes.txt) lasts for the session only.
 
-import { BoostType, bot, defineScriptOptions, option } from "turu";
+import { BoostType, bot, defineScriptOptions, option, type ScriptOption, type ScriptOptionItem } from "turu";
 import { CapeSpecial, CoreAdvanced, EnhancementType, HelmSpecial, WeaponSpecial } from "../core/CoreAdvanced";
 import { Core } from "../core/CoreBots";
 import { CoreFarms } from "../core/CoreFarms";
@@ -24,6 +24,14 @@ const DVB = new DoomVaultB();
 const InfernalArena = new InfernalArenaMerge();
 const J6 = new J6Saga();
 const Forge = new UnlockForgeEnhancements();
+
+/**
+ * An item option (`option.item`) declared as a text option with its `item` field, so a Turu older
+ * than `option.item` still loads the script and shows a text box.
+ */
+function itemOption(name: string, displayName: string, description: string, item: ScriptOptionItem): ScriptOption {
+    return { ...option.text(name, displayName, description), item };
+}
 
 export class Grimgaol {
     readonly runTimer = new Stopwatch();
@@ -46,12 +54,12 @@ export class Grimgaol {
             "If enabled, this will log the time for each room into chat/the Logs > scripts tab.",
             false,
         ), // Helms
-        option.item("ForgeHelm", "Helm: Forge", "Your helm with the Forge enhancement", "helm"),
-        option.item("WizHelm", "Helm: Wizard", "Your helm with the Wizard enhancement", "helm"),
-        option.item("HealerHelm", "Helm: Healer", "Your helm with the Healer enhancement", "helm"), // Weapons
-        option.item("Elysium", "Weapon: Elysium", "Your weapon with the Elysium enhancement", "weapon"), // Capes
-        option.item("Absolution", "Cape: Absolution", "Your cape with the Absolution enhancement", "cape"),
-        option.item("Penitence", "Cape: Penitence", "Your cape with the Penitence enhancement", "cape"),
+        itemOption("ForgeHelm", "Helm: Forge", "Your helm with the Forge enhancement", "helm"),
+        itemOption("WizHelm", "Helm: Wizard", "Your helm with the Wizard enhancement", "helm"),
+        itemOption("HealerHelm", "Helm: Healer", "Your helm with the Healer enhancement", "helm"), // Weapons
+        itemOption("Elysium", "Weapon: Elysium", "Your weapon with the Elysium enhancement", "weapon"), // Capes
+        itemOption("Absolution", "Cape: Absolution", "Your cape with the Absolution enhancement", "cape"),
+        itemOption("Penitence", "Cape: Penitence", "Your cape with the Penitence enhancement", "cape"),
     ];
 
     // ── Split Timer State ────────────────────────────────────────────────────

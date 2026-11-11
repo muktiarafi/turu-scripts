@@ -35,6 +35,13 @@ against `types/turu.ts`.
 Every commit on `main` is published to Search Scripts right away, so a merged script must
 type-check and should have been run in game; say in the pull request if it hasn't.
 
+**Scripts must load in older Turu releases.** Users download scripts without updating the
+app, and a script that calls an API member their Turu doesn't have fails to load (along with
+every script that imports it). When a script uses something added to `types/turu.ts` recently,
+give it a fallback for older releases: declare a new option field on an older maker
+(`{ ...option.text(...), item: "helm" }` instead of `option.item(...)`; older releases ignore
+fields they don't know), or check the member first (`typeof bot.x?.y === "function"`).
+
 ### What CI checks
 
 Every pull request runs [.github/workflows/index.yml](.github/workflows/index.yml), and it must
