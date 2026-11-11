@@ -31,15 +31,15 @@ export class ShadowslayerSummoningRitual2 {
         Core.farmingLogger("Lunate Sigil", quant);
 
         while (!Core.checkInventory("Lunate Sigil", quant)) {
-            Core.huntMonsterQuest(
-                9846,
-                ["chaoscave", "Dracowerepyre", ClassType.Solo],
-                ["darkoviaforest", "Lich Of The Stone", ClassType.Solo],
-                ["borgars", "Burglinster", ClassType.Solo],
-                ["firewar", "Uriax", ClassType.Solo],
-                ["maul", "Creature Creation ", ClassType.Solo],
-                ["techdungeon", "Kalron the Cryptborg", ClassType.Solo],
-            );
+            Core.ensureAccept(9846);
+            Core.equipClass(ClassType.Solo);
+            Core.huntMonster("chaoscave", "DracoWerePyre", "Chaotic Dragon Blade", 1, { isTemp: false });
+            Core.huntMonster("darkoviaforest", "Lich of the Stone", "Lich Crown", 1, { isTemp: false });
+            Core.huntMonster("borgars", "Burglinster", "Deep Fried Mecha Mace", 1, { isTemp: false });
+            Core.huntMonster("firewar", "Uriax", "Uriax's Tail", 1, { isTemp: false });
+            Core.huntMonster("maul", "Creature Creation", "Axe of Creation", 1, { isTemp: false });
+            Core.huntMonster("techdungeon", "Kalron the Cryptborg", "Zealous Cherubs", 1, { isTemp: false });
+            Core.ensureComplete(9846);
             bot.wait.forPickup("Lunate Sigil");
         }
     }

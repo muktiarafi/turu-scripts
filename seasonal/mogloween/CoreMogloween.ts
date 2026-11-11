@@ -1053,11 +1053,11 @@ export class CoreMogloween {
 
         // 10466 | Limitless Lengths
         if (!Story.questProgression(10466)) {
-            Core.huntMonsterQuest(
-                10466,
-                ["eldritchworld", UseableMonsters[7], ClassType.Farm],
-                ["eldritchworld", UseableMonsters[6], ClassType.Farm],
-            );
+            Core.ensureAccept(10466);
+            Core.equipClass(ClassType.Farm);
+            Core.huntMonster("eldritchworld", "Mass of Teeth", "Brittle Enamel", 6);
+            Core.huntMonster("eldritchworld", "Mass of Hair", "Moldy Strands", 6);
+            Core.ensureComplete(10466);
         }
 
         // 10467 | Merely Existing
@@ -1099,11 +1099,11 @@ export class CoreMogloween {
 
         // 10471 | Bottomfeeder Fruits
         if (!Story.questProgression(10471)) {
-            Core.huntMonsterQuest(
-                10471,
-                ["elodeatemple", UseableMonsters[0], ClassType.Farm],
-                ["elodeatemple", UseableMonsters[1], ClassType.Farm],
-            );
+            Core.ensureAccept(10471);
+            Core.equipClass(ClassType.Farm);
+            Core.huntMonster("elodeatemple", "Nudibranch", "Seaslug Entrails", 6);
+            Core.huntMonster("elodeatemple", "Kathool Cultist", "Kultist Entrails", 4);
+            Core.ensureComplete(10471);
         }
 
         // 10472 | Dirge of the Depths
@@ -1121,11 +1121,11 @@ export class CoreMogloween {
 
         // 10474 | Sea Symphony
         if (!Story.questProgression(10474)) {
-            Core.huntMonsterQuest(
-                10474,
-                ["elodeatemple", UseableMonsters[3], ClassType.Farm],
-                ["elodeatemple", UseableMonsters[2], ClassType.Farm],
-            );
+            Core.ensureAccept(10474);
+            Core.equipClass(ClassType.Farm);
+            Core.huntMonster("elodeatemple", "Riptide Adept", "Adept's Aria", 8);
+            Core.huntMonster("elodeatemple", "Merdrathoolian", "Merdrathoolian's Oratio", 6);
+            Core.ensureComplete(10474);
         }
 
         // 10475 | If You Hate the Robe, You'll Hate its Priest

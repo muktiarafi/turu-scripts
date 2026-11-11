@@ -67,12 +67,13 @@ export class CelestialSpoilsMerge {
                 case "Lucky Button":
                     Core.farmingLogger(req.name, quant);
                     while (!bot.shouldExit && !Core.checkInventory(req.name, quant)) {
-                        Core.huntMonsterQuest(
-                            9836,
-                            ["deadmoor", "Toxic Souleater", ClassType.Farm],
-                            ["moonlab", "Infected Scientist", ClassType.Farm],
-                            ["deerhunt", "Zweinichthirsch", ClassType.Solo],
-                        );
+                        Core.ensureAccept(9836);
+                        Core.equipClass(ClassType.Farm);
+                        Core.huntMonster("deadmoor", "Toxic Souleater", "Toxic Souleater Venom", 10);
+                        Core.huntMonster("moonlab", "Infected Scientist", "Scientist's Flask", 10);
+                        Core.equipClass(ClassType.Solo);
+                        Core.huntMonster("deerhunt", "Zweinichthirsch", " Zweinichthirsch Antler");
+                        Core.ensureComplete(9836);
                         bot.wait.forPickup(req.name);
                     }
                     break;

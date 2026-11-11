@@ -21,23 +21,24 @@ export class BaseCamp {
 
         // 10270 | One Brick at a Time
         if (!Story.questProgression(10270)) {
-            Core.huntMonsterQuest(
-                10270,
-                ["cornelis", "Gargoyle", ClassType.Farm],
-                ["cornelis", "Stone Golem", ClassType.Solo],
-                ["faerie", "Cyclops Warlord", ClassType.Solo],
-            );
+            Core.ensureAccept(10270);
+            Core.equipClass(ClassType.Farm);
+            Core.huntMonster("cornelis", "Gargoyle", "Portal Bricks", 25);
+            Core.equipClass(ClassType.Solo);
+            Core.huntMonster("cornelis", "Stone Golem", "Support Pillars", 4);
+            Core.huntMonster("faerie", "Cyclops Warlord", "Magelight", 4);
+            Core.ensureComplete(10270);
         }
 
         // 10271 | Room with a View
         if (!Story.questProgression(10271)) {
-            Core.huntMonsterQuest(
-                10271,
-                ["dwarfhold", "Gemrald", ClassType.Farm],
-                ["crashsite", "Mithril Man", ClassType.Farm],
-                ["crashsite", "ProtoSartorium", ClassType.Farm],
-                ["digitalmaintown", "8-Bit Lionfang", ClassType.Farm],
-            );
+            Core.ensureAccept(10271);
+            Core.equipClass(ClassType.Farm);
+            Core.huntMonster("dwarfhold", "Gemrald", "Magic Rocks", 8);
+            Core.huntMonster("crashsite", "Mithril Man", "Power Cable");
+            Core.huntMonster("crashsite", "ProtoSartorium", "75-inch Ultra-thin 144hz 1ms LED Display");
+            Core.huntMonster("digitalmaintown", "8-bit Lionfang", "1080x1920 JPEG of Battleon");
+            Core.ensureComplete(10271);
         }
 
         // 10272 | Transportalation
@@ -51,12 +52,12 @@ export class BaseCamp {
 
         // 10273 | Your First Portal
         if (!Story.questProgression(10273)) {
-            Core.huntMonsterQuest(
-                10273,
-                ["swordhavenbridge", "Slime", ClassType.Farm],
-                ["farm", "Scarecrow", ClassType.Farm],
-                ["boxes", "Sneeviltron", ClassType.Farm],
-            );
+            Core.ensureAccept(10273);
+            Core.equipClass(ClassType.Farm);
+            Core.huntMonster("swordhavenbridge", "Slime", "Nontoxic Children's Glue");
+            Core.huntMonster("farm", "Scarecrow", "Unused Popsicle Sticks", 10);
+            Core.huntMonster("boxes", "Sneeviltron", "Clear Tape");
+            Core.ensureComplete(10273);
         }
     }
 }

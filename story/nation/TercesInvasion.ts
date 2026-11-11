@@ -88,11 +88,11 @@ export class TercesInvasion {
 
         // 10580 | Billowing Hate
         if (!Story.questProgression(10580)) {
-            Core.huntMonsterQuest(
-                10580,
-                ["tercesinvasion", UseableMonsters[5], ClassType.Farm],
-                ["tercesinvasion", UseableMonsters[7], ClassType.Farm],
-            );
+            Core.ensureAccept(10580);
+            Core.equipClass(ClassType.Farm);
+            Core.huntMonster("tercesinvasion", "Rodeleros Soldier", "Still Air", 2);
+            Core.huntMonster("tercesinvasion", "Elemental Fiend", "Windblades");
+            Core.ensureComplete(10580);
         }
 
         // 10581 | The Swordmaiden

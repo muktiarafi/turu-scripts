@@ -73,11 +73,11 @@ export class AtlasPromenade {
 
         // 10111 | Old Souls
         if (!Story.questProgression(10111)) {
-            Core.huntMonsterQuest(
-                10111,
-                ["atlaspromenade", UseableMonsters[3], ClassType.Solo],
-                ["atlaspromenade", UseableMonsters[2], ClassType.Solo],
-            );
+            Core.ensureAccept(10111);
+            Core.equipClass(ClassType.Solo);
+            Core.huntMonster("atlaspromenade", "Atlas Light Magus", "Mage's Tally", 6);
+            Core.huntMonster("atlaspromenade", "Atlas Knight", "Knight's Tally", 6);
+            Core.ensureComplete(10111);
         }
 
         // 10114 | Digging Too Deep

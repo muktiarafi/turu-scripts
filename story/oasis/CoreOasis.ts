@@ -129,11 +129,11 @@ export class CoreOasis {
 
         // 10324 | Subaru
         if (!Story.questProgression(10324)) {
-            Core.huntMonsterQuest(
-                10324,
-                ["whitetigerpoint", UseableMonsters[1], ClassType.Farm],
-                ["whitetigerpoint", UseableMonsters[0], ClassType.Farm],
-            );
+            Core.ensureAccept(10324);
+            Core.equipClass(ClassType.Farm);
+            Core.huntMonster("whitetigerpoint", "Byakko Cub", "Cub Stripes", 6);
+            Core.huntMonster("whitetigerpoint", "Astral Spirit", "Astral Sparkle", 6);
+            Core.ensureComplete(10324);
         }
 
         // 10325 | Kagasuki
@@ -153,11 +153,11 @@ export class CoreOasis {
 
         // 10328 | Toroki
         if (!Story.questProgression(10328)) {
-            Core.huntMonsterQuest(
-                10328,
-                ["whitetigerpoint", UseableMonsters[3], ClassType.Farm],
-                ["whitetigerpoint", UseableMonsters[2], ClassType.Farm],
-            );
+            Core.ensureAccept(10328);
+            Core.equipClass(ClassType.Farm);
+            Core.huntMonster("whitetigerpoint", "Lunar Haze", "Lunar Gaze", 6);
+            Core.huntMonster("whitetigerpoint", "Rigel Stray", "Rigel Radiation", 6);
+            Core.ensureComplete(10328);
         }
 
         // 10329 | Komokuten
@@ -236,11 +236,11 @@ export class CoreOasis {
         //#endregion Useable Monsters
         // 9537 | Remnants of Apophis
         if (!Story.questProgression(9537)) {
-            Core.huntMonsterQuest(
-                9537,
-                ["djinnguard", UseableMonsters[1], ClassType.Solo],
-                ["djinnguard", UseableMonsters[2], ClassType.Solo],
-            );
+            Core.ensureAccept(9537);
+            Core.equipClass(ClassType.Solo);
+            Core.huntMonster("djinnguard", "Loamy Lamia", "Hissteria Scale", 6);
+            Core.huntMonster("djinnguard", "Fluvial Lamia", "Fluvial Scale", 6);
+            Core.ensureComplete(9537);
         }
 
         // 9538 | Follower of Faiyum
@@ -377,11 +377,11 @@ export class CoreOasis {
 
         // 10758 | Amnion Alchemy
         if (!Story.questProgression(10758)) {
-            Core.huntMonsterQuest(
-                10758,
-                ["carcossacabins", UseableMonsters[2], ClassType.Solo],
-                ["carcossacabins", UseableMonsters[3], ClassType.Solo],
-            );
+            Core.ensureAccept(10758);
+            Core.equipClass(ClassType.Solo);
+            Core.huntMonster("carcossacabins", "Evolved Lifeform", "Lifeform's Cranium", 9);
+            Core.huntMonster("carcossacabins", "Doom Leech", "Leech's Sucker", 9);
+            Core.ensureComplete(10758);
         }
 
         // 10759 | Self-Infested
@@ -424,11 +424,11 @@ export class CoreOasis {
 
         // 10767 | Mitsutake
         if (!Story.questProgression(10767)) {
-            Core.huntMonsterQuest(
-                10767,
-                ["vermillioncliffs", UseableMonsters[0], ClassType.Farm],
-                ["vermillioncliffs", UseableMonsters[1], ClassType.Farm],
-            );
+            Core.ensureAccept(10767);
+            Core.equipClass(ClassType.Farm);
+            Core.huntMonster("vermillioncliffs", "Star Sweet", "Sugar Star", 6);
+            Core.huntMonster("vermillioncliffs", "Tejat Muse Moth", "Muse Dust", 6);
+            Core.ensureComplete(10767);
         }
 
         // 10768 | Nuriko
@@ -448,11 +448,11 @@ export class CoreOasis {
 
         // 10771 | Hotohori
         if (!Story.questProgression(10771)) {
-            Core.huntMonsterQuest(
-                10771,
-                ["vermillioncliffs", UseableMonsters[2], ClassType.Solo],
-                ["vermillioncliffs", UseableMonsters[3], ClassType.Solo],
-            );
+            Core.ensureAccept(10771);
+            Core.equipClass(ClassType.Solo);
+            Core.huntMonster("vermillioncliffs", "Dawn Knight", "Knight's Shine", 6);
+            Core.huntMonster("vermillioncliffs", "Vermillion Phoenix", "Phoenix Tongue", 6);
+            Core.ensureComplete(10771);
         }
 
         // 10772 | Zochoten

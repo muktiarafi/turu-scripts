@@ -73,12 +73,14 @@ export class InfernalParadiseMerge {
                 case "Divine Down":
                     Core.farmingLogger(req.name, quant);
                     while (!bot.shouldExit && !Core.checkInventory(req.name, quant)) {
-                        Core.huntMonsterQuest(
-                            10082,
-                            ["infernalparadise", "Akh-a", ClassType.Solo],
-                            ["infernalparadise", "Azalith", ClassType.Dodge],
-                            ["infernalparadise", "Infernal Knight", ClassType.Farm],
-                        );
+                        Core.ensureAccept(10082);
+                        Core.equipClass(ClassType.Solo);
+                        Core.huntMonster("infernalparadise", "Akh-a", "Hybrid Feathers", 4);
+                        Core.equipClass(ClassType.Dodge);
+                        Core.huntMonster("infernalparadise", "Azalith", "Azalith's Horn");
+                        Core.equipClass(ClassType.Farm);
+                        Core.huntMonster("infernalparadise", "Infernal Knight", "Knight's Broken Halo", 8);
+                        Core.ensureComplete(10082);
                         bot.wait.forPickup(req.name);
                     }
                     break;
@@ -120,11 +122,11 @@ export class InfernalParadiseMerge {
                     Core.farmingLogger(req.name, quant);
                     Core.equipClass(ClassType.Solo);
                     while (!bot.shouldExit && !Core.checkInventory(req.name, quant)) {
-                        Core.huntMonsterQuest(
-                            9887,
-                            ["champazalith", "Maah-na", ClassType.Solo],
-                            ["champazalith", "Akh-a", ClassType.Solo],
-                        );
+                        Core.ensureAccept(9887);
+                        Core.equipClass(ClassType.Solo);
+                        Core.huntMonster("champazalith", "Maah-na", "Maah-na's Wing");
+                        Core.huntMonster("champazalith", "Akh-a", "Akh-a's Wing");
+                        Core.ensureComplete(9887);
                         bot.wait.forPickup(req.name);
                     }
                     break;

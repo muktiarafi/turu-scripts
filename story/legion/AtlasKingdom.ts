@@ -71,11 +71,11 @@ export class AtlasKingdom {
 
         // 10124 | Blood of the Hesperides
         if (!Story.questProgression(10124)) {
-            Core.huntMonsterQuest(
-                10124,
-                ["atlaskingdom", UseableMonsters[3], ClassType.Solo],
-                ["atlaskingdom", UseableMonsters[4], ClassType.Solo],
-            );
+            Core.ensureAccept(10124);
+            Core.equipClass(ClassType.Solo);
+            Core.huntMonster("atlaskingdom", "Atlas Leo", "Leo's Mane", 4);
+            Core.huntMonster("atlaskingdom", "Atlas Elite", "Elite's Rose", 4);
+            Core.ensureComplete(10124);
         }
 
         // 10125 | Prota Sparasso

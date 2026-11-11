@@ -47,12 +47,12 @@ export class ObsessorCommanderMerge {
                 case "Compass Rose Skull":
                     Core.farmingLogger(req.name, quant);
                     while (!bot.shouldExit && !Core.checkInventory(req.name, quant)) {
-                        Core.huntMonsterQuest(
-                            9894,
-                            ["dracocon", "Treasure Pile", ClassType.Farm],
-                            ["battleundere", "Treasure Pile", ClassType.Farm],
-                            ["greed", "Treasure Pile", ClassType.Farm],
-                        );
+                        Core.ensureAccept(9894);
+                        Core.equipClass(ClassType.Farm);
+                        Core.huntMonster("dracocon", "Treasure Pile", "2nd Gold Piece");
+                        Core.huntMonster("battleundere", "Treasure Pile", "3rd Gold Piece");
+                        Core.huntMonster("greed", "Treasure Pile", "1st Gold Piece");
+                        Core.ensureComplete(9894);
                         bot.wait.forPickup(req.name);
                     }
                     break;

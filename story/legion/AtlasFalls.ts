@@ -47,11 +47,11 @@ export class AtlasFalls {
 
         // 10128 | Exodus of Dust
         if (!Story.questProgression(10128)) {
-            Core.huntMonsterQuest(
-                10128,
-                ["atlasfalls", UseableMonsters[0], ClassType.Solo],
-                ["atlasfalls", UseableMonsters[2], ClassType.Solo],
-            );
+            Core.ensureAccept(10128);
+            Core.equipClass(ClassType.Solo);
+            Core.huntMonster("atlasfalls", "Atlas Knight", "Knight's Skull", 9);
+            Core.huntMonster("atlasfalls", "Atlas Light Mage", "Mage's Skull", 9);
+            Core.ensureComplete(10128);
         }
 
         // 10129 | Impeccable Judgement

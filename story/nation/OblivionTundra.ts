@@ -55,11 +55,11 @@ export class OblivionTundra {
 
         // 10039 | Greywater
         if (!Story.questProgression(10039)) {
-            Core.huntMonsterQuest(
-                10039,
-                ["obliviontundra", UseableMonsters[1], ClassType.Farm],
-                ["obliviontundra", UseableMonsters[0], ClassType.Farm],
-            );
+            Core.ensureAccept(10039);
+            Core.equipClass(ClassType.Farm);
+            Core.huntMonster("obliviontundra", "Hushed", "Soiled Contract", 2);
+            Core.huntMonster("obliviontundra", "Empty Creature", "Gray Meat", 4);
+            Core.ensureComplete(10039);
         }
 
         // 10040 | A Fiendish Waste
@@ -85,11 +85,11 @@ export class OblivionTundra {
 
         // 10044 | Stirring Darkness
         if (!Story.questProgression(10044)) {
-            Core.huntMonsterQuest(
-                10044,
-                ["obliviontundra", UseableMonsters[3], ClassType.Farm],
-                ["obliviontundra", UseableMonsters[4], ClassType.Farm],
-            );
+            Core.ensureAccept(10044);
+            Core.equipClass(ClassType.Farm);
+            Core.huntMonster("obliviontundra", "Oblivion Magus", "Magus' Gray Soul", 6);
+            Core.huntMonster("obliviontundra", "Ettin Fiend", "Ettin Core", 3);
+            Core.ensureComplete(10044);
         }
 
         // 10045 | Remember to Breathe

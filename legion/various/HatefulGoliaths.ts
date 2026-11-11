@@ -47,14 +47,14 @@ export class HatefulGoliaths {
         Core.huntMonster("fortressdelve", "Astero", "Glass Wing", undefined, { log: false });
         Core.ensureComplete(9170);
 
-        Core.huntMonsterQuest(
-            10103,
-            ["shadowblast", "Thanatos", ClassType.Solo],
-            ["evilwarnul", "Laken", ClassType.Solo],
-            ["envy", "Envy", ClassType.Solo],
-            ["darkfortress", "Wilhelm", ClassType.Solo],
-            ["darkally", "Underfiend", ClassType.Solo],
-        );
+        Core.ensureAccept(10103);
+        Core.equipClass(ClassType.Solo);
+        Core.huntMonster("shadowblast", "Thanatos", "Thanatos' Soul", 1, { isTemp: false });
+        Core.huntMonster("evilwarnul", "Laken", "Laken's Soul", 1, { isTemp: false });
+        Core.huntMonster("envy", "Envy", "Envy's Soul", 1, { isTemp: false });
+        Core.huntMonster("darkfortress", "Wilhelm", "Wilhelm's Soul", 1, { isTemp: false });
+        Core.huntMonster("darkally", "Underfiend", "Underfiend's Soul", 1, { isTemp: false });
+        Core.ensureComplete(10103);
     }
 }
 

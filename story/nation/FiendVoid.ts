@@ -52,11 +52,11 @@ export class FiendVoid {
 
         // 10563 | Forever Fall
         if (!Story.questProgression(10563)) {
-            Core.huntMonsterQuest(
-                10563,
-                ["fiendvoid", UseableMonsters[1], ClassType.Farm],
-                ["fiendvoid", UseableMonsters[0], ClassType.Farm],
-            );
+            Core.ensureAccept(10563);
+            Core.equipClass(ClassType.Farm);
+            Core.huntMonster("fiendvoid", "The Hushed", "Acrid Smoke", 3);
+            Core.huntMonster("fiendvoid", "Blood Fiend", "Ball of Veins", 6);
+            Core.ensureComplete(10563);
         }
 
         // 10564 | Hydrops Fetalis
@@ -86,11 +86,11 @@ export class FiendVoid {
 
         // 10568 | Ingrained in Flesh
         if (!Story.questProgression(10568)) {
-            Core.huntMonsterQuest(
-                10568,
-                ["fiendvoid", UseableMonsters[3], ClassType.Solo],
-                ["fiendvoid", UseableMonsters[4], ClassType.Solo],
-            );
+            Core.ensureAccept(10568);
+            Core.equipClass(ClassType.Solo);
+            Core.huntMonster("fiendvoid", "Void Fang", "Mutated Scales", 2);
+            Core.huntMonster("fiendvoid", "Arachnid Seeker", "Seeker Legs", 40);
+            Core.ensureComplete(10568);
         }
 
         // 10569 | I Know, Therefore I Suffer

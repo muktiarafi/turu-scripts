@@ -37,21 +37,24 @@ export class ImageOfNulgath {
 
             // Doomed Extract
             TD.storyline();
-            Core.huntMonsterQuest(
-                9090,
-                ["templedelve", "Infested Nation", ClassType.Farm],
-                ["templedelve", "Doomed Fiend", ClassType.Solo],
-                ["templedelve", "Delirious Elemental", ClassType.Farm],
-            );
+            Core.ensureAccept(9090);
+            Core.equipClass(ClassType.Farm);
+            Core.huntMonster("templedelve", "Infested Nation", "Infestation Study", 6);
+            Core.equipClass(ClassType.Solo);
+            Core.huntMonster("templedelve", "Doomed Fiend", "Fiend Worm");
+            Core.equipClass(ClassType.Farm);
+            Core.huntMonster("templedelve", "Delirious Elemental", "Elemental Study", 6);
+            Core.ensureComplete(9090);
 
             // Void Remnant
             VC.storyline();
-            Core.huntMonsterQuest(
-                9553,
-                ["voidchasm", "Carcano", ClassType.Solo],
-                ["voidchasm", "Carnage", ClassType.Solo],
-                ["voidchasm", "The Hushed", ClassType.Farm],
-            );
+            Core.ensureAccept(9553);
+            Core.equipClass(ClassType.Solo);
+            Core.huntMonster("voidchasm", "Carcano", "Carcano's Teratoma");
+            Core.huntMonster("voidchasm", "Carnage", "Bloodied Chainlink");
+            Core.equipClass(ClassType.Farm);
+            Core.huntMonster("voidchasm", "The Hushed", "Defunct Seal of Approval", 6);
+            Core.ensureComplete(9553);
         }
 
         const RewardOptions = Core.ensureLoad(10019).rewards;

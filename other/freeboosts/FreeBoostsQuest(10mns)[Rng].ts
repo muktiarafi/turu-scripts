@@ -31,12 +31,13 @@ export class FreeBoosts {
             Core.checkInventory("REPUTATION Boost! (10 min)", RepBoostQuant);
 
         while (!bot.shouldExit && !allQuantitiesMet) {
-            Core.huntMonsterQuest(
-                6208,
-                ["bloodtusk", "Trollola Plant", ClassType.Solo],
-                ["cloister", "Acornent", ClassType.Farm],
-                ["nibbleon", "Dark Makai", ClassType.Farm],
-            );
+            Core.ensureAccept(6208);
+            Core.equipClass(ClassType.Solo);
+            Core.huntMonster("bloodtusk", "Trollola Plant", "Trollola Nectar", 2, { isTemp: false });
+            Core.equipClass(ClassType.Farm);
+            Core.huntMonster("cloister", "Acornent", "Nimblestem", 1, { isTemp: false });
+            Core.huntMonster("nibbleon", "Dark Makai", "Moglinberries", 3, { isTemp: false });
+            Core.ensureComplete(6208);
 
             if (allQuantitiesMet) break; // Exit the loop when all quantities are met.
 

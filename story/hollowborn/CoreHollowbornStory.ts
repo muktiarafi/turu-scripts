@@ -267,11 +267,11 @@ export class CoreHollowbornStory {
 
         // 9863 | Ceremonies and Rituals
         if (!Story.questProgression(9863)) {
-            Core.huntMonsterQuest(
-                9863,
-                ["neotower", UseableMonsters[0], ClassType.Solo],
-                ["neotower", UseableMonsters[1], ClassType.Solo],
-            );
+            Core.ensureAccept(9863);
+            Core.equipClass(ClassType.Solo);
+            Core.huntMonster("neotower", "Dawn Vindicator Soldier ", "Soldier's Grace", 8);
+            Core.huntMonster("neotower", "Vindicator Beast", "Beast's Grace", 8);
+            Core.ensureComplete(9863);
         }
 
         // 9864 | Selective Acknowledgement
@@ -345,11 +345,11 @@ export class CoreHollowbornStory {
 
         // 9984 | Thurisaz - Realized
         if (!Story.questProgression(9984)) {
-            Core.huntMonsterQuest(
-                9984,
-                ["dawnsanctum", UseableMonsters[5], ClassType.Farm],
-                ["dawnsanctum", UseableMonsters[6], ClassType.Farm],
-            );
+            Core.ensureAccept(9984);
+            Core.equipClass(ClassType.Farm);
+            Core.huntMonster("dawnsanctum", "Vindicator Draconian", "Vindicator Talon", 6);
+            Core.huntMonster("dawnsanctum", "Hollowborn Draconian", "Hollowborn Talon", 6);
+            Core.ensureComplete(9984);
         }
 
         // 9985 | Othala - Realized

@@ -91,12 +91,12 @@ export class LibrarysLostandFoundMerge {
             Core.huntMonsterQuest(10098, ["dagefortress", "Scorned Knight", ClassType.Farm]);
         }
         while (!bot.shouldExit && !Core.checkInventory("Underworld Linen", quant)) {
-            Core.huntMonsterQuest(
-                10099,
-                ["judgement", "Minos", ClassType.Solo],
-                ["judgement", "Rhadamanthys", ClassType.Solo],
-                ["judgement", "Aeacus", ClassType.Solo],
-            );
+            Core.ensureAccept(10099);
+            Core.equipClass(ClassType.Solo);
+            Core.huntMonster("judgement", "Minos", "Minos' Scylla");
+            Core.huntMonster("judgement", "Rhadamanthys", "Rhadamanthys' Asterion");
+            Core.huntMonster("judgement", "Aeacus", "Aeacus' Marrow");
+            Core.ensureComplete(10099);
             bot.wait.forPickup("Underworld Linen");
         }
     }

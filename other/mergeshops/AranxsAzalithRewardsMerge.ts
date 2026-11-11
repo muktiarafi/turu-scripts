@@ -44,11 +44,11 @@ export class AranxsAzalithRewardsMerge {
                     Core.farmingLogger(req.name, quant);
                     Core.equipClass(ClassType.Solo);
                     while (!bot.shouldExit && !Core.checkInventory(req.name, quant)) {
-                        Core.huntMonsterQuest(
-                            9887,
-                            ["champazalith", "Maah-na", ClassType.Solo],
-                            ["champazalith", "Akh-a", ClassType.Solo],
-                        );
+                        Core.ensureAccept(9887);
+                        Core.equipClass(ClassType.Solo);
+                        Core.huntMonster("champazalith", "Maah-na", "Maah-na's Wing");
+                        Core.huntMonster("champazalith", "Akh-a", "Akh-a's Wing");
+                        Core.ensureComplete(9887);
                         bot.wait.forPickup(req.name);
                     }
                     break;

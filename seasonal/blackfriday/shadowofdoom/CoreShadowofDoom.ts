@@ -338,11 +338,11 @@ export class CoreShadowofDoom {
 
         // 9958 | Canopic Guardians
         if (!Story.questProgression(9958)) {
-            Core.huntMonsterQuest(
-                9958,
-                ["hiddenduat", UseableMonsters[0], ClassType.Solo],
-                ["hiddenduat", UseableMonsters[2], ClassType.Solo],
-            );
+            Core.ensureAccept(9958);
+            Core.equipClass(ClassType.Solo);
+            Core.huntMonster("hiddenduat", "Umbral Sphinx", "Umbral Sphinx Resin", 3);
+            Core.huntMonster("hiddenduat", "Umbral Royal Guard", "Guard's Stomach", 3);
+            Core.ensureComplete(9958);
         }
 
         // 9959 | Lum'ah

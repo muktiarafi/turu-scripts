@@ -51,11 +51,11 @@ export class EbilMegaMall {
 
         // 10504 | Free PR
         if (!Story.questProgression(10504)) {
-            Core.huntMonsterQuest(
-                10504,
-                ["ebilmegamall", UseableMonsters[1], ClassType.Farm],
-                ["ebilmegamall", UseableMonsters[2], ClassType.Farm],
-            );
+            Core.ensureAccept(10504);
+            Core.equipClass(ClassType.Farm);
+            Core.huntMonster("ebilmegamall", "Mogugu", "Common Mogugu", 10);
+            Core.huntMonster("ebilmegamall", "Deal Hunter", "Deal Scam", 5);
+            Core.ensureComplete(10504);
         }
 
         // 10505 | Artificial Demand

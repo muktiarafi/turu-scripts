@@ -49,12 +49,13 @@ export class MoglinFeastMerge {
                     Core.farmingLogger(req.name, quant);
                     Core.addDrop(req.id);
                     while (!bot.shouldExit && !Core.checkInventory(req.id, quant)) {
-                        Core.huntMonsterQuest(
-                            10498,
-                            ["moglinfeast", "Hay Fever Sylph", ClassType.Farm],
-                            ["moglinfeast", "Redcap Mush", ClassType.Farm],
-                            ["moglinfeast", "Fall Fae Queen", ClassType.Solo],
-                        );
+                        Core.ensureAccept(10498);
+                        Core.equipClass(ClassType.Farm);
+                        Core.huntMonster("moglinfeast", "Hay Fever Sylph", "Golden Nectar", 6);
+                        Core.huntMonster("moglinfeast", "Redcap Mush", "Mushroom Jaw", 6);
+                        Core.equipClass(ClassType.Solo);
+                        Core.huntMonster("moglinfeast", "Fall Fae Queen", "Fall Diadem");
+                        Core.ensureComplete(10498);
                         bot.wait.forPickup(req.name);
                     }
                     break;

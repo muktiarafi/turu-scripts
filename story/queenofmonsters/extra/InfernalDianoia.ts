@@ -50,11 +50,11 @@ export class InfernalDianoia {
 
         // 10088 | Rapturous Ascent
         if (!Story.questProgression(10088)) {
-            Core.huntMonsterQuest(
-                10088,
-                ["infernaldianoia", UseableMonsters[0], ClassType.Farm],
-                ["infernaldianoia", UseableMonsters[1], ClassType.Farm],
-            );
+            Core.ensureAccept(10088);
+            Core.equipClass(ClassType.Farm);
+            Core.huntMonster("infernaldianoia", "Infernal Pegasus", "Infernal Flame", 10);
+            Core.huntMonster("infernaldianoia", "Bright Dominion", "Golden Horn", 5);
+            Core.ensureComplete(10088);
         }
 
         // 10089 | Broken Stoicism
@@ -69,11 +69,11 @@ export class InfernalDianoia {
 
         // 10091 | Life and Spirits
         if (!Story.questProgression(10091)) {
-            Core.huntMonsterQuest(
-                10091,
-                ["infernaldianoia", UseableMonsters[4], ClassType.Solo],
-                ["infernaldianoia", UseableMonsters[5], ClassType.Solo],
-            );
+            Core.ensureAccept(10091);
+            Core.equipClass(ClassType.Solo);
+            Core.huntMonster("infernaldianoia", "Avatar of Life", "Life's Light");
+            Core.huntMonster("infernaldianoia", "Avatar of Spirits", "Spirits' Breath");
+            Core.ensureComplete(10091);
         }
 
         // 10092 | On Your Time

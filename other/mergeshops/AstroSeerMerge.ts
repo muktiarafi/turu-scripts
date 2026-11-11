@@ -43,12 +43,13 @@ export class AstroSeerMerge {
                 case "Lemon":
                     Core.farmingLogger(req.name, quant);
                     while (!bot.shouldExit && !Core.checkInventory(req.name, quant)) {
-                        Core.huntMonsterQuest(
-                            10054,
-                            ["extinction", "Lard", ClassType.Farm],
-                            ["extinction", "Gelatinous Slime", ClassType.Farm],
-                            ["extinction", "SN.O.W. Challenge", ClassType.Solo],
-                        );
+                        Core.ensureAccept(10054);
+                        Core.equipClass(ClassType.Farm);
+                        Core.huntMonster("extinction", "Lard", "Lemon Lard", 10);
+                        Core.huntMonster("extinction", "Gelatinous Slime", "Slime Gelatin", 10);
+                        Core.equipClass(ClassType.Solo);
+                        Core.huntMonster("extinction", "SN.O.W. Challenge", "SN.O.W. Ice", 1, { isTemp: false });
+                        Core.ensureComplete(10054);
                         bot.wait.forPickup(req.name);
                     }
                     break;

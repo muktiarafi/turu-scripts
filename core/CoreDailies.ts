@@ -878,12 +878,13 @@ export class CoreDailies {
         if (!this.checkDailyv2(9896, ["Elden Ruby"])) return;
         if (!Core.checkInventory("Compass Rose Skull")) {
             Core.logger("Getting the Compass Rose Skull.");
-            Core.huntMonsterQuest(
-                9894,
-                ["dracocon", "Treasure Pile", ClassType.Farm],
-                ["battleundere", "Treasure Pile", ClassType.Farm],
-                ["greed", "Treasure Pile", ClassType.Farm],
-            );
+            Core.ensureAccept(9894);
+            Core.equipClass(ClassType.Farm);
+            Core.huntMonster("shadowfall", "Cursed Treasure", "Suspicious Ruby", 1);
+            Core.equipClass(ClassType.Farm);
+            Core.huntMonster("shadowfall", "Vindicator Recruit", "Soul's Deepest Darkness", 5);
+            Core.huntMonster("shadowfall", "Vindicator Soldier", "Soul's Deepest Darkness", 5);
+            Core.ensureComplete(9894);
         }
         if (!Core.checkInventory("Obsessor Captain")) {
             Core.logger("Getting the Obsessor Captain.");
@@ -893,11 +894,11 @@ export class CoreDailies {
         Core.unbank("Compass Rose Skull", "Obsessor Captain");
         Core.addDrop("Elden Ruby");
 
-        Core.huntMonsterQuest(
-            9896,
-            ["trygve", "Vindicator Recruit", ClassType.Farm],
-            ["greed", "Cursed Treasure", ClassType.Solo],
-        );
+        Core.ensureAccept(9896);
+        Core.equipClass(ClassType.Farm);
+        Core.huntMonster("trygve", "Vindicator Recruit", "Soul's Deepest Darkness", 5);
+        Core.huntMonster("greed", "Cursed Treasure", "Suspicious Ruby");
+        Core.ensureComplete(9896);
 
         Core.toBank("Compass Rose Skull", "Obsessor Captain");
     }

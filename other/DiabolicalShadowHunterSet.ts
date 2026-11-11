@@ -37,14 +37,15 @@ export class DiabolicalShadowHunterSet {
 
             Core.farmingLogger(Reward.name, 1);
             while (!bot.shouldExit && !Core.checkInventory(Reward.id)) {
-                Core.huntMonsterQuest(
-                    10053,
-                    ["brokenwoods", "Eldritch Amalgamation", ClassType.Solo],
-                    ["backroom", "Book Wyrm", ClassType.Solo],
-                    ["lostvilla", "Eldritch Parasite", ClassType.Solo],
-                    ["lostvilla", "Covetous Disgrace", ClassType.Solo],
-                    ["lostvilla", "Mutilated Atrocity", ClassType.Farm],
-                );
+                Core.ensureAccept(10053);
+                Core.equipClass(ClassType.Solo);
+                Core.huntMonster("brokenwoods", "Eldritch Amalgamation", "Eldritch Amalgamation's Strained Eye");
+                Core.huntMonster("backroom", "Book Wyrm", "Book Wyrm's Wretched Vein", 2);
+                Core.huntMonster("lostvilla", "Eldritch Parasite", "Eldritch Parasite's Infested Arteries", 12);
+                Core.huntMonster("lostvilla", "Covetous Disgrace", "Covetous Disgrace's Mangled Rib", 3);
+                Core.equipClass(ClassType.Farm);
+                Core.huntMonster("lostvilla", "Mutilated Atrocity", "Mutilated Atrocity's Dismembered Winglet", 5);
+                Core.ensureComplete(10053);
             }
 
             Core.jumpWait();

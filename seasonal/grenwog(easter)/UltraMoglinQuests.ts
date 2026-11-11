@@ -24,7 +24,11 @@ export class UltraMoglinPets {
 
         // Ultra Twig's Gift Quest [10200]
         Core.farmingLogger(Core.questRewards(10200)[0], 1);
-        Core.huntMonsterQuest(10200, ["river", "Zardman Fisher", ClassType.Farm], ["river", "Kuro", ClassType.Farm]);
+        Core.ensureAccept(10200);
+        Core.equipClass(ClassType.Farm);
+        Core.huntMonster("river", "Zardman Fisher", "River Fish", 13);
+        Core.huntMonster("river", "Kuro", "Scoop of Ice Cream", 3);
+        Core.ensureComplete(10200);
     }
 
     twillyPet(): void {

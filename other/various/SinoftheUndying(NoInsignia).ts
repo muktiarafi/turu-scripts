@@ -38,12 +38,12 @@ export class SinoftheSinoftheUndyingNoInsignia {
         if (!Core.checkInventory("Atlas Lion Pelt", 20)) {
             Core.farmingLogger("Atlas Lion Pelt", 20);
             while (!bot.shouldExit && !Core.checkInventory("Atlas Lion Pelt", 20)) {
-                Core.huntMonsterQuest(
-                    10126,
-                    ["atlaskingdom", "Atlas Leo", ClassType.Solo],
-                    ["atlaskingdom", "Atlas Elite", ClassType.Solo],
-                    ["atlaskingdom", "Executioner Ladon", ClassType.Solo],
-                );
+                Core.ensureAccept(10126);
+                Core.equipClass(ClassType.Solo);
+                Core.huntMonster("atlaskingdom", "Atlas Leo", "Leo's Fang", 6);
+                Core.huntMonster("atlaskingdom", "Atlas Elite", "Elite Pedigree", 6);
+                Core.huntMonster("atlaskingdom", "Executioner Ladon", "Ladon's Golden Apple");
+                Core.ensureComplete(10126);
                 bot.wait.forPickup("Atlas Lion Pelt");
             }
         }
@@ -65,12 +65,13 @@ export class SinoftheSinoftheUndyingNoInsignia {
         if (!Core.checkInventory("Broken Chain", 150)) {
             Core.farmingLogger("Broken Chain", 150);
             while (!bot.shouldExit && !Core.checkInventory("Broken Chain", 150)) {
-                Core.huntMonsterQuest(
-                    10115,
-                    ["atlaspromenade", "Atlas Light Magus", ClassType.Farm],
-                    ["atlaspromenade", "Wrath Guard", ClassType.Farm],
-                    ["atlaspromenade", "Usurper Lord Slaine", ClassType.Solo],
-                );
+                Core.ensureAccept(10115);
+                Core.equipClass(ClassType.Farm);
+                Core.huntMonster("atlaspromenade", "Atlas Light Magus", "Atlas Citizenship", 6);
+                Core.huntMonster("atlaspromenade", "Wrath Guard", "Wrath Scar", 12);
+                Core.equipClass(ClassType.Solo);
+                Core.huntMonster("atlaspromenade", "Usurper Lord Slaine", "Slaine's Barbed Chain");
+                Core.ensureComplete(10115);
                 bot.wait.forPickup("Broken Chain");
             }
         }

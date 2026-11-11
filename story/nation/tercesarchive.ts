@@ -44,11 +44,11 @@ export class TercesArchive {
 
         // 10551 | O.T.
         if (!Story.questProgression(10551)) {
-            Core.huntMonsterQuest(
-                10551,
-                ["tercesarchive", UseableMonsters[1], ClassType.Farm],
-                ["tercesarchive", UseableMonsters[0], ClassType.Farm],
-            );
+            Core.ensureAccept(10551);
+            Core.equipClass(ClassType.Farm);
+            Core.huntMonster("tercesarchive", "Fiendish Devourer", "Devourer Throat", 3);
+            Core.huntMonster("tercesarchive", "Oblivion Magus", "Oblivion Nihil", 3);
+            Core.ensureComplete(10551);
         }
 
         // 10552 | The Fiend is in the Details
@@ -69,11 +69,11 @@ export class TercesArchive {
 
         // 10555 | Point of No Return
         if (!Story.questProgression(10555)) {
-            Core.huntMonsterQuest(
-                10555,
-                ["tercesarchive", UseableMonsters[3], ClassType.Farm],
-                ["tercesarchive", UseableMonsters[2], ClassType.Farm],
-            );
+            Core.ensureAccept(10555);
+            Core.equipClass(ClassType.Farm);
+            Core.huntMonster("tercesarchive", "Wasted Clone", "Cloned Face", 3);
+            Core.huntMonster("tercesarchive", "Nightmare Fiend", "Nightmarish Scream", 6);
+            Core.ensureComplete(10555);
         }
 
         // 10556 | All Appetite

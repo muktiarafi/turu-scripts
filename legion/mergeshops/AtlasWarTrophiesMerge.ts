@@ -46,12 +46,13 @@ export class AtlasWarTrophiesMerge {
                     //10115 | You and Your Chain
                     Core.farmingLogger(req.name, quant);
                     while (!bot.shouldExit && !Core.checkInventory(req.name, quant)) {
-                        Core.huntMonsterQuest(
-                            10115,
-                            ["atlaspromenade", "Atlas Light Magus", ClassType.Farm],
-                            ["atlaspromenade", "Wrath Guard", ClassType.Farm],
-                            ["atlaspromenade", "Usurper Lord Slaine", ClassType.Solo],
-                        );
+                        Core.ensureAccept(10115);
+                        Core.equipClass(ClassType.Farm);
+                        Core.huntMonster("atlaspromenade", "Atlas Light Magus", "Atlas Citizenship", 6);
+                        Core.huntMonster("atlaspromenade", "Wrath Guard", "Wrath Scar", 12);
+                        Core.equipClass(ClassType.Solo);
+                        Core.huntMonster("atlaspromenade", "Usurper Lord Slaine", "Slaine's Barbed Chain");
+                        Core.ensureComplete(10115);
                         bot.wait.forPickup(req.name);
                     }
                     break;

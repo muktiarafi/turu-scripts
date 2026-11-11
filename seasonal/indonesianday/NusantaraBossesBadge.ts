@@ -26,12 +26,12 @@ export class NusantaraBosses {
         }
 
         if (!Story.questProgression(10374)) {
-            Core.huntMonsterQuest(
-                10374,
-                ["rangda", "Rangda", ClassType.Solo],
-                ["kala", "Kala", ClassType.Solo],
-                ["wentira", "Kabasaran Waranei", ClassType.Solo],
-            );
+            Core.ensureAccept(10374);
+            Core.equipClass(ClassType.Solo);
+            Core.huntMonster("rangda", "Rangda", "Rangda Medali");
+            Core.huntMonster("kala", "Kala", "Kala Medali");
+            Core.huntMonster("wentira", "Kabasaran Waranei", "Kabasaran Medali");
+            Core.ensureComplete(10374);
         }
     }
 

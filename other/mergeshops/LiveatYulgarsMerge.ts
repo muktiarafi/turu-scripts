@@ -47,11 +47,11 @@ export class LiveatYulgarsMerge {
                     Core.farmingLogger(req.name, quant);
                     Core.addDrop(req.id);
                     while (!bot.shouldExit && !Core.checkInventory(req.id, quant)) {
-                        Core.huntMonsterQuest(
-                            4199,
-                            ["boxes", "Sneevil Boxer", ClassType.Farm],
-                            ["greenguardwest", "Slime", ClassType.Farm],
-                        );
+                        Core.ensureAccept(4199);
+                        Core.equipClass(ClassType.Farm);
+                        Core.huntMonster("boxes", "Sneevil Boxer", "Broken Album Shard", 3);
+                        Core.huntMonster("greenguardwest", "Slime", "Goo Glue", 3);
+                        Core.ensureComplete(4199);
                         bot.wait.forPickup(req.name);
                     }
                     Core.cancelRegisteredQuests();

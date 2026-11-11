@@ -198,11 +198,12 @@ export class ShadowSlayerK {
 
         // 9840 | Suspicious Minds
         if (!Story.questProgression(9840)) {
-            Core.huntMonsterQuest(
-                9840,
-                ["badmoon", UseableMonsters[0], ClassType.Farm],
-                ["badmoon", UseableMonsters[1], ClassType.Solo],
-            );
+            Core.ensureAccept(9840);
+            Core.equipClass(ClassType.Farm);
+            Core.huntMonster("badmoon", "Dire Wolf", "Wolf Pelts", 8);
+            Core.equipClass(ClassType.Solo);
+            Core.huntMonster("badmoon", "Ghoul", "Ghoul Flesh", 8);
+            Core.ensureComplete(9840);
         }
 
         // 9841 | Get Out The Way

@@ -321,11 +321,11 @@ export class CoreDageBirthday {
 
         // 10627 | Disciplinary Action
         if (!Story.questProgression(10627)) {
-            Core.huntMonsterQuest(
-                10627,
-                ["legiontournament", UseableMonsters[0], ClassType.Farm],
-                ["legiontournament", UseableMonsters[1], ClassType.Farm],
-            );
+            Core.ensureAccept(10627);
+            Core.equipClass(ClassType.Farm);
+            Core.huntMonster("legiontournament", "Underworld Wolf", "Wolf Head", 5);
+            Core.huntMonster("legiontournament", "Legion Gladiator", "Gladiator Head", 10);
+            Core.ensureComplete(10627);
         }
 
         // 10628 | The Fun Police
@@ -372,11 +372,11 @@ export class CoreDageBirthday {
 
         // 10633 | Vultures of a Feather
         if (!Story.questProgression(10633)) {
-            Core.huntMonsterQuest(
-                10633,
-                ["legiontournament", UseableMonsters[3], ClassType.Solo],
-                ["legiontournament", UseableMonsters[4], ClassType.Solo],
-            );
+            Core.ensureAccept(10633);
+            Core.equipClass(ClassType.Solo);
+            Core.huntMonster("legiontournament", "Legion Ritualist", "Famine's Gold", 12);
+            Core.huntMonster("legiontournament", "Deathwing", "Death's Pulse", 6);
+            Core.ensureComplete(10633);
         }
 
         // 10634 | All's Fair
@@ -460,11 +460,11 @@ export class CoreDageBirthday {
 
         // 10645 | Suspicious Distraction
         if (!Story.questProgression(10645)) {
-            Core.huntMonsterQuest(
-                10645,
-                ["Phlegethonarena", UseableMonsters[5], ClassType.Farm],
-                ["Phlegethonarena", UseableMonsters[4], ClassType.Farm],
-            );
+            Core.ensureAccept(10645);
+            Core.equipClass(ClassType.Farm);
+            Core.huntMonster("phlegethonarena", "Deathwings", "Deathwing Mask", 9);
+            Core.huntMonster("phlegethonarena", "Legion Guard", "Guard's Bribe", 6);
+            Core.ensureComplete(10645);
         }
 
         // 10646 | Death's Revelation
@@ -604,11 +604,11 @@ export class CoreDageBirthday {
 
         // 10660 | Laken, the Sequel
         if (!Story.questProgression(10660)) {
-            Core.huntMonsterQuest(
-                10660,
-                ["reapfinals", UseableMonsters[14], ClassType.Solo],
-                ["reapfinals", UseableMonsters[13], ClassType.Solo],
-            );
+            Core.ensureAccept(10660);
+            Core.equipClass(ClassType.Solo);
+            Core.huntMonster("reapfinals", "Laken Clone 2.3", "Laken Clone 2.3 Defeated");
+            Core.huntMonster("reapfinals", "Laken Clone 1.7", "Laken Clone 1.7 Defeated");
+            Core.ensureComplete(10660);
         }
 
         // 10661 | Take Ill

@@ -58,20 +58,20 @@ export class WarMonger {
         //#region Mage
         // 10156 | Perfect Practice
         if (!Story.questProgression(10156)) {
-            Core.huntMonsterQuest(
-                10156,
-                ["forest", UseableMonsters[0], ClassType.Farm],
-                ["forest", UseableMonsters[1], ClassType.Farm],
-            );
+            Core.ensureAccept(10156);
+            Core.equipClass(ClassType.Farm);
+            Core.huntMonster("forest", "Zardman Grunt", "Grunt's Tooth", 5);
+            Core.huntMonster("forest", "Zardman Hunter", "Hunter's Tooth");
+            Core.ensureComplete(10156);
         }
 
         // 10157 | Grateful Guru
         if (!Story.questProgression(10157)) {
-            Core.huntMonsterQuest(
-                10157,
-                ["guru", UseableMonsters[2], ClassType.Farm],
-                ["guru", UseableMonsters[3], ClassType.Farm],
-            );
+            Core.ensureAccept(10157);
+            Core.equipClass(ClassType.Farm);
+            Core.huntMonster("guru", "Trobble", "Trobble Fluff", 4);
+            Core.huntMonster("guru", "LeatherWing", "Leatherwing Feathers", 4);
+            Core.ensureComplete(10157);
         }
 
         // 10158 | Magitech
@@ -81,39 +81,40 @@ export class WarMonger {
 
         // 10159 | Trial by Fire
         if (!Story.questProgression(10159)) {
-            Core.huntMonsterQuest(
-                10159,
-                ["citadel", UseableMonsters[5], ClassType.Solo],
-                ["citadel", UseableMonsters[6], ClassType.Solo],
-            );
+            Core.ensureAccept(10159);
+            Core.equipClass(ClassType.Solo);
+            Core.huntMonster("citadel", "Inquisitor Guard", "Guard's Helm", 5);
+            Core.huntMonster("citadel", "Inquisitor Captain", "Captain's Hood");
+            Core.ensureComplete(10159);
         }
         //#endregion Mage
         //#region Healer
         // 10160 | Pinch Your Nose
         if (!Story.questProgression(10160)) {
-            Core.huntMonsterQuest(
-                10160,
-                ["greenguardwest", UseableMonsters[7], ClassType.Farm],
-                ["greenguardwest", UseableMonsters[8], ClassType.Farm],
-            );
+            Core.ensureAccept(10160);
+            Core.equipClass(ClassType.Farm);
+            Core.huntMonster("greenguardwest", "Frogzard", "Frogzard Glands", 5);
+            Core.huntMonster("greenguardwest", "Slime", "Slime Goo", 5);
+            Core.ensureComplete(10160);
         }
 
         // 10161 | Small Doses
         if (!Story.questProgression(10161)) {
-            Core.huntMonsterQuest(
-                10161,
-                ["greenguardeast", UseableMonsters[9], ClassType.Solo],
-                ["greenguardeast", UseableMonsters[10], ClassType.Solo],
-            );
+            Core.ensureAccept(10161);
+            Core.equipClass(ClassType.Solo);
+            Core.huntMonster("greenguardeast", "Spider", "Spider Venom", 4);
+            Core.huntMonster("greenguardeast", "Wolf", "Wolf's Blood", 4);
+            Core.ensureComplete(10161);
         }
 
         // 10162 | Chaotic Seedbed
         if (!Story.questProgression(10162)) {
-            Core.huntMonsterQuest(
-                10162,
-                ["forestchaos", UseableMonsters[11], ClassType.Solo],
-                ["forestchaos", UseableMonsters[12], ClassType.Farm],
-            );
+            Core.ensureAccept(10162);
+            Core.equipClass(ClassType.Solo);
+            Core.huntMonster("forestchaos", "Chaorrupted Bear", "Chaorrupted Bear Innards");
+            Core.equipClass(ClassType.Farm);
+            Core.huntMonster("forestchaos", "Chaorrupted Wolf", "Chaorrupted Wolf Innards", 5);
+            Core.ensureComplete(10162);
         }
 
         // 10163 | Dark's Embrace, Sacred Space
@@ -169,11 +170,11 @@ export class WarMonger {
         //#region WarLord
         // 10172 | Chaos Reigned
         if (!Story.questProgression(10172)) {
-            Core.huntMonsterQuest(
-                10172,
-                ["DeepForest", UseableMonsters[22], ClassType.Farm],
-                ["DeepForest", UseableMonsters[23], ClassType.Farm],
-            );
+            Core.ensureAccept(10172);
+            Core.equipClass(ClassType.Farm);
+            Core.huntMonster("deepforest", "Eldritch Stalker", "Stalker's Eye", 8);
+            Core.huntMonster("deepforest", "Terrarsite", "Terrasite's Maw", 8);
+            Core.ensureComplete(10172);
         }
 
         // 10173 | Fireproofing
@@ -183,29 +184,29 @@ export class WarMonger {
 
         // 10174 | Fishy-men Business
         if (!Story.questProgression(10174)) {
-            Core.huntMonsterQuest(
-                10174,
-                ["Ashray", UseableMonsters[25], ClassType.Farm],
-                ["Ashray", UseableMonsters[26], ClassType.Farm],
-            );
+            Core.ensureAccept(10174);
+            Core.equipClass(ClassType.Farm);
+            Core.huntMonster("ashray", "Ashray Fisherman", "Fisherman's Hook", 8);
+            Core.huntMonster("ashray", "Kitefin Shark Bait", "Sharkbait Chunk", 8);
+            Core.ensureComplete(10174);
         }
 
         // 10175 | Baleful Morals
         if (!Story.questProgression(10175)) {
-            Core.huntMonsterQuest(
-                10175,
-                ["Balemorale", UseableMonsters[27], ClassType.Farm],
-                ["Balemorale", UseableMonsters[28], ClassType.Farm],
-            );
+            Core.ensureAccept(10175);
+            Core.equipClass(ClassType.Farm);
+            Core.huntMonster("balemorale", "Lightguard Paladin", "Paladin's Apology", 8);
+            Core.huntMonster("balemorale", "Noble's Knight", "Knight's Apology", 8);
+            Core.ensureComplete(10175);
         }
 
         // 10176 | Nainhdeil
         if (!Story.questProgression(10176)) {
-            Core.huntMonsterQuest(
-                10176,
-                ["LiaTaraHill", UseableMonsters[29], ClassType.Farm],
-                ["LiaTaraHill", UseableMonsters[30], ClassType.Farm],
-            );
+            Core.ensureAccept(10176);
+            Core.equipClass(ClassType.Farm);
+            Core.huntMonster("liatarahill", "Garde Wraith", "Wraith Exorcised", 8);
+            Core.huntMonster("liatarahill", "Undead Garde ", "Undead Exorcised", 8);
+            Core.ensureComplete(10176);
         }
 
         // Farming Quest - very hard to solo without army.

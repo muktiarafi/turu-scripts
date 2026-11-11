@@ -75,12 +75,12 @@ export class InfernalCelestialFinaleMerge {
         Core.farmingLogger("Infernal Down", quant);
         Core.addDrop("Infernal Down");
         while (!bot.shouldExit && !Core.checkInventory("Infernal Down", quant)) {
-            Core.huntMonsterQuest(
-                10095,
-                ["infernaldianoia", "Eudae", ClassType.Solo],
-                ["infernaldianoia", "Avatar of Time", ClassType.Solo],
-                ["infernaldianoia", "Aranx, Nightstar", ClassType.Solo],
-            );
+            Core.ensureAccept(10095);
+            Core.equipClass(ClassType.Solo);
+            Core.huntMonster("infernaldianoia", "Eudae", "Eudae Metanoia", 3);
+            Core.huntMonster("infernaldianoia", "Avatar of Time", "Avatar of Time's Hand");
+            Core.huntMonster("infernaldianoia", "Aranx, Nightstar", "Nightstar");
+            Core.ensureComplete(10095);
             bot.wait.forPickup("Infernal Down");
         }
     }

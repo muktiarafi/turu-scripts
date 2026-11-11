@@ -930,11 +930,11 @@ export class CoreHarvestDay {
 
         // 10491 | Vegetarian Fricassee
         if (!Story.questProgression(10491)) {
-            Core.huntMonsterQuest(
-                10491,
-                ["moglinfeast", UseableMonsters[0], ClassType.Farm],
-                ["moglinfeast", UseableMonsters[1], ClassType.Farm],
-            );
+            Core.ensureAccept(10491);
+            Core.equipClass(ClassType.Farm);
+            Core.huntMonster("moglinfeast", "Dianthus Fae", "Dianthus Pollen", 10);
+            Core.huntMonster("moglinfeast", "Pumpkin Mimic", "Peeled Mimic", 5);
+            Core.ensureComplete(10491);
         }
 
         // 10492 | No Thoughts, Head Empty
@@ -963,11 +963,11 @@ export class CoreHarvestDay {
 
         // 10496 | Putrid Potpourri
         if (!Story.questProgression(10496)) {
-            Core.huntMonsterQuest(
-                10496,
-                ["moglinfeast", UseableMonsters[2], ClassType.Farm],
-                ["moglinfeast", UseableMonsters[3], ClassType.Farm],
-            );
+            Core.ensureAccept(10496);
+            Core.equipClass(ClassType.Farm);
+            Core.huntMonster("moglinfeast", "Hay Fever Sylph", "Sylph Pollen", 8);
+            Core.huntMonster("moglinfeast", "Redcap Mush", "Sauteed Mush", 8);
+            Core.ensureComplete(10496);
         }
 
         // 10497 | Fairy Foray

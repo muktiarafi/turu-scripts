@@ -45,12 +45,12 @@ export class AtlasDowryTreasuryMerge {
                 case "Atlas Lion Pelt":
                     Core.farmingLogger(req.name, quant);
                     while (!bot.shouldExit && !Core.checkInventory(req.name, quant)) {
-                        Core.huntMonsterQuest(
-                            10126,
-                            ["atlaskingdom", "Atlas Leo", ClassType.Solo],
-                            ["atlaskingdom", "Atlas Elite", ClassType.Solo],
-                            ["atlaskingdom", "Executioner Ladon", ClassType.Solo],
-                        );
+                        Core.ensureAccept(10126);
+                        Core.equipClass(ClassType.Solo);
+                        Core.huntMonster("atlaskingdom", "Atlas Leo", "Leo's Fang", 6);
+                        Core.huntMonster("atlaskingdom", "Atlas Elite", "Elite Pedigree", 6);
+                        Core.huntMonster("atlaskingdom", "Executioner Ladon", "Ladon's Golden Apple");
+                        Core.ensureComplete(10126);
                         bot.wait.forPickup(req.name);
                     }
                     break;

@@ -157,11 +157,11 @@ export class YokaiHunt {
         //#endregion Useable Monsters
         // 10056 | Xionghuang Remedy
         if (!Story.questProgression(10056)) {
-            Core.huntMonsterQuest(
-                10056,
-                ["yokairiver", "Kappa Ninja", ClassType.Farm],
-                ["yokairiver", "Funa-yurei", ClassType.Farm],
-            );
+            Core.ensureAccept(10056);
+            Core.equipClass(ClassType.Farm);
+            Core.huntMonster("yokairiver", "Kappa Ninja", "Kappa Spirits", 8);
+            Core.huntMonster("yokairiver", "Funa-yurei", "Funa-Yurei Powder", 8);
+            Core.ensureComplete(10056);
         }
 
         // 10057 | Calabash Elixir
@@ -205,11 +205,11 @@ export class YokaiHunt {
 
         // 10588 | Natural Betrayal
         if (!Story.questProgression(10588)) {
-            Core.huntMonsterQuest(
-                10588,
-                ["hakuwar", "Dark Zmey", ClassType.Farm],
-                ["hakuwar", "Kitsune Spy", ClassType.Farm],
-            );
+            Core.ensureAccept(10588);
+            Core.equipClass(ClassType.Farm);
+            Core.huntMonster("hakuwar", "Dark Zmey", "Zmey Alexandrite", 9);
+            Core.huntMonster("hakuwar", "Kitsune Spy", "Kitsune Kinchaku", 9);
+            Core.ensureComplete(10588);
         }
 
         // 10589 | Coming Conflict
