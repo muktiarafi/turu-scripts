@@ -97,7 +97,12 @@ export class EtherStormWastes {
 
         Story.preLoad(this.water);
         //Weaken The Bonds 1396
-        Story.killQuest(1396, "water", ["Water Elemental", "Living Water"]);
+        if (!Story.questProgression(1396)) {
+            Core.ensureAccept(1396);
+            Core.huntMonster("water", "Water Elemental", "Water Elemental Destroyed", 5);
+            Core.huntMonster("water", "Living Water", "Living Water Destroyed", 5);
+            Core.ensureComplete(1396);
+        }
 
         //Udaroth Is Ready 1397
         Story.mapItemQuest(1397, "water", 690, 6);
@@ -134,7 +139,12 @@ export class EtherStormWastes {
         Story.preLoad(this.wind);
 
         //A Weak Wind 1404
-        Story.killQuest(1404, "wind", ["Wind Elemental", "Living Air"]);
+        if (!Story.questProgression(1404)) {
+            Core.ensureAccept(1404);
+            Core.huntMonster("wind", "Wind Elemental", "Wind Elemental Destroyed", 8);
+            Core.huntMonster("wind", "Living Air", "Living Air Destroyed", 8);
+            Core.ensureComplete(1404);
+        }
 
         //An Ounce Of Prevention 1405
         Story.mapItemQuest(1405, "wind", 695, 5);
@@ -171,7 +181,12 @@ export class EtherStormWastes {
         Story.preLoad(this.fire);
 
         //Putting Out Fires 1412
-        Story.killQuest(1412, "fire", ["Fire Elemental", "Living Fire"]);
+        if (!Story.questProgression(1412)) {
+            Core.ensureAccept(1412);
+            Core.huntMonster("fire", "Fire Elemental", "Fire Elemental Destroyed", 10);
+            Core.huntMonster("fire", "Living Fire", "Living Fire Destroyed", 10);
+            Core.ensureComplete(1412);
+        }
 
         //At A Loss 1413
         Story.mapItemQuest(1413, "fire", 693, 6);

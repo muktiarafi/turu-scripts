@@ -630,6 +630,11 @@ export class CoreBots {
         return (CoreBots._instance ??= new CoreBots());
     }
 
+    /** True for class slot values that mean "no specific class": null/empty, "Generic" or "(Current)". */
+    static isGenericClass(name: string | null | undefined): boolean {
+        return !name || equalsIgnoreCase(name, "Generic") || name === "(Current)";
+    }
+
     /**
      * Called with the class name after {@link equipClass} equips a configured class
      * (C# `static event OnEquipClass`; CoreAdvanced hooks auto-enhance here).
@@ -700,6 +705,21 @@ export class CoreBots {
                 bot.sleep(1000);
                 loadAttempts++;
             }
+
+            // A disconnect restarts the script while the client is still logging back in, and a relogin
+            // attempt can look logged in at first and fail seconds later. Give the client up to 2 minutes
+            // to be logged in and loaded before giving up; otherwise the script stops (or sits on the
+            // message box) and the relogin then finds it "already running" and never starts it again.
+            // Not gated on bot.options.autoRelogin: the client's relogin turns it off while it retries.
+            if (!bot.player.loggedIn) {
+                this.logger("Not logged in yet, waiting up to 2 min for the login.", "SetOptions");
+                const giveUp = Date.now() + 2 * 60 * 1000;
+                while (!bot.shouldExit && Date.now() < giveUp && !(bot.player.loggedIn && bot.player.loaded))
+                    bot.sleep(1000);
+            }
+
+            // Being stopped while waiting: don't open the log-in message box on the way out.
+            if (bot.shouldExit) return;
 
             // Only stop AFTER retries exhausted
             if (!bot.player.loggedIn) {
@@ -4085,7 +4105,15 @@ export class CoreBots {
     /** The first living match of {@link findMonstersList} (or the first match). */
     findMonster(map: string, monster: string, monsterMapId = -1): Monster | null {
         const matches = this.findMonstersList(map, monster, monsterMapId);
-        return matches.find((x) => alive(x)) ?? matches[0] ?? null;
+
+        // Prefer a live match in the cell we're already in, so we don't jump around unnecessarily without killing anything.
+        const currentCell = bot.player.cell;
+        return (
+            (currentCell ? matches.find((x) => alive(x) && equalsIgnoreCase(x.cell, currentCell)) : undefined) ??
+            matches.find((x) => alive(x)) ??
+            matches[0] ??
+            null
+        );
     }
 
     /**
@@ -4802,8 +4830,33 @@ export class CoreBots {
      * no class configured, starts the skills of the class you're wearing.
      */
     equipClass(classToUse: ClassType): void {
-        // Already equipped? Skip if timer is running
-        if (this.currentClass === classToUse && bot.skills.timerRunning) return;
+        const targetClass =
+            classToUse === ClassType.Solo
+                ? this.soloClass
+                : classToUse === ClassType.Farm
+                  ? this.farmClass
+                  : classToUse === ClassType.Dodge
+                    ? this.dodgeClass
+                    : classToUse === ClassType.Boss
+                      ? this.bossClass
+                      : null;
+
+        // Skip while the skill timer runs for this slot, but only when there is nothing to do:
+        // - the slot is generic, or
+        // - the slot's class is actually worn (so a class swapped in by e.g. UseBossClass, or a
+        //   class changed at runtime, gets re-equipped), or
+        // - the slot's class isn't owned (nothing to equip; checked again on every call, so it
+        //   is equipped as soon as it's acquired). _equipClass loops until the class is worn,
+        //   so an owned class can't silently fail.
+        if (
+            this.currentClass === classToUse &&
+            bot.skills.timerRunning &&
+            (CoreBots.isGenericClass(targetClass) ||
+                equalsIgnoreCase(bot.player.currentClass?.trim(), targetClass!.trim()) ||
+                !this.checkInventory(targetClass, 1, { toInv: false }))
+        )
+            return;
+
         this.currentClass = classToUse;
 
         const equipClass = (
@@ -4871,21 +4924,34 @@ export class CoreBots {
             return true;
         };
 
-        const configured = (name: string) =>
-            name !== "Generic" && name !== "(Current)" && name.length > 0 && this.checkInventory(name);
+        // using*Generic is captured once in SetOptions. Only let it block an equip while the
+        // slot is still generic, so a class set at runtime isn't ignored as "generic" forever.
+        const configured = (name: string) => !CoreBots.isGenericClass(name) && this.checkInventory(name);
 
         switch (classToUse) {
             case ClassType.Farm:
                 if (
                     configured(this.farmClass) &&
-                    equipClass(this.usingFarmGeneric, this.farmClass, this.farmUseMode, this.farmGearOn, this.farmGear)
+                    equipClass(
+                        this.usingFarmGeneric && CoreBots.isGenericClass(this.farmClass),
+                        this.farmClass,
+                        this.farmUseMode,
+                        this.farmGearOn,
+                        this.farmGear,
+                    )
                 )
                     return;
                 break;
             case ClassType.Solo:
                 if (
                     configured(this.soloClass) &&
-                    equipClass(this.usingSoloGeneric, this.soloClass, this.soloUseMode, this.soloGearOn, this.soloGear)
+                    equipClass(
+                        this.usingSoloGeneric && CoreBots.isGenericClass(this.soloClass),
+                        this.soloClass,
+                        this.soloUseMode,
+                        this.soloGearOn,
+                        this.soloGear,
+                    )
                 )
                     return;
                 break;
@@ -4893,7 +4959,7 @@ export class CoreBots {
                 if (
                     configured(this.dodgeClass) &&
                     equipClass(
-                        this.usingDodgeGeneric,
+                        this.usingDodgeGeneric && CoreBots.isGenericClass(this.dodgeClass),
                         this.dodgeClass,
                         this.dodgeUseMode,
                         this.dodgeGearOn,
@@ -4905,7 +4971,13 @@ export class CoreBots {
             case ClassType.Boss:
                 if (
                     configured(this.bossClass) &&
-                    equipClass(this.usingBossGeneric, this.bossClass, this.bossUseMode, this.bossGearOn, this.bossGear)
+                    equipClass(
+                        this.usingBossGeneric && CoreBots.isGenericClass(this.bossClass),
+                        this.bossClass,
+                        this.bossUseMode,
+                        this.bossGearOn,
+                        this.bossGear,
+                    )
                 )
                     return;
                 break;
@@ -5443,6 +5515,9 @@ export class CoreBots {
         const add = (...more: string[]) => more.forEach((c) => blackListed.add(c.toLowerCase()));
 
         switch (bot.map.name) {
+            case "wormhole":
+                add("r8a");
+                break;
             case "towerofmirrors":
                 add("replay", "EndCuts");
                 break;
@@ -6397,11 +6472,13 @@ export class CoreBots {
         }
     }
 
-    /** Whether the room you're in is a public room (room number below 1000). */
+    /**
+     * Whether jumps in this room should auto-correct. C# used to check for a public room (room number
+     * below 1000) and now always returns true.
+     */
     inPublicRoom(): boolean {
         bot.wait.forMapLoad(bot.map.name);
-        const nr = Number.parseInt(bot.map.fullName.split("-").pop() ?? "", 10);
-        return (Number.isFinite(nr) ? nr : 1) < 1000;
+        return true;
     }
 
     /** Kills the attackable monsters of your PvP room (in legionpvp it joins dagepvp instead). */

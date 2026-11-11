@@ -19,7 +19,7 @@ export class LightMage {
 
         Core.buyItem("celestialrealm", 1353, "Evolved LightCaster");
         Core.buyItem("celestialrealm", 1613, "LightMage Class Token A");
-        Core.buyItem("celestialrealm", 1612, "LightMage", undefined, 5987);
+        Core.buyItem("celestialrealm", 1612, 44838, undefined, 4885, 1);
 
         if (rankUpClass) {
             Adv.rankUpClass("LightMage");

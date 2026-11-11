@@ -1001,6 +1001,7 @@ export class CoreSoW {
         }
 
         // 8787 Guilt Complex
+        Core.equipClass(ClassType.Solo);
         Story.killQuest(8787, "ruinedcrown", "Calamitous Warlic");
 
         // 8788 Em-pathetic Connection (Merge Shop Quest)

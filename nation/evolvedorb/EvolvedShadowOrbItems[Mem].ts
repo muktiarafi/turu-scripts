@@ -42,6 +42,11 @@ export class EvolvedShadowOrbItems {
     }
 
     rebornDarkSide(): void {
+        if (Core.checkInventory("Evolved Shadow of Nulgath")) {
+            Core.logger('"Evolved Shadow of Nulgath" owned');
+            return;
+        }
+
         // Pre-check required items
         const requiredItems = ["Evolved Shadow Orb", "Platinum Coin of Nulgath: 2500"];
 
@@ -147,6 +152,11 @@ export class EvolvedShadowOrbItems {
     }
 
     voidEmotions(): void {
+        if (Core.checkInventory("Evolved Shadow Helm")) {
+            Core.logger('"Evolved Shadow Helm" owned');
+            return;
+        }
+
         //Void Emotion 4774
         if (!Core.checkInventory("Platinum Coin of Nulgath: 300")) {
             Core.logger("Platinum Coin of Nulgath 300 not found");
@@ -167,6 +177,11 @@ export class EvolvedShadowOrbItems {
     }
 
     shapeNothingness(): void {
+        if (Core.checkInventory("Evolved Shadow Spear of Nulgath")) {
+            Core.logger('"Evolved Shadow Spear of Nulgath" owned');
+            return;
+        }
+
         if (!Core.checkInventory("Platinum Coin of Nulgath: 2500")) {
             Core.logger("Platinum Coin of Nulgath 2500 not found");
             return;
@@ -183,7 +198,8 @@ export class EvolvedShadowOrbItems {
         Nation.supplies("Random Weapon of Nulgath");
         Nation.farmVoucher({ member: false });
         Nation.farmTotemofNulgath(10);
-        Adv.buyItem("alchemyacademy", 2036, 12056, 15, 9827);
+        // x15 ( 10x2 minimum) Destruction Elixer
+        Adv.buyItem("alchemyacademy", 2036, 12055, 15, 7653);
         Core.ensureComplete(4775);
         bot.wait.forPickup("Evolved Shadow Spear of Nulgath");
     }

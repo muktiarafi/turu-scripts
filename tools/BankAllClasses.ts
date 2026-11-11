@@ -11,7 +11,11 @@ import { Core } from "../core/CoreBots";
 export class BankAllClasses {
     bankClasses(): void {
         // C# hands the list to EnsureToBank's list overload; Turu's takes one item.
-        for (const item of bot.inventory.items.filter((item) => item.category === "Class" && !item.equipped)) {
+        // C# writes `Class && !Equipped || !IsFavorited`, which banks every unfavourited item of any
+        // category; favourites are skipped among the classes, as BankAllItems does.
+        for (const item of bot.inventory.items.filter(
+            (item) => item.category === "Class" && !item.equipped && !bot.inventory.isFavorited(item.id),
+        )) {
             bot.inventory.ensureToBank(item.id);
         }
     }

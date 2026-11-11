@@ -111,7 +111,7 @@ export class CheckArmyRoles {
                 "(Celestial of War) " +
                 this.importantItemCheckbox(1, "Greatblade of the Entwined Eclipse") +
                 "(Starlight of War) " +
-                this.importantItemCheckbox(2, "Star Light of the Empyrean", "Star Lights of the Empyrean") +
+                this.importantItemCheckbox(2, "Star Light of Destiny", "Star Lights of Destiny") +
                 "(Mysteries of War) " +
                 this.importantItemCheckbox(2, "Sin of the Underworld") +
                 "(Enoch of War)" +

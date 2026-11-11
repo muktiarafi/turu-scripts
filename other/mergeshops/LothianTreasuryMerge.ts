@@ -5,7 +5,7 @@ tags: lothian, treasury, merge, queeniona, dark, thunder, master, long, lightnin
 */
 // Port of Scripts/Other/MergeShops/LothianTreasuryMerge.cs.
 
-import { defineScriptOptions, option } from "turu";
+import { bot, defineScriptOptions, option } from "turu";
 import { CoreAdvanced, type mergeOptionsEnum } from "../../core/CoreAdvanced";
 import { Core } from "../../core/CoreBots";
 import { ColdThunderMerge } from "./ColdThunderMerge";
@@ -60,6 +60,11 @@ export class LothianTreasuryMerge {
                     QI.fight(req.name, req.quantity, true);
                     break;
                 case "Skye's Lightning":
+                    Core.farmingLogger(req.name, quant);
+                    Core.registerQuests(9834);
+                    AOR.coldThunderBoss(req.name, quant, false);
+                    bot.wait.forPickup(req.name);
+                    break;
 
                 case "Priestess Eire's Cletiné":
                     Core.farmingLogger(req.name, quant);

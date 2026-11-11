@@ -384,6 +384,7 @@ export function needYourStrongestPotions(args: NeedYourStrongestPotionsArgs = {}
                 break;
 
             case "Potent Destruction Elixir":
+            case "Destruction Elixir":
                 currTrait = AlchemyTraits.mRe;
                 bulkGrind("Dried Slime", "Arashtite Ore");
                 break;

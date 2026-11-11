@@ -60,9 +60,7 @@ export class EvovledHexOrbItems {
                 'as otherwise it costs 15m gold ( you can also aquire the "4th Betrayal Blade of Nulgath Pet" along the way)',
         );
         Nation.theAssistant("Unidentified 22", 1);
-        if (!Core.checkInventory(8069)) {
-            Nation.kisstheVoid(1, "4th Betrayal Blade of Nulgath Pet");
-        }
+        Nation.theAssistant("4th Betrayal Blade of Nulgath Pet");
         Core.equipClass(ClassType.Solo);
         Core.huntMonster("tercessuinotlim", "Taro Blademaster", "Polish's Book of Avalon", undefined, {
             isTemp: false,

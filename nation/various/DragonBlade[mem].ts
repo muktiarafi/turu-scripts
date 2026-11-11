@@ -21,27 +21,33 @@ export class DragonBladeofNulgath {
         "Crimson Face Plate of Nulgath",
     ];
 
-    getDragonBlade(): void {
-        if (Core.checkInventory("DragonBlade of Nulgath") || !Core.isMember) {
+    /** Farms DragonBlade of Nulgath or Ebony DragonBlade of Nulgath when the seasonal reward is active. */
+    getDragonBlade(DbladeOnly = false): void {
+        const DBON = Core.initializeWithRetries(() => bot.quests.ensureLoad(766));
+        const Rewards = [...(DBON?.rewards ?? [])];
+
+        const SeasonalActive = !DbladeOnly && Rewards.some((x) => x.name === "Ebony DragonBlade of Nulgath");
+        const TargetBlade = SeasonalActive ? "Ebony DragonBlade of Nulgath" : "DragonBlade of Nulgath";
+
+        if (!Core.isMember || Core.checkInventory(TargetBlade)) {
             Core.logger(
-                `${Core.checkInventory("DragonBlade of Nulgath") ? '"DragonBlade of Nulgath" owned' : 'Not an Member cannot get "DragonBlade of Nulgath"'}`,
+                !Core.isMember ? "Not a Member, cannot get DragonBlade of Nulgath." : `"${TargetBlade}" owned.`,
             );
             return;
         }
 
         Core.addDrop(
-            ...[
-                ...Nation.bagDrops.concat(...this.twistedItems),
-                ...[
-                    "DragonBlade of Nulgath",
-                    "Combat Trophy",
-                    "Basic War Sword",
-                    "Behemoth Blade of Shadow",
-                    "Behemoth Blade of Light",
-                ],
-            ],
+            ...Nation.bagDrops,
+            ...this.twistedItems,
+            "DragonBlade of Nulgath",
+            "Combat Trophy",
+            "Basic War Sword",
+            "Behemoth Blade of Shadow",
+            "Behemoth Blade of Light",
+            "Ebony DragonBlade of Nulgath",
         );
 
+        Core.ensureAccept(766);
         this.behemothBladeof("Shadow");
         this.behemothBladeof("Light");
 
@@ -54,10 +60,9 @@ export class DragonBladeofNulgath {
 
         Nation.farmTotemofNulgath(3);
 
-        Core.ensureAccept(766);
         Core.huntMonster("underworld", "Legion Fenrir", "Legion Fenrir Rune");
-        Core.ensureComplete(766, 5483);
-        bot.wait.forPickup("DragonBlade of Nulgath");
+        Core.ensureComplete(766);
+        bot.wait.forPickup(TargetBlade);
     }
 
     behemothBladeof(blade: string): void {

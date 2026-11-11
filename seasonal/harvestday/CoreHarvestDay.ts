@@ -174,7 +174,12 @@ export class CoreHarvestDay {
         Story.killQuest(895, "twilight", "Gressil");
 
         //Complete Airheads 896
-        Story.killQuest(896, "float", ["Cysero Balloon", "Beleen Balloon"]);
+        if (!Story.questProgression(896)) {
+            Core.ensureAccept(896);
+            Core.huntMonster("float", "Beleen Balloon", "Deflated Beleen", 4);
+            Core.huntMonster("float", "Cysero Balloon", "Deflated Cysero", 4);
+            Core.ensureComplete(896);
+        }
 
         //The Final Pilgrimage 897
         Story.killQuest(897, "float", "Twilly Balloon");
@@ -212,7 +217,13 @@ export class CoreHarvestDay {
         Story.mapItemQuest(1441, "grams", 715);
 
         //Creatures Serving Chaos 1442
-        Story.killQuest(1442, "grams", ["Wolf", "Wereboar", "Spider"]);
+        if (!Story.questProgression(1442)) {
+            Core.ensureAccept(1442);
+            Core.huntMonster("grams", "Wolf", "Wolf Pelt", 5);
+            Core.huntMonster("grams", "Wereboar", "Boar Tusk", 5);
+            Core.huntMonster("grams", "Spider", "Spider Silk", 5);
+            Core.ensureComplete(1442);
+        }
 
         //Bandit Battles 1443
         Story.killQuest(1443, "grams", "Bandit");
@@ -234,7 +245,12 @@ export class CoreHarvestDay {
         Story.preLoad(this.artixHome);
 
         //Chaos Critters in the Crops 1437
-        Story.killQuest(1437, "artixhome", ["Mosquito", "Chaorrupted Poultrygeist"]);
+        if (!Story.questProgression(1437)) {
+            Core.ensureAccept(1437);
+            Core.huntMonster("artixhome", "Mosquito", "Mosquito Squashed", 7);
+            Core.huntMonster("artixhome", "Chaorrupted Poultrygeist", "Poultry Plucked", 6);
+            Core.ensureComplete(1437);
+        }
 
         //Zombehs Aren't So Smart 1438
         Story.mapItemQuest(1438, "artixhome", 714, 10);
@@ -302,10 +318,20 @@ export class CoreHarvestDay {
         Story.mapItemQuest(3209, "killerkitchen", 2231);
 
         //Cornstalkerbread Stuffing 3210
-        Story.killQuest(3210, "harvest", ["Corn Stalker", "Corn Stalker"]);
+        if (!Story.questProgression(3210)) {
+            Core.ensureAccept(3210);
+            Core.huntMonster("harvest", "Corn Stalker", "Yellow Stalker Kernel", 10);
+            Core.huntMonster("harvest", "Corn Stalker", "White Stalker Kernel", 10);
+            Core.ensureComplete(3210);
+        }
 
         //Super Special Chutney 3211
-        Story.killQuest(3211, "harvest", ["Bad Apple", "Grapes of Wrath"]);
+        if (!Story.questProgression(3211)) {
+            Core.ensureAccept(3211);
+            Core.huntMonster("harvest", "Bad Apple", "Good Apple Chunks", 6);
+            Core.huntMonster("harvest", "Grapes of Wrath", "Grapey Wrath", 6);
+            Core.ensureComplete(3211);
+        }
 
         //Oishii's Secret Ingredient 3212
         Story.killQuest(3212, "killerkitchen", "Harvest Sneevil");
@@ -334,7 +360,12 @@ export class CoreHarvestDay {
         Story.killQuest(7216, "furblefeast", "Mini Turdraken");
 
         // Meat and Eggs 7217
-        Story.killQuest(7217, "furblefeast", ["Harvest Sneevil", "Turkey"]);
+        if (!Story.questProgression(7217)) {
+            Core.ensureAccept(7217);
+            Core.huntMonster("furblefeast", "Harvest Sneevil", "Harvest Meat", 6);
+            Core.huntMonster("furblefeast", "Turkey", "Turkey Egg", 6);
+            Core.ensureComplete(7217);
+        }
 
         // Zombies! 7218
         Story.killQuest(7218, "furblefeast", "Meat Zombie");
@@ -485,7 +516,12 @@ export class CoreHarvestDay {
         Story.killQuest(7789, "gothicdream", "Ice Scream");
 
         // Clear the Hallway 7790
-        Story.killQuest(7790, "gothicdream", ["Spooky Lantern", "Bat Garland"]);
+        if (!Story.questProgression(7790)) {
+            Core.ensureAccept(7790);
+            Core.huntMonster("gothicdream", "Bat Garland", "Bat Garland Slain", 5);
+            Core.huntMonster("gothicdream", "Spooky Lantern", "Spooky Lantern Slain", 5);
+            Core.ensureComplete(7790);
+        }
 
         // Sleepytime Gear 7791
         Story.mapItemQuest(7791, "gothicdream", [7820, 7821]);
@@ -501,7 +537,13 @@ export class CoreHarvestDay {
         Story.killQuest(7794, "gothicdream", "Sleep Paralysis");
 
         // Clean Up Clean Up Everybody Do Your Scare 7795
-        Story.killQuest(7795, "gothicdream", ["Spooky Lantern", "Bat Garland", "Ice Scream"]);
+        if (!Story.questProgression(7795)) {
+            Core.ensureAccept(7795);
+            Core.huntMonster("gothicdream", "Bat Garland", "Bats Chased Out", 8);
+            Core.huntMonster("gothicdream", "Ice Scream", "Ice Scream Mopped Up", 8);
+            Core.huntMonster("gothicdream", "Spooky Lantern", "Lantern Pieces Doomba'd", 8);
+            Core.ensureComplete(7795);
+        }
     }
 
     memetNightmare(): void {
@@ -532,7 +574,12 @@ export class CoreHarvestDay {
         }
 
         // Board up the Windows 7800
-        Story.killQuest(7800, "memetnightmare", ["Fire Cyclone", "Fire Cyclone"]);
+        if (!Story.questProgression(7800)) {
+            Core.ensureAccept(7800);
+            Core.huntMonster("memetnightmare", "Fire Cyclone", "Box of Nails");
+            Core.huntMonster("memetnightmare", "Fire Cyclone", "Sturdy Board", 6);
+            Core.ensureComplete(7800);
+        }
 
         // Energy Needed 7801
         Story.killQuest(7801, "memetnightmare", "Eye Wyrm");
@@ -544,7 +591,12 @@ export class CoreHarvestDay {
         Story.killQuest(7803, "memetnightmare", "Nightmare Maw");
 
         // Stop the Storm 7804
-        Story.killQuest(7804, "memetnightmare", ["Fire Cyclone", "Burning Ember"]);
+        if (!Story.questProgression(7804)) {
+            Core.ensureAccept(7804);
+            Core.huntMonster("memetnightmare", "Fire Cyclone", "Cyclone Slain", 5);
+            Core.huntMonster("memetnightmare", "Burning Ember", "Ember Slain", 5);
+            Core.ensureComplete(7804);
+        }
 
         // Cannibal Mermaids? 7805
         Story.killQuest(7805, "memetnightmare", "Scuttlefish");
@@ -556,7 +608,13 @@ export class CoreHarvestDay {
         Story.killQuest(7807, "memetnightmare", "Dark Pit of Despair");
 
         // Quiet Down, Will Ya? 7808
-        Story.killQuest(7808, "memetnightmare", ["Fire Cyclone", "Burning Ember", "Cannibal Mermaid"]);
+        if (!Story.questProgression(7808)) {
+            Core.ensureAccept(7808);
+            Core.huntMonster("memetnightmare", "Fire Cyclone", "Cyclones Subdued", 8);
+            Core.huntMonster("memetnightmare", "Burning Ember", "Embers Smothered", 8);
+            Core.huntMonster("memetnightmare", "Cannibal Mermaid", "Mermaids Dispersed", 8);
+            Core.ensureComplete(7808);
+        }
     }
 
     nightmareWar(): void {
@@ -622,7 +680,12 @@ export class CoreHarvestDay {
         Story.mapItemQuest(8946, "ebiltakeover", 10860, 5);
 
         //Drones and Drones 8947
-        Story.killQuest(8947, "ebiltakeover", ["Ebil Battle Drone", "Traitor Goon"]);
+        if (!Story.questProgression(8947)) {
+            Core.ensureAccept(8947);
+            Core.huntMonster("ebiltakeover", "Ebil Battle Drone", "Ebil Battle Drone Defeated", 6);
+            Core.huntMonster("ebiltakeover", "Traitor Goon", "Traitor Goons Defeated", 6);
+            Core.ensureComplete(8947);
+        }
 
         //Tech Collection 8948
         Story.killQuest(8948, "ebiltakeover", "Ebil Battle Drone");
@@ -631,7 +694,13 @@ export class CoreHarvestDay {
         Story.killQuest(8949, "ebiltakeover", "Ebil General Porkon");
 
         //Variety Is The Spice Of Life 8950
-        Story.killQuest(8950, "ebiltakeover", ["Ebil Fishman", "EbilCorp Slime", "Ebil Battle Drone"]);
+        if (!Story.questProgression(8950)) {
+            Core.ensureAccept(8950);
+            Core.huntMonster("ebiltakeover", "Ebil Fishman", "Fishman Defeated", 4);
+            Core.huntMonster("ebiltakeover", "EbilCorp Slime", "Slime Defeated", 4);
+            Core.huntMonster("ebiltakeover", "Ebil Battle Drone", "Drone Battled", 4);
+            Core.ensureComplete(8950);
+        }
 
         //Draconian Destruction 8951
         Story.killQuest(8951, "ebiltakeover", "Ebil Draconian");
@@ -646,7 +715,12 @@ export class CoreHarvestDay {
         Story.killQuest(8967, "ebiltakeover", "Ebil Ghoul");
 
         // Sample Processing 8968
-        Story.killQuest(8968, "ebiltakeover", ["Traitor Goon", "Ebil Fishman"]);
+        if (!Story.questProgression(8968)) {
+            Core.ensureAccept(8968);
+            Core.huntMonster("ebiltakeover", "Traitor Goon", "Symptoms Checked", 10);
+            Core.huntMonster("ebiltakeover", "Ebil Fishman", "Food Crumbs", 5);
+            Core.ensureComplete(8968);
+        }
 
         // What's That Smell 8969
         Story.killQuest(8969, "ebiltakeover", "Mystery Meat");

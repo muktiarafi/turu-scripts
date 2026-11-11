@@ -16,7 +16,7 @@ export class ShadowSlayerWar {}
 export default function main(): void {
     Core.setOptions();
 
-    if (!Core.isCompletedBefore(10478)) {
+    if (!Core.isCompletedBefore(10905)) {
         coreMogloween.birgittaMogloween();
     }
 

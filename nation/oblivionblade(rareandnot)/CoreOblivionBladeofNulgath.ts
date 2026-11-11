@@ -149,14 +149,14 @@ export class CoreOblivionBladeofNulgath {
      * @param quant Quanity of Gems of Nulgath to Get
      */
     diamondsofNulgathSale(quant: number): void {
-        if (Core.checkInventory("item")) {
+        if (Core.checkInventory("Diamond of Nulgath", quant)) {
             return;
         }
 
         this.petCheck(2563, 603);
 
-        while (!bot.shouldExit && !Core.checkInventory("Diamonds of Nulgath", quant)) {
-            Nation.farmVoucher({ member: true });
+        while (!bot.shouldExit && !Core.checkInventory("Diamond of Nulgath", quant)) {
+            Nation.farmVoucher({ member: true, keepVoucher: true });
         }
 
         Core.cancelRegisteredQuests();

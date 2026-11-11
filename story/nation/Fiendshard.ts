@@ -14,9 +14,9 @@ const Originul = new Originul_Story();
 
 export class Fiendshard_Story {
     fiendshard_QuestlineP1(): void {
-        Story.preLoad(this.fiendshard_QuestlineP1);
-
         Originul.originul_Questline();
+
+        Story.preLoad(this.fiendshard_QuestlineP1);
 
         Core.logger("Making sure portal quest is done.. appearntly its required...? (though not stated?)");
         Core.join("tercessuinotlim");

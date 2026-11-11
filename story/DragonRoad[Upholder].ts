@@ -101,7 +101,12 @@ export class DragonRoad {
         Story.killQuest(4543, "DragonRoad", "Horccolo");
 
         //Eliminate the Legion Cyborgs 4544
-        Story.killQuest(4544, "DragonRoad", ["Cyborg 71", "Cyborg 81"]);
+        if (!Story.questProgression(4544)) {
+            Core.ensureAccept(4544);
+            Core.huntMonster("dragonroad", "Cyborg 81", "Cyborg 81 Defeated");
+            Core.huntMonster("dragonroad", "Cyborg 71", "Cyborg 71 Defeated");
+            Core.ensureComplete(4544);
+        }
 
         //Pulverize Majic Guu  4545
         Story.killQuest(4545, "DragonRoad", "Majic Guu");

@@ -16,7 +16,7 @@ export class RankUpAll {
         // Define the classes to exclude
         // C# reads CurrentClass.Name without a null check; no class is "" here.
         const InitialClass = bot.player.currentClass ?? "";
-        const excludedClasses = ["Hobo Highlord", "No Class", "Obsidian No Class", InitialClass];
+        const excludedClasses = ["Hobo Highlord", "No Class", "Obsidian No Class", "Hollowborn No-Class", InitialClass];
         // Populate SelectedClasses from inventory, excluding specific classes
         const SelectedClasses = bot.inventory.items
             .filter(

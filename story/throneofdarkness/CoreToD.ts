@@ -253,19 +253,31 @@ export class CoreToD {
         Story.killQuest(4997, "towersilver", "Fallen Emperor Statue");
 
         // Slay 'Em All
-        Story.killQuest(4999, "towersilver", ["Undead Knight", "Undead Guard"]);
+        if (!Story.questProgression(4999)) {
+            Core.ensureAccept(4999);
+            Core.huntMonster("towersilver", "Undead Guard", "Undead Guard Slain", 3);
+            Core.huntMonster("towersilver", "Undead Knight", "Undead Knight Slain", 3);
+            Core.ensureComplete(4999);
+        }
 
         // Slay 'Em All Again
-        Story.killQuest(4998, "towersilver", ["Fallen DeathKnight", "Undead Warrior"]);
+        if (!Story.questProgression(4998)) {
+            Core.ensureAccept(4998);
+            Core.huntMonster("towersilver", "Fallen Deathknight", "Fallen Deathknight Slain", 3);
+            Core.huntMonster("towersilver", "Undead Warrior", "Undead Warrior Slain", 3);
+            Core.ensureComplete(4998);
+        }
 
         // Farming For Loot
-        Story.killQuest(5000, "towersilver", [
-            "Flying Spyball",
-            "Fallen DeathKnight",
-            "Undead Warrior",
-            "Undead Knight",
-            "Undead Guard",
-        ]);
+        if (!Story.questProgression(5000)) {
+            Core.ensureAccept(5000);
+            Core.huntMonster("towersilver", "Flying Spyball", "Sp-Eye Camera");
+            Core.huntMonster("towersilver", "Fallen Deathknight", "Deathknight's Axe");
+            Core.huntMonster("towersilver", "Undead Warrior", "Warrior's Shield");
+            Core.huntMonster("towersilver", "Undead Knight", "Knight's Helm");
+            Core.huntMonster("towersilver", "Undead Guard", "Guard's Skull");
+            Core.ensureComplete(5000);
+        }
 
         // Or... Not.
         Story.mapItemQuest(5001, "towersilver", [4368, 4369, 4370, 4371, 4372]);
@@ -292,13 +304,15 @@ export class CoreToD {
         Story.killQuest(5008, "towersilver", "Flester The Silver");
 
         // Get my Stuff
-        Story.killQuest(5009, "towersilver", [
-            "Fallen DeathKnight",
-            "Undead Knight",
-            "Undead Warrior",
-            "Ghoul",
-            "Undead Guard",
-        ]);
+        if (!Story.questProgression(5009)) {
+            Core.ensureAccept(5009);
+            Core.huntMonster("towersilver", "Fallen Deathknight", "Chef Ramskull's Apron");
+            Core.huntMonster("towersilver", "Undead Knight", "Chef Ramskull's Hat");
+            Core.huntMonster("towersilver", "Undead Warrior", "Chef Ramskull's Cookbook");
+            Core.huntMonster("towersilver", "Ghoul", "Chef Ramskull's Spatula");
+            Core.huntMonster("towersilver", "Undead Guard", "Chef Ramskull's Skillet");
+            Core.ensureComplete(5009);
+        }
 
         // In the Mix
         Story.killQuest(5010, "towersilver", "Bloody Scary");
@@ -333,7 +347,12 @@ export class CoreToD {
         Story.mapItemQuest(5019, "towergold", 4377, 3);
 
         // Advanced Self Defense
-        Story.killQuest(5020, "towergold", ["Undead Knight", "Undead Guard"]);
+        if (!Story.questProgression(5020)) {
+            Core.ensureAccept(5020);
+            Core.huntMonster("towergold", "Undead Knight", "Undead Knight Noogied", 3);
+            Core.huntMonster("towergold", "Undead Guard", "Undead Guard Swirlied", 3);
+            Core.ensureComplete(5020);
+        }
 
         // Take A Mallet To 'Em
         Story.killQuest(5021, "towergold", "Fallen Emperor Statue");
@@ -671,13 +690,23 @@ export class CoreToD {
             Story.mapItemQuest(5122, "baconcatlair", 4477, 4);
 
             //Sharks Should Not Walk 5123
-            Story.killQuest(5123, "baconcatlair", ["Robo Shark", "Robo Shark"]);
+            if (!Story.questProgression(5123)) {
+                Core.ensureAccept(5123);
+                Core.huntMonster("baconcatlair", "Robo Shark", "Walking Shark 2 Destroyed", 4);
+                Core.huntMonster("baconcatlair", "Robo Shark", "Walking Shark 1 Destroyed", 4);
+                Core.ensureComplete(5123);
+            }
 
             //Grab those Quarters 5124
             Story.killQuest(5124, "baconcatlair", "Robo Shark");
 
             //Shark Invaders! 5125
-            Story.killQuest(5125, "baconcatlair", ["Shark Invader", "Shark Invader"]);
+            if (!Story.questProgression(5125)) {
+                Core.ensureAccept(5125);
+                Core.huntMonster("baconcatlair", "Shark Invader", "Hi Score", 100);
+                Core.huntMonster("baconcatlair", "Shark Invader", "BONUS!");
+                Core.ensureComplete(5125);
+            }
 
             //Sharks like Honey? 5126
             Story.mapItemQuest(5126, "baconcatlair", 4480, 6);

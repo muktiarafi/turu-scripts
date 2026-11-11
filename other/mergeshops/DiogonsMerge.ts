@@ -75,7 +75,7 @@ export class DiogonsMerge {
             Adv.buyItem("ectocave", 2449, "Toxian Metal", 3);
             Core.equipClass(ClassType.Farm);
             Core.huntMonster("therift", "Noxious Fumes", "Noxious Fumes", 7);
-            Core.huntMonster("shadowattack", "Toxic Fiend", "Toxic Fiend Blood", 3);
+            Core.killMonster("shadowattack", "r2", "Left", "Toxic Fiend", "Toxic Fiend Blood", 3);
             Core.huntMonster("ectocave", "Sludge Beast", "Sludge Beast's Tentacle");
             Core.equipClass(ClassType.Solo);
             Core.huntMonster("ectocave", "Ektorax", "Ektorax's Ectoplasm");

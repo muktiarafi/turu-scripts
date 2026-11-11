@@ -16,7 +16,7 @@ export class DiamondsofNulgathSale {}
 
 export const scriptOptions = defineScriptOptions(
     "DiamondsofNulgathSale",
-    [Core.skipOptions, option.int("DiamondQuant", "Diamond Quant", "Diamond of Nulgath quant", 0)],
+    [Core.skipOptions, option.int("DiamondQuant", "Diamond Quant", "Diamond of Nulgath quant", 1000)],
     true,
 );
 

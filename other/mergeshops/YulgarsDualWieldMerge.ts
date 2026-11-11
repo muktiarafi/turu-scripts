@@ -536,7 +536,7 @@ export class YulgarsDualWieldMerge {
                         Core.logger(`${req.name} requires Membership to obtain`);
                         return;
                     }
-                    DBoN.getDragonBlade();
+                    DBoN.getDragonBlade(true);
                     break;
                 case "ShadowReaper Of Doom":
                     sRoD.shadowReaperOfDoom();

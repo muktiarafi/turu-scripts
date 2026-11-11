@@ -86,7 +86,7 @@ export class UndeadLegionMerge {
                     }
                     break;
                 case "DragonBlade of Nulgath":
-                    DBoN.getDragonBlade();
+                    DBoN.getDragonBlade(true);
                     break;
                 case "Fallen MonsterHunter":
 

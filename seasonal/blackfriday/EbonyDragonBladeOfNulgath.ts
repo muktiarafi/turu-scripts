@@ -29,7 +29,7 @@ export class EbonyDragonBladeofNulgath {
             Nation.farmDiamondofNulgath(100);
         }
         if (!Core.checkInventory("DragonBlade of Nulgath")) {
-            DBoN.getDragonBlade();
+            DBoN.getDragonBlade(true);
         }
         Core.buyItem("evilwarnul", 456, "Ebony DragonBlade of Nulgath");
     }

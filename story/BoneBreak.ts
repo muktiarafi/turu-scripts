@@ -64,7 +64,12 @@ export class BoneBreak {
         Story.mapItemQuest(5977, "bonebreak", 5418);
 
         //Chew the Dead 5978
-        Story.killQuest(5978, "bonebreak", ["Undead Berserker", "Bone Leech"]);
+        if (!Story.questProgression(5978)) {
+            Core.ensureAccept(5978);
+            Core.huntMonster("bonebreak", "Undead Berserker", "Rotten Flesh", 7);
+            Core.huntMonster("bonebreak", "Bone Leech", "Old Bone", 7);
+            Core.ensureComplete(5978);
+        }
 
         //Marsh Mash Pit 5979
         Story.killQuest(5979, "bonebreak", "Marsh Thing");

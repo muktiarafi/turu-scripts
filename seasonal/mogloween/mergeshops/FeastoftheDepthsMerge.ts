@@ -73,6 +73,21 @@ export class FeastoftheDepths {
                     }
                     Core.cancelRegisteredQuests();
                     break;
+                case "Shrimp Noodle Pack":
+                    // #FROM CASE STORAGE
+                    if (req.upgrade && !Core.isMember) {
+                        Core.logger(`${req.name} requires membership to farm, skipping.`);
+                        return;
+                    }
+                    Core.farmingLogger(req.name, quant);
+                    Core.equipClass(ClassType.Solo);
+                    Core.addDrop(req.id);
+                    while (!bot.shouldExit && !Core.checkInventory(req.id, quant)) {
+                        Core.huntMonsterQuest(10460, "eldritchworld", "Kathool Cultist");
+                        bot.wait.forPickup(req.name);
+                    }
+                    Core.cancelRegisteredQuests();
+                    break;
                 default: {
                     const shouldStop = !Adv.matsOnly || !this.dontStopMissingIng;
                     Core.logger(`The bot hasn't been taught how to get ${req.name}.`, undefined, {
@@ -101,6 +116,7 @@ export class FeastoftheDepths {
             'Mode: [select] only\nShould the bot buy "Faustian Plague Doctor" ?',
             false,
         ),
+        option.bool("104743", "Elodea's Dress", 'Mode: [select] only\nShould the bot buy "Elodea\'s Dress" ?', false),
         option.bool(
             "95584",
             "Erudite Plague Doctor Cloak",

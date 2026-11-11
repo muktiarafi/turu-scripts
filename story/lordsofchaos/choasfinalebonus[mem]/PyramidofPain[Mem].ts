@@ -25,7 +25,12 @@ export class PyramidofPain {
         Story.preLoad(this.pyramidofPain_Line);
 
         // Prove Your Worth
-        Story.killQuest(3640, "pyramidpain", ["Cactus Creeper ", "Golden Scarab "]);
+        if (!Story.questProgression(3640)) {
+            Core.ensureAccept(3640);
+            Core.huntMonster("pyramidpain", "Cactus Creeper ", "Cup of Cactus Water", 5);
+            Core.huntMonster("pyramidpain", "Golden Scarab ", "Slab of Scarab Meat", 3);
+            Core.ensureComplete(3640);
+        }
         // Still Not Impressed?
         Story.killQuest(3641, "pyramidpain", "Pyramid Vase");
         // A Prickly Situation
@@ -33,7 +38,12 @@ export class PyramidofPain {
         // Beetle Battle Armor
         Story.killQuest(3643, "pyramidpain", "Golden Scarab ");
         // Pyramid Pilgrimage
-        Story.killQuest(3644, "pyramidpain", ["Cactus Creeper ", "Golden Scarab "]);
+        if (!Story.questProgression(3644)) {
+            Core.ensureAccept(3644);
+            Core.huntMonster("pyramidpain", "Cactus Creeper ", "Additional Cup of Cactus Water", 5);
+            Core.huntMonster("pyramidpain", "Golden Scarab ", "Stored Slab of Scarab Meat", 6);
+            Core.ensureComplete(3644);
+        }
         // Blood in the Sand
         Story.killQuest(3645, "pyramidpain", "Sandshark ");
         // Defeat Tribal Traitors
@@ -47,7 +57,12 @@ export class PyramidofPain {
         // The Legend of Eldo
         Story.killQuest(3650, "pyramidpain", "Pyramid Vase");
         // There's No Point
-        Story.killQuest(3651, "pyramidpain", ["Cactus Creeper ", "Golden Scarab "]);
+        if (!Story.questProgression(3651)) {
+            Core.ensureAccept(3651);
+            Core.huntMonster("pyramidpain", "Cactus Creeper ", "Cacti Cut", 7);
+            Core.huntMonster("pyramidpain", "Golden Scarab ", "Scarab Squashed", 5);
+            Core.ensureComplete(3651);
+        }
         // Trail of Naan Crumbs
         Story.mapItemQuest(3652, "pyramidpain", 2770, 13);
         // Tricky Trip Wires

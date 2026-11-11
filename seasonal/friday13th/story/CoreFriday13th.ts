@@ -6,6 +6,7 @@ tags: null
 // Port of Scripts/Seasonal/Friday13th/Story/CoreFriday13th.cs.
 // Converted by tools/cs2ts, not yet read through by hand (cs2ts --force regenerates it); remove this line once it is.
 
+import { bot } from "turu";
 import { Core } from "../../../core/CoreBots";
 import { CoreStory } from "../../../core/CoreStory";
 
@@ -88,7 +89,12 @@ export class CoreFriday13th {
         Story.killQuest(3102, "Vampirates", "Vampirate");
 
         // Oh Right, They're Vampires 3103
-        Story.killQuest(3103, "Vampirates", ["Creepy Bat", "Vampirate"]);
+        if (!Story.questProgression(3103)) {
+            Core.ensureAccept(3103);
+            Core.huntMonster("vampirates", "Creepy Bat", "Vampire Bat Staked", 4);
+            Core.huntMonster("vampirates", "Vampirate", "Vampirate Staked", 4);
+            Core.ensureComplete(3103);
+        }
 
         // The Vampirate Captain 3104
         Story.mapItemQuest(3104, "Vampirates", 1959);
@@ -97,7 +103,14 @@ export class CoreFriday13th {
         Story.killQuest(3105, "Vampirates", "Stranglerfish");
 
         // Unsink This Ship! 3106
-        Story.killQuest(3106, "Vampirates", ["Murderaconian", "Vampirate", "Vampirate"]);
+        if (!Story.questProgression(3106)) {
+            Core.ensureAccept(3106);
+            Core.huntMonster("Vampirates", "Murderaconian", "Murderaconian Slain", 5);
+            Core.huntMonster("Vampirates", "Vampirate", "Vampirate Slain", 5);
+            Core.huntMonster("Vampirates", "Vampirate", "Multi-Purpose Ship Widget");
+            Core.ensureComplete(3106);
+            bot.sleep(200);
+        }
 
         // Release the Kraken! Wait, no - Don't. 3107
         Story.killQuest(3107, "Vampirates", "Bracken Kraken");
@@ -116,10 +129,22 @@ export class CoreFriday13th {
 
         if (Core.isMember) {
             //Me Knickers Got a Big Hole Across th' Bum 3114
-            Story.killQuest(3114, "Skullpunch", ["Fishbones", "Vampirate"]);
+            if (!Story.questProgression(3114)) {
+                Core.ensureAccept(3114);
+                Core.huntMonster("skullpunch", "Fishbones", "Thin Fishbone Bone");
+                Core.huntMonster("skullpunch", "Vampirate", "Scrap o' Fabric", 8);
+                Core.ensureComplete(3114);
+            }
 
             // Where'd Me Ship's Cargo? 3115
-            Story.killQuest(3115, "Skullpunch", ["Fishbones", "Fishbones", "Fishbones", "Fishbones"]);
+            if (!Story.questProgression(3115)) {
+                Core.ensureAccept(3115);
+                Core.huntMonster("skullpunch", "Fishbones", "Dented Footlocker");
+                Core.huntMonster("skullpunch", "Fishbones", "Wooden Crate");
+                Core.huntMonster("skullpunch", "Fishbones", "Small Chest");
+                Core.huntMonster("skullpunch", "Fishbones", "Half-Empty Barrel");
+                Core.ensureComplete(3115);
+            }
 
             // A Most Important Package 3116
             Story.killQuest(3116, "Skullpunch", "Fishbones");
@@ -129,7 +154,7 @@ export class CoreFriday13th {
                 Core.ensureAccept(3117);
                 Core.huntMonster("Skullpunch", "Shelleton", "Turtle Meat", 10);
                 Core.huntMonster("Skullpunch", "Fishwing", "Fish Oil", 5);
-                Core.ensureAccept(3117);
+                Core.ensureComplete(3117);
             }
 
             // Full o' Holes 3118
@@ -179,24 +204,28 @@ export class CoreFriday13th {
         Story.chainQuest(756);
 
         // The First 6 Chapters 757
-        Story.killQuest(757, "Ebildread", [
-            "Pink Ghostly Sheet",
-            "Pink Ghostly Sheet",
-            "Pink Ghostly Sheet",
-            "Pink Ghostly Sheet",
-            "Pink Ghostly Sheet",
-            "Pink Ghostly Sheet",
-        ]);
+        if (!Story.questProgression(757)) {
+            Core.ensureAccept(757);
+            Core.huntMonster("ebildread", "Pink Ghostly Sheet", "Lowe-anomicon Chapter 2");
+            Core.huntMonster("ebildread", "Pink Ghostly Sheet", "Lowe-anomicon Chapter 3");
+            Core.huntMonster("ebildread", "Pink Ghostly Sheet", "Lowe-anomicon Chapter 4");
+            Core.huntMonster("ebildread", "Pink Ghostly Sheet", "Lowe-anomicon Chapter 5");
+            Core.huntMonster("ebildread", "Pink Ghostly Sheet", "Lowe-anomicon Chapter 6");
+            Core.huntMonster("ebildread", "Pink Ghostly Sheet", "Lowe-anomicon Chapter 1");
+            Core.ensureComplete(757);
+        }
 
         // The Last 6 Chapters 758
-        Story.killQuest(758, "Ebildread", [
-            "Pink Skeletal Soldier",
-            "Pink Skeletal Soldier",
-            "Pink Skeletal Soldier",
-            "Pink Skeletal Soldier",
-            "Pink Skeletal Soldier",
-            "Pink Skeletal Soldier",
-        ]);
+        if (!Story.questProgression(758)) {
+            Core.ensureAccept(758);
+            Core.huntMonster("ebildread", "Pink Skeletal Soldier", "Lowe-anomicon Chapter 7");
+            Core.huntMonster("ebildread", "Pink Skeletal Soldier", "Lowe-anomicon Chapter 8");
+            Core.huntMonster("ebildread", "Pink Skeletal Soldier", "Lowe-anomicon Chapter 9");
+            Core.huntMonster("ebildread", "Pink Skeletal Soldier", "Lowe-anomicon Chapter 10");
+            Core.huntMonster("ebildread", "Pink Skeletal Soldier", "Lowe-anomicon Chapter 11");
+            Core.huntMonster("ebildread", "Pink Skeletal Soldier", "Lowe-anomicon Chapter 12");
+            Core.ensureComplete(758);
+        }
 
         // The Glossary 759
         Story.killQuest(759, "Ebildread", "Jay Sun");
@@ -301,7 +330,13 @@ export class CoreFriday13th {
         Story.preLoad(this.firehouse);
 
         // Gaining Trust 1552
-        Story.killQuest(1552, "FireTown", ["Fire Elemental", "Fire Elemental", "Fire Elemental"]);
+        if (!Story.questProgression(1552)) {
+            Core.ensureAccept(1552);
+            Core.huntMonster("firetown", "Fire Elemental", "Charyi's Garnet Bead");
+            Core.huntMonster("firetown", "Fire Elemental", "Yans' Charred Spade Handle");
+            Core.huntMonster("firetown", "Fire Elemental", "Kierk's Missing Gear");
+            Core.ensureComplete(1552);
+        }
 
         // If You Can't Stand the Heat... 1553
         Story.killQuest(1553, "FireTown", "Fire Elemental");
@@ -560,7 +595,12 @@ export class CoreFriday13th {
         Story.preLoad(this.wormhole);
 
         // Something In The Air 5051
-        Story.killQuest(5051, "Wormhole", ["Goth Girl", "Vamp Boy"]);
+        if (!Story.questProgression(5051)) {
+            Core.ensureAccept(5051);
+            Core.huntMonster("wormhole", "Goth Girl", "Goth Girl Gas Masked", 4);
+            Core.huntMonster("wormhole", "Vamp Boy", "Vampire Boy Gas Masked", 4);
+            Core.ensureComplete(5051);
+        }
 
         // They're Not Red Shirts - They're Deadshirts! 5052
         Story.mapItemQuest(5052, "Wormhole", [4420, 4421, 4422]);
@@ -573,7 +613,12 @@ export class CoreFriday13th {
         Story.mapItemQuest(5054, "Wormhole", [4423, 4424, 4425, 4426]);
 
         // Beam Me Up! 5055
-        Story.killQuest(5055, "Wormhole", ["Undead Astronaut", "Undead Astronaut"]);
+        if (!Story.questProgression(5055)) {
+            Core.ensureAccept(5055);
+            Core.huntMonster("wormhole", "Undead Astronaut", "Teleporter Passcode");
+            Core.huntMonster("wormhole", "Undead Astronaut", "Undead Astronaut Defeated", 6);
+            Core.ensureComplete(5055);
+        }
 
         // Exotic Pets 5056
         Story.killQuest(5056, "Wormhole", "Xenodog");
@@ -599,7 +644,12 @@ export class CoreFriday13th {
         }
 
         // Maybe These Guys Know Something 5062
-        Story.killQuest(5062, "Wormhole", ["Stormslasher", "Undead Space Marine"]);
+        if (!Story.questProgression(5062)) {
+            Core.ensureAccept(5062);
+            Core.huntMonster("wormhole", "Stormslasher", "Slasher Transmission", 3);
+            Core.huntMonster("wormhole", "Undead Space Marine", "Marine Transmission", 3);
+            Core.ensureComplete(5062);
+        }
 
         // Look At That Awesome Armor! 5063
         Story.killQuest(5063, "Wormhole", "Stormslasher");
@@ -608,7 +658,12 @@ export class CoreFriday13th {
         Story.killQuest(5064, "Wormhole", "Guardian");
 
         // Undead Space 5065
-        Story.killQuest(5065, "Wormhole", ["Space Ghost", "Singularity"]);
+        if (!Story.questProgression(5065)) {
+            Core.ensureAccept(5065);
+            Core.huntMonster("wormhole", "Space Ghost", "Space Ghost Exorcised", 5);
+            Core.huntMonster("wormhole", "Singularity", "Singularity Destroyed", 5);
+            Core.ensureComplete(5065);
+        }
 
         // Trobbolegion! 5066
         Story.killQuest(5066, "Wormhole", "Trobbolegion");
@@ -699,7 +754,12 @@ export class CoreFriday13th {
         Story.mapItemQuest(6262, "Gonnagetcha", [5738, 5739]);
 
         // Cysero was Right! 6263
-        Story.killQuest(6263, "Gonnagetcha", ["Murkonian", "Murkonian"]);
+        if (!Story.questProgression(6263)) {
+            Core.ensureAccept(6263);
+            Core.huntMonster("gonnagetcha", "Murkonian", "Murkonian Slain", 10);
+            Core.huntMonster("gonnagetcha", "Murkonian", "Black Knights Cabin Key");
+            Core.ensureComplete(6263);
+        }
 
         // Explore the Black Knight's Cabin 6264
         Story.mapItemQuest(6264, "Gonnagetcha", [5740, 5741]);
@@ -719,7 +779,12 @@ export class CoreFriday13th {
         Story.killQuest(6268, "Gonnagetcha", "Shrade");
 
         // Revitalize the Camp 6269
-        Story.killQuest(6269, "Gonnagetcha", ["Shrade Cultist", "Vengeful Ghost"]);
+        if (!Story.questProgression(6269)) {
+            Core.ensureAccept(6269);
+            Core.huntMonster("gonnagetcha", "Shrade Cultist", "Cultist Cleared", 6);
+            Core.huntMonster("gonnagetcha", "Vengeful Ghost", "Ghost Gone", 2);
+            Core.ensureComplete(6269);
+        }
     }
 
     greymoor(): void {
@@ -740,7 +805,13 @@ export class CoreFriday13th {
         Story.preLoad(this.greymoor);
 
         // Tired of Gremlins 6409
-        Story.killQuest(6409, "Greymoor", ["Auto Gremlin", "Auto Gremlin", "Auto Gremlin"]);
+        if (!Story.questProgression(6409)) {
+            Core.ensureAccept(6409);
+            Core.huntMonster("greymoor", "Auto Gremlin", "Jack");
+            Core.huntMonster("greymoor", "Auto Gremlin", "Air Pump");
+            Core.huntMonster("greymoor", "Auto Gremlin", "Tire Patch");
+            Core.ensureComplete(6409);
+        }
 
         // I Don't Mean To Be CRUDE 6410
         Story.killQuest(6410, "Greymoor", "Oil Elemental");
@@ -988,7 +1059,12 @@ export class CoreFriday13th {
         Story.killQuest(8659, "Oddities", "Creepy Baby");
 
         // Snotty Crumbs 8660
-        Story.killQuest(8660, "Oddities", ["Oddity Swarm", "Cursed Doll-Head"]);
+        if (!Story.questProgression(8660)) {
+            Core.ensureAccept(8660);
+            Core.huntMonster("oddities", "Oddity Swarm", "Black Slime Glob", 5);
+            Core.huntMonster("oddities", "Cursed Doll-Head", "Dried Ectoplasm", 5);
+            Core.ensureComplete(8660);
+        }
 
         // Wobbly Rune Writing 8661
         Story.mapItemQuest(8661, "Oddities", 10155, 6);
@@ -1015,7 +1091,13 @@ export class CoreFriday13th {
         Story.killQuest(8666, "Oddities", "Cursed Spirit");
 
         // Deep Cleanse 8667
-        Story.killQuest(8667, "Oddities", ["Cursed Curio", "Creepy Baby", "Cursed Spirit"], { getReward: false });
+        if (!Story.questProgression(8667, { getReward: false })) {
+            Core.ensureAccept(8667);
+            Core.huntMonster("oddities", "Cursed Spirit", "Doll Eyes", 7);
+            Core.huntMonster("oddities", "Cursed Curio ", "Chipped Wood", 7);
+            Core.huntMonster("oddities", "Creepy Baby", "Fuzz Tuff", 7);
+            Core.ensureComplete(8667);
+        }
     }
 
     blackMaze(): void {
@@ -1064,7 +1146,13 @@ export class CoreFriday13th {
         Story.killQuest(9052, "blackmaze", "Vi'eel Dreaddacovra");
 
         //9053 | Neurocranium in a Haystack
-        Story.killQuest(9053, "blackmaze", ["Screamon", "Globlin", "Shadow Demon"]);
+        if (!Story.questProgression(9053)) {
+            Core.ensureAccept(9053);
+            Core.huntMonster("blackmaze", "Screamon", "Screamon Defeated", 5);
+            Core.huntMonster("blackmaze", "Globlin", "Globlin Defeated", 5);
+            Core.huntMonster("blackmaze", "Shadow Demon", "Shadows Defeated", 5);
+            Core.ensureComplete(9053);
+        }
 
         //9054 | Burning Skeleman
         Story.mapItemQuest(9054, "blackmaze", 11093);

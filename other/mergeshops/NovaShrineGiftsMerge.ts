@@ -100,7 +100,7 @@ export class NovaShrineGiftsMerge {
                     if (!bot.player.isMember) {
                         streamwarMerge.buyAllMerge("Dark Dragon Slayer's Halberd");
                     } else {
-                        DBoN.getDragonBlade();
+                        DBoN.getDragonBlade(true);
                     }
                     Core.buyItem("novashrine", 2458, "Star Light of Destiny", 1, !bot.player.isMember ? 13334 : 13333);
                     break;

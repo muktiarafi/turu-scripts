@@ -6,9 +6,9 @@ tags: story, quest, mogloween, seasonal, merge
 // Port of Scripts/Seasonal/Mogloween/MergeShops/MogloweenSeasonalMerge.cs.
 // Converted by tools/cs2ts, not yet read through by hand (cs2ts --force regenerates it); remove this line once it is.
 
-import { bot, defineScriptOptions, option } from "turu";
-import { CoreAdvanced, type mergeOptionsEnum } from "../../../core/CoreAdvanced";
-import { ClassType, Core } from "../../../core/CoreBots";
+import { bot, choices, defineScriptOptions, option } from "turu";
+import { CoreAdvanced, mergeOptionsEnum } from "../../../core/CoreAdvanced";
+import { ClassType, Core, configOr } from "../../../core/CoreBots";
 import { CoreLegion } from "../../../legion/CoreLegion";
 import { CoreNation } from "../../../nation/CoreNation";
 
@@ -16,7 +16,75 @@ const Adv = new CoreAdvanced();
 const Legion = new CoreLegion();
 const Nation = new CoreNation();
 
+export enum MogloweenMergeMode {
+    all = 0,
+    acOnly = 1,
+    mergeMats = 2,
+    select = 3,
+}
+
 export class MogloweenSeasonalMerge {
+    static readonly generic = [
+        Core.skipOptions,
+        option.choice(
+            "mode",
+            "Select the mode to use",
+            "Select what items to buy from the Mogloween shop.",
+            choices(MogloweenMergeMode),
+            "all",
+        ),
+        option.bool(
+            "mogloweenBuyUndeadWarrior",
+            "Buy Undead Warrior and join the Legion",
+            "When enabled, the script may buy Undead Warrior, join the Legion, and farm Legion Tokens. When disabled, it skips all Legion items and actions.",
+            false,
+        ),
+        // C# names the explanation lines " "; option names must be unique here (they're labels, never read).
+        option.text(
+            "modeExplanationAll",
+            "Mode Explanation [all]",
+            "Mode [all]: Get all the items from the shop, even non-AC items.",
+            "click here",
+        ),
+        option.text(
+            "modeExplanationAcOnly",
+            "Mode Explanation [acOnly]",
+            "Mode [acOnly]: Get all AC-tagged items from the shop.",
+            "click here",
+        ),
+        option.text(
+            "modeExplanationMergeMats",
+            "Mode Explanation [mergeMats]",
+            "Mode [mergeMats]: Get the materials for the items without buying them.",
+            "click here",
+        ),
+        option.text(
+            "modeExplanationSelect",
+            "Mode Explanation [select]",
+            "Mode [select]: Choose which items to get in the Select category.",
+            "click here",
+        ),
+    ];
+
+    private static readonly legionItems = [
+        "Twisted Legion PumpkinLord Blade",
+        "Creeper Legion Helm",
+        "Creeper Flame Legion Helm",
+        "Flaming Legion Helm",
+        "Evil Legion Helm",
+        "Barbed Legion PumpkinLord Shroud",
+        "Battered Legion PumpkinLord Shroud",
+        "Barbed Legion PumpkinLord Vines",
+        "Barbed Legion PumpkinLord Cape",
+        "Luminous Legion PumpkinLord Cape",
+        "Legion PumpkinLord",
+        "Legion Pumpking Overlord",
+        "Legion Pumpking Morph",
+        "Blade of the Pumpking Legion",
+        "A Gourdly Legion Spirit",
+        "Baby Dragon Dage",
+    ];
+
     // [Can Change] This should only be changed by the author.
     //              If true, it will not stop the script if the default case triggers and the user chose to only get mats
     private dontStopMissingIng = false;
@@ -96,6 +164,11 @@ export class MogloweenSeasonalMerge {
                     bot.wait.forPickup(req.name);
                     break;
                 case "Legion Token":
+                    if (!shouldFarmLegionTokens) {
+                        Core.logger("Skipping Legion Token requirement; Legion actions are disabled.");
+                        break;
+                    }
+
                     Legion.farmLegionToken(quant);
                     break;
                 case "Diamond of Nulgath":
@@ -107,7 +180,26 @@ export class MogloweenSeasonalMerge {
             return;
         }
         //Only edit the map and shopID here
-        Adv.startBuyAllMerge("mogloween", 223, findIngredients, buyOnlyThis, { buyMode });
+        // C# reads these with Bot.Config?.Get, which gives the defaults for a script without them.
+        const modeName = configOr("Generic", "mode", "all");
+        const selectedMode =
+            typeof MogloweenMergeMode[modeName as keyof typeof MogloweenMergeMode] === "number"
+                ? MogloweenMergeMode[modeName as keyof typeof MogloweenMergeMode]
+                : MogloweenMergeMode.all;
+        const shouldFarmLegionTokens = configOr("Generic", "mogloweenBuyUndeadWarrior", false);
+        const resolvedMode =
+            buyMode ??
+            (selectedMode === MogloweenMergeMode.acOnly
+                ? mergeOptionsEnum.acOnly
+                : selectedMode === MogloweenMergeMode.mergeMats
+                  ? mergeOptionsEnum.mergeMats
+                  : selectedMode === MogloweenMergeMode.select
+                    ? mergeOptionsEnum.select
+                    : mergeOptionsEnum.all);
+        Adv.startBuyAllMerge("mogloween", 223, findIngredients, buyOnlyThis, {
+            itemBlackList: shouldFarmLegionTokens ? null : MogloweenSeasonalMerge.legionItems,
+            buyMode: resolvedMode,
+        });
 
         //#region Dont edit this part
     }
@@ -406,7 +498,7 @@ export class MogloweenSeasonalMerge {
 }
 
 export const scriptOptions = defineScriptOptions(Adv.optionsStorage, [], true, {
-    Generic: Adv.mergeOptions,
+    Generic: MogloweenSeasonalMerge.generic,
     Select: MogloweenSeasonalMerge.select,
 });
 
@@ -426,6 +518,9 @@ export default function main(): void {
         "Legion Token",
         "Diamond of Nulgath ",
     );
+    if (bot.config.has("Generic", Core.skipOptions.name) && !bot.config.get<boolean>("Generic", Core.skipOptions.name))
+        bot.config.configure();
+
     Core.setOptions();
 
     script.buyAllMerge();

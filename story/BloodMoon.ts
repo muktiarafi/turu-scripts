@@ -52,7 +52,11 @@ export class BloodMoon {
         Story.mapItemQuest(6054, "bloodmoon", 5457);
 
         //Beat This 6055
-        Story.killQuest(6055, "bloodmoon", ["Frankentacles", "Spidderbeast"]);
+        if (!Story.questProgression(6055)) {
+            Core.ensureAccept(6055);
+            Core.huntMonster("bloodmoon", "Frankentacles", "Franken-beasts Slain", 8);
+            Core.ensureComplete(6055);
+        }
 
         //Insane in the Brain? 6056
         Story.mapItemQuest(6056, "bloodmoon", 5458);

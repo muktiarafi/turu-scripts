@@ -56,7 +56,12 @@ export class KillerCatacombs {
         Story.killQuest(3669, "killercatacombs", "Ravenous Maw");
 
         // Dinner Bell
-        Story.killQuest(3670, "killercatacombs", ["Starved Maw ", "Ravenous Maw"]);
+        if (!Story.questProgression(3670)) {
+            Core.ensureAccept(3670);
+            Core.huntMonster("killercatacombs", "Starved Maw ", "Starved Maw Defeated", 10);
+            Core.huntMonster("killercatacombs", "Ravenous Maw", "Ravenous Maw Defeated", 10);
+            Core.ensureComplete(3670);
+        }
 
         // Faceless Challengers
         Story.killQuest(3671, "killercatacombs", "Living Armor ");
@@ -65,20 +70,38 @@ export class KillerCatacombs {
         Story.killQuest(3672, "killercatacombs", "Living Armor ");
 
         // Eternal Hunger
-        Story.killQuest(3673, "killercatacombs", ["Starved Maw ", "Ravenous Maw", "Living Armor "]);
+        if (!Story.questProgression(3673)) {
+            Core.ensureAccept(3673);
+            Core.huntMonster("killercatacombs", "Starved Maw ", "Starved Maw Defeated", 10);
+            Core.huntMonster("killercatacombs", "Ravenous Maw", "Ravenous Maw Defeated", 10);
+            Core.huntMonster("killercatacombs", "Living Armor ", "Living Armor Defeated", 10);
+            Core.ensureComplete(3673);
+        }
 
         // You Weren't Invited
         Story.killQuest(3674, "killercatacombs", "Living Armor ");
 
         // Teeth and Plates
-        Story.killQuest(3675, "killercatacombs", ["Ravenous Maw", "Starved Maw", "Living Armor "]);
+        if (!Story.questProgression(3675)) {
+            Core.ensureAccept(3675);
+            Core.huntMonster("killercatacombs", "Ravenous Maw", "Ravenous Maw Defeated", 15);
+            Core.huntMonster("killercatacombs", "Starved Maw ", "Starved Maw Defeated", 15);
+            Core.huntMonster("killercatacombs", "Living Armor ", "Living Armor Defeated", 15);
+            Core.ensureComplete(3675);
+        }
 
         // The Moment of Silence
         Story.mapItemQuest(3676, "killercatacombs", 2763, 10);
         Story.killQuest(3676, "killercatacombs", "Living Armor");
 
         // Eternal Servitude
-        Story.killQuest(3677, "killercatacombs", ["Unstable Spirit Orb", "Living Armor ", "Sundered Darkblood "]);
+        if (!Story.questProgression(3677)) {
+            Core.ensureAccept(3677);
+            Core.huntMonster("killercatacombs", "Unstable Spirit Orb ", "Unstable Spirit Ousted", 10);
+            Core.huntMonster("killercatacombs", "Living Armor ", "Living Armor Defeated", 20);
+            Core.huntMonster("killercatacombs", "Sundered Darkblood ", "Sundered Darkblood Defeated", 10);
+            Core.ensureComplete(3677);
+        }
 
         // A Reanimated Dragon
         if (!Story.questProgression(3678)) {

@@ -11,7 +11,7 @@ tags: null
 import { bot, choices, defineScriptOptions, option } from "turu";
 import type { InventoryItem } from "turu";
 import { CoreAdvanced, GenericGearBoost } from "../../core/CoreAdvanced";
-import { ClassType, Core, configOr } from "../../core/CoreBots";
+import { ClassType, Core, CoreBots, configOr } from "../../core/CoreBots";
 import { CoreDailies } from "../../core/CoreDailies";
 import { CoreFarms } from "../../core/CoreFarms";
 import { Cryomancer } from "../../dailies/Cryomancer";
@@ -858,25 +858,62 @@ export class CoreFarmerJoe {
     //#endregion Extra:
 
     //#region BTS
-    private _lastCheckedLevel = 0;
     private _lastSolo: string | null = null;
     private _lastFarm: string | null = null;
     private _lastDodge: string | null = null;
+    private _setClassBusy = false;
 
     setClass(): void {
+        // Only one class setup at a time: an overlapping call would pass the skip check
+        // against the same old _last* values and rank/equip the same classes twice.
+        // The call already in progress sets up the same classes, so just skip.
+        if (this._setClassBusy) {
+            Core.logger("SetClass is already running, skipping the overlapping call.");
+            return;
+        }
+        this._setClassBusy = true;
+
+        try {
+            this.setClassInner();
+        } finally {
+            this._setClassBusy = false;
+        }
+    }
+
+    private setClassInner(): void {
+        // Start from the user's CBO selection, then upgrade it from the class pools.
+        Core.soloClass = Core.farmClass = Core.dodgeClass = "Generic";
         Core.readCbo();
         this._classCache.clear();
 
-        // Skip if nothing meaningful changed
-        if (this.shouldSkipSetClass()) return;
+        Core.soloClass = CoreFarmerJoe.resolveClass(Core.soloClass, this.soloClasses, "Solo") ?? Core.soloClass;
+        Core.farmClass = CoreFarmerJoe.resolveClass(Core.farmClass, this.farmClasses, "Farm") ?? Core.farmClass;
+        Core.dodgeClass = CoreFarmerJoe.resolveClass(Core.dodgeClass, this.dodgeClasses, "Dodge") ?? Core.dodgeClass;
 
-        // Resolve classes
-        Core.soloClass = CoreFarmerJoe.resolveClass(Core.soloClass, this.soloClasses) ?? Core.soloClass;
-        Core.farmClass = CoreFarmerJoe.resolveClass(Core.farmClass, this.farmClasses) ?? Core.farmClass;
-        Core.dodgeClass = CoreFarmerJoe.resolveClass(Core.dodgeClass, this.dodgeClasses) ?? Core.dodgeClass;
+        // Nothing to do: same classes as last time, and each is owned and rank 10 (or generic).
+        // Checked on the resolved classes rather than on level, so classes acquired at level 100
+        // are picked up; ownership/rank are rechecked so a class acquired later under the same
+        // name, or an interrupted rank-up, is handled on the next call.
+        const settled = (c: string | null): boolean =>
+            CoreBots.isGenericClass(c) ||
+            [...bot.inventory.items, ...bot.bank.items].some(
+                (i) =>
+                    i.category === "Class" &&
+                    i.name.toLowerCase() === c!.toLowerCase() &&
+                    i.quantity >= RANK_10_CLASS_POINTS,
+            );
+        const same = (a: string | null, b: string | null) =>
+            (a ?? "").toLowerCase() === (b ?? "").toLowerCase() && (a == null) === (b == null);
 
-        // C# reads the CBO file again here, which puts back the classes it just resolved.
-        Core.readCbo();
+        if (
+            same(this._lastSolo, Core.soloClass) &&
+            same(this._lastFarm, Core.farmClass) &&
+            same(this._lastDodge, Core.dodgeClass) &&
+            settled(Core.soloClass) &&
+            settled(Core.farmClass) &&
+            settled(Core.dodgeClass)
+        )
+            return;
 
         const rankTargets: [string | null, string][] = [
             [Core.soloClass, "SoloClass"],
@@ -890,39 +927,39 @@ export class CoreFarmerJoe {
 
         Core.equipClass(ClassType.Solo);
 
-        this._lastCheckedLevel = bot.player?.level ?? 0;
         this._lastSolo = Core.soloClass;
         this._lastFarm = Core.farmClass;
         this._lastDodge = Core.dodgeClass;
     }
 
-    private shouldSkipSetClass(): boolean {
-        const currentLevel = bot.player?.level ?? 0;
+    private static readonly _upgradeHintsShown = new Set<string>();
 
-        const levelIncreased = currentLevel > this._lastCheckedLevel;
+    /**
+     * Picks the class for one slot (solo/farm/dodge):
+     * - An owned class selected in CBO (in Joe's pool or not) is the user's choice and is kept.
+     *   If it is a pool class and a better pool class is owned, a one-time hint is logged.
+     * - Generic / empty / "(Current)" / not owned: Joe picks the highest-priority owned pool class
+     *   (pools are ordered best-first).
+     * Falls back to `current` if no pool class is owned.
+     */
+    private static resolveClass(current: string | null, pool: string[], slot: string): string | null {
+        const userChoice = !CoreBots.isGenericClass(current) && Core.checkInventory(current, 1, { toInv: false });
 
-        const same = (a: string | null, b: string | null) =>
-            (a ?? "").toLowerCase() === (b ?? "").toLowerCase() && (a == null) === (b == null);
-        const classChanged =
-            !same(this._lastSolo, Core.soloClass) ||
-            !same(this._lastFarm, Core.farmClass) ||
-            !same(this._lastDodge, Core.dodgeClass);
+        if (!userChoice) return pool.find((x) => Core.checkInventory(x)) ?? current;
 
-        return !levelIncreased && !classChanged;
-    }
-
-    /** C# `ResolveClass(current, pool, out found)`; `found` is never read, so it returns only the class. */
-    private static resolveClass(current: string | null, pool: string[]): string | null {
-        const invalid =
-            !current ||
-            current.toLowerCase() === "generic" ||
-            !pool.some((x) => x.toLowerCase() === current.toLowerCase()) ||
-            !Core.checkInventory(current);
-
-        if (!invalid) return current;
-
-        const found = pool.find((x) => Core.checkInventory(x));
-        return found ?? current;
+        const currentRank = pool.findIndex((x) => x.toLowerCase() === current!.toLowerCase());
+        if (currentRank > 0) {
+            const better = pool.slice(0, currentRank).find((x) => Core.checkInventory(x, 1, { toInv: false }));
+            const hint = `${slot}:${current}>${better}`.toLowerCase();
+            if (better != null && !CoreFarmerJoe._upgradeHintsShown.has(hint)) {
+                CoreFarmerJoe._upgradeHintsShown.add(hint);
+                Core.logger(
+                    `${slot} class is set to "${current}" in CBO, but you own "${better}". ` +
+                        `Set the ${slot} class to Generic in CBO to let FarmerJoe pick the best class automatically.`,
+                );
+            }
+        }
+        return current;
     }
 
     private static bankAllUnusedClasses(): void {

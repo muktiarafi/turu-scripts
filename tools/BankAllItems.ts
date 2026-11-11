@@ -14,7 +14,13 @@ export class BankAllItems {
             let movedAny = false;
 
             for (const item of items) {
-                if (blackListedItems.has(item.name) || item.equipped || item.equipped || (!bankNonAc && !item.coins)) {
+                if (
+                    blackListedItems.has(item.name) ||
+                    item.equipped ||
+                    item.equipped ||
+                    bot.inventory.isFavorited(item.id) ||
+                    (!bankNonAc && !item.coins)
+                ) {
                     continue;
                 }
 

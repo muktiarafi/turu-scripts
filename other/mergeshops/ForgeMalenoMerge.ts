@@ -41,10 +41,6 @@ export class ForgeMalenoMerge {
                 }
                 //#endregion
                 case "Black Flame of Maleno": {
-                    if (req.upgrade && !Core.isMember) {
-                        Core.logger(`${req.name} requires membership to farm, skipping.`);
-                        return;
-                    }
                     Core.farmingLogger(req.name, quant);
                     Core.addDrop(req.id);
                     let questID = 10369;
@@ -110,10 +106,6 @@ export class ForgeMalenoMerge {
                     Core.huntMonster("thelimacity", "Drow Soldier", req.name, quant, { isTemp: false, log: false });
                     break;
                 case "Steel Ingot":
-                    if (req.upgrade && !Core.isMember) {
-                        Core.logger(`${req.name} requires membership to farm, skipping.`);
-                        return;
-                    }
                     Core.farmingLogger(req.name, quant);
                     Core.addDrop(req.id);
                     while (!bot.shouldExit && !Core.checkInventory(req.id, quant)) {

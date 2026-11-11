@@ -160,7 +160,7 @@ export class MemberFarm {
             return;
         }
 
-        DBoN.getDragonBlade();
+        DBoN.getDragonBlade(true);
     }
 
     cruxVIPWeapon(): void {

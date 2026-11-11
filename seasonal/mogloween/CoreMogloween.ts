@@ -36,6 +36,7 @@ export class CoreMogloween {
         this.elodeaTemple();
         this.birgittaMogloween();
         this.shadowSlayerWar();
+        this.walpurgisnacht();
     }
 
     mogloween(): void {
@@ -1262,5 +1263,63 @@ export class CoreMogloween {
         // 10916 | Daughter of the Sun
         Story.killQuest(10916, "shadowslayerwar", UseableMonsters[3]);
         // ShadowSlayer Z Defeated x1
+    }
+
+    walpurgisnacht(): void {
+        if (Core.isCompletedBefore(10930) || !Core.isSeasonalMapActive("walpurgisnacht")) {
+            return;
+        }
+
+        Story.preLoad(this.walpurgisnacht);
+
+        const UseableMonsters = [
+            "Awakened Hunter",
+            "Beastly Hunger",
+            "Bloodlust",
+            "Druid Revenant",
+            "Forest Cultist",
+            "Moon's Firstborn",
+            "ShadowSlayer G ",
+            "The Gentleman",
+        ];
+
+        // 10921 | Vervain and Vaughn
+        Story.mapItemQuest(10921, "walpurgisnacht", 16340);
+        Story.killQuest(10921, "walpurgisnacht", UseableMonsters[3]); // Druid's Moon Sigil x4
+
+        // 10922 | Marigold and Angelica
+        Story.mapItemQuest(10922, "walpurgisnacht", 16341);
+        Story.killQuest(10922, "walpurgisnacht", UseableMonsters[4]); // Cultist's Angelica x6
+
+        // 10923 | Nialla's Mourning Cypress
+        if (!Story.questProgression(10923)) {
+            Core.ensureAccept(10923);
+            Core.getMapItem(16342, 1, "walpurgisnacht");
+            Core.huntMonster("walpurgisnacht", UseableMonsters[4], "Cultist's Eye", 6);
+            Core.huntMonster("walpurgisnacht", UseableMonsters[3], "Druid's Eye", 6);
+            Core.ensureComplete(10923);
+        }
+
+        // 10924 | Song's Sheep Sorrel
+        Story.mapItemQuest(10924, "walpurgisnacht", 16343);
+        Story.killQuest(10924, "walpurgisnacht", UseableMonsters[0]); // Hunter's Septogram x12
+
+        // 10925 | Auld Man's Bell
+        Story.killQuest(10925, "walpurgisnacht", UseableMonsters[6]); // G's Crossroads Bullet x1
+
+        // 10926 | Muscadier for Focus
+        Story.mapItemQuest(10926, "walpurgisnacht", 16344, 8);
+
+        // 10927 | Blood of the Moon
+        Story.killQuest(10927, "walpurgisnacht", UseableMonsters[2]); // Moonchild's Blood x6
+
+        // 10928 | Bones of the Forest
+        Story.killQuest(10928, "walpurgisnacht", UseableMonsters[1]); // Moonchild's Marrow x6
+
+        // 10929 | Empty Nest
+        Story.killQuest(10929, "walpurgisnacht", UseableMonsters[5]); // Moonchild's Memory x1
+
+        // 10930 | Gentleman of the Crossroads
+        Story.killQuest(10930, "walpurgisnacht", UseableMonsters[7]); // Father Forest Defeated x1
     }
 }

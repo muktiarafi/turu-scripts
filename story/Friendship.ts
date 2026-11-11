@@ -57,7 +57,7 @@ export class Friendship {
             bot.events.on("extensionPacket", friendshipPacketReader);
             Core.jumpWait();
 
-            while (!bot.tempInv.contains("Friendship Formed")) {
+            while (!bot.shouldExit && !bot.tempInv.contains("Friendship Formed")) {
                 SendWaitedPacket(`%xt%zm%friendshipInfo%${bot.map.roomId}%Maya%`);
                 SendWaitedPacket(`%xt%zm%friendshipTalk%${bot.map.roomId}%`);
                 SendWaitedPacket(`%xt%zm%friendshipChoice%${bot.map.roomId}%1%`);

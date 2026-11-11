@@ -54,10 +54,18 @@ export class InfernalCelestialFinaleMerge {
                 case "Life Spirit":
                     Core.farmingLogger(req.name, quant);
                     Core.equipClass(ClassType.Solo);
-                    Core.huntMonster("infernaldianoia", "Avatar of Life", req.name, quant, {
-                        isTemp: false,
-                        log: false,
-                    });
+                    // Kill 14 then 15, 14 doesnt respawn till 15 is killed
+                    Core.killBossWithSecondary(
+                        "infernaldianoia",
+                        "r7",
+                        "Left",
+                        14,
+                        15,
+                        req.name,
+                        req.quantity,
+                        req.temp,
+                        false,
+                    );
                     break;
             }
         };

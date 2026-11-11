@@ -97,7 +97,12 @@ export class SkyGuardSaga {
         Story.preLoad(this.anders);
 
         // Banditing Together 1104
-        Story.killQuest(1104, "anders", ["Dravir", "Copper Sky Pirate"]);
+        if (!Story.questProgression(1104)) {
+            Core.ensureAccept(1104);
+            Core.huntMonster("anders", "Dravir", "Bandit Bashed", 7);
+            Core.huntMonster("anders", "Copper Sky Pirate", "Pirate Pulverized", 8);
+            Core.ensureComplete(1104);
+        }
 
         // Booty Becomes Barrier 1105
         Story.mapItemQuest(1105, "anders", 439, 10);
@@ -198,14 +203,24 @@ export class SkyGuardSaga {
         Story.mapItemQuest(2039, "highcommand", 1000);
 
         // Comm Module 4dX 2040
-        Story.killQuest(2040, "highcommand", ["Bronze Sky Pirate", "Chaorrupted Invader"]);
+        if (!Story.questProgression(2040)) {
+            Core.ensureAccept(2040);
+            Core.huntMonster("highcommand", "Bronze Sky Pirate", "Comm Module Found!");
+            Core.huntMonster("highcommand", "Chaorrupted Invader", "Hunting for Powerpack", 10);
+            Core.ensureComplete(2040);
+        }
 
         // Can You Hear Me Now? 2043
         Story.mapItemQuest(2043, "highcommand", 996, 10);
         Story.mapItemQuest(2043, "highcommand", [998, 999]);
 
         // Back to Base-ics 2041
-        Story.killQuest(2041, "piratebase", ["Chaorrupted Sky Pirate", "Chaorrupted Sky Pirate"]);
+        if (!Story.questProgression(2041)) {
+            Core.ensureAccept(2041);
+            Core.huntMonster("piratebase", "Chaorrupted Sky Pirate", "SkyPirate Trophy", 10);
+            Core.huntMonster("piratebase", "Chaorrupted Sky Pirate", "Powerpack Location Found");
+            Core.ensureComplete(2041);
+        }
 
         // Secret Weapon Mecha-Death! 2042
         Story.killQuest(2042, "highcommand", "M3CH4-D34TH");

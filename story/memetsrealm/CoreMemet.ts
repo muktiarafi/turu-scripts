@@ -339,7 +339,12 @@ export class MemetsRealm {
         Story.killQuest(4145, "Nightmare", "Castle Spider");
 
         //Fear of Snakes? 4146
-        Story.killQuest(4146, "Nightmare", ["Wrasp", "Sneak"]);
+        if (!Story.questProgression(4146)) {
+            Core.ensureAccept(4146);
+            Core.huntMonster("nightmare", "Wrasp", "Grappling Hook");
+            Core.huntMonster("nightmare", "Sneak", "Rope");
+            Core.ensureComplete(4146);
+        }
 
         //Fear of Falling? 4147
         Story.mapItemQuest(4147, "Nightmare", 3262);
@@ -354,7 +359,12 @@ export class MemetsRealm {
         Story.killQuest(4150, "Nightmare", "Broken Toy");
 
         //Fear of Being Buried Alive? 4151
-        Story.killQuest(4151, "Nightmare", ["Unearthed Skeleton", "Rotfeeder Worm"]);
+        if (!Story.questProgression(4151)) {
+            Core.ensureAccept(4151);
+            Core.huntMonster("nightmare", "Unearthed Skeleton", "Skeleton Deboned", 8);
+            Core.huntMonster("nightmare", "Rotfeeder Worm", "Rotfeeder squished", 4);
+            Core.ensureComplete(4151);
+        }
 
         //Fear of Burning? 4152
         Story.killQuest(4152, "Nightmare", "Fire Imp");
@@ -363,7 +373,13 @@ export class MemetsRealm {
         Story.killQuest(4153, "Nightmare", "Flame Elemental");
 
         //Fear of Drowning? 4154
-        Story.killQuest(4154, "Nightmare", ["Anglerfish", "Deep Dweller", "Merdraconian"]);
+        if (!Story.questProgression(4154)) {
+            Core.ensureAccept(4154);
+            Core.huntMonster("nightmare", "Anglerfish", "Anglerfish Defeated", 6);
+            Core.huntMonster("nightmare", "Deep Dweller", "Deep Dweller defeated");
+            Core.huntMonster("nightmare", "Merdraconian", "Merdraconian Defeated", 6);
+            Core.ensureComplete(4154);
+        }
 
         //Fear of Inadequacy? 4155
         Story.killQuest(4155, "Nightmare", "Unearthed Skeleton");

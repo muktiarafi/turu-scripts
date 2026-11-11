@@ -136,6 +136,7 @@ export class FiendsPurgatory {
             return;
         }
 
+        bot.quests.updateQuest(10030); // to show Blighted Zubami
         while (!bot.shouldExit && !HasReward()) {
             Core.ensureAccept(FiendsPurgatory.questID);
             Core.huntMonster("deleuzetundra", "Blighted Zubami", "Blighted Zubami Badge", undefined, { isTemp: false });

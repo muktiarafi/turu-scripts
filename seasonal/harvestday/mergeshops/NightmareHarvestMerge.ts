@@ -38,6 +38,19 @@ export class NightmareHarvestMerge {
                     break;
                 }
                 //#endregion
+                case "Gothic Textile":
+                    Core.farmingLogger(req.name, quant);
+                    Core.equipClass(ClassType.Farm);
+                    while (!bot.shouldExit && !Core.checkInventory(req.name, quant)) {
+                        Core.ensureAccept(7795);
+                        Core.huntMonster("gothicdream", "Bat Garland", "Bats Chased Out", 8);
+                        Core.huntMonster("gothicdream", "Ice Scream", "Ice Scream Mopped Up", 8);
+                        Core.huntMonster("gothicdream", "Spooky Lantern", "Lantern Pieces Doomba'd", 8);
+                        Core.ensureComplete(7795);
+                        bot.wait.forPickup(req.name);
+                    }
+                    break;
+
                 case "Earplug":
                     Core.farmingLogger(req.name, quant);
                     Core.equipClass(ClassType.Farm);
@@ -57,7 +70,12 @@ export class NightmareHarvestMerge {
             return;
         }
         //Only edit the map and shopID here
-        Adv.startBuyAllMerge("gothicdream", 1939, findIngredients, buyOnlyThis, { buyMode });
+        // Farm Gothic Textile from its quest instead of exchanging Second Chance Coin.
+        Adv.mergeItemisinShopExceptions.push("Gothic Textile");
+        Adv.startBuyAllMerge("gothicdream", 1939, findIngredients, buyOnlyThis, {
+            itemBlackList: ["Gothic Textile"],
+            buyMode,
+        });
 
         //#region Dont edit this part
     }

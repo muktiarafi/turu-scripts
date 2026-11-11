@@ -23,7 +23,7 @@ export class LegionDBoN {
         }
 
         Legion.farmLegionToken(5000);
-        DBoN.getDragonBlade();
+        DBoN.getDragonBlade(true);
         bot.wait.forPickup("Legion DragonBlade of Nulgath");
 
         //Merge:
