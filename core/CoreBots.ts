@@ -3806,11 +3806,14 @@ export class CoreBots {
         let pairIndex = 0;
 
         for (const requirement of quest.requirements) {
-            if (this.checkInventory(requirement.id, requirement.quantity)) continue;
-
             if (pairIndex >= mapMonsterClassPairs.length) break;
 
+            // Take the requirement's pair before skipping one you have, as C# does: skipping first
+            // gave the next requirement this one's monster (Wandering Light [10238] hunted "Undead
+            // Vaughn" on Garde Wraiths forever once "Wraith's Loyalty" was done).
             const [mapName, monsterName, classType] = mapMonsterClassPairs[pairIndex++];
+
+            if (this.checkInventory(requirement.id, requirement.quantity)) continue;
 
             this.equipClass(classType);
 
