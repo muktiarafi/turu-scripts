@@ -46,12 +46,12 @@ export class Grimgaol {
             "If enabled, this will log the time for each room into chat/the Logs > scripts tab.",
             false,
         ), // Helms
-        option.text("ForgeHelm", "Helm: Forge", "insert Name of your Forge Helm"),
-        option.text("WizHelm", "Helm: Wizard", "insert Name of your Wizard Helm"),
-        option.text("HealerHelm", "Helm: HealerHelm", "insert Name of your HealerHelm Helm"), //Weapons
-        option.text("Elysium", "Weapon: Elysium", "insert Name of your Elysium Weapon"), // Capes
-        option.text("Absolution", "Absolution: Cape", "insert Name of your Absolution Cape"),
-        option.text("Penitence", "Penitence: Cape", "insert Name of your Penitence Cape"),
+        option.item("ForgeHelm", "Helm: Forge", "Your helm with the Forge enhancement", "helm"),
+        option.item("WizHelm", "Helm: Wizard", "Your helm with the Wizard enhancement", "helm"),
+        option.item("HealerHelm", "Helm: Healer", "Your helm with the Healer enhancement", "helm"), // Weapons
+        option.item("Elysium", "Weapon: Elysium", "Your weapon with the Elysium enhancement", "weapon"), // Capes
+        option.item("Absolution", "Cape: Absolution", "Your cape with the Absolution enhancement", "cape"),
+        option.item("Penitence", "Cape: Penitence", "Your cape with the Penitence enhancement", "cape"),
     ];
 
     // ── Split Timer State ────────────────────────────────────────────────────

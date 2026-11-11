@@ -700,7 +700,7 @@ export class CoreAdvanced {
             "mode",
             "Select the mode to use",
             "Regardless of the mode you pick, the bot wont (attempt to) buy Legend-only items if you're not a Legend.\n" +
-                "Select the Mode Explanation item to get more information",
+                "Each mode is explained below",
             choices(mergeOptionsEnum),
             "all",
         ),
