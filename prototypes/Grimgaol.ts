@@ -669,16 +669,25 @@ export class Grimgaol {
                 }
 
                 while (!bot.shouldExit) {
+                    // The C# returns here only in r3, so in other rooms it never leaves once the
+                    // last monster dies: `m` is a copy taken before the fight (its HP never drops)
+                    // and the target is gone (getTargetMonster drops a dead one).
                     if (bot.player.alive && !this.monsterAvail()) {
                         this.runTimer.stop();
-                        if (bot.player.cell === "r3") {
-                            return;
-                        }
+                        return;
                     }
 
                     if (!bot.player!.alive) {
                         bot.wait.forTrue(() => bot.player.alive, 20);
                         skillIndex = 0;
+                    }
+
+                    // This monster is dead (read from the game, not from the copy): the next one.
+                    if (bot.player.alive && !this.monsterAvailId(m.mapId)) {
+                        if (bot.player.inCombat) {
+                            bot.combat.cancelTarget();
+                        }
+                        break;
                     }
 
                     if (!bot.player.hasTarget || !bot.player.inCombat) {
