@@ -100,7 +100,7 @@ export class PotionBuyerv2 {
 
         // Validation
         if (
-            (!Seperate && !maxAll && ![...potionSelection].some((p) => p as unknown)) ||
+            (!Seperate && !maxAll && ![...potionSelection.values()].some((select) => select())) ||
             PotionQuant < 1 ||
             PotionQuant > 300
         ) {
