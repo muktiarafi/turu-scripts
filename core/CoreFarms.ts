@@ -108,6 +108,41 @@ export interface AlchemyPacketOptions {
     quant?: number;
 }
 
+/**
+ * Each reagent's mixing goal, by item ID (the alchemy game's `AlchemyData.REAGENTS`). A mixture's goal is
+ * the higher of its two reagents', and the bigger it is, the longer the mixing.
+ */
+const alchemyReagentGoals = new Map<number, number>([
+    [11467, 1000], // Fish Oil
+    [11468, 1300], // Searbush
+    [11469, 1100], // Nimblestem
+    [11470, 1100], // Rhison Blood
+    [11471, 1300], // Roc Tongue
+    [11472, 1100], // Moglin Tears
+    [11473, 1100], // Arashtite Ore
+    [11474, 1000], // Dried Slime
+    [11475, 1400], // Dragon Scale
+    [11476, 900], // Trollola Nectar
+    [11477, 900], // Doomatter
+    [11478, 1000], // Ice Vapor
+    [11479, 1200], // Lemurphant Tears
+    [11480, 1200], // Necrot
+    [11481, 1400], // Chaoroot
+    [11482, 1500], // Chaos Entity
+]);
+
+/**
+ * How long after alchStart to send alchDone. C# waits a fixed 16 s, but the server turns down a mixture
+ * finished in under about 12 ms per goal point ("Finished too quickly.", and the reagents are gone), so
+ * Chaos Entity's (goal 1500: Potent Honor Potion, Malice Potion, Might Tonic) failed every time. Finishing
+ * late isn't safe either: it can give another potion (Body Tonic came out as a Barrier Potion at 19.5 s).
+ * So send it a second after the server's minimum. Unknown reagents get the longest goal.
+ */
+function alchemyMixTimeMs(reagentId1: number, reagentId2: number): number {
+    const goal = Math.max(alchemyReagentGoals.get(reagentId1) ?? 1500, alchemyReagentGoals.get(reagentId2) ?? 1500);
+    return goal * 12 + 1000;
+}
+
 /** The Gold Vouchers and the shop that sells each one (C# `CoreFarms.Voucher`). */
 const goldVouchers = new Map<string, { id: number; map: string; shopId: number }>([
     ["Gold Voucher 500k", { id: 61043, map: "alchemyacademy", shopId: 2036 }],
@@ -1265,7 +1300,7 @@ export class CoreFarms {
 
     /** One craft: start it, wait out the mixing, then finish it (C# `AlchemyPacket`'s `Packet()`). */
     private alchemyCraft(reagentId1: number, reagentId2: number, rune: AlchemyRunes, trait: AlchemyTraits): boolean {
-        const mixTimeMs = 16000;
+        const mixTimeMs = alchemyMixTimeMs(reagentId1, reagentId2);
 
         // Reset flags at the start of each craft
         this.alchemyCraftStarted = false;
@@ -1273,6 +1308,7 @@ export class CoreFarms {
         this.alchemyCraftFailed = false;
 
         // Initiate potion craft
+        const startedAt = Date.now();
         Core.sendPackets(`%xt%zm%crafting%1%alchStart%${reagentId1}%${reagentId2}%${rune}%1%${trait}%`);
 
         // Wait for the server to accept alchStart
@@ -1284,7 +1320,8 @@ export class CoreFarms {
         if (this.alchemyCraftFailed) return false;
 
         Core.logger(`Mixing for ${mixTimeMs / 1000} seconds before completion`);
-        if (this.waitForAlchemyFlag(() => this.alchemyCraftFailed, mixTimeMs) || bot.shouldExit) return false;
+        const mixLeft = Math.max(0, mixTimeMs - (Date.now() - startedAt));
+        if (this.waitForAlchemyFlag(() => this.alchemyCraftFailed, mixLeft) || bot.shouldExit) return false;
 
         // Send completion packet
         Core.sendPackets("%xt%zm%crafting%1%alchDone%");
@@ -1312,14 +1349,15 @@ export class CoreFarms {
 
     /** Polls the flag every 100 ms until it is set or `timeoutMs` pass (C# `WaitForAlchemyFlag`). */
     private waitForAlchemyFlag(flag: () => boolean, timeoutMs: number): boolean {
-        let elapsed = 0;
+        // By the clock, not by adding up the sleeps (C#): each sleep runs a bit long, and the mixing time must be
+        // kept to (see alchemyMixTimeMs).
+        const end = Date.now() + timeoutMs;
         const checkInterval = 100;
 
-        while (elapsed < timeoutMs && !bot.shouldExit) {
+        while (Date.now() < end && !bot.shouldExit) {
             if (flag()) return true;
 
-            Core.sleep(checkInterval);
-            elapsed += checkInterval;
+            Core.sleep(Math.min(checkInterval, Math.max(1, end - Date.now()))); // 0 would be ActionDelay
         }
 
         return false;
