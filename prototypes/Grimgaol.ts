@@ -793,6 +793,16 @@ export class Grimgaol {
                         skillIndex = 0;
                     }
 
+                    // This monster is dead (read from the game, not from `m`, a copy taken before the
+                    // fight): the next one. Otherwise the bot keeps targeting the dead one and stands
+                    // idle while the others are alive (in r2 the Grim Bomb left alive kills it).
+                    if (bot.player.alive && !this.monsterAvailId(m.mapId)) {
+                        if (bot.player.inCombat) {
+                            bot.combat.cancelTarget();
+                        }
+                        break;
+                    }
+
                     if (!bot.player.hasTarget || !bot.player.inCombat) {
                         bot.combat.attack(m!.mapId);
                     }
@@ -864,6 +874,16 @@ export class Grimgaol {
                     if (!bot.player!.alive) {
                         bot.wait.forTrue(() => bot.player.alive, 20);
                         skillIndex = 0;
+                    }
+
+                    // This monster is dead (read from the game, not from `m`, a copy taken before the
+                    // fight): the next one. Otherwise the bot keeps targeting the dead one and stands
+                    // idle while the others are alive (in r2 the Grim Bomb left alive kills it).
+                    if (bot.player.alive && !this.monsterAvailId(m.mapId)) {
+                        if (bot.player.inCombat) {
+                            bot.combat.cancelTarget();
+                        }
+                        break;
                     }
 
                     if (!bot.player.hasTarget || !bot.player.inCombat) {
