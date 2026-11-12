@@ -19,7 +19,14 @@ tags: core
 
 import { bot, BoostType, choices, option } from "turu";
 import type { InventoryItem, ScriptOption } from "turu";
-import { Core, type CoreShopItem, type KillOptions, rethrowIfStopped, type ShopRequirement } from "./CoreBots";
+import {
+    Core,
+    type CoreShopItem,
+    type KillOptions,
+    rethrowIfStopped,
+    sameName,
+    type ShopRequirement,
+} from "./CoreBots";
 import { CoreFarms } from "./CoreFarms";
 
 const Farm = new CoreFarms();
@@ -160,7 +167,7 @@ export class CoreAdvanced {
                 continue;
             }
 
-            if (req.name === "Dragon Runestone") {
+            if (sameName(req.name, "Dragon Runestone")) {
                 Farm.dragonRunestone(totalNeeded);
                 continue;
             }
@@ -266,7 +273,7 @@ export class CoreAdvanced {
         }
 
         // Handle Dragon Runestone farming if required
-        const runestoneReq = item.requirements.find((x) => x.name === "Dragon Runestone");
+        const runestoneReq = item.requirements.find((x) => sameName(x.name, "Dragon Runestone"));
         if (runestoneReq) Farm.dragonRunestone(runestoneReq.quantity);
 
         // Warn if a temp item is missing
@@ -436,7 +443,7 @@ export class CoreAdvanced {
         for (const item of shopItems) {
             if (
                 this.miscCatagories.includes(item.category) ||
-                (buyOnlyThis && buyOnlyThis !== item.name) ||
+                (buyOnlyThis && !sameName(buyOnlyThis, item.name)) ||
                 (itemBlackList !== null && itemBlackList.some((x) => x.toLowerCase() === item.name.toLowerCase()))
             )
                 continue;
@@ -1106,7 +1113,8 @@ export class CoreAdvanced {
             const unEnhanceable: string[] = [];
 
             for (const item of items)
-                if (!bot.inventory.items.some((i) => i.name === item && isEnhanceable(i))) unEnhanceable.push(item);
+                if (!bot.inventory.items.some((i) => sameName(i.name, item) && isEnhanceable(i)))
+                    unEnhanceable.push(item);
 
             if (unEnhanceable.length === 1)
                 Core.logger(`Enhancement Failed: Unenhanceable item found, ${unEnhanceable[0]}`);

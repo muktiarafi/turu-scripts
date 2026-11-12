@@ -274,6 +274,18 @@ function equalsIgnoreCase(a: string | null | undefined, b: string | null | undef
     return a !== null && a !== undefined && b !== null && b !== undefined && a.toLowerCase() === b.toLowerCase();
 }
 
+/**
+ * Whether two item, faction or monster names are the same, as the engine matches them: trimmed,
+ * in any case, with VibeSkua's `&amp;`, `&lt;` and `&gt;` read as the game's `&`, `<` and `>`.
+ * C# compares these exactly; a script's "Etherstorm" against the game's "EtherStorm" then never
+ * matched and the farm never ended.
+ */
+export function sameName(a: string | null | undefined, b: string | null | undefined): boolean {
+    const norm = (s: string) =>
+        s.trim().replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").toLowerCase();
+    return a !== null && a !== undefined && b !== null && b !== undefined && norm(a) === norm(b);
+}
+
 /** C# `TextInfo.ToTitleCase(s.ToLower())`: "left" -> "Left", "center" -> "Center". */
 function toTitleCase(value: string): string {
     return value
@@ -1359,7 +1371,7 @@ export class CoreBots {
                 continue;
             }
 
-            const inventoryItem = [...bot.inventory.items, ...bot.house.items].find((x) => x.name === item);
+            const inventoryItem = [...bot.inventory.items, ...bot.house.items].find((x) => sameName(x.name, item));
             if (!inventoryItem) {
                 this.debugLogger(`❌ ${item} not found in inventory, skipping.`, "ToBank Debug");
                 continue;
@@ -1414,7 +1426,7 @@ export class CoreBots {
                 this.jumpWait();
                 this.sendPackets(`%xt%zm%bankFromInv%${bot.map.roomId}%${houseItem.id}%${houseItem.charItemId}%`);
                 this.waitForTrue(() => !bot.house.contains(item), 20);
-                if (bot.house.items.some((x) => x.name === item)) {
+                if (bot.house.items.some((x) => sameName(x.name, item))) {
                     this.logger(`🚫 Failed to bank ${item} from house storage, skipping.`);
                     continue;
                 }
@@ -1504,7 +1516,7 @@ export class CoreBots {
         for (const item of items) {
             if (typeof item === "string") {
                 if (bot.house.freeSlots <= 0 || !item || item === this.soloClass || item === this.farmClass) continue;
-                const itemExists = bot.house.items.some((x) => x.name === item && (!x.coins || !x.equipped));
+                const itemExists = bot.house.items.some((x) => sameName(x.name, item) && (!x.coins || !x.equipped));
                 if (!itemExists) continue;
                 if (bot.house.contains(item)) {
                     if (!bot.house.ensureToBank(item)) {
@@ -2027,7 +2039,7 @@ export class CoreBots {
         let found: InventoryItem | undefined;
         for (let i = 0; i < 5; i++) {
             found = [...bot.inventory.items, ...bot.bank.items].find((x) =>
-                typeof item === "string" ? x.name === itemName : x.id === item,
+                typeof item === "string" ? sameName(x.name, itemName) : x.id === item,
             );
             if (found) break;
             this.logger(
@@ -3261,7 +3273,9 @@ export class CoreBots {
         }
 
         const cells = bot.map.cells;
-        if (!cells.some((c) => equalsIgnoreCase(c, cell))) cell = cells.find((c) => equalsIgnoreCase(c, cell)) ?? cell;
+        // C# tests the case-insensitive match twice, so it never corrects anything; take the map's
+        // spelling when the cell isn't written exactly, so the `player.cell` checks below match.
+        if (!cells.includes(cell)) cell = cells.find((c) => equalsIgnoreCase(c, cell)) ?? cell;
 
         pad = toTitleCase(pad);
 
@@ -5180,9 +5194,9 @@ export class CoreBots {
         return bot.reputation.getRank(faction);
     }
 
-    /** C# `Bot.Reputation.FactionList.Exists(f => f.Name == faction)`: you have a reputation in it. */
+    /** C# `Bot.Reputation.FactionList.Exists(f => f.Name == faction)`: you have a reputation in it (any case). */
     hasFaction(faction: string): boolean {
-        return bot.reputation.factionList.some((f) => f.name === faction);
+        return bot.reputation.factionList.some((f) => sameName(f.name, faction));
     }
 
     // ---------------------------------------------------------------------------------------

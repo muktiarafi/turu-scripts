@@ -34,7 +34,7 @@ tags: core
 
 import { bot } from "turu";
 import type { Monster, QuestItem } from "turu";
-import { Core, formatForCompare } from "./CoreBots";
+import { Core, formatForCompare, sameName } from "./CoreBots";
 import type { QuestData } from "./CoreBots";
 
 /** The flags the C# story methods take as optional arguments. */
@@ -785,7 +785,7 @@ export class CoreStory {
             return;
         }
 
-        const sameItem = (a: QuestItem, b: QuestItem) => a.id === b.id || a.name === b.name;
+        const sameItem = (a: QuestItem, b: QuestItem) => a.id === b.id || sameName(a.name, b.name);
 
         //Core.DL_Enable();
         Core.debugLogger("-------------\t");

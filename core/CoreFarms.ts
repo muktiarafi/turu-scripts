@@ -16,7 +16,7 @@ tags: core
 
 import { bot, BoostType } from "turu";
 import type { ShopItem } from "turu";
-import { Alignment, ClassType, Core } from "./CoreBots";
+import { Alignment, ClassType, Core, sameName } from "./CoreBots";
 
 /** C# `Skua.Core.Models.BoostType` (the engine's, re-exported for scripts that import it here). */
 export { BoostType };
@@ -984,7 +984,7 @@ export class CoreFarms {
 
         // Find the first matching amulet in inventory or bank
         const owned = [...bot.inventory.items, ...bot.bank.items];
-        const amulet = this.acceptablePvPAmulets.find((name) => owned.some((i) => i?.name === name));
+        const amulet = this.acceptablePvPAmulets.find((name) => owned.some((i) => sameName(i?.name, name)));
 
         // Equip the amulet if found in inventory or bank
         if (amulet !== undefined) {
@@ -1052,7 +1052,7 @@ export class CoreFarms {
                     if (!bot.player.alive) return false;
 
                     // Wait for drop to appear in stack
-                    bot.wait.forTrue(() => bot.drops.current.some((d) => d.name === item), 40);
+                    bot.wait.forTrue(() => bot.drops.current.some((d) => sameName(d.name, item)), 40);
 
                     Core.sleep(1500);
                     bot.wait.forPickup(item, 40);
@@ -1759,7 +1759,7 @@ export class CoreFarms {
             return;
         }
 
-        if (!bot.reputation.factionList.some((f) => f.name === "Fishing")) {
+        if (!bot.reputation.factionList.some((f) => sameName(f.name, "Fishing"))) {
             Core.trashCan("Fishing Bait", "Fishing Dynamite");
             this.getBaitandDynamite(0, 1);
         }
@@ -2005,7 +2005,7 @@ export class CoreFarms {
         }
 
         const owned = [...bot.inventory.items, ...bot.bank.items];
-        const amulet = this.acceptablePvPAmulets.find((name) => owned.some((i) => i?.name === name));
+        const amulet = this.acceptablePvPAmulets.find((name) => owned.some((i) => sameName(i?.name, name)));
         if (amulet !== undefined) {
             Core.unbank(amulet);
             Core.equip(amulet);
@@ -3749,7 +3749,7 @@ export class CoreFarms {
         const itemId = quest === 1614 ? 10850 : 10997;
         const boostName = quest === 1614 ? "XP Boost! (10 min)" : "REPUTATION Boost! (10 min)";
 
-        const boostItem = Core.ensureLoad(quest)?.rewards.find((x) => x.name === boostName);
+        const boostItem = Core.ensureLoad(quest)?.rewards.find((x) => sameName(x.name, boostName));
         if (boostItem && Core.checkInventory(boostItem.name, quantity) && !doOnce) return;
 
         Core.farmingLogger(boostName, quantity);
