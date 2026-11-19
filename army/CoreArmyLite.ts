@@ -1126,7 +1126,7 @@ export class CoreArmyLite {
             Core.join("whitemap");
         }
         // Open bank if not already
-        if (bot.flash?.get("ui.mcPopup.currentLabel") !== '"Bank"') {
+        if (bot.flash.get<string>("ui.mcPopup.currentLabel") !== "Bank") {
             bot.bank?.open();
         }
         bot.bank?.load();
