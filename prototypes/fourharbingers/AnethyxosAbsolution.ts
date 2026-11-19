@@ -254,15 +254,18 @@ export class AnethyxosAbsolution {
                 return true;
             }
 
-            // C# also returns when UseSkill reports failure; Turu's useSkill reports nothing, and
-            // canUseSkill was just checked.
-            bot.skills.useSkill(3);
+            if (!bot.skills.useSkill(3)) {
+                bot.combat.cancelAutoAttack();
+                return true;
+            }
         } else {
             if (!bot.skills.canUseSkill(1)) {
                 return true;
             }
 
-            bot.skills.useSkill(1);
+            if (!bot.skills.useSkill(1)) {
+                return true;
+            }
         }
 
         this._dieNow = false;

@@ -131,6 +131,10 @@ export interface Aura {
     duration: number;
     /** When it was applied, in Unix milliseconds (0 when unknown). */
     timeStamp: number;
+    /** When it ends, in Unix milliseconds: `timeStamp` plus `duration` (VibeSkua `ExpiresAt`). */
+    expiresAt: number;
+    /** Whole seconds left, 0 once it ended or when `timeStamp` is unknown (VibeSkua `RemainingTime`). */
+    remainingTime: number;
     passive: boolean;
     potionType: string;
     icon: string;
@@ -398,6 +402,8 @@ export class GameMap {
     get loaded(): boolean { return call("map.loaded"); }
     get cells(): string[] { return call("map.cells"); }
     get playerNames(): string[] { return call("map.playerNames"); }
+    /** Every player in your room, you included (VibeSkua `Map.Players`), read at once from `world.uoTree`. */
+    get players(): PlayerInfo[] { return call("map.players"); }
     get playerCount(): number { return call("map.playerCount"); }
     /**
      * Another player in your room (VibeSkua `Map.GetPlayer` / `TryGetPlayer`), from
@@ -886,7 +892,8 @@ export class Skills {
     pause(): void { call("skills.pause"); }
     resume(): void { call("skills.resume"); }
     canUseSkill(index: number): boolean { return call("skills.canUseSkill", index); }
-    useSkill(index: number): void { call("skills.useSkill", index); }
+    /** Uses the skill when it is off cooldown; true when it was used (VibeSkua `UseSkill`). */
+    useSkill(index: number): boolean { return call("skills.useSkill", index); }
 }
 
 /** Waits. `timeout` counts tries of ~100 ms each, like VibeSkua (10 = about 1 s). */

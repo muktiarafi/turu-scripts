@@ -63,7 +63,14 @@ export interface RewardItem {
     temp: boolean;
     /** A member-only item (C# `ItemBase.Upgrade`). */
     upgrade: boolean;
+    /** The item's type (`sType`, C# `ItemBase.CategoryString`). */
+    category: string;
+    /** An AC item (C# `ItemBase.Coins`). */
+    coins: boolean;
 }
+
+/** An item {@link CoreBots.hasSpaceFor} can check (C# `ItemBase`). */
+export type SpaceItem = InventoryItem | CoreShopItem | RewardItem | QuestItem;
 
 /** An entry of the quest's `reward` list (C# `SimpleReward`). `type == 2` = pick-one reward. */
 export interface SimpleReward extends RewardItem {
@@ -381,6 +388,8 @@ function toRewardItem(raw: GameItem): RewardItem {
         maxStack: num(raw.iStk),
         temp: flag(raw.bTemp),
         upgrade: flag(raw.bUpg),
+        category: text(raw.sType),
+        coins: flag(raw.bCoins),
     };
 }
 
@@ -2765,7 +2774,7 @@ export class CoreBots {
      * Checks the item's destination pool, existing stack, and merge/token space.
      * `quantity` is the actual purchase amount, not the desired final total.
      */
-    hasSpaceFor(item: InventoryItem | CoreShopItem | null | undefined, quantity = 1): boolean {
+    hasSpaceFor(item: SpaceItem | null | undefined, quantity = 1): boolean {
         if (!item) return false;
         const categories = this.openInventoryCategories();
         if (!categories) return this.inventoryBagFreeSlots > 0 || bot.inventory.contains(item.id);
@@ -2789,7 +2798,7 @@ export class CoreBots {
     }
 
     /** GameItem item data (keeps fields such as bHouse, TokID and TokQty that the API omits). */
-    private inventorySpaceItemData(item: InventoryItem | CoreShopItem, rawItems?: GameItem[] | null): GameItem {
+    private inventorySpaceItemData(item: SpaceItem, rawItems?: GameItem[] | null): GameItem {
         const isShop = "shopItemId" in item;
         const items =
             rawItems ?? bot.flash.get<GameItem[] | null>(isShop ? "world.shopinfo.items" : "world.bankinfo.items");
@@ -2802,15 +2811,15 @@ export class CoreBots {
                 sName: item.name,
                 iQty: item.quantity,
                 iStk: item.maxStack,
-                sType: item.category,
-                bCoins: item.coins,
+                sType: "category" in item ? item.category : undefined,
+                bCoins: "coins" in item ? item.coins : undefined,
                 bUpg: item.upgrade,
                 sMeta: "meta" in item ? item.meta : null,
             }
         );
     }
 
-    private inventoryPoolFor(item: InventoryItem | CoreShopItem): string {
+    private inventoryPoolFor(item: SpaceItem): string {
         return this.openInventoryCategories()?.poolOf(this.inventorySpaceItemData(item)) ?? "bag";
     }
 
@@ -3034,7 +3043,7 @@ export class CoreBots {
             : [];
 
         // Fall back to turu's lists when the raw data isn't there.
-        const fromApi = (items: QuestItem[]): RewardItem[] => items.map((x) => ({ ...x }));
+        const fromApi = (items: QuestItem[]): RewardItem[] => items.map((x) => ({ ...x, category: "", coins: false }));
         return {
             ...quest,
             rewards: rewards.length > 0 ? rewards : fromApi(quest.rewards),
@@ -4553,6 +4562,19 @@ export class CoreBots {
         bot.wait.forPickup(item);
     }
 
+    /**
+     * Whether a monster in your cell is alive: by name, or by map ID (`useMapId`) or monster ID
+     * (C# `IsMonsterAlive`). C# also counts one alive while it isn't in `KilledMonsters`, the
+     * kill list dropped below; this goes by its HP and state alone.
+     */
+    isMonsterAlive(monster: string | number, useMapId = false): boolean {
+        const monsters = bot.monsters.currentMonsters;
+        if (typeof monster === "string") return monsters.some((m) => m.name === monster && alive(m));
+        return useMapId
+            ? alive(monsters.find((m) => m.mapId === monster))
+            : monsters.some((m) => m.id === monster && alive(m));
+    }
+
     // C# KilledMonsters / CleanKilledMonstersList / KilledMonsterListener / RespawnListener,
     // TagsToAdd / AutoAddTags / EndGameTags: SetOptions-only bookkeeping, dropped.
 
@@ -4775,6 +4797,25 @@ export class CoreBots {
             return classRank;
         }
         return 1;
+    }
+
+    /** True for an item that isn't a weapon (C# `NoneEnhancableFilter`: no weapon category). */
+    noneEnhancableFilter(item: InventoryItem): boolean {
+        return ![
+            "Sword",
+            "Axe",
+            "Dagger",
+            "Gun",
+            "HandGun",
+            "Rifle",
+            "Bow",
+            "Mace",
+            "Gauntlet",
+            "Polearm",
+            "Staff",
+            "Wand",
+            "Whip",
+        ].some((category) => categoryIs(item, category));
     }
 
     /** Rests if {@link shouldRest} is on and health is below 2% of max. */
