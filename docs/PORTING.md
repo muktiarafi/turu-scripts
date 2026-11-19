@@ -9,12 +9,19 @@ Turu (its tests import every script), but most have not run in game yet. A file 
 is `// Converted by tools/cs2ts, not yet read through by hand` is a draft nobody has reviewed;
 the others were fixed by hand. Deliberate C# bug fixes are marked `C#` in the code.
 
+The ports follow auqw/Scripts up to `602a35bd5` (2026-11-18). The first port came from `d445a16ec`
+(2026-10-28); a batch on 2026-11-11 ported the C# changes up to `c8c9cdbd3`, and the next every
+change from there to `602a35bd5` (new scripts, a rename it had missed, edits to ported files, and
+`Skills/AdvancedSkills.json`, which Turu ships as `bot/assets/AdvancedSkills.json`). To catch up
+again, start from that commit:
+`git -C ../Scripts diff --name-status -M 602a35bd5..origin/Skua`.
+
 ## Contents
 
 - [Conventions](#conventions): [calls and options](#calls-and-options), [enhancing](#enhancing), [merge scripts](#merge-script-pattern), [background tasks](#background-tasks)
 - [Core libraries and reference ports](#core-libraries-and-reference-ports)
 - [cs2ts](#cs2ts), the C# to TypeScript converter
-- Areas: [Merge scripts](#merge-scripts), [Story scripts](#story-scripts), [Core content areas](#core-content-areas), [Seasonal](#seasonal), [Other](#other), [Army](#army), [Tools](#tools), [FarmerJoe](#farmerjoe), [Ultras](#ultras)
+- Areas: [Merge scripts](#merge-scripts), [Story scripts](#story-scripts), [Core content areas](#core-content-areas), [Seasonal](#seasonal), [Other](#other), [Prototypes](#prototypes), [Army](#army), [Tools](#tools), [FarmerJoe](#farmerjoe), [Ultras](#ultras)
 
 ## Conventions
 
@@ -208,6 +215,10 @@ C# bugs fixed on purpose (still in VibeSkua's Scripts, marked `C#` in the code):
 - `InfernalArena`'s class check falls back to `"Void Highlord" ?? ""`, never empty: without either
   Void Highlord it equipped Void Highlord instead of the solo class.
 - `BeleensMerge` lists item 59359 twice in its options (Turu refuses duplicate option names).
+- `CoreFarms.handleShopPurchases` (the Swag Token exchange) passes the number of tokens to buy to
+  `BuyItem`, which takes the quantity to end with: once you owned that many, it bought nothing and
+  `swagTokenA` farmed forever. It also used the quantities read before the purchases. It passes
+  owned + bought now, read again after each purchase.
 
 Fixed in the earlier port: `Potions.needYourStrongestPotions` read `BuyReagents` and `MaxAll` with
 `bot.config.get`, which throws when another script (a merge) calls it; it reads them with
@@ -318,13 +329,16 @@ C# bugs fixed on purpose (still in VibeSkua's Scripts, marked `C#` in the code):
 - `Mockingbird` and `VanquishTheBetrayers` `return` from their reward loop at the first reward you
   own, so the rest were never farmed.
 - `TwillyTreasurePile` declares its kill counter inside the loop, so it never banks every 5 kills.
+- `CoreHarvestDay.CharityFeast` runs quests 10941 and 10946 without a `QuestProgression` check, so
+  a run started after either was done tried them again; they are skipped once done, as the others.
 
 ### Other
 
 Every script in the C# `Other/` folder is ported. The 187 left after the earlier batches were
-converted with cs2ts, with `prototypes/InfernalArenaLW` (VerusDoomKnight includes it). Nothing
-else outside the Ultras folders, `Army/` and `Tools/` was left but `Core/TaskExtensions.cs`, which
-no script includes and only wraps `Task.Run` (scripts are single-threaded). `0AllClasses`, `Lich`,
+converted with cs2ts, with `prototypes/InfernalArenaLW` (VerusDoomKnight includes it). Outside the
+Ultras folders, `Army/`, `Tools/` and [Prototypes](#prototypes), nothing is left but
+`Core/TaskExtensions.cs`, which no script includes and only wraps `Task.Run` (scripts are
+single-threaded). `0AllClasses`, `Lich`,
 `SovereignOfStorms` and `VerusDoomKnight` include Ultras files only for what their included
 scripts reach (`LothianTreasuryMerge`'s Queen Iona, see [Ultras](#ultras)). They type-check and
 load, but none has run in game. These 18 were fixed by hand; the rest are drafts with the cs2ts line:
@@ -353,6 +367,34 @@ C# bugs fixed on purpose (still in VibeSkua's Scripts, marked `C#` in the code):
   their names.
 
 Turu now accepts `%` in an options file name (the `1%Capes`-style storages of `OnePercentDrops`).
+
+### Prototypes
+
+Ported: `Grimgaol`, `InfernalArenaLW` and `MoreSkullsBoss` (with the scripts that include them,
+see above), the five Four Harbingers bosses with their library and Do All
+(`fourharbingers/`: `CoreFourHarbingers`, `Halosis`, `Bello`, `Fame`, `Mors`,
+`AnethyxosAbsolution`, `0DoAllFourHarbingers`) and `DoomArenaPVP`, all read through by hand. Not
+ported: `KathoolAdept/KathoolAdeptPrerequisite`, a stub whose `ScriptMain` only says to use
+`Other/Classes/KathoolAdept` (ported), which no script includes. None of these has run in game.
+
+- Each boss class has a `scriptMain()`: the Do All runs the bosses through it with `doAllMode`
+  and the farm overrides set, as C# calls their `ScriptMain`. C#'s `EquipClass` overload with an
+  `out` class is `equipClassWithFallback`, which returns the class equipped or null.
+- Halosis, Mors and Anethyx'o's Absolution listen to `extensionPacket` instead of
+  `Bot.Flash.FlashCall`; Mors looks for its counter-attack text in the packet as JSON, as C#
+  searched the raw packet. Absolution's `ReplaceSkillProvider` restarts the rotation
+  (`startSkills`), as `InfernalArenaLW` does.
+- `DoomArenaPVP`'s two clients share their round state in an army log (`bot.army.writeLog` /
+  `readLog`) instead of C#'s file in Skua's options folder.
+
+C# bugs fixed on purpose (marked `C#` in the code):
+
+- `Mors` pauses the skills when it sees the counter-attack cast and resumes them only after a
+  Counter Attack aura: when none came, the rest of the fight ran on auto attacks. It resumes them
+  when the cast's window ends.
+- `AnethyxosAbsolution` turns the counter-attack handling off and never back on, and leaves its
+  rotation running, so the Do All's next fight (or the next script) inherited both. It stops the
+  skills and turns the handling back on when it ends, as `Mors` does.
 
 ### Army
 
@@ -431,7 +473,7 @@ Skipped, and why:
 |---|---|
 | `Butlerv3`, `Butlerv4/Butlerv4` | Old Butler versions; Turu has Butler built in (Plugins > Butler). v4 also talks to a leader plugin over TCP. |
 | `Butlerv4/DownloadDLL` | Downloads a plugin DLL into Skua's folder (HTTP, files). |
-| `ForDevelopers/*` (`CaseStorage`, `GenerateQuestFilesv4`, `GeneratorHelpers/*`, `MergeTemplateHelperV2`, `ScriptMainCleaner`, `ShopAcheivmentandIOGrabber`, `SummarizeStatistics`, `UpdateTags`, `WeeklyReleaseGeneratorV2`, `WeeklyReleaseGeneratorV3`) | Developer and generator tools: they write scripts and data files or read the scripts folder. |
+| `ForDevelopers/*` (`CaseStorage`, `GenerateQuestFilesv4`, `GeneratorHelpers/*`, `MergeTemplateHelperV2`, `MergeTemplateHelperV3`, `ScriptMainCleaner`, `ShopAcheivmentandIOGrabber`, `SummarizeStatistics`, `UpdateTags`, `WeeklyReleaseGeneratorV2`, `WeeklyReleaseGeneratorV3`) | Developer and generator tools: they write scripts and data files or read the scripts folder. |
 | `GenerateQueuedScript` | A generator: writes a script file, with file dialogs. |
 | `BestGearAttemptX` | A developer test of CoreBots' `EquipBestItemsForMeta`. |
 | `FindBestPing` | Pings the servers with System.Net, which scripts don't have. |

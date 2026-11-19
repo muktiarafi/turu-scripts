@@ -114,7 +114,7 @@ SHA-256 when it downloads. To build the index locally: `node tools/build-index.m
 | `Army` | `CoreArmyLite`, the army farms and the one-client scripts. Not the templates or the script generator. |
 | `Tools` | The in-game tools. Not the developer, generator and file-based ones ([why](docs/PORTING.md#tools)). |
 | `Ultras/Ultrasv3` | The engine, the individual Ultras, the challenge bosses, the DoAll scripts and Entwined Eclipse. Not the older `Ultras` and `Ultrasv2` sets. |
-| `Prototypes` | Only the files other scripts include |
+| `Prototypes` | Every script but `KathoolAdeptPrerequisite` (a stub pointing to `Other/Classes/KathoolAdept`) |
 | `Templates`, `Skills` | Not ported (templates and skill data, not scripts) |
 
 [docs/PORTING.md](docs/PORTING.md) lists, area by area, what each port leaves out or changes,
