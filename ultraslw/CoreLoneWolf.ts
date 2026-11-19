@@ -188,13 +188,9 @@ export class CoreLoneWolf {
     player7 = option.text("player7", "Player 7", "Player 7 account name.", "");
 
     setAntiLag(): void {
-        // C# turns off VibeSkua's Streamer Mode by reflection (only on VibeSkua); Turu has the option.
-        if (bot.options.streamerMode) {
-            bot.options.streamerMode = false;
-            if (bot.map.loaded) {
-                bot.flash.callGameFunction("updateAreaName");
-            }
-        }
+        // Turu: C# turns off VibeSkua's Streamer Mode here. Turu's only relabels what is drawn
+        // (names, the area title, the house sign) and hides gold and the chat log, inside
+        // turu.swf: nothing these scripts read, and no lag to kill. It stays as you set it.
 
         bot.options.hidePlayers = true;
         bot.lite.disableSelfAnimation = true;

@@ -628,7 +628,9 @@ How it maps onto Turu:
   digits, as `Guid.ToString("N")`.
 - `ValidateFunctionBasedSkillsDisabled` stops Turu's own skill timer when it runs (C# stops the
   script when Skua's Function Based Skills plugin is on; Turu has no such plugin).
-  `SetAntiLag` turns off `bot.options.streamerMode` (C# sets VibeSkua's by reflection).
+  `SetAntiLag` leaves Streamer Mode alone: C# turns VibeSkua's off by reflection (a 500 ms loop
+  of Flash calls from C#), but Turu's only relabels what is drawn, inside turu.swf, and the
+  scripts read none of it, so a streamer keeps it on during the run.
 - The house check reads `world.myAvatar.houseitems`' raw `sType`/`bEquip`.
 - Signatures: `startPacketDetector(commands, texts)` takes a string or a list for each (C#'s four
   overloads); `strictSkillEngine(skills, index)` returns the next index (C# `ref int`); the
