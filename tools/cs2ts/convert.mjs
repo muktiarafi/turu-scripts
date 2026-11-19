@@ -2448,15 +2448,16 @@ export class FileConverter {
         const argList = this.callArgs(argNodes, [], this.ctorSigs(typeName), node);
         this.need(MODEL_TYPES[typeName] ?? typeName);
         let s = `new ${MODEL_TYPES[typeName] ?? typeName}(${argList})`;
-        if (init) {
-            const props = named(init)
-                .filter((k) => k.type === "assignment_expression")
-                .map(
-                    (k) => `${lcFirst(k.childForFieldName("left").text)}: ${this.expr(k.childForFieldName("right")).s}`,
-                );
-            s = `Object.assign(${s}, { ${props.join(", ")} })`;
-        }
+        if (init) s = this.withInitializer(s, init);
         return { s, t: t ?? this.namedType(typeName) };
+    }
+
+    /** `new X(...) { A = 1, B = 2 }`'s property assignments: `Object.assign(new X(...), { a: 1, b: 2 })`. */
+    withInitializer(s, init) {
+        const props = named(init)
+            .filter((k) => k.type === "assignment_expression")
+            .map((k) => `${lcFirst(k.childForFieldName("left").text)}: ${this.expr(k.childForFieldName("right")).s}`);
+        return `Object.assign(${s}, { ${props.join(", ")} })`;
     }
 
     ctorSigs(typeName) {
@@ -2478,7 +2479,10 @@ export class FileConverter {
         if (expected?.tsName || expected?.cs) {
             const name = expected.tsName ?? expected.cs;
             this.need(name);
-            return { s: `new ${name}(${argNodes.map((a) => this.expr(named(a).at(-1)).s).join(", ")})`, t: expected };
+            let s = `new ${name}(${argNodes.map((a) => this.expr(named(a).at(-1)).s).join(", ")})`;
+            // `X x = new() { A = 1 }`: the same property assignments as `new X { A = 1 }`.
+            if (init) s = this.withInitializer(s, init);
+            return { s, t: expected };
         }
         if (init) return this.arrayLiteral(init, null, null);
         // `int x = new()` is 0 (and false, "" for bool and string).
