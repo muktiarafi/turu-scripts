@@ -996,147 +996,143 @@ export class CoreFarms {
         if (Core.checkInventory(item, quant)) return;
 
         if (bot.map.name === "bludrutbrawl") {
-            Core.logger(
-                "Started in PvP map, which doesnt allow us to equip things if needed and can cause issues. Joining whitemap first.",
-            );
+            Core.logger("Started in PvP map. Joining whitemap first to avoid equipment issues.");
             Core.join("whitemap");
         }
 
-        // C# overwrites canSoloBoss with the CBO lookup's result and uses its out value.
+        // C# ignores canSoloBoss: the CBO switch decides.
         const killAds = Core.cboBool("PvP_SoloPvPBoss") === true;
         Core.logger(
             `\`Kill Ads\` Enabled? ${killAds ? "True" : "False"}` +
                 (killAds
-                    ? " - if enabled this will kill the healers aswell for an aditional 3 trophies (totaling 10) but will take longer."
+                    ? " This also kills the healers for an additional 3 trophies (10 total), but takes longer."
                     : ""),
         );
-        Core.addDrop(item);
+
+        Core.addDrop(item, "Combat Trophy", "The Secret 4", "Yoshino's Citrine");
 
         Core.equipClass(ClassType.Solo);
         Core.farmingLogger(item, quant);
+
         bot.options.aggroAllMonsters = false;
         bot.options.aggroMonsters = false;
 
-        // Find the first matching amulet in inventory or bank
+        // Find the first acceptable PvP amulet in inventory or bank.
         const owned = [...bot.inventory.items, ...bot.bank.items];
         const amulet = this.acceptablePvPAmulets.find((name) => owned.some((i) => sameName(i?.name, name)));
-
-        // Equip the amulet if found in inventory or bank
         if (amulet !== undefined) {
             Core.unbank(amulet);
             Core.equip(amulet);
         }
 
-        // C#'s Start / Exit / RestartOnDeath labels: `continue start` is `goto Start`.
-        start: for (;;) {
-            let exitAttempt = 1;
-            let death = 0;
-            while (!bot.shouldExit && !Core.checkInventory(item, quant)) {
-                // One run: false when you died on the way.
-                const run = (): boolean => {
-                    Core.join("bludrutbrawl-999999", "Enter0", "Spawn");
-                    bot.wait.forMapLoad("bludrutbrawl");
-                    // C# reads "Combat Trophy" here, so farming Yoshino's Citrine compared the
-                    // citrine count against the trophy count and waited forever below.
-                    let currentTrophies = bot.inventory.getQuantity(item);
+        let deathCount = 0;
+        let exitAttempt = 0;
 
-                    Core.pvpMove(5, "Morale0C", randomInt(784, 862), randomInt(254, 274));
-                    Core.pvpMove(4, "Morale0B", randomInt(786, 850), randomInt(262, 287));
-                    Core.pvpMove(7, "Morale0A", randomInt(783, 857), randomInt(263, 293));
-                    Core.pvpMove(9, "Crosslower", randomInt(777, 857), randomInt(254, 290));
+        // One round: false when you died on the way.
+        const round = (): boolean => {
+            Core.join("bludrutbrawl-999999", "Enter0", "Spawn");
+            bot.wait.forMapLoad("bludrutbrawl");
+            if (bot.map.name !== "bludrutbrawl") return true;
 
-                    // If CBO setting for `Kill ads before boss` is enabled do:
-                    if (killAds) {
-                        // C# checks "owns an amulet and has anything equipped"; this checks an amulet is equipped.
-                        if (!bot.inventory.items.some((x) => x?.equipped && this.acceptablePvPAmulets.includes(x.name)))
-                            Core.oneTimeMessage(
-                                "Wheres your amulet retard?",
-                                "Hey ChuckleFuck, you forgot your amulet! So now you get to kill the minions.",
-                            );
+            // As in C#, the round's reward is read from the Combat Trophies whatever `item` is.
+            const currentTrophies = bot.inventory.getQuantity("Combat Trophy");
 
-                        Core.pvpMove(14, "Crossupper", randomInt(399, 545), randomInt(255, 256));
-                        Core.pvpMove(18, "Resource1A", randomInt(786, 860), randomInt(255, 274));
+            Core.pvpMove(5, "Morale0C", randomInt(784, 862), randomInt(254, 274));
+            Core.pvpMove(4, "Morale0B", randomInt(786, 850), randomInt(262, 287));
+            Core.pvpMove(7, "Morale0A", randomInt(783, 857), randomInt(263, 293));
+            Core.pvpMove(9, "Crosslower", randomInt(777, 857), randomInt(254, 290));
 
-                        Core.pvpKilling();
-                        if (!bot.player.alive) return false;
+            if (killAds) {
+                if (!bot.inventory.items.some((x) => x?.equipped && this.acceptablePvPAmulets.includes(x.name)))
+                    Core.oneTimeMessage(
+                        "Wheres your amulet retard?",
+                        "Hey ChuckleFuck, you forgot your amulet! So now you get to kill the minions.",
+                    );
 
-                        Core.pvpMove(20, "Resource1B", randomInt(784, 852), randomInt(254, 293));
+                Core.pvpMove(14, "Crossupper", randomInt(399, 545), randomInt(255, 256));
+                Core.pvpMove(18, "Resource1A", randomInt(786, 860), randomInt(255, 274));
 
-                        Core.pvpKilling();
-                        if (!bot.player.alive) return false;
+                Core.pvpKilling();
+                if (!bot.player.alive) return false;
 
-                        Core.pvpMove(21, "Resource1A", randomInt(123, 189), randomInt(262, 297));
-                        Core.pvpMove(19, "Crossupper", randomInt(122, 189), randomInt(258, 282));
-                        Core.pvpMove(17, "Crosslower", randomInt(439, 536), randomInt(467, 470));
-                    }
+                Core.pvpMove(20, "Resource1B", randomInt(784, 852), randomInt(254, 293));
 
-                    Core.pvpMove(15, "Morale1A", randomInt(781, 858), randomInt(258, 290));
-                    bot.kill.monster(13);
-                    if (!bot.player.alive) return false;
+                Core.pvpKilling();
+                if (!bot.player.alive) return false;
 
-                    Core.pvpMove(23, "Morale1B", randomInt(782, 850), randomInt(259, 276));
-                    bot.kill.monster(14);
-                    if (!bot.player.alive) return false;
+                Core.pvpMove(21, "Resource1A", randomInt(123, 189), randomInt(262, 297));
+                Core.pvpMove(19, "Crossupper", randomInt(122, 189), randomInt(258, 282));
+                Core.pvpMove(17, "Crosslower", randomInt(439, 536), randomInt(467, 470));
+            }
 
-                    Core.pvpMove(25, "Morale1C", randomInt(802, 865), randomInt(264, 286));
-                    bot.kill.monster(15);
-                    if (!bot.player.alive) return false;
+            Core.pvpMove(15, "Morale1A", randomInt(781, 858), randomInt(258, 290));
+            bot.kill.monster(13);
+            if (!bot.player.alive) return false;
 
-                    Core.pvpMove(28, "Captain1", randomInt(430, 537), randomInt(254, 255));
-                    bot.kill.monster(16);
-                    if (!bot.player.alive) return false;
+            Core.pvpMove(23, "Morale1B", randomInt(782, 850), randomInt(259, 276));
+            bot.kill.monster(14);
+            if (!bot.player.alive) return false;
 
-                    // Wait for drop to appear in stack
-                    bot.wait.forTrue(() => bot.drops.current.some((d) => sameName(d.name, item)), 40);
+            Core.pvpMove(25, "Morale1C", randomInt(802, 865), randomInt(264, 286));
+            bot.kill.monster(15);
+            if (!bot.player.alive) return false;
 
-                    Core.sleep(1500);
-                    bot.wait.forPickup(item, 40);
+            Core.pvpMove(28, "Captain1", randomInt(430, 537), randomInt(254, 255));
+            bot.kill.monster(16);
+            if (!bot.player.alive) return false;
 
-                    // Record updated quantity until server actually updates it
-                    // (C# waits without a limit, which hangs forever when the drop never came.)
-                    let updatedTrophies = bot.inventory.getQuantity(item);
-                    for (let tries = 0; !bot.shouldExit && updatedTrophies <= currentTrophies && tries < 60; tries++) {
-                        Core.sleep(500); // give server time to process PvP reward
-                        updatedTrophies = bot.inventory.getQuantity(item);
-                    }
-                    if (updatedTrophies <= currentTrophies) Core.logger(`No ${item} from this run, trying again.`);
-                    // Update baseline so next run compares correctly
-                    currentTrophies = updatedTrophies;
+            // Wait for the requested drop and attempt pickup.
+            bot.wait.forTrue(() => bot.drops.current.some((d) => sameName(d.name, item)), 40);
 
-                    if (item) Core.farmingLogger(item, quant);
+            Core.sleep(1500);
+            bot.wait.forPickup(item, 40);
 
-                    Core.sleep(1500);
-                    return true;
-                };
+            // Wait up to 30 seconds for the server to update the trophies.
+            const deadline = Date.now() + 30_000;
+            let updatedTrophies = currentTrophies;
+            while (!bot.shouldExit && bot.player.alive && updatedTrophies <= currentTrophies && Date.now() < deadline) {
+                Core.sleep(500);
+                updatedTrophies = bot.inventory.getQuantity("Combat Trophy");
+            }
+            if (updatedTrophies <= currentTrophies)
+                Core.logger("Combat Trophy reward was not detected within 30 seconds, restarting PvP");
 
-                if (run()) {
-                    // Exit:
-                    while (!bot.shouldExit && bot.map.name !== "battleon") {
-                        bot.combat.cancelTarget();
-                        bot.wait.forCombatExit();
-                        bot.map.join("battleon-999999");
-                        bot.wait.forMapLoad("battleon");
-                        if (bot.map.name !== "battleon") continue;
-                        else continue start;
-                    }
-                }
+            Core.farmingLogger(item, quant);
+            return true;
+        };
 
-                // RestartOnDeath: (C# also falls through to it after Exit when already in battleon)
-                Core.logger(`Death: ${death++}, resetting`);
-                while (!bot.shouldExit) {
-                    bot.wait.forTrue(() => bot.player.alive, 100);
-                    Core.logger(`Attempting Death Exit ${exitAttempt++}.`);
+        while (!bot.shouldExit && !Core.checkInventory(item, quant)) {
+            if (round()) {
+                if (bot.shouldExit) break;
+
+                // Return to Battleon before starting another round.
+                while (!bot.shouldExit && bot.map.name !== "battleon") {
+                    bot.combat.cancelTarget();
+                    bot.wait.forCombatExit();
                     bot.map.join("battleon-999999");
                     bot.wait.forMapLoad("battleon");
-                    Core.sleep(1500);
-                    if (bot.map.name !== "battleon") Core.logger("Failed!? HOW.. try agian");
-                    else {
-                        Core.logger("Successful!");
-                        continue start;
-                    }
                 }
+                continue;
             }
-            break;
+
+            Core.logger(`Death: ${++deathCount}, resetting.`);
+            while (!bot.shouldExit) {
+                bot.wait.forTrue(() => bot.player.alive, 100);
+                if (!bot.player.alive) continue;
+
+                Core.logger(`Attempting Death Exit ${++exitAttempt}.`);
+                bot.map.join("battleon-999999");
+                bot.wait.forMapLoad("battleon");
+                Core.sleep(1500);
+
+                if (bot.map.name !== "battleon") {
+                    Core.logger("Failed!? HOW.. trying again.");
+                    continue;
+                }
+
+                Core.logger("Successful!");
+                break;
+            }
         }
 
         for (const reward of ["Yoshino's Citrine", "The Secret 4"]) {
@@ -3619,12 +3615,7 @@ export class CoreFarms {
                 bot.wait.forPickup("Super-Fan Swag Token D");
             }
 
-            this.handleShopPurchases(
-                bot.inventory.getQuantity("Super-Fan Swag Token D"),
-                bot.inventory.getQuantity("Super-Fan Swag Token C"),
-                bot.inventory.getQuantity("Super-Fan Swag Token B"),
-                bot.inventory.getQuantity("Super-Fan Swag Token A"),
-            );
+            this.handleShopPurchases();
         }
         //#endregion Token farm and check
         Core.cancelRegisteredQuests();
@@ -3666,41 +3657,32 @@ export class CoreFarms {
     }
 
     // Shop handler for SwagTokens
-    private handleShopPurchases(dQuantity: number, cQuantity: number, bQuantity: number, aQuantity: number): void {
+    private handleShopPurchases(): void {
         // Join "Collection" map and wait for it to load
         Core.join("Collection");
         bot.wait.forMapLoad("Collection");
         bot.wait.forCellChange("Begin");
         Core.sleep();
 
-        // Token D > Token C (purchase if needed)
-        if (Math.trunc(dQuantity / 10) > 1 && cQuantity < 500 && Math.trunc(dQuantity / 10) + cQuantity < 500) {
-            const buyC = Math.trunc(dQuantity / 10);
-            Core.buyItem("collection", 325, "Super-Fan Swag Token C", buyC);
-            bot.wait.forActionCooldown("buyItem");
-            bot.wait.forItemBuy();
-        }
+        // Each purchase is capped at what the token's stack has room for. Core.buyItem takes the
+        // quantity to end with, so pass owned + bought: C# passes only the count to buy, which buys
+        // nothing once you already own that many. C# also kept using the quantities read before
+        // the purchases; they are read again after each one.
+        const exchange = (token: string, cost: string, rate: number, cap: number): void => {
+            const owned = bot.inventory.getQuantity(token);
+            const buy = Math.min(Math.trunc(bot.inventory.getQuantity(cost) / rate), cap - owned);
+            if (buy > 0) {
+                Core.buyItem("collection", 325, token, owned + buy);
+                bot.wait.forActionCooldown("buyItem");
+                bot.wait.forItemBuy();
+            }
+            Core.sleep();
+        };
 
-        Core.sleep();
-
-        // Token C > Token B (buy from shop if needed)
-        if (Math.trunc(cQuantity / 10) > 1 && bQuantity < 200 && Math.trunc(cQuantity / 10) + bQuantity < 200) {
-            const buyB = Math.trunc(cQuantity / 10);
-            Core.buyItem("collection", 325, "Super-Fan Swag Token B", buyB);
-            bot.wait.forActionCooldown("buyItem");
-            bot.wait.forItemBuy();
-        }
-
-        Core.sleep();
-
-        // Token B > Token A (buy from shop if needed)
-        if (Math.trunc(bQuantity / 20) > 1 && aQuantity < 100 && Math.trunc(bQuantity / 20) + aQuantity < 100) {
-            const buyA = Math.trunc(bQuantity / 20);
-            Core.buyItem("collection", 325, "Super-Fan Swag Token A", buyA);
-            bot.wait.forActionCooldown("buyItem");
-            bot.wait.forItemBuy();
-        }
-        Core.sleep();
+        // Token D > Token C > Token B > Token A
+        exchange("Super-Fan Swag Token C", "Super-Fan Swag Token D", 10, 500);
+        exchange("Super-Fan Swag Token B", "Super-Fan Swag Token C", 10, 200);
+        exchange("Super-Fan Swag Token A", "Super-Fan Swag Token B", 20, 100);
     }
 
     membershipDues(faction: MemberShipsIDS, rank = 10): void {

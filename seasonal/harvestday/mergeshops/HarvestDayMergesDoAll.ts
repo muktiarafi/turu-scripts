@@ -8,11 +8,13 @@ tags: harvestday, harvest, merge, doall
 import { bot, choices, defineScriptOptions, option, type ScriptOption } from "turu";
 import { mergeOptionsEnum } from "../../../core/CoreAdvanced";
 import { Core, configOr } from "../../../core/CoreBots";
+import { CoreHarvestDay } from "../CoreHarvestDay";
 import { AutumnMerge } from "./AutumnMerge";
 import { EbilCorpCafeMerge } from "./EbilCorpCafeMerge";
 import { EbilHQMerge } from "./EbilCorpHQMerge";
 import { FreeasaBirdMerge } from "./FreeasaBirdMerge";
 import { HarvestDayParadeMerge } from "./HarvestDayParadeMerge";
+import { HarvestMenuShop } from "./HarvestMenuShop";
 import { HarvestMerge } from "./HarvestMerge";
 import { ManaHarvestMerge } from "./ManaHarvestMerge";
 import { MoglinFeastMerge } from "./MoglinFeastMerge";
@@ -52,6 +54,7 @@ export class HarvestDayMergesDoAll {
         ...HarvestDayMergesDoAll.mergeShopSelectOptions("Nightmare Harvest", NightmareHarvestMerge.select),
         ...HarvestDayMergesDoAll.mergeShopSelectOptions("Nightmare Harvest War", NightmareHarvestWarMerge.select),
         ...HarvestDayMergesDoAll.mergeShopSelectOptions("Robina's Harvest", RobinasHarvestMerge.select),
+        ...HarvestDayMergesDoAll.mergeShopSelectOptions("Harvest Menu", HarvestMenuShop.select),
     ];
 
     getMergeShopActions(): (() => void)[] {
@@ -68,6 +71,7 @@ export class HarvestDayMergesDoAll {
             () => new NightmareHarvestMerge().buyAllMerge(null, buyMode),
             () => new NightmareHarvestWarMerge().buyAllMerge(null, buyMode),
             () => new RobinasHarvestMerge().buyAllMerge(null, buyMode),
+            () => new HarvestMenuShop().buyAllMerge(null, buyMode),
         ];
     }
 
@@ -181,9 +185,14 @@ export default function main(): void {
         "Ebil Operative Death Blade",
         "Ebil Operative Long Baton",
         "Ebil Operative Tactical Rifle",
+        "Bone Harvester Eye",
+        "Bone Harvester Morph",
+        "Hans' Chore Voucher",
     );
 
     Core.setOptions();
+
+    new CoreHarvestDay().doAll();
 
     for (const buy of script.getMergeShopActions()) {
         if (bot.shouldExit) {

@@ -2208,14 +2208,15 @@ export class CoreAdvanced {
                 //#endregion
 
                 case "archivist of time":
-                    //#region Wizard -  Valiance - Pneuna - Vainglory
-                    if (!this.uValiance() || !this.uPneuma() || !this.uVainglory()) {
+                case "archivist of temporis":
+                    //#region Wizard -  Valiance - Examen - Vainglory
+                    if (!this.uValiance() || !this.uExamen() || !this.uVainglory()) {
                         return useAwe();
                     }
                     type = EnhancementType.Wizard;
                     cSpecial = CapeSpecial.Vainglory;
                     wSpecial = WeaponSpecial.Valiance;
-                    hSpecial = HelmSpecial.Pneuma;
+                    hSpecial = HelmSpecial.Examen;
                     break;
 
                 //#endregion
@@ -2569,6 +2570,7 @@ export class CoreAdvanced {
                 case "beast warrior":
                 case "beastmaster":
                 case "berserker":
+                case "brutal berserker":
                 case "beta berserker":
                 case "blademaster assassin":
                 case "blademaster":
@@ -2577,6 +2579,7 @@ export class CoreAdvanced {
                 case "blood titan":
                 case "frostblood titan":
                 case "cardclasher":
+                case "cardclasher ace":
                 case "chaos avenger member preview":
                 case "chaos champion prime":
                 case "chaos shaper":
@@ -2644,6 +2647,7 @@ export class CoreAdvanced {
                 case "infinite dark caster":
                 case "infinite legion dark caster":
                 case "infinity titan":
+                case "infinity hero":
                 case "legendary naval commander":
                 case "legion blademaster assassin":
                 case "legion doomknight tester":
@@ -2740,12 +2744,14 @@ export class CoreAdvanced {
                 case "archmage":
                 case "beastmaster":
                 case "berserker":
+                case "brutal berserker":
                 case "beta berserker":
                 case "blademaster assassin":
                 case "blademaster":
                 case "blood titan":
                 case "frostblood titan":
                 case "cardclasher":
+                case "cardclasher ace":
                 case "chaos avenger member preview":
                 case "chaos champion prime":
                 case "chaos slayer":
@@ -2789,6 +2795,7 @@ export class CoreAdvanced {
                 case "infinite dark caster":
                 case "infinite legion dark caster":
                 case "infinity titan":
+                case "infinity hero":
                 case "legion blademaster assassin":
                 case "legion evolved dark caster":
                 case "legion swordmaster assassin":
@@ -2929,6 +2936,7 @@ export class CoreAdvanced {
                 case "master martial artist":
                 case "antique hunter":
                 case "archivist of time":
+                case "archivist of temporis":
                     type = EnhancementType.Lucky;
                     wSpecial = WeaponSpecial.Awe_Blast;
                     break;

@@ -13,12 +13,9 @@ const Adv = new CoreAdvanced();
 
 export class SmartEnhance {
     doSmartEnhance(): void {
-        if (Core.cboBool("DisableAutoEnhance") === true) {
-            return;
-        }
-
+        // Started by hand, so it enhances even when DisableAutoEnhance is on.
         const className = bot.player.currentClass ?? "";
-        Adv.smartEnhance(className);
+        Adv.smartEnhance(className, { forceEnh: true });
     }
 }
 

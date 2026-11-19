@@ -44,10 +44,7 @@ export class KathoolAdept {
             return;
         }
 
-        if (bot.player.level < 80) {
-            Core.logger("Kathool Adept requires level 80.");
-            return;
-        }
+        Farm.experience(80);
 
         if (bot.shouldExit) {
             return;

@@ -5,7 +5,7 @@ tags: null
 */
 // Port of Scripts/Nation/Various/EliteVoid.cs.
 
-import { bot, SkillUseMode } from "turu";
+import { bot } from "turu";
 import { ClassType, Core } from "../../core/CoreBots";
 import { CitadelRuins } from "../../story/nation/CitadelRuins";
 
@@ -81,22 +81,7 @@ export class EliteVoid {
             while (!bot.shouldExit && !Core.checkInventory("Elite Void Sword Pet")) {
                 //Staying Humble 6682
                 Core.ensureAccept(6682);
-                //why the fuck was the class buffed!?
-                const usethis =
-                    bot.inventory.items
-                        .concat(...bot.bank.items)
-                        .find((n) => n.name === "Yami no Ronin" || n.name.startsWith("Chaos Slayer")) ?? null;
-                if (usethis != null) {
-                    Core.equip(usethis.id);
-                    Core.equip(...Core.farmGear);
-                    if (usethis.name === "Yami no Ronin") {
-                        bot.skills.startSkills("1 | 4", -1, SkillUseMode.UseIfAvailable);
-                    }
-                } else {
-                    Core.equipClass(ClassType.Dodge);
-                }
-
-                Core.huntMonster("underlair", "ArchFiend DragonLord", "Twisted Armor Piece", 3);
+                Core.killArchFiendDragonLord("Twisted Armor Piece", 3);
                 Core.ensureComplete(6682);
             }
         }

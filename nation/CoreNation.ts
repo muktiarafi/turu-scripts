@@ -93,9 +93,12 @@ export class CoreNation {
     /** CanChange: If enabled will do "Swindles Return Policy" passively during "Supplies To Spin The Wheels of Fate". */
     returnPolicyDuringSupplies = true;
 
-    /** Crag and Bamboozle name in game. */
-    get cragName(): string {
-        return "Crag & Bamboozle";
+    /**
+     * Crag and Bamboozle's item ID. C# changed it from the name to the ID ("Crag &amp; Bamboozle"
+     * wasn't found on every client); blacklists and logs spell the name out.
+     */
+    get cragName(): number {
+        return 4845;
     }
 
     /** All principal drops from Nulgath. */
@@ -761,8 +764,14 @@ export class CoreNation {
                     Core.killMonster("ultraalteon", "r10", "Left", "Ultra Chaos Alteon", "Relic of Chaos", 1, {
                         isTemp: false,
                         log: false,
+                        publicRoom: this.suppliesPublicRoom,
                     });
-                else Core.killEscherion("Relic of Chaos", 1, { log: false, fromSupplies: true });
+                else
+                    Core.killEscherion("Relic of Chaos", 1, {
+                        log: false,
+                        fromSupplies: true,
+                        publicRoom: this.suppliesPublicRoom,
+                    });
 
                 this.sellVoucherOfNulgath(this.sellMemVoucher, null);
                 this.assistantDuringSupplies(assistantDuring);
@@ -772,8 +781,14 @@ export class CoreNation {
         }
     }
 
+    /** Supplies' fights honour the public-room settings (C# `PublicDifficult == true || !PrivateRooms`). */
+    private get suppliesPublicRoom(): boolean {
+        return Core.publicDifficult || !Core.privateRooms;
+    }
+
     private killHydra(): void {
-        if ((bot.map.name ?? "").toLowerCase() !== "hydrachallenge") Core.join("hydrachallenge");
+        if ((bot.map.name ?? "").toLowerCase() !== "hydrachallenge")
+            Core.join("hydrachallenge", "Enter", "Spawn", { publicRoom: this.suppliesPublicRoom });
 
         const relics = bot.inventory.getQuantity("Relic of Chaos");
 
@@ -815,8 +830,12 @@ export class CoreNation {
         while (!bot.shouldExit && !Core.checkInventory(item, quant)) {
             if (hydraChallenge) this.killHydra();
             else if (ultraAlteon)
-                Core.killMonster("ultraalteon", "r10", "Left", "*", null, 1, { isTemp: false, log: false });
-            else Core.killEscherion(null, 1, { log: false, fromSupplies: true });
+                Core.killMonster("ultraalteon", "r10", "Left", "*", null, 1, {
+                    isTemp: false,
+                    log: false,
+                    publicRoom: this.suppliesPublicRoom,
+                });
+            else Core.killEscherion(null, 1, { log: false, fromSupplies: true, publicRoom: this.suppliesPublicRoom });
 
             this.sellVoucherOfNulgath(this.sellMemVoucher, item);
             this.assistantDuringSupplies(assistantDuring);
@@ -1649,7 +1668,7 @@ export class CoreNation {
         if (Core.checkInventory("Totem of Nulgath", quant)) return;
 
         // <CragName> Owned
-        this.deal(0, quant);
+        if (Core.checkInventory(this.cragName)) this.deal(0, quant);
 
         // Nulgath's Birthday Gift / Bounty Hunter's Drone Pet Owned
         this.newWorldsNewOpportunities("Totem of Nulgath", quant);
@@ -1707,7 +1726,7 @@ export class CoreNation {
      */
     deal(gemQuant = 0, totemQuant = 0): void {
         if (!Core.checkInventory(this.cragName)) {
-            Core.logger(`Missing ${this.cragName} cannot continue`);
+            Core.logger("Missing Crag & Bamboozle cannot continue");
             return;
         }
 

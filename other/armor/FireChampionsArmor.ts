@@ -5,7 +5,7 @@ tags: fire champions armor, fire champions armor, polished dragon slayer, flame 
 */
 // Port of Scripts/Other/Armor/FireChampionsArmor.cs.
 
-import { bot, SkillUseMode } from "turu";
+import { bot } from "turu";
 import { CoreAdvanced } from "../../core/CoreAdvanced";
 import { ClassType, Core } from "../../core/CoreBots";
 import { Lair } from "../../story/Lair";
@@ -65,27 +65,7 @@ export class FireChampionsArmor {
     voidScale(VoidScaleQuant = 13): void {
         if (Core.checkInventory("Void Scale", VoidScaleQuant)) return;
 
-        const OptimalClasses = ["Yami no Ronin", "Chaos Slayer"];
-
-        const usethis = bot.inventory.items
-            .concat(bot.bank.items)
-            .find((n) => OptimalClasses.some((o) => n.name === o || n.name.startsWith(o)));
-
-        Core.logger(
-            usethis != null
-                ? `${usethis.name} found -- equipping optimal class.`
-                : !!Core.dodgeClass
-                  ? "No optimal class found, falling back to Dodge Class."
-                  : "No optimal/dodge class found, using equipped class for Archfiend Dragonlord... GOOD LUCK!!",
-        );
-
-        if (usethis != null) {
-            Core.equip(usethis.id);
-            Core.equip(...Core.dodgeGear);
-            if (usethis.name === "Yami no Ronin") bot.skills.startSkills("1 | 4", -1, SkillUseMode.UseIfAvailable);
-        } else if (!!Core.dodgeClass) Core.equipClass(ClassType.Dodge);
-
-        Core.huntMonster("underlair", "Archfiend Dragonlord", "Void Scale", VoidScaleQuant, { isTemp: false });
+        Core.killArchFiendDragonLord("Void Scale", VoidScaleQuant, { isTemp: false });
     }
 }
 

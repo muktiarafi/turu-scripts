@@ -47,8 +47,7 @@ export class BehemothBlade {
             Core.buyItem("battleon", 222, "Steel Afterlife");
         }
         Farm.bludrutBrawlBoss(undefined, 500);
-        const bladeChoice = String(bot.config?.get<Blade>("BladeChoice")) ?? "";
-        Core.buyItem("battleon", 222, `Behemoth Blade of ${bladeChoice}`);
+        Core.buyItem("battleon", 222, `Behemoth Blade of ${blade}`);
     }
 }
 

@@ -5,7 +5,7 @@ tags: class, dot, damage over time, dragon of time, timeinn
 */
 // Port of Scripts/Other/Classes/DragonOfTime.cs.
 
-import { bot, SkillUseMode } from "turu";
+import { bot } from "turu";
 import { CoreAdvanced } from "../../core/CoreAdvanced";
 import { ClassType, Core } from "../../core/CoreBots";
 import { CoreFarms } from "../../core/CoreFarms";
@@ -221,17 +221,7 @@ export class DragonOfTime {
                 publicRoom: true,
             });
             if (!Core.checkInventory("Dragon's Plasma", 20)) {
-                //why the fuck was the class buffed!?
-                const usethis = bot.inventory.items
-                    .concat(bot.bank.items)
-                    .find((n) => n.name === "Yami no Ronin" || n.name.startsWith("Chaos Slayer"));
-                if (usethis != null) {
-                    Core.equip(usethis.id);
-                    Core.equip(...Core.farmGear);
-                    if (usethis.name === "Yami no Ronin")
-                        bot.skills.startSkills("1 | 4", -1, SkillUseMode.UseIfAvailable);
-                } else Core.equipClass(ClassType.Dodge);
-                Core.huntMonster("underlair", "ArchFiend Dragonlord", "Dragon's Plasma", 20, { isTemp: false });
+                Core.killArchFiendDragonLord("Dragon's Plasma", 20, { isTemp: false });
             }
             Core.jumpWait();
             Core.equipClass(ClassType.Solo);

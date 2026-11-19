@@ -8,6 +8,7 @@ tags: mogloween, merge, doall
 import { bot, choices, defineScriptOptions, option, type ScriptOption } from "turu";
 import { mergeOptionsEnum } from "../../../core/CoreAdvanced";
 import { Core, configOr } from "../../../core/CoreBots";
+import { CoreMogloween } from "../CoreMogloween";
 import { AlnswickCastleMerge } from "./AlnswickCastleMerge";
 import { CandiedCostumesMerge } from "./CandiedCostumesMerge";
 import { ChromaCandyMerge } from "./ChromaCandyMerge";
@@ -242,6 +243,8 @@ export default function main(): void {
         bot.config.configure();
 
     Core.setOptions();
+
+    new CoreMogloween().doAll();
 
     for (const buy of script.getMergeShopActions()) {
         buy();

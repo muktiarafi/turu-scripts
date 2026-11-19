@@ -1,7 +1,7 @@
 /*
 name: King's Echo Class
 description: King's Echo Class
-tags: King's, King, Echo, class, kingsecho
+tags: King's, King, Echo, class, kingsecho, kings echo, kingkong, ke, k, kings, booty
 */
 // Port of Scripts/Other/Classes/KingsEcho.cs.
 
@@ -56,7 +56,9 @@ export class KingsEcho {
 
                         Core.ensureAccept(10440);
                         Core.equipClass(ClassType.Solo);
-                        Core.huntMonster("queenbattle", "Queen of Monsters", "Calcified Tear", 60, { isTemp: false });
+                        Core.huntMonster("transformation", "Queen of Monsters", "Calcified Tear", 60, {
+                            isTemp: false,
+                        });
                         Core.huntMonster("dreadhaven", "Slugwrath", "Whispers of Chaos", 40, { isTemp: false });
                         Core.huntMonster("ultradrakath", "Champion of Chaos", "Trace of Chaos", 13, { isTemp: false });
                         Core.ensureComplete(10440);

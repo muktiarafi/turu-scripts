@@ -50,6 +50,7 @@ export class CoreHarvestDay {
             this.blightHarvest();
             this.manaHarvest();
             this.moglinFeast();
+            this.charityFeast();
         } else {
             this.ebilCorpHQ();
         }
@@ -1048,6 +1049,64 @@ export class CoreHarvestDay {
         if (!Story.questProgression(10497)) {
             Core.huntMonsterQuest(10497, ["moglinfeast", UseableMonsters[4], ClassType.Solo]);
         }
+    }
+
+    charityFeast(): void {
+        if (Core.isCompletedBefore(10947) || !Core.isSeasonalMapActive("charityfeast")) {
+            return;
+        }
+
+        Story.preLoad(this.charityFeast);
+
+        const UseableMonsters = [
+            "Fall Fae Queen", // UseableMonsters[0]
+            "Masked Skeleton", // UseableMonsters[1]
+            "Pumpkin Blossom Fae", // UseableMonsters[2]
+            "Sluagh King", // UseableMonsters[3]
+            "Sluagh Warrior", // UseableMonsters[4]
+            "Uninvited Guest", // UseableMonsters[5]
+        ];
+
+        // 10938 | Pumpkin Pop
+        Story.killQuest(10938, "charityfeast", UseableMonsters[2]); // Magical Pumpkin Seeds x12
+
+        // 10939 | Black-Tie Pigs
+        Story.killQuest(10939, "charityfeast", UseableMonsters[5]); // Confiscated Cravat x4
+
+        // 10940 | Unnecessary Patience
+        Story.mapItemQuest(10940, "charityfeast", 16408, 10);
+
+        // 10941 | Five-Star Service
+        // C# runs it on every start, even once completed; it is skipped when done, as the others.
+        if (!Story.questProgression(10941)) {
+            Core.ensureAccept(10941);
+            Core.huntMonster("charityfeast", UseableMonsters[2], "Pumpkin Rind", 6);
+            Core.huntMonster("charityfeast", UseableMonsters[5], "Embroidered Handkerchief", 6);
+            Core.ensureComplete(10941);
+        }
+
+        // 10942 | Set Up to Fall
+        Story.mapItemQuest(10942, "charityfeast", [16409, 16410, 16411]);
+
+        // 10943 | Tricky Nixie
+        Story.killQuest(10943, "charityfeast", UseableMonsters[0]); // Nixie's Amber x1
+
+        // 10944 | Undead Minyans
+        Story.killQuest(10944, "charityfeast", UseableMonsters[1]); // Strange Mask x13
+
+        // 10945 | Crimson Corvus
+        Story.killQuest(10945, "charityfeast", UseableMonsters[4]); // Sluagh Antler x24
+
+        // 10946 | Feast of Thrills
+        if (!Story.questProgression(10946)) {
+            Core.ensureAccept(10946);
+            Core.huntMonster("charityfeast", UseableMonsters[1], "Chipped Mask", 6);
+            Core.huntMonster("charityfeast", UseableMonsters[4], "Sluagh Feather", 6);
+            Core.ensureComplete(10946);
+        }
+
+        // 10947 | King Mellori
+        Story.killQuest(10947, "charityfeast", UseableMonsters[3]); // Sluagh King Defeated x1
     }
 }
 

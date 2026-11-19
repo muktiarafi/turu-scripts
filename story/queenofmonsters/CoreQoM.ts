@@ -340,7 +340,11 @@ export class CoreQOM {
         Story.mapItemQuest(5813, "charredpath", 5254);
 
         //Remove the Bile
-        Story.killQuest(5819, "charredpath", "Noxious Fumes");
+        if (!Story.questProgression(5819)) {
+            Core.ensureAccept(5819);
+            Core.huntMonster("charredpath", "Noxious Fumes", "Toxin Destroyed", 10);
+            Core.ensureComplete(5819);
+        }
 
         //Get the Plague (Crystal)
         Story.killQuest(5820, "charredpath", "Plague Spreader");

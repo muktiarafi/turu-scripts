@@ -166,7 +166,8 @@ export const scriptOptions = defineScriptOptions(
 export default function main(): void {
     Core.bankingBlackList.push(
         ...[
-            Nation.cragName,
+            "Crag &amp; Bamboozle",
+            "Crag & Bamboozle",
             "Gem of Nulgath",
             "Tainted Gem",
             "Dark Crystal Shard",

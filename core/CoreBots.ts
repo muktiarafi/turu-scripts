@@ -4332,6 +4332,42 @@ export class CoreBots {
         this.jumpWait();
     }
 
+    /**
+     * Hunts ArchFiend DragonLord (underlair) with a rank 10 Chaos Slayer, else a rank 10 Yami no
+     * Ronin (Def mode), else the dodge class.
+     * @param item The item to obtain, or null to kill the boss once.
+     * @param quant The desired item quantity.
+     */
+    killArchFiendDragonLord(item: string | null = null, quant = 1, options: KillOptions = {}): void {
+        const { isTemp = true, log = true, publicRoom = false } = options;
+        if (item !== null && (isTemp ? bot.tempInv.contains(item, quant) : this.checkInventory(item, quant))) return;
+
+        // Rank 10 is 302500 class points (see checkClassRank). C# calls CheckClassRank, which logs
+        // every class it looks at.
+        const ownedClasses = [...bot.inventory.items, ...bot.bank.items].filter((i) => categoryIs(i, "Class"));
+        const rankTen = (name: (className: string) => boolean): InventoryItem | undefined =>
+            ownedClasses.find((i) => name(i.name) && i.quantity >= 302500);
+        const chaosSlayer = rankTen((n) => n.toLowerCase().startsWith("chaos slayer"));
+        const yamiNoRonin = chaosSlayer ? undefined : rankTen((n) => equalsIgnoreCase(n, "Yami no Ronin"));
+
+        if (chaosSlayer) {
+            this.equip(chaosSlayer.name);
+            bot.skills.startAdvanced(chaosSlayer.name, false, ClassUseMode.Base);
+        } else if (yamiNoRonin) {
+            this.equip(yamiNoRonin.name);
+            bot.skills.startAdvanced(yamiNoRonin.name, false, ClassUseMode.Def);
+        } else {
+            this.equipClass(ClassType.Dodge);
+            this.logger(
+                CoreBots.isGenericClass(this.dodgeClass)
+                    ? "No Chaos Slayer or Yami no Ronin found and no dodge class is set. Using the currently equipped class for ArchFiend DragonLord. This might fail. GOOD LUCK!!!"
+                    : "No Chaos Slayer or Yami no Ronin found. Using the dodge class for ArchFiend DragonLord. This might fail.",
+            );
+        }
+
+        this.huntMonster("underlair", "ArchFiend DragonLord", item, quant, { isTemp, log, publicRoom });
+    }
+
     /** Kill DoomKitten, with a damage-over-time class when you own one. */
     killDoomKitten(item: string | null = null, quant = 1, options: { isTemp?: boolean; log?: boolean } = {}): void {
         const { isTemp = false, log = true } = options;
@@ -5980,7 +6016,9 @@ export class CoreBots {
                 break;
 
             case "ultradrakath":
-                simpleQuestBypass([182, 5]);
+                // Only when the slot is behind: setting it to 5 would wind back a later value.
+                if (num(bot.flash.callGameFunction("world.getQuestValue", 182)) < 5) simpleQuestBypass([182, 5]);
+                else tryJoin();
                 break;
 
             case "backroom":
@@ -6136,7 +6174,6 @@ export class CoreBots {
                         'This map now requires a one-time completion of "Beyond the Portal"\nNot sure why it loads tercessuinotlim first, but get over it :|',
                         false,
                     );
-                    simpleQuestBypass([15, 8], [542, 2]);
                     this.join("citadel");
                     this.jump("m22", "Left");
                     this.equipClass(ClassType.Solo);
@@ -6147,7 +6184,6 @@ export class CoreBots {
 
                 if (!prereqQuest2) this.chainComplete(9541);
 
-                this.jump("m22", "Left");
                 tryJoin();
                 break;
             }

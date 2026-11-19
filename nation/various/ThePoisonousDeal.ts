@@ -17,7 +17,7 @@ const TC = new TaintedClaymore();
 export class ThePoisonousDeal {
     deal(TaintedQuant: number, ShardQuant: number): void {
         if (!Core.checkInventory(Nation.cragName)) {
-            Core.logger(`${Nation.cragName} missing. stopping`);
+            Core.logger("Crag & Bamboozle missing. stopping"); // C# logs the ID now
             return;
         }
 

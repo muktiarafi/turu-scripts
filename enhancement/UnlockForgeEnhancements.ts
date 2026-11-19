@@ -5,7 +5,7 @@ tags: lacerate, smite, herosvaliance, arcanasconcerto, elysium, acheron, absolut
 */
 // Port of Scripts/Enhancement/UnlockForgeEnhancements.cs.
 
-import { bot, choices, defineScriptOptions, option, SkillUseMode } from "turu";
+import { bot, choices, defineScriptOptions, option } from "turu";
 import { EternalDrakath } from "../chaos/EternalDrakathSet";
 import { CoreAdvanced } from "../core/CoreAdvanced";
 import { ClassType, Core, configOr } from "../core/CoreBots";
@@ -775,6 +775,7 @@ export class UnlockForgeEnhancements {
                 Core.buyItem("museum", 1130, "Armor of Awe Pass");
                 Core.addDrop("Pauldron Fragment");
                 Core.registerQuests(4162);
+                Core.equipClass(ClassType.Solo);
                 Core.huntMonster("gravestrike", "Ultra Akriloth", "Pauldron Fragment", 15, { isTemp: false });
                 bot.wait.forPickup("Pauldron Fragment");
                 Core.cancelRegisteredQuests();
@@ -830,17 +831,7 @@ export class UnlockForgeEnhancements {
         Core.huntMonster("frozenlair", "Legion Lich Lord", "Sapphire Orb", 100, { isTemp: false });
         Core.huntMonster("icewing", "Warlord Icewing", "Boreal Cavalier Bardiche", undefined, { isTemp: false });
 
-        //why the fuck was the class buffed!?
-        const usethis = bot.inventory.items
-            .concat(bot.bank.items)
-            .find((n) => n.name === "Yami no Ronin" || n.name.startsWith("Chaos Slayer"));
-
-        if (usethis != null) {
-            Core.equip(usethis.id);
-            Core.equip(...Core.farmGear);
-            if (usethis.name === "Yami no Ronin") bot.skills.startSkills("1 | 4", -1, SkillUseMode.UseIfAvailable);
-        } else Core.equipClass(ClassType.Dodge);
-        Core.huntMonster("underlair", "ArchFiend DragonLord", "Void Scale", 13, { isTemp: false });
+        Core.killArchFiendDragonLord("Void Scale", 13, { isTemp: false });
 
         Core.ensureComplete(8822);
         Core.logger("Enhancement Unlocked: Penitence");

@@ -271,6 +271,8 @@ export class CoreFarmerJoe {
         if (bot.player.level >= 30 && Daily.checkDailyv2(802, ["Elders' Blood"], { any: true, shouldUnBank: true }))
             Daily.eldersBlood();
 
+        Daily.dagesScrollFragment();
+
         Core.logger(
             "Joe will handle each level bracket (0-30, 30-50, 50-55, 55-60, 60-65, 65-75, 75-100)\n doing the leveling first, then acquiring classes and items after\n so its prepared... and hopefully strong enough to handle the next level bracket.",
         );

@@ -6,7 +6,7 @@ tags: story, quest, nation, citadel-ruins
 // Port of Scripts/Story/Nation/CitadelRuins.cs.
 
 import { bot } from "turu";
-import { ClassType, Core } from "../../core/CoreBots";
+import { Core } from "../../core/CoreBots";
 import { CoreFarms } from "../../core/CoreFarms";
 import { CoreStory } from "../../core/CoreStory";
 import { CoreNation } from "../../nation/CoreNation";
@@ -82,16 +82,11 @@ export class CitadelRuins {
 
         // Staying Humble
         Core.addDrop("Elite Void Sword Pet");
-        //why the fuck was the class buffed!?
-        const usethis = bot.inventory.items
-            .concat(bot.bank.items)
-            .find((n) => n.name === "Yami no Ronin" || n.name.startsWith("Chaos Slayer"));
-        if (usethis != null) {
-            Core.equip(usethis.id);
-            Core.equip(...Core.farmGear);
-            if (usethis.name === "Yami no Ronin") bot.skills.startAdvanced("1 | 4");
-        } else Core.equipClass(ClassType.Dodge);
-        Story.killQuest(6682, "underlair", "ArchFiend DragonLord");
+        if (!Story.questProgression(6682)) {
+            Core.ensureAccept(6682);
+            Core.killArchFiendDragonLord("Twisted Armor Piece", 3);
+            Core.ensureComplete(6682);
+        }
     }
 
     cutieMakaisQuest(): void {

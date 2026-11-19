@@ -6,7 +6,7 @@ tags: farm, pet, polly-rogers, celestial-pirate-commander, pirate
 // Port of Scripts/Seasonal/TalkLikeaPirateDay/CelestialPirateCommander[PollyRogers].cs.
 // Converted by tools/cs2ts, not yet read through by hand (cs2ts --force regenerates it); remove this line once it is.
 
-import { bot, choices, defineScriptOptions, option, SkillUseMode } from "turu";
+import { bot, choices, defineScriptOptions, option } from "turu";
 import { ClassType, configEnum, Core } from "../../core/CoreBots";
 import { CoreFarms } from "../../core/CoreFarms";
 
@@ -105,25 +105,7 @@ export class CelestialPirateCommander {
                 publicRoom: true,
             });
 
-            //why the fuck was the class buffed!?
-            const usethis =
-                bot.inventory.items
-                    .concat(...bot.bank.items)
-                    .find((n) => n.name === "Yami no Ronin" || n.name.startsWith("Chaos Slayer")) ?? null;
-            if (usethis != null) {
-                Core.equip(usethis.id);
-                Core.equip(...Core.farmGear);
-                if (usethis.name === "Yami no Ronin") {
-                    bot.skills.startSkills("1 | 4", -1, SkillUseMode.UseIfAvailable);
-                }
-            } else {
-                Core.equipClass(ClassType.Dodge);
-            }
-
-            Core.huntMonster("underlair", "ArchFiend DragonLord", "Coffer of the Stars", 1, {
-                isTemp: false,
-                publicRoom: true,
-            });
+            Core.killArchFiendDragonLord("Coffer of the Stars", 1, { isTemp: false, publicRoom: true });
 
             Core.equipClass(ClassType.Solo);
 

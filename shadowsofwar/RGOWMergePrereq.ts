@@ -1,7 +1,7 @@
 /*
-name: Ultra Speaker Merge PreReqs
-description: Gets the prerequisites for the Ultra Speaker merge.
-tags: ultra speaker merge, ultra malgor merge, rgow, goddess of war
+name: Radiant Goddess of War Merge PreReqs (Ultra Speaker Merge)
+description: Gets the merge prerequisites for RGoW (Ultra Speaker Merge).
+tags: ultra speaker merge, ultra malgor merge, rgow, goddess of war, merge, radiant, goddess, of, war
 */
 // Port of Scripts/ShadowsOfWar/RGOWMergePrereq.cs.
 // Converted by tools/cs2ts, not yet read through by hand (cs2ts --force regenerates it); remove this line once it is.
