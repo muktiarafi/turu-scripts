@@ -21,7 +21,7 @@ again, start from that commit:
 - [Conventions](#conventions): [calls and options](#calls-and-options), [enhancing](#enhancing), [merge scripts](#merge-script-pattern), [background tasks](#background-tasks)
 - [Core libraries and reference ports](#core-libraries-and-reference-ports)
 - [cs2ts](#cs2ts), the C# to TypeScript converter
-- Areas: [Merge scripts](#merge-scripts), [Story scripts](#story-scripts), [Core content areas](#core-content-areas), [Seasonal](#seasonal), [Other](#other), [Prototypes](#prototypes), [Army](#army), [Tools](#tools), [FarmerJoe](#farmerjoe), [Ultras](#ultras)
+- Areas: [Merge scripts](#merge-scripts), [Story scripts](#story-scripts), [Core content areas](#core-content-areas), [Seasonal](#seasonal), [Other](#other), [Prototypes](#prototypes), [Army](#army), [Tools](#tools), [FarmerJoe](#farmerjoe), [Ultras](#ultras), [UltrasLW](#ultraslw)
 
 ## Conventions
 
@@ -600,3 +600,57 @@ What differs from C#:
 
 None of it has run in game. `bot/tests/core_tasks.rs` tests the tasks, the cancellation token and
 reset event against a fake game, and checks that every ported Ultrasv3 script's module tree loads.
+
+### UltrasLW
+
+`ultraslw/` is a port of [UltrasLW](https://github.com/l0newolf12/UltrasLW) by l0newolf12 (one
+change by Tato), at `8e48a9e` (2026-11-14): its own Ultra engine, `CoreLoneWolf`, and the army
+scripts on it (the Ultras, the dailies, Temple Shrine, the Void bosses, the seven-player Ultras and
+the farms). It isn't part of auqw/Scripts; the drafts came from cs2ts run over a copy of
+`../Scripts` with UltrasLW in it as `UltrasLW/` (cs2ts's file walk skips symlinks).
+
+`CoreLoneWolf` was read through by hand. The other 35 files are cs2ts drafts fixed until they
+type-check (the cs2ts line says so). Not ported: `Extras/ResetArmyCompositions`, which rewrites
+every option file in Skua's options folder (scripts can't touch files; Edit Script Options resets
+a script's options). None of it has run in game.
+
+How it maps onto Turu:
+- The skill engine thread is the `LoneWolfSkills` task (`core/CoreTasks.ts`), stepped every
+  100 ms (Chrono ShadowHunter's Gunslinger fires every 50 ms; the task timer runs every 20 ms). Its
+  waits (`TauntMonster`, `UseSkillFive`, the immediate taunt and skill 5, the targeted skill) are
+  generators that `yield`; the class engines don't wait. `Interlocked`/`Volatile` are plain
+  fields: only the script thread touches them. Stopping joins nothing: `tasks.cancel`.
+- The packet detector listens to `extensionPacket` and matches its texts in
+  `JSON.stringify` of the packet (`{"params":{"type","dataObj"}}`, VibeSkua's raw "pext"), so
+  `"cmd":"x"` markers match as in C#.
+- The army sync file is a `bot.army` log named after it without `.sync`; the protocol (RESET,
+  READY, START, STEP, ARRIVED, CONTINUE, SIGNAL, TIMESTAMP, STOP lines) is C#'s. Tokens are 32 hex
+  digits, as `Guid.ToString("N")`.
+- `ValidateFunctionBasedSkillsDisabled` stops Turu's own skill timer when it runs (C# stops the
+  script when Skua's Function Based Skills plugin is on; Turu has no such plugin).
+  `SetAntiLag` turns off `bot.options.streamerMode` (C# sets VibeSkua's by reflection).
+- The house check reads `world.myAvatar.houseitems`' raw `sType`/`bEquip`.
+- Signatures: `startPacketDetector(commands, texts)` takes a string or a list for each (C#'s four
+  overloads); `strictSkillEngine(skills, index)` returns the next index (C# `ref int`); the
+  `TryGet...` methods with `out` values return a record or null. The scripts' `ref`/`out`
+  parameters are `Ref<T>` holders (`ultraslw/LWRef.ts`): callers pass `ref(get, set)` over their
+  variable or field. C# overloads that clash got their own names (`runFightLoopWith`).
+- `Stopwatch` is Unix milliseconds; `DateTimeOffset` values are Unix milliseconds.
+
+Engine and Core additions it needed (all VibeSkua's or CoreBots' C#):
+- `bot.skills.useSkill` returns whether the skill was used (turu.swf's `useSkill` returns it, as
+  VibeSkua's does); the engine relies on `canUseSkill(n) && useSkill(n)` throughout.
+- `Aura.expiresAt` and `Aura.remainingTime` (VibeSkua `ExpiresAt`, `RemainingTime`), and
+  `bot.map.players` (VibeSkua `Map.Players`).
+- `Core.hasSpaceFor` takes quest rewards (`RewardItem` now carries `category` and `coins`), as
+  C#'s `HasSpaceFor(ItemBase)`; `Core.noneEnhancableFilter` and `Core.isMonsterAlive` (without
+  C#'s dropped kill list, by HP and state).
+
+Conversion traps fixed by hand, for the next port: integer divisions cs2ts left as float division
+(`(a - b) / reward.quantity`); `GetGameObject("ui.mcPopup.currentLabel") != "\"Bank\""`, a raw
+JSON compare that is always true against Turu's parsed value (also fixed in `army/CoreArmyLite.ts`);
+`GetMonsterAura(...).Contains("\"nam\":...")` on what is an `Aura[]` in Turu; `x is >= 'A' and
+<= 'Z' || ...` chains, which tree-sitter parses with the `||` inside the pattern; `ThenBy` (cs2ts
+sorts twice); `[...list?.map(...)] ?? []`, which throws on null; a generic method's lost `<T>`.
+cs2ts itself now keeps the initializer of a target-typed `new() { A = 1 }` (it dropped it, which
+emptied every class preset).

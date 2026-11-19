@@ -116,6 +116,7 @@ SHA-256 when it downloads. To build the index locally: `node tools/build-index.m
 | `Ultras/Ultrasv3` | The engine, the individual Ultras, the challenge bosses, the DoAll scripts and Entwined Eclipse. Not the older `Ultras` and `Ultrasv2` sets. |
 | `Prototypes` | Every script but `KathoolAdeptPrerequisite` (a stub pointing to `Other/Classes/KathoolAdept`) |
 | `Templates`, `Skills` | Not ported (templates and skill data, not scripts) |
+| [UltrasLW](https://github.com/l0newolf12/UltrasLW) (`ultraslw/`) | Every script but `ResetArmyCompositions` ([why](docs/PORTING.md#ultraslw)) |
 
 [docs/PORTING.md](docs/PORTING.md) lists, area by area, what each port leaves out or changes,
 and the C# bugs fixed on purpose (marked `C#` in the code).
@@ -126,10 +127,12 @@ and the C# bugs fixed on purpose (marked `C#` in the code).
   LordExelot, Vld Mrk, PUNK3DAF, l0newolf12, PapaShokry, BrenoHenrike, SharpTheNightmare and
   [the other contributors](https://github.com/auqw/Scripts/graphs/contributors). Their logic,
   names and structure are theirs; this repository translates them to TypeScript for Turu.
+- `ultraslw/` is a port of [UltrasLW](https://github.com/l0newolf12/UltrasLW) by l0newolf12:
+  its LoneWolf Ultra engine and army scripts are theirs.
 - The script API follows [Skua](https://github.com/auqw/skua) (the auqw team) and
   [VibeSkua](https://github.com/NinjaXz/VibeSkua) (NinjaXz).
 
-auqw/Scripts publishes no license, so its authors keep their rights to the ported scripts. If
+auqw/Scripts and UltrasLW publish no license, so their authors keep their rights to the ported scripts. If
 you're one of them and want something changed or removed,
 [open an issue](https://github.com/muktiarafi/turu-scripts/issues). This project isn't affiliated
 with Artix Entertainment or auqw.
