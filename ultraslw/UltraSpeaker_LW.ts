@@ -262,7 +262,15 @@ export class UltraSpeaker_LW {
     }
 
     private validateOptions(): boolean {
-        this.armyComposition = this.getUltraOption("UltraSpeakerComposition", "ArmyComposition");
+        // Turu: a choice option is read back as its member name ("Stable"), not the enum's number, so
+        // look the member up; comparing the name with the numeric members never matched.
+        this.armyComposition =
+            ArmyComposition[
+                this.getUltraOption<string>(
+                    "UltraSpeakerComposition",
+                    "ArmyComposition",
+                ) as keyof typeof ArmyComposition
+            ] ?? ArmyComposition.Default;
         this.bruteForceMethod = this.getUltraOption("UltraSpeakerBruteForceMethod", "BruteForceMethod");
         this.privateRoomNumber = this.getSetupOption("PrivateRoomNumber");
         return LoneWolf.validatePrivateRoomNumber(this.privateRoomNumber);

@@ -182,7 +182,12 @@ export class UltraDarkon_LW {
     }
 
     private validateOptions(): boolean {
-        this.armyComposition = this.getUltraOption("UltraDarkonComposition", "ArmyComposition");
+        // Turu: a choice option is read back as its member name ("Stable"), not the enum's number, so
+        // look the member up; comparing the name with the numeric members never matched.
+        this.armyComposition =
+            ArmyComposition[
+                this.getUltraOption<string>("UltraDarkonComposition", "ArmyComposition") as keyof typeof ArmyComposition
+            ] ?? ArmyComposition.Default;
         this.privateRoomNumber = this.getSetupOption("PrivateRoomNumber");
         return LoneWolf.validatePrivateRoomNumber(this.privateRoomNumber);
     }
