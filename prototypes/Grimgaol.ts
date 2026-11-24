@@ -27,10 +27,17 @@ const Forge = new UnlockForgeEnhancements();
 
 /**
  * An item option (`option.item`) declared as a text option with its `item` field, so a Turu older
- * than `option.item` still loads the script and shows a text box.
+ * than `option.item` still loads the script and shows a text box. Each is required (the run stops
+ * without it) and names the enhancement the item should have.
  */
-function itemOption(name: string, displayName: string, description: string, item: ScriptOptionItem): ScriptOption {
-    return { ...option.text(name, displayName, description), item };
+function itemOption(
+    name: string,
+    displayName: string,
+    description: string,
+    item: ScriptOptionItem,
+    enhancement: string,
+): ScriptOption {
+    return { ...option.text(name, displayName, description), item, required: true, enhancement };
 }
 
 export class Grimgaol {
@@ -54,12 +61,12 @@ export class Grimgaol {
             "If enabled, this will log the time for each room into chat/the Logs > scripts tab.",
             false,
         ), // Helms
-        itemOption("ForgeHelm", "Helm: Forge", "Your helm with the Forge enhancement", "helm"),
-        itemOption("WizHelm", "Helm: Wizard", "Your helm with the Wizard enhancement", "helm"),
-        itemOption("HealerHelm", "Helm: Healer", "Your helm with the Healer enhancement", "helm"), // Weapons
-        itemOption("Elysium", "Weapon: Elysium", "Your weapon with the Elysium enhancement", "weapon"), // Capes
-        itemOption("Absolution", "Cape: Absolution", "Your cape with the Absolution enhancement", "cape"),
-        itemOption("Penitence", "Cape: Penitence", "Your cape with the Penitence enhancement", "cape"),
+        itemOption("ForgeHelm", "Helm: Forge", "Your helm with the Forge enhancement", "helm", "Forge"),
+        itemOption("WizHelm", "Helm: Wizard", "Your helm with the Wizard enhancement", "helm", "Wizard"),
+        itemOption("HealerHelm", "Helm: Healer", "Your helm with the Healer enhancement", "helm", "Healer"), // Weapons
+        itemOption("Elysium", "Weapon: Elysium", "Your weapon with the Elysium enhancement", "weapon", "Elysium"), // Capes
+        itemOption("Absolution", "Cape: Absolution", "Your cape with the Absolution enhancement", "cape", "Absolution"),
+        itemOption("Penitence", "Cape: Penitence", "Your cape with the Penitence enhancement", "cape", "Penitence"),
     ];
 
     // ── Split Timer State ────────────────────────────────────────────────────
