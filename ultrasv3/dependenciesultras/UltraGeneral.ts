@@ -9,7 +9,7 @@ tags: null
 // parameter (cs2ts passes `bot`) but read the global.
 
 import { type Bot, bot as theBot } from "turu";
-import { Core, rethrowIfStopped } from "../../core/CoreBots";
+import { configOr, Core, rethrowIfStopped } from "../../core/CoreBots";
 import { compareIgnoreCase, type CoreUltrav3, lineTime, newGuid, nowSeconds } from "./CoreUltrav3";
 
 export class UltraGeneral {
@@ -27,8 +27,10 @@ export class UltraGeneral {
 
         armySize = armySize > 0 ? armySize : Math.max(1, theBot.config.get<number>("ArmySize"));
 
+        // Turu: through `configOr`, as C#'s `Config.Get` reads an option the script doesn't declare
+        // (Kolr declares two classes, Masakado five): Turu's `config.get` refuses one.
         const presetEntries = ["Class1", "Class2", "Class3", "Class4", "Class5", "Class6", "Class7"]
-            .map((name) => theBot.config.get<string>(name)?.trim())
+            .map((name) => configOr(name, "")?.trim())
             .filter((cl): cl is string => !!cl)
             .map(parseClassOption)
             .filter((entry) => !!entry.className);
@@ -78,8 +80,10 @@ export class UltraGeneral {
 
         armySize = armySize > 0 ? armySize : Math.max(1, theBot.config.get<number>("ArmySize"));
 
+        // Turu: through `configOr`, as C#'s `Config.Get` reads an option the script doesn't declare
+        // (Kolr declares two classes, Masakado five): Turu's `config.get` refuses one.
         const presetEntries = ["Class1", "Class2", "Class3", "Class4", "Class5", "Class6", "Class7"]
-            .map((name) => theBot.config.get<string>(name)?.trim())
+            .map((name) => configOr(name, "")?.trim())
             .filter((cl): cl is string => !!cl)
             .map(parseClassOption)
             .filter((entry) => !!entry.className);
