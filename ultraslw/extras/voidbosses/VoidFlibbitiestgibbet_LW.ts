@@ -219,7 +219,9 @@ export class VoidFlibbitiestgibbet_LW {
 
         const playerFive = this.getSetupOption<string>("player5")?.trim() ?? "";
         const playerSix = this.getSetupOption<string>("player6")?.trim() ?? "";
-        const playerSeven = this.getSetupOption<string>("player7")?.trim() ?? "";
+        // TheEncroachingShadows_LW runs this as its child with six players: its "Setup" has no
+        // player7, which C#'s Config.Get reads as null and Turu's config.get refuses.
+        const playerSeven = (this.masterMode ? configOr("Setup", "player7", "") : configOr("player7", "")).trim();
 
         if (!playerFive && (!!playerSix || !!playerSeven)) {
             Core.logger("Player 5 is required when Player 6 or Player 7 is configured.", "ValidateOptions", {
