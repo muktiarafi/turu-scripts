@@ -441,9 +441,13 @@ export class CoreAdvanced {
 
         // Process shop items based on various conditions
         for (const item of shopItems) {
+            // Turu: the C# skips misc categories (Item, Note...) even when buyOnlyThis names one, so
+            // a caller asking for such an item gets nothing and loops (Malgor's set asks for
+            // "Dragon's Tear", an Item). An item named in buyOnlyThis is kept whatever its category.
+            const named = buyOnlyThis !== null && sameName(buyOnlyThis, item.name);
             if (
-                this.miscCatagories.includes(item.category) ||
-                (buyOnlyThis && !sameName(buyOnlyThis, item.name)) ||
+                (this.miscCatagories.includes(item.category) && !named) ||
+                (buyOnlyThis && !named) ||
                 (itemBlackList !== null && itemBlackList.some((x) => x.toLowerCase() === item.name.toLowerCase()))
             )
                 continue;
@@ -649,7 +653,11 @@ export class CoreAdvanced {
         mode: mergeOptionsEnum,
         memSkipped: boolean,
     ): void {
-        if (buyOnlyThis !== null) return;
+        if (buyOnlyThis !== null) {
+            // Turu: the C# says nothing here, which hid a caller looping on an item it never bought.
+            Core.logger(`"${buyOnlyThis}": nothing to buy (owned already, or not in this shop).`);
+            return;
+        }
 
         switch (mode) {
             case mergeOptionsEnum.all:
