@@ -68,6 +68,15 @@ function isCategory(item: { category: string }, category: string): boolean {
     return item.category.toLowerCase() === category.toLowerCase();
 }
 
+/**
+ * The inventory items you wear: `bot.inventory.equippedItems`, which reads only those, or on Turu
+ * releases before it the whole inventory filtered.
+ */
+function equippedItems(): InventoryItem[] {
+    const inventory: { equippedItems?: InventoryItem[] } = bot.inventory;
+    return inventory.equippedItems ?? bot.inventory.items.filter((i) => i.equipped);
+}
+
 function isEnhanceable(item: InventoryItem): boolean {
     return enhanceableCatagories.some((c) => isCategory(item, c));
 }
@@ -912,18 +921,18 @@ export class CoreAdvanced {
         if (!restore) {
             this.reEquippedItems.length = 0;
 
-            const equippedItems = bot.inventory.equippedItems;
+            const worn = equippedItems();
 
-            for (const item of equippedItems) this.reEquippedItems.push(item.name);
+            for (const item of worn) this.reEquippedItems.push(item.name);
 
             this.reEnhanceAfter = this.currentClassEnh();
             this.reWEnhanceAfter = this.currentWeaponSpecial();
 
-            this.reCEnhanceAfter = equippedItems.some((i) => isCategory(i, "Cape"))
+            this.reCEnhanceAfter = worn.some((i) => isCategory(i, "Cape"))
                 ? this.currentCapeSpecial()
                 : CapeSpecial.None;
 
-            this.reHEnhanceAfter = equippedItems.some((i) => isCategory(i, "Helm"))
+            this.reHEnhanceAfter = worn.some((i) => isCategory(i, "Helm"))
                 ? this.currentHelmSpecial()
                 : HelmSpecial.None;
 
@@ -1168,7 +1177,7 @@ export class CoreAdvanced {
      * (Adventurer and Depths count as Lucky).
      */
     currentClassEnh(): EnhancementType {
-        let patternId = bot.inventory.equippedItems.find((i) => isCategory(i, "Class"))?.enhancementPatternId ?? 9;
+        let patternId = equippedItems().find((i) => isCategory(i, "Class"))?.enhancementPatternId ?? 9;
 
         if (patternId === 1 || patternId === 23) patternId = 9;
 
@@ -1177,7 +1186,7 @@ export class CoreAdvanced {
 
     /** The special of your equipped cape, or None (C# `CurrentCapeSpecial`). */
     currentCapeSpecial(): CapeSpecial {
-        const equippedCape = bot.inventory.equippedItems.find((i) => isCategory(i, "Cape"));
+        const equippedCape = equippedItems().find((i) => isCategory(i, "Cape"));
         if (!equippedCape) return CapeSpecial.None;
         const patternId = equippedCape.enhancementPatternId;
         if (isDefined(EnhancementType, patternId)) return CapeSpecial.None;
@@ -1186,7 +1195,7 @@ export class CoreAdvanced {
 
     /** The special of your equipped helm, or None (C# `CurrentHelmSpecial`). */
     currentHelmSpecial(): HelmSpecial {
-        const equippedHelm = bot.inventory.equippedItems.find((i) => isCategory(i, "Helm"));
+        const equippedHelm = equippedItems().find((i) => isCategory(i, "Helm"));
         if (!equippedHelm) return HelmSpecial.None;
         const patternId = equippedHelm.enhancementPatternId;
 
@@ -1199,9 +1208,7 @@ export class CoreAdvanced {
      * reads the weapon's enhancement pattern, not its proc.
      */
     currentWeaponSpecial(): WeaponSpecial {
-        const equippedWeapon = bot.inventory.equippedItems.find((i) =>
-            this.weaponCatagories.some((c) => isCategory(i, c)),
-        );
+        const equippedWeapon = equippedItems().find((i) => this.weaponCatagories.some((c) => isCategory(i, c)));
         if (!equippedWeapon) return WeaponSpecial.None;
         const patternId = equippedWeapon.enhancementPatternId;
 
