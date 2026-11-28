@@ -912,7 +912,7 @@ export class CoreAdvanced {
         if (!restore) {
             this.reEquippedItems.length = 0;
 
-            const equippedItems = bot.inventory.items.filter((i) => i.equipped);
+            const equippedItems = bot.inventory.equippedItems;
 
             for (const item of equippedItems) this.reEquippedItems.push(item.name);
 
@@ -1168,8 +1168,7 @@ export class CoreAdvanced {
      * (Adventurer and Depths count as Lucky).
      */
     currentClassEnh(): EnhancementType {
-        let patternId =
-            bot.inventory.items.find((i) => i.equipped && isCategory(i, "Class"))?.enhancementPatternId ?? 9;
+        let patternId = bot.inventory.equippedItems.find((i) => isCategory(i, "Class"))?.enhancementPatternId ?? 9;
 
         if (patternId === 1 || patternId === 23) patternId = 9;
 
@@ -1178,7 +1177,7 @@ export class CoreAdvanced {
 
     /** The special of your equipped cape, or None (C# `CurrentCapeSpecial`). */
     currentCapeSpecial(): CapeSpecial {
-        const equippedCape = bot.inventory.items.find((i) => i.equipped && isCategory(i, "Cape"));
+        const equippedCape = bot.inventory.equippedItems.find((i) => isCategory(i, "Cape"));
         if (!equippedCape) return CapeSpecial.None;
         const patternId = equippedCape.enhancementPatternId;
         if (isDefined(EnhancementType, patternId)) return CapeSpecial.None;
@@ -1187,7 +1186,7 @@ export class CoreAdvanced {
 
     /** The special of your equipped helm, or None (C# `CurrentHelmSpecial`). */
     currentHelmSpecial(): HelmSpecial {
-        const equippedHelm = bot.inventory.items.find((i) => i.equipped && isCategory(i, "Helm"));
+        const equippedHelm = bot.inventory.equippedItems.find((i) => isCategory(i, "Helm"));
         if (!equippedHelm) return HelmSpecial.None;
         const patternId = equippedHelm.enhancementPatternId;
 
@@ -1200,8 +1199,8 @@ export class CoreAdvanced {
      * reads the weapon's enhancement pattern, not its proc.
      */
     currentWeaponSpecial(): WeaponSpecial {
-        const equippedWeapon = bot.inventory.items.find(
-            (i) => i.equipped && this.weaponCatagories.some((c) => isCategory(i, c)),
+        const equippedWeapon = bot.inventory.equippedItems.find((i) =>
+            this.weaponCatagories.some((c) => isCategory(i, c)),
         );
         if (!equippedWeapon) return WeaponSpecial.None;
         const patternId = equippedWeapon.enhancementPatternId;
